@@ -1,0 +1,59 @@
+<!--EXTERNAL_PROPERTIES: BANNERLORD_GAME_DIR-->
+<!--EXTERNAL_PROPERTIES: BANNERLORD_STABLE_DIR-->
+<!--EXTERNAL_PROPERTIES: BANNERLORD_BETA_DIR-->
+<!--EXTERNAL_PROPERTIES: GITHUB_ACTIONS-->
+<!--EXTERNAL_PROPERTIES: TargetFramework-->
+<Project>
+
+  <!--Development Variables-->
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>BUTR Team</Authors>
+    <Company></Company>
+    <Product>BUTR Loader for Bannerlord Launcher</Product>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsStable>false</IsStable>
+    <IsStable Condition="$(Configuration.Contains('Stable'))">true</IsStable>
+    <IsBeta>false</IsBeta>
+    <IsBeta Condition="$(Configuration.Contains('Beta'))">true</IsBeta>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GameVersion>1.4.3</GameVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--Bannerlord's Root Folder. Leave empty if you want it to be tried to be autoresolved.-->
+    <GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
+    <GameFolder Condition="$(IsStable)">$(BANNERLORD_STABLE_DIR)</GameFolder>
+    <GameFolder Condition="$(IsBeta)">$(BANNERLORD_BETA_DIR)</GameFolder>
+  </PropertyGroup>
+
+
+  <!--GitHub Actions-->
+  <PropertyGroup Condition="$(GITHUB_ACTIONS) == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+  <!--SorceLink-->
+  <PropertyGroup>
+    <Deterministic>true</Deterministic>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+  <!--SorceLink-->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+  <!--CI Builds-->
+  <ItemGroup Condition="$(TargetFramework) == 'net472' AND $(OS) != 'Windows_NT'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

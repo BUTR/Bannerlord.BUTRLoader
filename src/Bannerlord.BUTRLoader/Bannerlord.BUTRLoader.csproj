@@ -1,0 +1,27 @@
+<!--EXTERNAL_PROPERTIES: GameFolder-->
+<!--EXTERNAL_PROPERTIES: GameVersion-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <PlatformTarget>x86</PlatformTarget>
+
+    <Configurations>Stable_Debug;Stable_Release;Beta_Debug;Beta_Release</Configurations>
+
+    <OutputPath>$(GameFolder)\bin\Win64_Shipping_Client</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <!--NuGet References-->
+  <ItemGroup>
+    <PackageReference Include="Bannerlord.ReferenceAssemblies.Core.EarlyAccess" Version="$(GameVersion).*" PrivateAssets="All" />
+  </ItemGroup>
+  <!--NuGet References-->
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy  /Y /S &quot;$(MSBuildProjectDirectory)\_bin&quot; &quot;$(GameFolder)\bin\Win64_Shipping_Client&quot;" />
+  </Target>
+
+</Project>
