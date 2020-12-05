@@ -1,6 +1,6 @@
 ﻿using TaleWorlds.Library;
 
-namespace Bannerlord.BUTRLoader
+namespace Bannerlord.BUTRLoader.ModuleInfoExtended
 {
     internal readonly struct DependedModuleMetadata
     {

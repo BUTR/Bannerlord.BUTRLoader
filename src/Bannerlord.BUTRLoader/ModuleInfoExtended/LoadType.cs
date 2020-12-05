@@ -1,4 +1,4 @@
-﻿namespace Bannerlord.BUTRLoader
+﻿namespace Bannerlord.BUTRLoader.ModuleInfoExtended
 {
     internal enum LoadType
     {

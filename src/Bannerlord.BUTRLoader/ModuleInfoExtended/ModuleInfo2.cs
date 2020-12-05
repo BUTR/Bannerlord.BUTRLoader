@@ -1,13 +1,15 @@
-﻿using System;
+﻿using Bannerlord.BUTRLoader.Helpers;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 
 using TaleWorlds.Library;
 
-namespace Bannerlord.BUTRLoader
+namespace Bannerlord.BUTRLoader.ModuleInfoExtended
 {
-    internal sealed class ExtendedModuleInfo : ModuleInfo
+    internal sealed class ModuleInfo2 : ModuleInfo
     {
         public string Url { get; private set; } = string.Empty;
 

@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Bannerlord.BUTRLoader.ModuleInfoExtended;
+
+using System.Collections.Generic;
 using System.Linq;
 
-namespace Bannerlord.BUTRLoader
+namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class ModuleSorter
     {
-        public static IEnumerable<ExtendedModuleInfo> GetDependentModulesOf(IEnumerable<ExtendedModuleInfo> source, ExtendedModuleInfo module)
+        public static IEnumerable<ModuleInfo2> GetDependentModulesOf(IEnumerable<ModuleInfo2> source, ModuleInfo2 module)
         {
             var sourceList = source.ToList();
 

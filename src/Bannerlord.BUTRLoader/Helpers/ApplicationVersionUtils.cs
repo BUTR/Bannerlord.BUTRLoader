@@ -1,6 +1,6 @@
 ﻿using TaleWorlds.Library;
 
-namespace Bannerlord.BUTRLoader
+namespace Bannerlord.BUTRLoader.Helpers
 {
     /// <summary>Helper class for handling the game version.</summary>
     internal static class ApplicationVersionUtils
