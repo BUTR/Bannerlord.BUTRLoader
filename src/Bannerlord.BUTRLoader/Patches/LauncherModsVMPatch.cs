@@ -1,13 +1,15 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.ModuleInfoExtended;
 
+using HarmonyLib;
+
 using System.Collections.Generic;
 using System.Linq;
 
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher;
 
-namespace Bannerlord.BUTRLoader.WithHarmony
+namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
     {

@@ -1,13 +1,10 @@
-<!--EXTERNAL_PROPERTIES: BANNERLORD_GAME_DIR-->
-<!--EXTERNAL_PROPERTIES: BANNERLORD_STABLE_DIR-->
-<!--EXTERNAL_PROPERTIES: BANNERLORD_BETA_DIR-->
-<!--EXTERNAL_PROPERTIES: GITHUB_ACTIONS-->
-<!--EXTERNAL_PROPERTIES: TargetFramework-->
+<!--EXTERNAL_PROPERTIES: TargetFramework;BANNERLORD_GAME_DIR;BANNERLORD_STABLE_DIR;BANNERLORD_BETA_DIR;GITHUB_ACTIONS-->
 <Project>
 
   <!--Development Variables-->
   <PropertyGroup>
     <Version>1.0.0</Version>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <PropertyGroup>

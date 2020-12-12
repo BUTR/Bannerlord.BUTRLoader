@@ -1,5 +1,7 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 
+using HarmonyLib;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -8,7 +10,7 @@ using TaleWorlds.GauntletUI.Data;
 using TaleWorlds.GauntletUI.PrefabSystem;
 using TaleWorlds.MountAndBlade.Launcher;
 
-namespace Bannerlord.BUTRLoader.WithHarmony
+namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherUIPatch
     {
