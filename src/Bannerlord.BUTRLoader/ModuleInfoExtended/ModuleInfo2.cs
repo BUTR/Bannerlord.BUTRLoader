@@ -9,6 +9,7 @@ using TaleWorlds.Library;
 
 namespace Bannerlord.BUTRLoader.ModuleInfoExtended
 {
+    // https://github.com/BUTR/Bannerlord.ButterLib/blob/dev/src/Bannerlord.ButterLib/Helpers/ModuleInfo/ExtendedModuleInfo.cs
     internal sealed class ModuleInfo2 : ModuleInfo
     {
         public string Url { get; private set; } = string.Empty;

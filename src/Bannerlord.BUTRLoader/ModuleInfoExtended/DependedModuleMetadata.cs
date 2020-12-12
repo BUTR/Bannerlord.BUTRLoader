@@ -2,6 +2,7 @@
 
 namespace Bannerlord.BUTRLoader.ModuleInfoExtended
 {
+    // https://github.com/BUTR/Bannerlord.ButterLib/blob/dev/src/Bannerlord.ButterLib/Helpers/ModuleInfo/DependedModuleMetadata.cs
     internal readonly struct DependedModuleMetadata
     {
         public readonly string Id;

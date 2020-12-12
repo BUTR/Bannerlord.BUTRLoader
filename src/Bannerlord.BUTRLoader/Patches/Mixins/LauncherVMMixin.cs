@@ -6,7 +6,7 @@ using System.Reflection;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher;
 
-namespace Bannerlord.BUTRLoader.Launcher
+namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal class LauncherVMMixin
     {

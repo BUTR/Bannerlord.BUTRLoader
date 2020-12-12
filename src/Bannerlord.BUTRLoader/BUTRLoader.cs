@@ -20,17 +20,18 @@ namespace Bannerlord.BUTRLoader
                 // Wait for the Launcher assembly to load
                 if (args.LoadedAssembly.GetName().Name == "TaleWorlds.MountAndBlade.Launcher")
                 {
-                    HarmonyFlow();
+                    Initialize();
                 }
             };
         }
 
-        private static bool HarmonyFlow()
+        private static bool Initialize()
         {
             var harmony = new Harmony("Bannerlord.BUTRLoader");
 
             LauncherModsVMPatch.Enable(harmony);
             LauncherUIPatch.Enable(harmony);
+            WidgetPrefabPatch.Enable(harmony);
 
             return true;
         }

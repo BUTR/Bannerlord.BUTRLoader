@@ -2,6 +2,7 @@
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
+    // https://github.com/BUTR/Bannerlord.ButterLib/blob/dev/src/Bannerlord.ButterLib/Helpers/ApplicationVersionUtils.cs
     /// <summary>Helper class for handling the game version.</summary>
     internal static class ApplicationVersionUtils
     {
