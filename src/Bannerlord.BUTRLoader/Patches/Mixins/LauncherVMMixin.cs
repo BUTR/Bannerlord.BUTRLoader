@@ -22,21 +22,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 }
             }
         }
-        private string _versionTextSingleplayer = string.Empty;
-
-        public string VersionTextMultiplayer
-        {
-            get => _versionTextMultiplayer;
-            set
-            {
-                if (value != _versionTextMultiplayer)
-                {
-                    _versionTextMultiplayer = value;
-                    _launcherVM.OnPropertyChangedWithValue(value, nameof(VersionTextMultiplayer));
-                }
-            }
-        }
-        private string _versionTextMultiplayer = string.Empty;
+        private string _versionTextSingleplayer = $"BUTRLoader v{typeof(LauncherVMMixin).Assembly.GetName().Version.ToString(3)}";
 
         private readonly LauncherVM _launcherVM;
         public LauncherVMMixin(LauncherVM launcherVM)
@@ -50,23 +36,6 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 typeof(LauncherVMMixin).GetProperty(nameof(VersionTextSingleplayer), ReflectionHelper.All)!,
                 this,
                 () => _launcherVM.OnPropertyChanged(nameof(VersionTextSingleplayer))));
-
-            propsObject.Add(nameof(VersionTextMultiplayer), new WrappedPropertyInfo(
-                typeof(LauncherVMMixin).GetProperty(nameof(VersionTextMultiplayer), ReflectionHelper.All)!,
-                this,
-                () => _launcherVM.OnPropertyChanged(nameof(VersionTextMultiplayer))));
-
-            _launcherVM.PropertyChangedWithValue += LauncherVM2_PropertyChangedWithValue;
-            LauncherVM2_PropertyChangedWithValue(this, new PropertyChangedWithValueEventArgs(nameof(LauncherVM.VersionText), _launcherVM.VersionText));
-        }
-
-        private void LauncherVM2_PropertyChangedWithValue(object sender, PropertyChangedWithValueEventArgs e)
-        {
-            if (e.PropertyName == nameof(LauncherVM.VersionText) && e.Value is string str)
-            {
-                VersionTextSingleplayer = _launcherVM.IsMultiplayer ? VersionTextSingleplayer : str + " BUTRLoader";
-                VersionTextMultiplayer = _launcherVM.IsMultiplayer ? str : VersionTextMultiplayer;
-            }
         }
     }
 }
