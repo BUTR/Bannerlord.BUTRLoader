@@ -13,6 +13,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
     {
         private enum TopTabs
         {
+            NONE,
             Singleplayer,
             Multiplayer,
             Options
@@ -202,6 +203,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             SetVMProperty(nameof(VersionTextSingleplayer));
             SetVMProperty(nameof(OptionsData));
+
+            if (_launcherVM.IsMultiplayer)
+                IsMultiplayer = true;
+            else
+                IsSingleplayer = true;
         }
     }
 }
