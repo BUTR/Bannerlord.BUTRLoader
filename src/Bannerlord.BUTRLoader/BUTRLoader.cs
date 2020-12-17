@@ -102,7 +102,7 @@ namespace Bannerlord.BUTRLoader
             LauncherModsVMPatch.Enable(harmony);
             LauncherUIPatch.Enable(harmony);
             WidgetPrefabPatch.Enable(harmony);
-            WidgetFactoryPost154Patch.Enable(harmony, WidgetRequested);
+            WidgetFactoryPatch.Enable(harmony, WidgetRequested);
 
             return true;
         }

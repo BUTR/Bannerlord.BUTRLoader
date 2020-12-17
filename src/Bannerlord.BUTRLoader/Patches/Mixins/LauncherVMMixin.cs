@@ -29,13 +29,15 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 {
                     _state = TopTabs.Singleplayer;
 
+                    _launcherVM.IsSingleplayer = true;
+                    _launcherVM.OnPropertyChanged(nameof(IsSingleplayer));
+                    _launcherVM.OnPropertyChanged(nameof(IsOptions));
+
                     _launcherVM.OnPropertyChanged(nameof(IsNotOptions));
                     _launcherVM.OnPropertyChanged(nameof(SkipNews));
                     _launcherVM.OnPropertyChanged(nameof(SkipMods));
 
                     RandomImageSwitch = !RandomImageSwitch;
-
-                    _launcherVM.IsSingleplayer = true;
 
                     _launcherVM.ModsData.IsDisabledOnMultiplayer = false;
                     _launcherVM.News.IsDisabledOnMultiplayer = false;
@@ -55,6 +57,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     _launcherVM.IsMultiplayer = true;
                     _launcherVM.OnPropertyChanged(nameof(IsMultiplayer));
+                    _launcherVM.OnPropertyChanged(nameof(IsOptions));
 
                     _launcherVM.OnPropertyChanged(nameof(IsNotOptions));
                     _launcherVM.OnPropertyChanged(nameof(SkipNews));
@@ -79,6 +82,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     _state = TopTabs.Options;
 
                     _launcherVM.OnPropertyChangedWithValue(value, nameof(IsOptions));
+                    //_launcherVM.OnPropertyChanged(nameof(IsOptions));
                     _launcherVM.OnPropertyChanged(nameof(IsMultiplayer));
 
                     RandomImageSwitch = !RandomImageSwitch;

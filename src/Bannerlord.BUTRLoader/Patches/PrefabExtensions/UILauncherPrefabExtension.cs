@@ -287,7 +287,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     }
 
     /// <summary>
-    /// Hides PLAY button when in Options
+    /// News tab can be disabled
     /// </summary>
     internal sealed class UILauncherPrefabExtension12 : RawPatch
     {

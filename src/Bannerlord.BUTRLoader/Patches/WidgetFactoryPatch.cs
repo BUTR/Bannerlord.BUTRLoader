@@ -14,7 +14,7 @@ using TaleWorlds.GauntletUI.PrefabSystem;
 namespace Bannerlord.BUTRLoader.Patches
 {
     // TODO: Backport
-    internal static class WidgetFactoryPost154Patch
+    internal static class WidgetFactoryPatch
     {
         private static readonly Dictionary<string, string> CustomTypePaths = new();
         private static readonly Dictionary<string, WidgetPrefab> LiveCustomTypes = new();
@@ -30,19 +30,19 @@ namespace Bannerlord.BUTRLoader.Patches
 
             harmony.Patch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.GetCustomType(null!)),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPost154Patch), nameof(GetCustomTypePrefix))));
+                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPatch), nameof(GetCustomTypePrefix))));
 
             harmony.Patch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.GetWidgetTypes()),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPost154Patch), nameof(GetWidgetTypesPostfix))));
+                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPatch), nameof(GetWidgetTypesPostfix))));
 
             harmony.Patch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.IsCustomType(null!)),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPost154Patch), nameof(IsCustomTypePrefix))));
+                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPatch), nameof(IsCustomTypePrefix))));
 
             harmony.Patch(
                 AccessTools.DeclaredMethod(typeof(WidgetFactory), "OnUnload"),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPost154Patch), nameof(OnUnloadPrefix))));
+                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPatch), nameof(OnUnloadPrefix))));
         }
 
         private static void LauncherUIPatch_OnInitialize(object sender, EventArgs e)
