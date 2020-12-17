@@ -33,5 +33,12 @@ namespace Bannerlord.BUTRLoader.Helpers
             version = new ApplicationVersion(applicationVersionType, major, minor, revision, changeSet, ApplicationVersionGameType.Singleplayer);
             return true;
         }
+
+        public static string ToString(ApplicationVersion av)
+        {
+            string prefix = ApplicationVersion.GetPrefix(av.ApplicationVersionType);
+            var def = ApplicationVersion.FromParametersFile(ApplicationVersionGameType.Singleplayer);
+            return $"{prefix}{av.Major}.{av.Minor}.{av.Revision}{(av.ChangeSet == def.ChangeSet ? "" : $".{av.ChangeSet}")}";
+        }
     }
 }

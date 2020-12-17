@@ -4,7 +4,9 @@ using Bannerlord.BUTRLoader.ModuleInfoExtended;
 using HarmonyLib;
 
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher;
@@ -25,6 +27,9 @@ namespace Bannerlord.BUTRLoader.Patches
             return extendedModuleInfo;
         }
 
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
+        [SuppressMessage("ReSharper", "RedundantAssignment")]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetDependentModulesOfPrefix(IEnumerable<ModuleInfo> source, ModuleInfo module, ref IEnumerable<ModuleInfo> __result)
         {
             var sourceList = source.ToList();

@@ -1,4 +1,4 @@
-<!--EXTERNAL_PROPERTIES: GameFolder;GameVersion-->
+<!--EXTERNAL_PROPERTIES: GameFolder;GameVersion;BANNERLORD_BUTR_BASE_URL-->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -8,6 +8,8 @@
     <PlatformTarget>x64</PlatformTarget>
 
     <Configurations>Stable_Debug;Stable_Release;Beta_Debug;Beta_Release</Configurations>
+
+    <BUTRBaseUrl>$(BANNERLORD_BUTR_BASE_URL)</BUTRBaseUrl>
   </PropertyGroup>
 
   <!--NuGet References-->
@@ -16,8 +18,19 @@
     <PackageReference Include="ILRepack" Version="2.1.0-beta1" PrivateAssets="All" />
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" PrivateAssets="All" />
     <PackageReference Include="Lib.Harmony" Version="2.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
   <!--NuGet References-->
+
+  <Target Name="SetBUTRBaseUrl" BeforeTargets="BeforeCompile">
+    <ItemGroup Condition="$(BUTRBaseUrl) != ''">
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" >
+        <_Parameter1>BUTRBaseUrl</_Parameter1>
+        <_Parameter2>$(BUTRBaseUrl)</_Parameter2>
+      </AssemblyAttribute>
+    </ItemGroup>
+    <Warning Condition="$(BUTRBaseUrl) == ''" Text="Environment variable 'BANNERLORD_BUTR_BASE_URL' is not set!"></Warning>
+  </Target>
 
   <Target Name="PostBuild" AfterTargets="ILRepacker" Condition="Exists($(GameFolder)) AND $(OS) == 'Windows_NT'">
     <Exec Command="xcopy /Y /S &quot;$(MSBuildProjectDirectory)\_GameRoot&quot; &quot;$(GameFolder)&quot;" />
