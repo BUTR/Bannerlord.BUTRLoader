@@ -14,7 +14,7 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
     {
         public string Url { get; private set; } = string.Empty;
 
-        public readonly List<DependedModuleMetadata> DependedModuleMetadatas = new List<DependedModuleMetadata>();
+        public readonly List<DependedModuleMetadata> DependedModuleMetadatas = new();
 
         public new void Load(string alias)
         {

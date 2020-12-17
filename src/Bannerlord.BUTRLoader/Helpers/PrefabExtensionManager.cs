@@ -12,6 +12,13 @@ namespace Bannerlord.BUTRLoader.Helpers
         string Id { get; }
     }
 
+    // TODO: Backport
+    public abstract class RawPatch : IPrefabPatch
+    {
+        public abstract string Id { get; }
+        public abstract Action<XmlNode> Patcher { get; }
+    }
+
     public abstract class InsertPatch : IPrefabPatch
     {
         public const int PositionFirst = 0;
@@ -71,6 +78,21 @@ namespace Bannerlord.BUTRLoader.Helpers
                 }
 
                 patcher(node);
+            });
+        }
+
+        // TODO: Backport
+        public static void RegisterPatch(string movie, string? xpath, RawPatch patch)
+        {
+            RegisterPatch(movie, xpath, node =>
+            {
+                var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument;
+                if (ownerDocument is null)
+                {
+                    return;
+                }
+
+                patch.Patcher(node);
             });
         }
 

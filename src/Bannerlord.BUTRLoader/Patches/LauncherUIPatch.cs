@@ -2,6 +2,7 @@
 
 using HarmonyLib;
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -14,6 +15,9 @@ namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherUIPatch
     {
+        public static event EventHandler? OnInitialize;
+        public static WidgetFactory WidgetFactory { get; private set; } = default!;
+
         public static void Enable(Harmony harmony)
         {
             harmony.Patch(
@@ -28,6 +32,9 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void InitializePostfix(GauntletMovie ____movie, LauncherVM ____viewModel, UIContext ____context, WidgetFactory ____widgetFactory)
         {
+            WidgetFactory = ____widgetFactory;
+            OnInitialize?.Invoke(null, EventArgs.Empty);
+
             // Add to the existing VM our own properties
             MixinManager.AddMixins(____viewModel);
 

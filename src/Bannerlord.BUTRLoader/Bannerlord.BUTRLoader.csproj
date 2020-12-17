@@ -12,19 +12,36 @@
     <BUTRBaseUrl>$(BANNERLORD_BUTR_BASE_URL)</BUTRBaseUrl>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Resources\Prefabs\Launcher.Options.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Prefabs\Launcher.Options.xml" />
+  </ItemGroup>
+
   <!--NuGet References-->
   <ItemGroup>
     <PackageReference Include="Bannerlord.ReferenceAssemblies.Core.EarlyAccess" Version="$(GameVersion).*" PrivateAssets="All" />
     <PackageReference Include="ILRepack" Version="2.1.0-beta1" PrivateAssets="All" />
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" PrivateAssets="All" />
+    <PackageReference Include="IsExternalInit" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Lib.Harmony" Version="2.0.4" />
+    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Nullable" Version="1.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <!--NuGet References-->
 
   <Target Name="SetBUTRBaseUrl" BeforeTargets="BeforeCompile">
     <ItemGroup Condition="$(BUTRBaseUrl) != ''">
-      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute" >
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
         <_Parameter1>BUTRBaseUrl</_Parameter1>
         <_Parameter2>$(BUTRBaseUrl)</_Parameter2>
       </AssemblyAttribute>

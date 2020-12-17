@@ -23,13 +23,30 @@ namespace Bannerlord.BUTRLoader.Patches
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension1.Movie, UILauncherPrefabExtension1.XPath, new UILauncherPrefabExtension1());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension2.Movie, UILauncherPrefabExtension2.XPath, new UILauncherPrefabExtension2());
 
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension1.Movie, LauncherModsPrefabExtension1.XPath, new LauncherModsPrefabExtension1());
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension2.Movie, LauncherModsPrefabExtension2.XPath, new LauncherModsPrefabExtension2());
+            // Options
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension3.Movie , UILauncherPrefabExtension3.XPath , new UILauncherPrefabExtension3 ());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension4.Movie , UILauncherPrefabExtension4.XPath , new UILauncherPrefabExtension4 ());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension5.Movie , UILauncherPrefabExtension5.XPath , new UILauncherPrefabExtension5 ());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension6.Movie , UILauncherPrefabExtension6.XPath , new UILauncherPrefabExtension6 ());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension7.Movie , UILauncherPrefabExtension7.XPath , new UILauncherPrefabExtension7 ());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension8.Movie , UILauncherPrefabExtension8.XPath , new UILauncherPrefabExtension8 ());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension9.Movie , UILauncherPrefabExtension9.XPath , new UILauncherPrefabExtension9 ());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension10.Movie, UILauncherPrefabExtension10.XPath, new UILauncherPrefabExtension10());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension11.Movie, UILauncherPrefabExtension11.XPath, new UILauncherPrefabExtension11());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension12.Movie, UILauncherPrefabExtension12.XPath, new UILauncherPrefabExtension12());
+            // Options
+
+            //PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension1.Movie, LauncherModsPrefabExtension1.XPath, new LauncherModsPrefabExtension1());
+            //PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension2.Movie, LauncherModsPrefabExtension2.XPath, new LauncherModsPrefabExtension2());
 
 
             harmony.Patch(
                 AccessTools.DeclaredMethod(typeof(WidgetPrefab), nameof(WidgetPrefab.LoadFrom)),
                 transpiler: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(WidgetPrefab_LoadFrom_Transpiler))));
+
+            harmony.CreateReversePatcher(
+                SymbolExtensions.GetMethodInfo(() => WidgetPrefab.LoadFrom(null!, null!, null!)),
+                new HarmonyMethod(SymbolExtensions.GetMethodInfo(() => LoadFromDocument(null!, null!, null!, null!)))).Patch();
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
@@ -76,11 +93,73 @@ namespace Bannerlord.BUTRLoader.Patches
             // ProcessMovie(path, xmlDocument);
             instructionsList.InsertRange(startIndex + 1, new List<CodeInstruction>
             {
-                new CodeInstruction(OpCodes.Ldarg_2),
-                new CodeInstruction(OpCodes.Ldloc_0),
-                new CodeInstruction(OpCodes.Call, SymbolExtensions.GetMethodInfo(() => ProcessMovie(null!, null!)))
+                new (OpCodes.Ldarg_2),
+                new (OpCodes.Ldloc_0),
+                new (OpCodes.Call, SymbolExtensions.GetMethodInfo(() => ProcessMovie(null!, null!)))
             });
             return instructionsList.AsEnumerable();
+        }
+
+
+        // We can call a slightly modified native game call this way
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public static WidgetPrefab LoadFromDocument(
+            PrefabExtensionContext prefabExtensionContext,
+            WidgetAttributeContext widgetAttributeContext,
+            string path,
+            XmlDocument document)
+        {
+            // Replaces reading XML from file with assigning it from the new local variable `XmlDocument document`
+            [MethodImpl(MethodImplOptions.NoInlining)]
+            static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
+            {
+                var returnNull = new List<CodeInstruction>
+                {
+                    new (OpCodes.Ldnull),
+                    new (OpCodes.Ret)
+                }.AsEnumerable();
+
+                var instructionList = instructions.ToList();
+
+                var locals = method.GetMethodBody()?.LocalVariables;
+                var typeLocal = locals?.FirstOrDefault(x => x.LocalType == typeof(XmlDocument));
+
+                if (typeLocal is null)
+                    return returnNull;
+
+                var constructorIndex = -1;
+                var constructor = AccessTools.Constructor(typeof(WidgetPrefab));
+                for (var i = 0; i < instructionList.Count; i++)
+                {
+                    if (instructionList[i].opcode == OpCodes.Newobj && Equals(instructionList[i].operand, constructor))
+                        constructorIndex = i;
+                }
+
+                if (constructorIndex == -1)
+                    return returnNull;
+
+                for (var i = 0; i < constructorIndex; i++)
+                {
+                    instructionList[i] = new CodeInstruction(OpCodes.Nop);
+                }
+
+                instructionList[constructorIndex - 2] = new CodeInstruction(OpCodes.Ldarg_S, 3);
+                instructionList[constructorIndex - 1] = new CodeInstruction(OpCodes.Stloc_S, typeLocal.LocalIndex);
+
+                return instructionList.AsEnumerable();
+            }
+
+            // make compiler happy
+            _ = Transpiler(null!, null!);
+
+            // make analyzer happy
+            prefabExtensionContext.AddExtension(null);
+            widgetAttributeContext.RegisterKeyType(null);
+            path.Do(null);
+            document.Validate(null);
+
+            // make compiler happy
+            return null!;
         }
     }
 }

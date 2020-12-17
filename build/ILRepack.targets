@@ -6,6 +6,7 @@
       <InputAssemblies Include="$(OutputPath)\Bannerlord.BUTRLoader.dll" />
       <InputAssemblies Include="$(OutputPath)\0Harmony.dll" />
       <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll" />
+      <InputAssemblies Include="$(OutputPath)\Microsoft.Bcl.HashCode.dll" />
     </ItemGroup>
 
     <!-- ReSharper disable once UnknownTask -->
@@ -16,6 +17,7 @@
       InputAssemblies="@(InputAssemblies)"
       TargetKind="SameAsPrimaryAssembly"
       OutputFile="$(OutputPath)\$(AssemblyName).dll"
+      LibraryPath="$(GameFolder)\bin\Win64_Shipping_Client"
     />
 
   </Target>

@@ -7,9 +7,12 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Threading.Tasks;
+using System.Xml;
 
 using TaleWorlds.Core;
+using TaleWorlds.GauntletUI.PrefabSystem;
 using TaleWorlds.MountAndBlade.Launcher.UserDatas;
 
 namespace Bannerlord.BUTRLoader
@@ -18,9 +21,45 @@ namespace Bannerlord.BUTRLoader
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal sealed class BUTRLoaderAppDomainManager : AppDomainManager
     {
+        private static readonly string ConfigPath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            "Mount and Blade II Bannerlord",
+            "Configs"
+        );
+
+        private static readonly string OptionsPath = Path.Combine(
+            ConfigPath,
+            "ModSettings",
+            "BUTRLoader",
+            "Options.json"
+        );
+
+        public static bool ExtendedSorting
+        {
+            get => _extendedSorting;
+            set => _extendedSorting = value;
+        }
+        private static bool _extendedSorting;
+
+        public static bool AutomaticallyCheckForUpdates
+        {
+            get => _automaticallyCheckForUpdates;
+            set => _automaticallyCheckForUpdates = value;
+        }
+        private static bool _automaticallyCheckForUpdates;
+
+
         public override void InitializeNewDomain(AppDomainSetup appDomainInfo)
         {
             base.InitializeNewDomain(appDomainInfo);
+
+            if (Directory.Exists(ConfigPath))
+            {
+                if (File.Exists(OptionsPath))
+                {
+
+                }
+            }
 
 #if STABLE_DEBUG || BETA_DEBUG
             Task.Run(CheckForUpdates);
@@ -63,8 +102,23 @@ namespace Bannerlord.BUTRLoader
             LauncherModsVMPatch.Enable(harmony);
             LauncherUIPatch.Enable(harmony);
             WidgetPrefabPatch.Enable(harmony);
+            WidgetFactoryPost154Patch.Enable(harmony, WidgetRequested);
 
             return true;
+        }
+        private static WidgetPrefab? WidgetRequested(string widget) => widget switch
+        {
+            "Launcher.Options" => PrefabInjector.Create(Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml")),
+            _ => null
+        };
+        private static XmlDocument Load(string embedPath)
+        {
+            using var stream = typeof(BUTRLoaderAppDomainManager).Assembly.GetManifestResourceStream(embedPath);
+            if (stream is null) throw new Exception($"Could not find embed resource '{embedPath}'!");
+            using var xmlReader = XmlReader.Create(stream, new XmlReaderSettings { IgnoreComments = true });
+            var doc = new XmlDocument();
+            doc.Load(xmlReader);
+            return doc;
         }
     }
 }

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Prefab>
+  <Constants>
+    <Constant Name="ModToggle.Width" BrushName="Launcher.Mods.ModToggle" BrushLayer="Default" BrushValueType="Width" />
+    <Constant Name="ModToggle.Height" BrushName="Launcher.Mods.ModToggle" BrushLayer="Default" BrushValueType="Height" />
+  </Constants>
+  <Window>
+    <Widget HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" VerticalAlignment="Top" HorizontalAlignment="Left">
+      <Children>
+
+        <ScrollablePanel Id="ScrollablePanel" HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" InnerPanel="MyClipRect\InnerPanel" ClipRect="MyClipRect" MarginLeft="30" MarginTop="46" MarginBottom="23" VerticalScrollbar="..\Scrollbar" AutoHideScrollBars="true">
+          <Children>
+            <Widget Id="MyClipRect" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" ClipContents="true">
+              <Children>
+                <ListPanel Id="InnerPanel" DataSource="{SettingProperties}" HeightSizePolicy="CoverChildren" WidthSizePolicy="StretchToParent" LayoutImp.LayoutMethod="VerticalBottomToTop" VerticalAlignment="Top">
+                  <ItemTemplate>
+
+                    <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" LayoutImp.LayoutMethod="VerticalBottomToTop">
+                      <Children>
+
+                        <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="26" MarginBottom="10">
+                          <Children>
+
+                            <!-- Boolean switch widget -->
+                            <ButtonWidget DoNotPassEventsToChildren="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModToggle.Width" SuggestedHeight="!ModToggle.Height" VerticalAlignment="Center"
+                                          Brush="Launcher.Mods.ModToggle" ButtonType="Toggle" IsSelected="@BoolValue" ToggleIndicator="ToggleIndicator" UpdateChildrenStates="true">
+                              <Children>
+                                <ImageWidget Id="ToggleIndicator" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="Launcher.Mods.ModToggle.Checkmark" />
+                              </Children>
+                            </ButtonWidget>
+
+                            <!-- Property Name Section -->
+                            <TextWidget Text="@Name" HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" VerticalAlignment="Center" MarginLeft="10" PositionYOffset="2"
+                                        Brush="Launcher.Mods.ModNameText" Brush.TextHorizontalAlignment="Left"/>
+
+                          </Children>
+                        </ListPanel>
+
+                        <!--<Widget DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="2" MarginLeft="2" MarginRight="2" MarginBottom="10" Sprite="launcher_divider" AlphaFactor="0.5" />-->
+
+                      </Children>
+                    </ListPanel>
+
+                  </ItemTemplate>
+                </ListPanel>
+              </Children>
+            </Widget>
+          </Children>
+        </ScrollablePanel>
+
+      </Children>
+    </Widget>
+  </Window>
+</Prefab>

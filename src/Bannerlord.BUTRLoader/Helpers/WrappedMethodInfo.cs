@@ -33,7 +33,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         public override Module Module => _methodInfoImplementation.Module;
         public override string Name => _methodInfoImplementation.Name;
         public override Type? ReflectedType => _methodInfoImplementation.ReflectedType;
-        public override ParameterInfo ReturnParameter => _methodInfoImplementation.ReturnParameter;
+        public override ParameterInfo? ReturnParameter => _methodInfoImplementation.ReturnParameter;
         public override Type ReturnType => _methodInfoImplementation.ReturnType;
         public override ICustomAttributeProvider ReturnTypeCustomAttributes => _methodInfoImplementation.ReturnTypeCustomAttributes;
 

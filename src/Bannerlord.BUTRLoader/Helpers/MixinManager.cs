@@ -8,7 +8,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class MixinManager
     {
-        private static readonly List<object> Mixins = new List<object>();
+        private static readonly List<object> Mixins = new();
 
         public static void AddMixins(LauncherVM launcherVM)
         {
