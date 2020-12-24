@@ -53,7 +53,7 @@ namespace Bannerlord.BUTRLoader.Patches
             var toPatchMethod = typeof(LauncherModsVM).GetMethod("GetDependentModulesOf", ReflectionHelper.All);
             var prefixMethod = typeof(LauncherModsVMPatch).GetMethod(nameof(GetDependentModulesOfPrefix), ReflectionHelper.All);
 
-            if (toPatchMethod == null || prefixMethod == null)
+            if (toPatchMethod is null || prefixMethod is null)
                 return;
 
             harmony.Patch(toPatchMethod, new HarmonyMethod(prefixMethod));

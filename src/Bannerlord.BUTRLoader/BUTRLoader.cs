@@ -98,6 +98,7 @@ namespace Bannerlord.BUTRLoader
         {
             var harmony = new Harmony("Bannerlord.BUTRLoader");
 
+            UserDataManagerPatch.Enable(harmony);
             LauncherModsVMPatch.Enable(harmony);
             LauncherUIPatch.Enable(harmony);
             WidgetPrefabPatch.Enable(harmony);
