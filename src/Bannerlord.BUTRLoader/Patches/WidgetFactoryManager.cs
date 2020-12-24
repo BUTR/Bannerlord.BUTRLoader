@@ -1,6 +1,4 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
-
-using HarmonyLib;
+﻿using HarmonyLib;
 
 using System;
 using System.Collections;
@@ -8,47 +6,73 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Xml;
 
 using TaleWorlds.GauntletUI.PrefabSystem;
 
 namespace Bannerlord.BUTRLoader.Patches
 {
-    // TODO: Backport
-    internal static class WidgetFactoryPatch
+    /// <summary>
+    /// https://github.com/Aragas/Bannerlord.MBOptionScreen/blob/dev/src/MCM.UI/Patches/WidgetFactoryManager.cs
+    /// </summary>
+    internal static class WidgetFactoryManager
     {
-        private static readonly Dictionary<string, string> CustomTypePaths = new();
+        private static readonly Dictionary<string, Func<WidgetPrefab?>> CustomTypes = new();
         private static readonly Dictionary<string, WidgetPrefab> LiveCustomTypes = new();
         private static readonly Dictionary<string, int> LiveInstanceTracker = new();
 
-        private static Func<string, WidgetPrefab?>? _widgetRequested;
+        private static Harmony? _harmony;
 
-        public static void Enable(Harmony harmony, Func<string, WidgetPrefab?> widgetRequested)
+        private static WeakReference<WidgetFactory?> WidgetFactoryReference { get; } = new(null);
+
+        public static void SetWidgetFactory(WidgetFactory widgetFactory)
         {
-            _widgetRequested = widgetRequested;
+            WidgetFactoryReference.SetTarget(widgetFactory);
+        }
 
-            LauncherUIPatch.OnInitialize += LauncherUIPatch_OnInitialize;
+        public static WidgetPrefab? Create(XmlDocument doc)
+        {
+            if (!WidgetFactoryReference.TryGetTarget(out var widgetFactory) || widgetFactory is null)
+                return null;
+
+            return WidgetPrefabPatch.LoadFromDocument(
+                widgetFactory.PrefabExtensionContext,
+                widgetFactory.WidgetAttributeContext,
+                string.Empty,
+                doc);
+        }
+
+        public static void Register(string name, Func<WidgetPrefab?> create)
+        {
+            CustomTypes.Add(name, create);
+        }
+
+        public static void CreateAndRegister(string name, XmlDocument xmlDocument) => Register(name, () => Create(xmlDocument));
+
+
+        public static void Enable(Harmony harmony)
+        {
+            _harmony = harmony;
 
             harmony.Patch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.GetCustomType(null!)),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPatch), nameof(GetCustomTypePrefix))));
+                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetCustomTypePrefix))));
 
             harmony.Patch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.GetWidgetTypes()),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPatch), nameof(GetWidgetTypesPostfix))));
+                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetWidgetTypesPostfix))));
 
             harmony.Patch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.IsCustomType(null!)),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPatch), nameof(IsCustomTypePrefix))));
+                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(IsCustomTypePrefix))));
 
             harmony.Patch(
                 AccessTools.DeclaredMethod(typeof(WidgetFactory), "OnUnload"),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryPatch), nameof(OnUnloadPrefix))));
-        }
+                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(OnUnloadPrefix))));
 
-        private static void LauncherUIPatch_OnInitialize(object sender, EventArgs e)
-        {
-            PrefabInjector.Register("Launcher.Options");
-            CustomTypePaths.Add("Launcher.Options", "");
+            harmony.Patch(
+                SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.Initialize()),
+                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix))));
         }
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
@@ -56,7 +80,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void GetWidgetTypesPostfix(ref IEnumerable<string> __result)
         {
-            __result = __result.Concat(CustomTypePaths.Keys);
+            __result = __result.Concat(CustomTypes.Keys);
         }
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
@@ -64,7 +88,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool IsCustomTypePrefix(string typeName, ref bool __result)
         {
-            if (!CustomTypePaths.ContainsKey(typeName))
+            if (!CustomTypes.ContainsKey(typeName))
                 return true;
 
             __result = true;
@@ -76,7 +100,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetCustomTypePrefix(string typeName, IDictionary ____liveCustomTypes, ref WidgetPrefab __result)
         {
-            if (____liveCustomTypes.Contains(typeName) || !CustomTypePaths.ContainsKey(typeName))
+            if (____liveCustomTypes.Contains(typeName) || !CustomTypes.ContainsKey(typeName))
                 return true;
 
             if (LiveCustomTypes.TryGetValue(typeName, out var liveWidgetPrefab))
@@ -86,7 +110,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 return false;
             }
 
-            if (_widgetRequested?.Invoke(typeName) is { } widgetPrefab)
+            if (CustomTypes[typeName]?.Invoke() is { } widgetPrefab)
             {
                 LiveCustomTypes.Add(typeName, widgetPrefab);
                 LiveInstanceTracker[typeName] = 1;
@@ -113,6 +137,18 @@ namespace Bannerlord.BUTRLoader.Patches
             }
 
             return true;
+        }
+
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void InitializePostfix(ref WidgetFactory __instance)
+        {
+            SetWidgetFactory(__instance);
+
+            _harmony?.Unpatch(
+                SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.Initialize()),
+                AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
         }
     }
 }

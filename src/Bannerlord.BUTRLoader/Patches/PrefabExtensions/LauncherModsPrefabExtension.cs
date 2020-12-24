@@ -10,7 +10,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string XPath { get; } = "/Prefab/Window/Widget/Children/ListPanel/Children/TextWidget[1]";
 
         public override string Id => "LauncherModsPrefabExtension1";
-        private XmlDocument XmlDocument { get; } = new XmlDocument();
+        private XmlDocument XmlDocument { get; } = new();
 
         public LauncherModsPrefabExtension1()
         {
@@ -26,7 +26,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string XPath { get; } = "descendant::ListPanel[@Id='InnerPanel']/ItemTemplate/ListPanel/Children/TextWidget[1]";
 
         public override string Id => "LauncherModsPrefabExtension2";
-        private XmlDocument XmlDocument { get; } = new XmlDocument();
+        private XmlDocument XmlDocument { get; } = new();
 
         public LauncherModsPrefabExtension2()
         {

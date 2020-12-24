@@ -2,7 +2,10 @@
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    public enum SettingType
+    /// <summary>
+    /// https://github.com/Aragas/Bannerlord.MBOptionScreen/blob/dev/src/MCM/Abstractions/Settings/SettingType.cs
+    /// </summary>
+    internal enum SettingType
     {
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -13,7 +16,10 @@ namespace Bannerlord.BUTRLoader.Helpers
         String
     }
 
-    public interface ISettingsPropertyDefinition
+    /// <summary>
+    /// https://github.com/Aragas/Bannerlord.MBOptionScreen/blob/dev/src/MCM/Abstractions/Settings/Models/ISettingsPropertyDefinition.cs
+    /// </summary>
+    internal interface ISettingsPropertyDefinition
     {
         IRef PropertyReference { get; }
 
@@ -24,7 +30,10 @@ namespace Bannerlord.BUTRLoader.Helpers
         decimal MaxValue { get; }
     }
 
-    public class SettingsPropertyDefinition : ISettingsPropertyDefinition
+    /// <summary>
+    /// https://github.com/Aragas/Bannerlord.MBOptionScreen/blob/dev/src/MCM/Abstractions/Settings/Models/SettingsPropertyDefinition.cs
+    /// </summary>
+    internal class SettingsPropertyDefinition : ISettingsPropertyDefinition
     {
         public string DisplayName { get; init; } = default!;
         public IRef PropertyReference { get; init; } = default!;

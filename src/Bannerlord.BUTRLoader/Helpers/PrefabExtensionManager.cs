@@ -5,21 +5,28 @@ using System.Xml;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    // https://github.com/BUTR/Bannerlord.UIExtenderEx/tree/dev/src/Bannerlord.UIExtenderEx/Prefabs
-
-    public interface IPrefabPatch
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/IPrefabPatch.cs
+    /// </summary>
+    internal interface IPrefabPatch
     {
         string Id { get; }
     }
 
-    // TODO: Backport
-    public abstract class RawPatch : IPrefabPatch
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/PrefabExtensionSetAttributePatch.cs
+    /// </summary>
+    internal abstract class PrefabExtensionSetAttributePatch : IPrefabPatch
     {
         public abstract string Id { get; }
-        public abstract Action<XmlNode> Patcher { get; }
+        public abstract string Attribute { get; }
+        public abstract string Value { get; }
     }
 
-    public abstract class InsertPatch : IPrefabPatch
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/InsertPatch.cs
+    /// </summary>
+    internal abstract class InsertPatch : IPrefabPatch
     {
         public const int PositionFirst = 0;
 
@@ -32,7 +39,10 @@ namespace Bannerlord.BUTRLoader.Helpers
         public abstract XmlDocument GetPrefabExtension();
     }
 
-    public abstract class PrefabExtensionInsertAsSiblingPatch : IPrefabPatch
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/PrefabExtensionInsertAsSiblingPatch.cs
+    /// </summary>
+    internal abstract class PrefabExtensionInsertAsSiblingPatch : IPrefabPatch
     {
         public enum InsertType { Prepend, Append }
 
@@ -43,19 +53,27 @@ namespace Bannerlord.BUTRLoader.Helpers
         public abstract XmlDocument GetPrefabExtension();
     }
 
-    public abstract class PrefabExtensionInsertPatch : InsertPatch { }
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/PrefabExtensionInsertPatch.cs
+    /// </summary>
+    internal abstract class PrefabExtensionInsertPatch : InsertPatch { }
 
-    public abstract class PrefabExtensionReplacePatch : IPrefabPatch
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/PrefabExtensionReplacePatch.cs
+    /// </summary>
+    internal abstract class PrefabExtensionReplacePatch : IPrefabPatch
     {
         public abstract string Id { get; }
 
         public abstract XmlDocument GetPrefabExtension();
     }
 
-    // https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Components/PrefabComponent.cs
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Components/PrefabComponent.cs
+    /// </summary>
     internal static class PrefabExtensionManager
     {
-        private static readonly ConcurrentDictionary<string, List<Action<XmlDocument>>> MoviePatches = new ConcurrentDictionary<string, List<Action<XmlDocument>>>();
+        private static readonly ConcurrentDictionary<string, List<Action<XmlDocument>>> MoviePatches = new();
 
         public static void RegisterPatch(string movie, Action<XmlDocument> patcher)
         {
@@ -81,8 +99,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             });
         }
 
-        // TODO: Backport
-        public static void RegisterPatch(string movie, string? xpath, RawPatch patch)
+        public static void RegisterPatch(string movie, string? xpath, PrefabExtensionSetAttributePatch patch)
         {
             RegisterPatch(movie, xpath, node =>
             {
@@ -92,7 +109,18 @@ namespace Bannerlord.BUTRLoader.Helpers
                     return;
                 }
 
-                patch.Patcher(node);
+                if (node.NodeType != XmlNodeType.Element)
+                {
+                    return;
+                }
+
+                if (node.Attributes![patch.Attribute] is null)
+                {
+                    var attribute = ownerDocument.CreateAttribute(patch.Attribute);
+                    node.Attributes.Append(attribute);
+                }
+
+                node.Attributes![patch.Attribute].Value = patch.Value;
             });
         }
 

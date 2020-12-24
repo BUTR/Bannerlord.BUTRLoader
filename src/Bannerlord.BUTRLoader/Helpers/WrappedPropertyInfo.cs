@@ -6,7 +6,9 @@ using System.Reflection;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    // https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/rewrite/Bannerlord.UIExtenderEx/ViewModels/WrappedPropertyInfo.cs
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/rewrite/Bannerlord.UIExtenderEx/ViewModels/WrappedPropertyInfo.cs
+    /// </summary>
     internal sealed class WrappedPropertyInfo : PropertyInfo
     {
         private readonly object _instance;

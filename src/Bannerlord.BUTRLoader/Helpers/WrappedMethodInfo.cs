@@ -5,7 +5,9 @@ using System.Reflection;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    // https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/rewrite/Bannerlord.UIExtenderEx/ViewModels/WrappedMethodInfo.cs
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/rewrite/Bannerlord.UIExtenderEx/ViewModels/WrappedMethodInfo.cs
+    /// </summary>
     internal sealed class WrappedMethodInfo : MethodInfo
     {
         private readonly object _instance;

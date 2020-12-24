@@ -2,8 +2,9 @@
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    // https://github.com/BUTR/Bannerlord.ButterLib/blob/dev/src/Bannerlord.ButterLib/Helpers/ApplicationVersionUtils.cs
-    /// <summary>Helper class for handling the game version.</summary>
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.ButterLib/blob/dev/src/Bannerlord.ButterLib/Helpers/ApplicationVersionUtils.cs
+    /// </summary>
     internal static class ApplicationVersionUtils
     {
         public static bool TryParse(string? versionAsString, out ApplicationVersion version)

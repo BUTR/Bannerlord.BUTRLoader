@@ -5,13 +5,19 @@ using System.Runtime.CompilerServices;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    public interface IRef : INotifyPropertyChanged
+    /// <summary>
+    /// https://github.com/Aragas/Bannerlord.MBOptionScreen/blob/dev/src/MCM/Abstractions/Ref/IRef.cs
+    /// </summary>
+    internal interface IRef : INotifyPropertyChanged
     {
         Type Type { get; }
         object? Value { get; set; }
     }
 
-    public class PropertyRef : IRef, IEquatable<PropertyRef>
+    /// <summary>
+    /// https://github.com/Aragas/Bannerlord.MBOptionScreen/blob/dev/src/MCM/Abstractions/Ref/PropertyRef.cs
+    /// </summary>
+    internal class PropertyRef : IRef, IEquatable<PropertyRef>
     {
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;

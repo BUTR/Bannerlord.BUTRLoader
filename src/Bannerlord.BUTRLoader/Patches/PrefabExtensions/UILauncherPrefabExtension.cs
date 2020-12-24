@@ -1,6 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 
-using System;
 using System.Xml;
 
 namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
@@ -79,29 +78,14 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     /// <summary>
     /// Replaces original Divider with a left one
     /// </summary>
-    internal sealed class UILauncherPrefabExtension4 : RawPatch
+    internal sealed class UILauncherPrefabExtension4 : PrefabExtensionSetAttributePatch
     {
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/Widget[1]/Children/Widget[1]";
 
         public override string Id => "UILauncherPrefabExtension4";
-        public override Action<XmlNode> Patcher { get; } = node =>
-        {
-            if (node.NodeType != XmlNodeType.Element)
-            {
-                return;
-            }
-
-            var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument!;
-
-            if (node.Attributes!["MarginLeft"] is null)
-            {
-                var attribute = ownerDocument.CreateAttribute("MarginLeft");
-                node.Attributes.Append(attribute);
-            }
-
-            node.Attributes!["MarginLeft"].Value = "125";
-        };
+        public override string Attribute => "MarginLeft";
+        public override string Value => "125";
     }
 
     /// <summary>
@@ -177,140 +161,65 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     /// <summary>
     /// Replaces ModsPage - uses 'SkipMods' instead of 'IsMultiplayer'
     /// </summary>
-    internal sealed class UILauncherPrefabExtension8 : RawPatch
+    internal sealed class UILauncherPrefabExtension8 : PrefabExtensionSetAttributePatch
     {
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[2]";
 
         public override string Id => "UILauncherPrefabExtension8";
-        public override Action<XmlNode> Patcher { get; } = node =>
-        {
-            if (node.NodeType != XmlNodeType.Element)
-            {
-                return;
-            }
-
-            var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument!;
-
-            if (node.Attributes!["IsHidden"] is null)
-            {
-                var attribute = ownerDocument.CreateAttribute("IsHidden");
-                node.Attributes.Append(attribute);
-            }
-
-            node.Attributes!["IsHidden"].Value = "@SkipMods";
-        };
+        public override string Attribute => "IsHidden";
+        public override string Value => "@SkipMods";
     }
 
     /// <summary>
     /// Replaces ModsPage - uses 'SkipNews' instead of 'IsMultiplayer'
     /// </summary>
-    internal sealed class UILauncherPrefabExtension9 : RawPatch
+    internal sealed class UILauncherPrefabExtension9 : PrefabExtensionSetAttributePatch
     {
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[1]";
 
         public override string Id => "UILauncherPrefabExtension9";
-        public override Action<XmlNode> Patcher { get; } = node =>
-        {
-            if (node.NodeType != XmlNodeType.Element)
-            {
-                return;
-            }
-
-            var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument!;
-
-            if (node.Attributes!["IsHidden"] is null)
-            {
-                var attribute = ownerDocument.CreateAttribute("IsHidden");
-                node.Attributes.Append(attribute);
-            }
-
-            node.Attributes!["IsHidden"].Value = "@SkipNews";
-        };
+        public override string Attribute => "IsHidden";
+        public override string Value => "@SkipNews";
     }
 
     /// <summary>
     /// Changing to Option screen will change image
     /// </summary>
-    internal sealed class UILauncherPrefabExtension10 : RawPatch
+    internal sealed class UILauncherPrefabExtension10 : PrefabExtensionSetAttributePatch
     {
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/LauncherRandomImageWidget";
 
         public override string Id => "UILauncherPrefabExtension10";
-        public override Action<XmlNode> Patcher { get; } = node =>
-        {
-            if (node.NodeType != XmlNodeType.Element)
-            {
-                return;
-            }
-
-            var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument!;
-
-            if (node.Attributes!["ChangeTrigger"] is null)
-            {
-                var attribute = ownerDocument.CreateAttribute("ChangeTrigger");
-                node.Attributes.Append(attribute);
-            }
-
-            node.Attributes!["ChangeTrigger"].Value = "@RandomImageSwitch";
-        };
+        public override string Attribute => "ChangeTrigger";
+        public override string Value => "@RandomImageSwitch";
     }
 
     /// <summary>
     /// Hides PLAY button when in Options
     /// </summary>
-    internal sealed class UILauncherPrefabExtension11 : RawPatch
+    internal sealed class UILauncherPrefabExtension11 : PrefabExtensionSetAttributePatch
     {
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "descendant::ButtonWidget[@Id='PlayButton']";
 
         public override string Id => "UILauncherPrefabExtension11";
-        public override Action<XmlNode> Patcher { get; } = node =>
-        {
-            if (node.NodeType != XmlNodeType.Element)
-            {
-                return;
-            }
-
-            var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument!;
-
-            if (node.Attributes!["IsHidden"] is null)
-            {
-                var attribute = ownerDocument.CreateAttribute("IsHidden");
-                node.Attributes.Append(attribute);
-            }
-
-            node.Attributes!["IsHidden"].Value = "@IsOptions";
-        };
+        public override string Attribute => "IsHidden";
+        public override string Value => "@IsOptions";
     }
 
     /// <summary>
     /// News tab can be disabled
     /// </summary>
-    internal sealed class UILauncherPrefabExtension12 : RawPatch
+    internal sealed class UILauncherPrefabExtension12 : PrefabExtensionSetAttributePatch
     {
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/TabControl/Children/Launcher.News";
 
         public override string Id => "UILauncherPrefabExtension12";
-        public override Action<XmlNode> Patcher { get; } = node =>
-        {
-            if (node.NodeType != XmlNodeType.Element)
-            {
-                return;
-            }
-
-            var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument!;
-
-            if (node.Attributes!["IsDisabled"] is null)
-            {
-                var attribute = ownerDocument.CreateAttribute("IsDisabled");
-                node.Attributes.Append(attribute);
-            }
-
-            node.Attributes!["IsDisabled"].Value = "@IsDisabledOnMultiplayer";
-        };
+        public override string Attribute => "IsDisabled";
+        public override string Value => "@IsDisabledOnMultiplayer";
     }
 }

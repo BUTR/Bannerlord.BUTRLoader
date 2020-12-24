@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using TaleWorlds.Core;
-using TaleWorlds.GauntletUI.PrefabSystem;
 using TaleWorlds.MountAndBlade.Launcher.UserDatas;
 
 namespace Bannerlord.BUTRLoader
@@ -39,7 +38,7 @@ namespace Bannerlord.BUTRLoader
             get => _extendedSorting;
             set => _extendedSorting = value;
         }
-        private static bool _extendedSorting;
+        private static bool _extendedSorting = true;
 
         public static bool AutomaticallyCheckForUpdates
         {
@@ -62,7 +61,8 @@ namespace Bannerlord.BUTRLoader
             }
 
 #if STABLE_DEBUG || BETA_DEBUG
-            Task.Run(CheckForUpdates);
+            if (AutomaticallyCheckForUpdates)
+                Task.Run(CheckForUpdates);
 #endif
 
             AppDomain.CurrentDomain.AssemblyLoad += (sender, args) =>
@@ -92,7 +92,6 @@ namespace Bannerlord.BUTRLoader
             var newVersions = UpdateChecker.GetAsync(moduleInfos).ConfigureAwait(false).GetAwaiter().GetResult();
 
             return Task.CompletedTask;
-            ;
         }
 
         private static bool Initialize()
@@ -102,15 +101,11 @@ namespace Bannerlord.BUTRLoader
             LauncherModsVMPatch.Enable(harmony);
             LauncherUIPatch.Enable(harmony);
             WidgetPrefabPatch.Enable(harmony);
-            WidgetFactoryPatch.Enable(harmony, WidgetRequested);
+            WidgetFactoryManager.Enable(harmony);
+            WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
 
             return true;
         }
-        private static WidgetPrefab? WidgetRequested(string widget) => widget switch
-        {
-            "Launcher.Options" => PrefabInjector.Create(Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml")),
-            _ => null
-        };
         private static XmlDocument Load(string embedPath)
         {
             using var stream = typeof(BUTRLoaderAppDomainManager).Assembly.GetManifestResourceStream(embedPath);

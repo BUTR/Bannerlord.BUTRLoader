@@ -4,7 +4,10 @@ using static HarmonyLib.AccessTools;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    public static class AccessTools2
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.ButterLib/blob/dev/src/Bannerlord.ButterLib/Helpers/Harmony/AccessTools2.cs
+    /// </summary>
+    internal static class AccessTools2
     {
         public static FieldRef<object, TField>? FieldRefAccess<TField>(Type type, string fieldName)
         {

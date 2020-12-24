@@ -15,7 +15,7 @@ namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
     {
-        private static readonly Dictionary<string, ModuleInfo2> ExtendedModuleInfos = new Dictionary<string, ModuleInfo2>();
+        private static readonly Dictionary<string, ModuleInfo2> ExtendedModuleInfos = new();
         private static ModuleInfo2 GetExtendedModuleInfo(ModuleInfo moduleInfo)
         {
             if (ExtendedModuleInfos.ContainsKey(moduleInfo.Id))
@@ -33,6 +33,9 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetDependentModulesOfPrefix(IEnumerable<ModuleInfo> source, ModuleInfo module, ref IEnumerable<ModuleInfo> __result)
         {
+            if (!BUTRLoaderAppDomainManager.ExtendedSorting)
+                return true;
+
             var sourceList = source.ToList();
             var extendedSourceList = sourceList.ConvertAll(GetExtendedModuleInfo);
 
