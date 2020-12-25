@@ -11,9 +11,9 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             var sourceList = source.ToList();
 
-            foreach (var dependedModuleId in module.DependedModuleIds)
+            foreach (var dependedModule in module.DependedModules)
             {
-                if (sourceList.Find(i => i.Id == dependedModuleId) is { } moduleInfo)
+                if (sourceList.Find(i => i.Id == dependedModule.ModuleId) is { } moduleInfo)
                 {
                     yield return moduleInfo;
                 }
