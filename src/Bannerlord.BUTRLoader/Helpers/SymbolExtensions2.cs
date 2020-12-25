@@ -18,7 +18,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         public static AccessTools.FieldRef<TObject, TField>? FieldRefAccess<TObject, TField>(LambdaExpression expression)
         {
             if (expression.Body is MemberExpression { Member: FieldInfo fieldInfo })
-                return fieldInfo is null ? null : AccessTools.FieldRefAccess<TObject, TField>(fieldInfo);
+                return AccessTools.FieldRefAccess<TObject, TField>(fieldInfo);
 
             throw new ArgumentException("Invalid Expression. Expression should consist of a Field return only.");
         }

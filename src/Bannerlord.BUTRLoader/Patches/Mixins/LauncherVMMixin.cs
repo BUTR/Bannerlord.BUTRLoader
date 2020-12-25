@@ -1,11 +1,17 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches.ViewModels;
 
+using HarmonyLib;
+
 using System.Collections.Generic;
 using System.Reflection;
 
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher;
+using TaleWorlds.MountAndBlade.Launcher.UserDatas;
+
+using UserDataOld = TaleWorlds.MountAndBlade.Launcher.UserDatas.UserData;
+using UserDataOptions = Bannerlord.BUTRLoader.Options.UserData;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
@@ -28,6 +34,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             {
                 if (value && _state != TopTabs.Singleplayer)
                 {
+                    if (_state == TopTabs.Options)
+                    {
+                        SaveOptions();
+                    }
+
                     _state = TopTabs.Singleplayer;
 
                     _launcherVM.IsSingleplayer = true;
@@ -54,6 +65,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             {
                 if (value && _state != TopTabs.Multiplayer)
                 {
+                    if (_state == TopTabs.Options)
+                    {
+                        SaveOptions();
+                    }
+
                     _state = TopTabs.Multiplayer;
 
                     _launcherVM.IsMultiplayer = true;
@@ -174,18 +190,20 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private LauncherOptionsVM _optionsData = new ();
 
         private readonly LauncherVM _launcherVM;
+        private readonly UserDataManager _userDataManager;
 
         public LauncherVMMixin(LauncherVM launcherVM)
         {
             _launcherVM = launcherVM;
+            _userDataManager = (UserDataManager) AccessTools.Field(typeof(LauncherVM), "_userDataManager").GetValue(launcherVM);
 
-            var field = typeof(ViewModel).GetField( "_propertyInfos", ReflectionHelper.All);
-            var propsObject = field?.GetValue(_launcherVM) as Dictionary<string, PropertyInfo> ?? new Dictionary<string, PropertyInfo>();
+            var propsObject = AccessTools.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherVM) as Dictionary<string, PropertyInfo>
+                              ?? new Dictionary<string, PropertyInfo>();
 
             void SetVMProperty(string property)
             {
                 propsObject[property] = new WrappedPropertyInfo(
-                    typeof(LauncherVMMixin).GetProperty(property, ReflectionHelper.All)!,
+                    AccessTools.Property(typeof(LauncherVMMixin), property),
                     this,
                     () => _launcherVM.OnPropertyChanged(property));
             }
@@ -208,6 +226,20 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 IsMultiplayer = true;
             else
                 IsSingleplayer = true;
+        }
+
+        private void SaveOptions()
+        {
+            void Save() => _userDataManager.SaveUserData();
+
+            if (_userDataManager.UserData is UserDataOptions userData)
+            {
+                if (userData.ExtendedSorting != BUTRLoaderAppDomainManager.ExtendedSorting)
+                    Save();
+
+                if (userData.AutomaticallyCheckForUpdates != BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates)
+                    Save();
+            }
         }
     }
 }

@@ -15,8 +15,8 @@ namespace Bannerlord.BUTRLoader.Patches
         public static void Enable(Harmony harmony)
         {
             harmony.Patch(
-                typeof(LauncherUI).GetMethod("Initialize", ReflectionHelper.All)!,
-                postfix: new HarmonyMethod(typeof(LauncherUIPatch).GetMethod(nameof(InitializePostfix), ReflectionHelper.All)!));
+                AccessTools.Method(typeof(LauncherUI), nameof(LauncherUI.Initialize)),
+                postfix: new HarmonyMethod(AccessTools.Method(typeof(LauncherUIPatch), nameof(InitializePostfix))));
         }
 
         [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]

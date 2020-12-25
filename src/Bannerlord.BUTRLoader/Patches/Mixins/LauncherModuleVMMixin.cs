@@ -1,5 +1,7 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 
+using HarmonyLib;
+
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -31,12 +33,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             _launcherModuleVM = launcherModuleVM;
 
-            var field = typeof(ViewModel).GetField("_propertyInfos", ReflectionHelper.All);
-            var propsObject = field?.GetValue(_launcherModuleVM) as Dictionary<string, PropertyInfo> ??
-                              new Dictionary<string, PropertyInfo>();
+            var propsObject = AccessTools.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherModuleVM) as Dictionary<string, PropertyInfo>
+                              ?? new Dictionary<string, PropertyInfo>();
 
             propsObject.Add(nameof(IsNoUpdateAvailable), new WrappedPropertyInfo(
-                typeof(LauncherModuleVMMixin).GetProperty(nameof(IsNoUpdateAvailable), ReflectionHelper.All)!,
+                AccessTools.Property(typeof(LauncherModuleVMMixin), nameof(IsNoUpdateAvailable)),
                 this,
                 () => _launcherModuleVM.OnPropertyChanged(nameof(IsNoUpdateAvailable))));
 

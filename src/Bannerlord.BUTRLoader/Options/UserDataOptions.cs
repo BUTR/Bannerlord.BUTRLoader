@@ -4,7 +4,7 @@ namespace Bannerlord.BUTRLoader.Options
 {
     public class UserData : UserDataOld
     {
-        public bool ExtendedSorting { get; set; }
+        public bool ExtendedSorting { get; set; } = true;
         public bool AutomaticallyCheckForUpdates { get; set; }
 
         public UserData() { }
