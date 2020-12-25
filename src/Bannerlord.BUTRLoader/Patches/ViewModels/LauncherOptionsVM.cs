@@ -43,16 +43,18 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
             SettingProperties.Clear();
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Extended Sorting",
+                DisplayName = "Enable Extended Mod Sorting",
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.ExtendedSorting))!, this)
             }));
+            /*
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
                 DisplayName = "Automatically Check for Updates",
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates))!, this)
             }));
+            */
         }
     }
 }
