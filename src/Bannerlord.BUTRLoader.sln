@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bannerlord.BUTRLoader", "Bannerlord.BUTRLoader\Bannerlord.BUTRLoader.csproj", "{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{18F85D07-5188-4633-BC5D-24E75DF10113}"
+	ProjectSection(SolutionItems) = preProject
+		..\changelog.txt = ..\changelog.txt
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{600040EC-083E-4F50-B808-EC9642699634}"
 	ProjectSection(SolutionItems) = preProject
