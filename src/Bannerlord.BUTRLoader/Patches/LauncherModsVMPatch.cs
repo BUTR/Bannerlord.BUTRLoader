@@ -16,15 +16,15 @@ namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
     {
-        private static readonly Dictionary<string, ModuleInfo2> ExtendedModuleInfos = new();
+        private static readonly Dictionary<string, ModuleInfo2> ExtendedModuleInfoCache = new();
         private static ModuleInfo2 GetExtendedModuleInfo(ModuleInfo moduleInfo)
         {
-            if (ExtendedModuleInfos.ContainsKey(moduleInfo.Id))
-                return ExtendedModuleInfos[moduleInfo.Id];
+            if (ExtendedModuleInfoCache.ContainsKey(moduleInfo.Id))
+                return ExtendedModuleInfoCache[moduleInfo.Id];
 
             var extendedModuleInfo = new ModuleInfo2();
             extendedModuleInfo.Load(moduleInfo.Alias);
-            ExtendedModuleInfos[moduleInfo.Id] = extendedModuleInfo;
+            ExtendedModuleInfoCache[moduleInfo.Id] = extendedModuleInfo;
             return extendedModuleInfo;
         }
 
@@ -58,7 +58,7 @@ namespace Bannerlord.BUTRLoader.Patches
             var extendedModuleInfo = GetExtendedModuleInfo(module);
 
             var extendedDependencies = ModuleSorter.GetDependentModulesOf(extendedSourceList, extendedModuleInfo);
-            var dependencies = extendedDependencies.Select(em => sourceList.First(m => m.Id == em.Id));
+            var dependencies = extendedDependencies.Select(em => sourceList.Find(m => m.Id == em.Id));
 
             __result = dependencies;
             return false;
@@ -68,25 +68,52 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool IsAllDependenciesOfModulePresentPrefix(ModuleInfo info, ref bool __result)
+        private static bool IsAllDependenciesOfModulePresentPrefix(ModuleInfo info, List<ModuleInfo> ____modulesCache, ref bool __result)
         {
             __result = true;
-
             var extendedModuleInfo = GetExtendedModuleInfo(info);
 
-            var allDependencies = extendedModuleInfo.DependedModules.Select(dm => dm.ModuleId).Concat(extendedModuleInfo
-                .DependedModuleMetadatas.Where(dmm => dmm.LoadType == LoadType.LoadBeforeThis).Select(dmm => dmm.Id)).ToArray();
+            // Merge TW's dependency implementation and BUTR implementation
+            var allDependencies = extendedModuleInfo.DependedModules.Select(dm => dm.ModuleId).Concat(
+                extendedModuleInfo.DependedModuleMetadatas.Where(dmm => dmm.LoadType == LoadType.LoadBeforeThis).Select(dmm => dmm.Id))
+                .ToArray();
 
+            // Check any dependencies issues first
+            foreach (var dependedModuleId in allDependencies)
+            {
+                var module = ____modulesCache.Find(m => m.Id == dependedModuleId);
+                IsAllDependenciesOfModulePresentPrefix(module, ____modulesCache, ref __result);
+                if (!__result)
+                    return false;
+            }
+
+            // Check if all dependencies are present
             foreach (var dependedModuleId in allDependencies)
             {
                 var metadata = extendedModuleInfo.DependedModuleMetadatas.Find(dmm => dmm.Id == dependedModuleId);
                 if (metadata.IsOptional)
                     continue;
 
-                if (!ExtendedModuleInfos.ContainsKey(dependedModuleId))
+                if (!ExtendedModuleInfoCache.ContainsKey(dependedModuleId))
                 {
                     __result = false;
-                    break;
+                    return false;
+                }
+            }
+
+            // Check if the dependencies have the minimum required version
+            var comparer = new ApplicationVersionComparer();
+            foreach (var dependedModuleMetadata in extendedModuleInfo.DependedModuleMetadatas)
+            {
+                if (dependedModuleMetadata.Version == ApplicationVersion.Empty)
+                    continue;
+
+                var dependedModule = ExtendedModuleInfoCache[dependedModuleMetadata.Id];
+                // dependedModuleMetadata.Version > dependedModule.Version
+                if (dependedModule is null || comparer.Compare(dependedModuleMetadata.Version, dependedModule.Version) > 0)
+                {
+                    __result = false;
+                    return false;
                 }
             }
 
