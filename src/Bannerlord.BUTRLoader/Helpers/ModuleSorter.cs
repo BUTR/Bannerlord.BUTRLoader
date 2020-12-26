@@ -21,7 +21,15 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             foreach (var dependedModuleMetadata in module.DependedModuleMetadatas)
             {
-                if (sourceList.Find(i => i.Id == dependedModuleMetadata.Id) is { } moduleInfo && dependedModuleMetadata.LoadType == LoadType.LoadBeforeThis)
+                if (dependedModuleMetadata.LoadType != LoadType.LoadBeforeThis)
+                    continue;
+
+                var moduleInfo = sourceList.Find(i => i.Id == dependedModuleMetadata.Id);
+                if (!dependedModuleMetadata.IsOptional && moduleInfo is null)
+                {
+                    // We should not hit this place
+                }
+                else if (moduleInfo is not null)
                 {
                     yield return moduleInfo;
                 }
@@ -31,7 +39,10 @@ namespace Bannerlord.BUTRLoader.Helpers
             {
                 foreach (var dependedModuleMetadata in moduleInfo.DependedModuleMetadatas)
                 {
-                    if (dependedModuleMetadata.Id == module.Id && dependedModuleMetadata.LoadType == LoadType.LoadAfterThis)
+                    if (dependedModuleMetadata.LoadType != LoadType.LoadAfterThis)
+                        continue;
+
+                    if (dependedModuleMetadata.Id == module.Id)
                     {
                         yield return moduleInfo;
                     }

@@ -27,6 +27,17 @@ namespace Bannerlord.BUTRLoader.Patches
             return extendedModuleInfo;
         }
 
+        public static void Enable(Harmony harmony)
+        {
+            harmony.Patch(
+                AccessTools.Method(typeof(LauncherModsVM), "GetDependentModulesOf"),
+                prefix: new HarmonyMethod(AccessTools.Method(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix))));
+
+            harmony.Patch(
+                AccessTools.Method(typeof(LauncherModsVM), "IsAllDependenciesOfModulePresent"),
+                prefix: new HarmonyMethod(AccessTools.Method(typeof(LauncherModsVMPatch), nameof(IsAllDependenciesOfModulePresentPrefix))));
+        }
+
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -48,15 +59,33 @@ namespace Bannerlord.BUTRLoader.Patches
             return false;
         }
 
-        public static void Enable(Harmony harmony)
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
+        [SuppressMessage("ReSharper", "RedundantAssignment")]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool IsAllDependenciesOfModulePresentPrefix(ModuleInfo info, ref bool __result)
         {
-            var toPatchMethod = AccessTools.Method(typeof(LauncherModsVM), "GetDependentModulesOf");
-            var prefixMethod = AccessTools.Method(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix));
+            __result = true;
 
-            if (toPatchMethod is null || prefixMethod is null)
-                return;
+            var extendedModuleInfo = GetExtendedModuleInfo(info);
 
-            harmony.Patch(toPatchMethod, new HarmonyMethod(prefixMethod));
+            var allDependencies = extendedModuleInfo.DependedModules.Select(dm => dm.ModuleId).Concat(extendedModuleInfo
+                .DependedModuleMetadatas.Where(dmm => dmm.LoadType == LoadType.LoadBeforeThis).Select(dmm => dmm.Id)).ToArray();
+
+            foreach (var dependedModuleId in allDependencies)
+            {
+                var metadata = extendedModuleInfo.DependedModuleMetadatas.Find(dmm => dmm.Id == dependedModuleId);
+                if (metadata.IsOptional)
+                    continue;
+
+                if (!ExtendedModuleInfos.ContainsKey(dependedModuleId))
+                {
+                    __result = false;
+                    break;
+                }
+            }
+
+            return false;
         }
     }
 }

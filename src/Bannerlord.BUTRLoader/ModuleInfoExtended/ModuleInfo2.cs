@@ -9,18 +9,6 @@ using TaleWorlds.Library;
 
 namespace Bannerlord.BUTRLoader.ModuleInfoExtended
 {
-    internal struct DependedModule
-    {
-        public string ModuleId { get; }
-        public ApplicationVersion Version { get; }
-
-        public DependedModule(string moduleId, ApplicationVersion version)
-        {
-            ModuleId = moduleId;
-            Version = version;
-        }
-    }
-
     /// <summary>
     /// https://github.com/BUTR/Bannerlord.ButterLib/blob/dev/src/Bannerlord.ButterLib/Helpers/ModuleInfo/ExtendedModuleInfo.cs
     /// </summary>
@@ -41,7 +29,7 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
 
         public string Url { get; private set; } = string.Empty;
 
-        public readonly List<DependedModuleMetadata> DependedModuleMetadatas = new();
+        public List<DependedModuleMetadata> DependedModuleMetadatas { get; }  = new();
 
         public void Load(string alias)
         {
