@@ -47,6 +47,13 @@ namespace Bannerlord.BUTRLoader
         }
         private static bool _automaticallyCheckForUpdates;
 
+        public static bool UnblockFiles
+        {
+            get => _unblockFiles;
+            set => _unblockFiles = value;
+        }
+        private static bool _unblockFiles;
+
 
         public override void InitializeNewDomain(AppDomainSetup appDomainInfo)
         {
@@ -98,6 +105,7 @@ namespace Bannerlord.BUTRLoader
         {
             var harmony = new Harmony("Bannerlord.BUTRLoader");
 
+            ProgramPatch.Enable(harmony);
             UserDataManagerPatch.Enable(harmony);
             LauncherModsVMPatch.Enable(harmony);
             LauncherUIPatch.Enable(harmony);

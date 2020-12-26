@@ -64,6 +64,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 setMethod.Invoke(__instance, new object?[] { userDataOptions as UserDataOld });
                 BUTRLoaderAppDomainManager.ExtendedSorting = userDataOptions.ExtendedSorting;
                 BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates = userDataOptions.AutomaticallyCheckForUpdates;
+                BUTRLoaderAppDomainManager.UnblockFiles = userDataOptions.UnblockFiles;
             }
             catch (Exception value)
             {
@@ -87,7 +88,8 @@ namespace Bannerlord.BUTRLoader.Patches
                 xmlSerializer.Serialize(xmlWriter, new UserDataOptions(
                     __instance.UserData,
                     BUTRLoaderAppDomainManager.ExtendedSorting,
-                    BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates));
+                    BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates,
+                    BUTRLoaderAppDomainManager.UnblockFiles));
             }
             catch (Exception value)
             {

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Xml;
 
@@ -14,7 +15,7 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
     /// </summary>
     internal sealed class ModuleInfo2
     {
-        private static string PathPrefix => BasePath.Name + "Modules/";
+        public static string PathPrefix => Path.Combine(BasePath.Name, "Modules/");
 
         public string Id { get; private set; } = string.Empty;
 		public string Name { get; private set; } = string.Empty;

@@ -239,6 +239,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                 if (userData.AutomaticallyCheckForUpdates != BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates)
                     Save();
+
+                if (userData.UnblockFiles != BUTRLoaderAppDomainManager.UnblockFiles)
+                    Save();
             }
         }
     }
