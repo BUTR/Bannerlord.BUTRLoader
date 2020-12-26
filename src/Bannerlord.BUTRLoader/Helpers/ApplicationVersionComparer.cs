@@ -9,11 +9,8 @@ namespace Bannerlord.BUTRLoader.Helpers
     /// </summary>
     internal class ApplicationVersionComparer : IComparer<ApplicationVersion>
     {
-        public int Compare(ApplicationVersion x, ApplicationVersion y)
+        public virtual int Compare(ApplicationVersion x, ApplicationVersion y)
         {
-            var applicationVersionTypeComparison = x.ApplicationVersionType.CompareTo(y.ApplicationVersionType);
-            if (applicationVersionTypeComparison != 0) return applicationVersionTypeComparison;
-
             var majorComparison = x.Major.CompareTo(y.Major);
             if (majorComparison != 0) return majorComparison;
 
@@ -25,9 +22,6 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             var changeSetComparison = x.ChangeSet.CompareTo(y.ChangeSet);
             if (changeSetComparison != 0) return changeSetComparison;
-
-            var versionGameTypeComparison = x.VersionGameType.CompareTo(y.VersionGameType);
-            if (versionGameTypeComparison != 0) return versionGameTypeComparison;
 
             return 0;
         }

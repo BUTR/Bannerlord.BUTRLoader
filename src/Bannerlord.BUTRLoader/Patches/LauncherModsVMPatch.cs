@@ -102,7 +102,7 @@ namespace Bannerlord.BUTRLoader.Patches
             }
 
             // Check if the dependencies have the minimum required version
-            var comparer = new ApplicationVersionComparer();
+            var comparer = new ApplicationVersionFullComparer();
             foreach (var dependedModuleMetadata in extendedModuleInfo.DependedModuleMetadatas)
             {
                 if (dependedModuleMetadata.Version == ApplicationVersion.Empty)
