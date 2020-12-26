@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
 
@@ -12,11 +13,14 @@ namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherUIPatch
     {
-        public static void Enable(Harmony harmony)
+        public static bool Enable(Harmony harmony)
         {
-            harmony.Patch(
+            var res1 = harmony.TryPatch(
                 AccessTools.Method(typeof(LauncherUI), nameof(LauncherUI.Initialize)),
-                postfix: new HarmonyMethod(AccessTools.Method(typeof(LauncherUIPatch), nameof(InitializePostfix))));
+                postfix: AccessTools.Method(typeof(LauncherUIPatch), nameof(InitializePostfix)));
+            if (!res1) return false;
+
+            return true;
         }
 
         [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]

@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches.PrefabExtensions;
 
 using HarmonyLib;
@@ -18,7 +19,7 @@ namespace Bannerlord.BUTRLoader.Patches
     // https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Patches/WidgetPrefabPatch.cs
     internal static class WidgetPrefabPatch
     {
-        public static void Enable(Harmony harmony)
+        public static bool Enable(Harmony harmony)
         {
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension1.Movie, UILauncherPrefabExtension1.XPath, new UILauncherPrefabExtension1());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension2.Movie, UILauncherPrefabExtension2.XPath, new UILauncherPrefabExtension2());
@@ -40,13 +41,18 @@ namespace Bannerlord.BUTRLoader.Patches
             //PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension2.Movie, LauncherModsPrefabExtension2.XPath, new LauncherModsPrefabExtension2());
 
 
-            harmony.Patch(
+            var res1 = harmony.TryPatch(
                 AccessTools.DeclaredMethod(typeof(WidgetPrefab), nameof(WidgetPrefab.LoadFrom)),
-                transpiler: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(WidgetPrefab_LoadFrom_Transpiler))));
+                transpiler: AccessTools.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(WidgetPrefab_LoadFrom_Transpiler)));
+            if (!res1) return false;
 
-            harmony.CreateReversePatcher(
+            var res2 = harmony.TryCreateReversePatcher(
                 SymbolExtensions.GetMethodInfo(() => WidgetPrefab.LoadFrom(null!, null!, null!)),
-                new HarmonyMethod(SymbolExtensions.GetMethodInfo(() => LoadFromDocument(null!, null!, null!, null!)))).Patch();
+                SymbolExtensions.GetMethodInfo(() => LoadFromDocument(null!, null!, null!, null!)));
+            if (res2 is null) return false;
+            res2.Patch();
+
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.ModuleInfoExtended;
 
 using HarmonyLib;
@@ -27,15 +28,19 @@ namespace Bannerlord.BUTRLoader.Patches
             return extendedModuleInfo;
         }
 
-        public static void Enable(Harmony harmony)
+        public static bool Enable(Harmony harmony)
         {
-            harmony.Patch(
+            var res1 = harmony.TryPatch(
                 AccessTools.Method(typeof(LauncherModsVM), "GetDependentModulesOf"),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix))));
+                prefix: AccessTools.Method(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix)));
+            if (!res1) return false;
 
-            harmony.Patch(
+            var res2 = harmony.TryPatch(
                 AccessTools.Method(typeof(LauncherModsVM), "IsAllDependenciesOfModulePresent"),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(LauncherModsVMPatch), nameof(IsAllDependenciesOfModulePresentPrefix))));
+                prefix: AccessTools.Method(typeof(LauncherModsVMPatch), nameof(IsAllDependenciesOfModulePresentPrefix)));
+            if (!res2) return false;
+
+            return true;
         }
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]

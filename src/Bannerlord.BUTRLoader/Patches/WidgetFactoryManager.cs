@@ -1,4 +1,6 @@
-﻿using HarmonyLib;
+﻿using Bannerlord.BUTRLoader.Extensions;
+
+using HarmonyLib;
 
 using System;
 using System.Collections;
@@ -50,29 +52,36 @@ namespace Bannerlord.BUTRLoader.Patches
         public static void CreateAndRegister(string name, XmlDocument xmlDocument) => Register(name, () => Create(xmlDocument));
 
 
-        public static void Enable(Harmony harmony)
+        public static bool Enable(Harmony harmony)
         {
             _harmony = harmony;
 
-            harmony.Patch(
+            var res1 = harmony.TryPatch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.GetCustomType(null!)),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetCustomTypePrefix))));
+                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetCustomTypePrefix)));
+            if (!res1) return false;
 
-            harmony.Patch(
+            var res2 = harmony.TryPatch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.GetWidgetTypes()),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetWidgetTypesPostfix))));
+                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetWidgetTypesPostfix)));
+            if (!res2) return false;
 
-            harmony.Patch(
+            var res3 = harmony.TryPatch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.IsCustomType(null!)),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(IsCustomTypePrefix))));
+                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(IsCustomTypePrefix)));
+            if (!res3) return false;
 
-            harmony.Patch(
+            var res4 = harmony.TryPatch(
                 AccessTools.DeclaredMethod(typeof(WidgetFactory), "OnUnload"),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(OnUnloadPrefix))));
+                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(OnUnloadPrefix)));
+            if (!res4) return false;
 
-            harmony.Patch(
+            var res5 = harmony.TryPatch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.Initialize()),
-                prefix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix))));
+                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
+            if (!res5) return false;
+
+            return true;
         }
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]

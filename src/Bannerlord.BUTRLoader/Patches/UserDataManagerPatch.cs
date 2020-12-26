@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
 
@@ -20,15 +21,19 @@ namespace Bannerlord.BUTRLoader.Patches
 {
     internal class UserDataManagerPatch
     {
-        public static void Enable(Harmony harmony)
+        public static bool Enable(Harmony harmony)
         {
-            harmony.Patch(
+            var res1 = harmony.TryPatch(
                 SymbolExtensions.GetMethodInfo((UserDataManager udm) => udm.LoadUserData()),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(UserDataManagerPatch), nameof(LoadUserDataPrefix))));
+                prefix: AccessTools.Method(typeof(UserDataManagerPatch), nameof(LoadUserDataPrefix)));
+            if (!res1) return false;
 
-            harmony.Patch(
+            var res2 = harmony.TryPatch(
                 SymbolExtensions.GetMethodInfo((UserDataManager udm) => udm.SaveUserData()),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(UserDataManagerPatch), nameof(SaveUserDataPrefix))));
+                prefix: AccessTools.Method(typeof(UserDataManagerPatch), nameof(SaveUserDataPrefix)));
+            if (!res2) return false;
+
+            return true;
         }
 
         private static XmlAttributeOverrides GetOverrides()
