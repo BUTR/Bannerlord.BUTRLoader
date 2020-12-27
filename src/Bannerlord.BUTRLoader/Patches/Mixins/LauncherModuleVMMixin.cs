@@ -36,10 +36,15 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             var propsObject = AccessTools.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherModuleVM) as Dictionary<string, PropertyInfo>
                               ?? new Dictionary<string, PropertyInfo>();
 
-            propsObject.Add(nameof(IsNoUpdateAvailable), new WrappedPropertyInfo(
-                AccessTools.Property(typeof(LauncherModuleVMMixin), nameof(IsNoUpdateAvailable)),
-                this,
-                () => _launcherModuleVM.OnPropertyChanged(nameof(IsNoUpdateAvailable))));
+            void SetVMProperty(string property)
+            {
+                propsObject[property] = new WrappedPropertyInfo(
+                    AccessTools.Property(typeof(LauncherVMMixin), property),
+                    this,
+                    () => _launcherModuleVM.OnPropertyChanged(property));
+            }
+
+            SetVMProperty(nameof(IsNoUpdateAvailable));
 
             _launcherModuleVM.OnPropertyChanged(nameof(IsNoUpdateAvailable));
         }

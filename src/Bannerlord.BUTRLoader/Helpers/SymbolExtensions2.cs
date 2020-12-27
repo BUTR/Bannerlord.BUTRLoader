@@ -9,7 +9,7 @@ namespace Bannerlord.BUTRLoader.Helpers
     /// <summary>
     /// https://github.com/BUTR/Bannerlord.ButterLib/blob/dev/src/Bannerlord.ButterLib/Helpers/Harmony/SymbolExtensions2.cs
     /// </summary>
-    public static class SymbolExtensions2
+    internal static class SymbolExtensions2
     {
         public static AccessTools.FieldRef<TObject, TField>? FieldRefAccess<TObject, TField>(Expression<Func<TObject, TField>> expression)
         {

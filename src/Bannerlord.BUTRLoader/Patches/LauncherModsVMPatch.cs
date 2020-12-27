@@ -1,5 +1,4 @@
-﻿using System;
-using Bannerlord.BUTRLoader.Extensions;
+﻿using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.ModuleInfoExtended;
 

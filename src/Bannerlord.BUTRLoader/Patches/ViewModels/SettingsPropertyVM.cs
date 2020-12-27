@@ -1,6 +1,7 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 
 using System.ComponentModel;
+using System.Globalization;
 
 using TaleWorlds.Library;
 
@@ -87,7 +88,7 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
         public string TextBoxValue => SettingType switch
         {
             SettingType.Int when PropertyReference.Value is int val => val.ToString(),
-            SettingType.Float when PropertyReference.Value is float val => val.ToString(),
+            SettingType.Float when PropertyReference.Value is float val => val.ToString(CultureInfo.InvariantCulture),
             _ => string.Empty
         };
 

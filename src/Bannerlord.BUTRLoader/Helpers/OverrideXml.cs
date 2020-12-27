@@ -12,12 +12,13 @@ using System;
 using System.Reflection;
 using System.Xml.Serialization;
 
+// ReSharper disable once CheckNamespace
 namespace Ikriv.Xml
 {
     /// <summary>
     /// Creates XmlAttributeOverrides instance using an easy-to-use fluent interface
     /// </summary>
-    public class OverrideXml
+    internal class OverrideXml
     {
         private Type? _currentType;
         private string _currentMember = "";
