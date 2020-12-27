@@ -68,7 +68,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool IsAllDependenciesOfModulePresentPrefix(ModuleInfo info, List<ModuleInfo> ____modulesCache, ref bool __result)
+        private static bool IsAllDependenciesOfModulePresentPrefix(LauncherModsVM __instance, ModuleInfo info, List<ModuleInfo> ____modulesCache, ref bool __result)
         {
             __result = true;
             var extendedModuleInfo = GetExtendedModuleInfo(info);
@@ -78,19 +78,33 @@ namespace Bannerlord.BUTRLoader.Patches
                 extendedModuleInfo.DependedModuleMetadatas.Where(dmm => dmm.LoadType == LoadType.LoadBeforeThis).Select(dmm => dmm.Id))
                 .ToArray();
 
-            // Check any dependencies issues first
-            foreach (var dependedModuleId in allDependencies)
-            {
-                var module = ____modulesCache.Find(m => m.Id == dependedModuleId);
-                IsAllDependenciesOfModulePresentPrefix(module, ____modulesCache, ref __result);
-                if (!__result)
-                    return false;
-            }
-
-            // Check if all dependencies are present
+            // Check that the dependencies themselves have all dependencies present
             foreach (var dependedModuleId in allDependencies)
             {
                 var metadata = extendedModuleInfo.DependedModuleMetadatas.Find(dmm => dmm.Id == dependedModuleId);
+
+                // Ignore the check for Optional
+                if (metadata.IsOptional)
+                    continue;
+
+                var module = ____modulesCache.Find(m => m.Id == dependedModuleId);
+
+                if (!AreAllDependenciesOfModulePresent(__instance, module, ____modulesCache))
+                {
+                    __result = false;
+                    return false;
+                }
+            }
+
+            // Check that all dependencies are present
+            foreach (var dependedModuleId in allDependencies)
+            {
+                var metadata = extendedModuleInfo.DependedModuleMetadatas.Find(dmm => dmm.Id == dependedModuleId);
+
+                if (metadata.LoadType != LoadType.LoadBeforeThis)
+                    continue;
+
+                // Ignore the check for Optional
                 if (metadata.IsOptional)
                     continue;
 
@@ -101,23 +115,37 @@ namespace Bannerlord.BUTRLoader.Patches
                 }
             }
 
-            // Check if the dependencies have the minimum required version
+            // Check that the dependencies have the minimum required version set by DependedModuleMetadatas
             var comparer = new ApplicationVersionFullComparer();
-            foreach (var dependedModuleMetadata in extendedModuleInfo.DependedModuleMetadatas)
+            foreach (var metadata in extendedModuleInfo.DependedModuleMetadatas)
             {
-                if (dependedModuleMetadata.Version == ApplicationVersion.Empty)
+                // Ignore the check for Optional
+                if (metadata.IsOptional)
                     continue;
 
-                var dependedModule = ExtendedModuleInfoCache[dependedModuleMetadata.Id];
+                // Ignore the check for non-provided versions
+                if (metadata.Version == ApplicationVersion.Empty)
+                    continue;
+
+                var dependedModule = ExtendedModuleInfoCache[metadata.Id];
                 // dependedModuleMetadata.Version > dependedModule.Version
-                if (dependedModule is null || comparer.Compare(dependedModuleMetadata.Version, dependedModule.Version) > 0)
+                if (dependedModule is null || comparer.Compare(metadata.Version, dependedModule.Version) > 0)
                 {
                     __result = false;
                     return false;
                 }
             }
 
+
             return false;
+        }
+
+
+        private static bool AreAllDependenciesOfModulePresent(LauncherModsVM launcherModsVM, ModuleInfo moduleInfo, List<ModuleInfo> modulesCache)
+        {
+            var result = false;
+            IsAllDependenciesOfModulePresentPrefix(launcherModsVM, moduleInfo, modulesCache, ref result);
+            return result;
         }
     }
 }
