@@ -55,41 +55,47 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
             IsMultiplayerModule = moduleNode?.SelectSingleNode("MultiplayerModule")?.Attributes?["value"]?.InnerText?.Equals("true") == true;
 
             var dependedModules = moduleNode?.SelectSingleNode("DependedModules");
-            foreach (var xmlElement in dependedModules?.OfType<XmlElement>() ?? Enumerable.Empty<XmlElement>())
-			{
-				var innerText = xmlElement?.Attributes?["Id"]?.InnerText ?? string.Empty;
-                ApplicationVersionUtils.TryParse(xmlElement?.Attributes?["DependentVersion"]?.InnerText, out var version);
-                DependedModules.Add(new DependedModule(innerText, version));
-			}
+            var dependedModulesList = dependedModules?.SelectNodes("DependedModule");
+            for (var i = 0; i < dependedModulesList?.Count; i++)
+            {
+                if (dependedModulesList[i]?.Attributes["Id"] is { } idAttr)
+                {
+                    ApplicationVersionUtils.TryParse(dependedModulesList[i]?.Attributes?["DependentVersion"]?.InnerText, out var version);
+                    DependedModules.Add(new DependedModule(idAttr.InnerText, version));
+                }
+            }
 
-            var subModules = moduleNode?.SelectSingleNode("SubModules")?.SelectNodes("SubModule");
-            for (var i = 0; i < subModules?.Count; i++)
+            var subModules = moduleNode?.SelectSingleNode("SubModules");
+            var subModuleList = subModules?.SelectNodes("SubModule");
+            for (var i = 0; i < subModuleList?.Count; i++)
             {
                 var subModuleInfo = new SubModuleInfo();
                 try
                 {
-                    subModuleInfo.LoadFrom(subModules[i], PathPrefix + alias);
+                    subModuleInfo.LoadFrom(subModuleList[i], PathPrefix + alias);
                     SubModules.Add(subModuleInfo);
                 }
                 catch { }
             }
 
+            // Custom data
             Url = moduleNode?.SelectSingleNode("Url")?.Attributes?["value"]?.InnerText ?? string.Empty;
 
             var dependedModuleMetadatas = moduleNode?.SelectSingleNode("DependedModuleMetadatas");
-            foreach (var xmlElement in dependedModuleMetadatas?.OfType<XmlElement>() ?? Enumerable.Empty<XmlElement>())
+            var dependedModuleMetadatasList = dependedModuleMetadatas?.SelectNodes("DependedModuleMetadata");
+            for (var i = 0; i < dependedModuleMetadatasList?.Count; i++)
             {
-                if (xmlElement.Attributes["id"] is { } idAttr)
+                if (dependedModuleMetadatasList[i]?.Attributes["id"] is { } idAttr)
                 {
-                    var incompatible = xmlElement.Attributes["incompatible"]?.InnerText.Equals("true") ?? false;
+                    var incompatible = dependedModuleMetadatasList[i]?.Attributes["incompatible"]?.InnerText.Equals("true") ?? false;
                     if (incompatible)
                     {
                         DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, LoadType.NONE, false, incompatible, ApplicationVersion.Empty));
                     }
-                    else if (xmlElement.Attributes["order"] is { } orderAttr && Enum.TryParse<LoadTypeParse>(orderAttr.InnerText, out var order))
+                    else if (dependedModuleMetadatasList[i]?.Attributes["order"] is { } orderAttr && Enum.TryParse<LoadTypeParse>(orderAttr.InnerText, out var order))
                     {
-                        var optional = xmlElement.Attributes["optional"]?.InnerText.Equals("true") ?? false;
-                        var version = ApplicationVersionUtils.TryParse(xmlElement.Attributes["version"]?.InnerText, out var v) ? v : ApplicationVersion.Empty;
+                        var optional = dependedModuleMetadatasList[i]?.Attributes["optional"]?.InnerText.Equals("true") ?? false;
+                        var version = ApplicationVersionUtils.TryParse(dependedModuleMetadatasList[i]?.Attributes["version"]?.InnerText, out var v) ? v : ApplicationVersion.Empty;
                         DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, (LoadType) order, optional, incompatible, version));
                     }
                 }
@@ -97,9 +103,22 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
 
             // Fixed Launcher supported optional tag
             var loadAfterModules = moduleNode?.SelectSingleNode("LoadAfterModules");
-            foreach (var xmlElement in loadAfterModules?.OfType<XmlElement>() ?? Enumerable.Empty<XmlElement>())
+            var loadAfterModuleList = loadAfterModules?.SelectNodes("LoadAfterModule");
+            for (var i = 0; i < loadAfterModuleList?.Count; i++)
             {
-                if (xmlElement.Attributes["Id"] is { } idAttr)
+                if (loadAfterModuleList[i]?.Attributes["Id"] is { } idAttr)
+                {
+                    DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, LoadType.LoadBeforeThis, true, false, ApplicationVersion.Empty));
+                }
+            }
+
+            // Bannerlord Launcher supported optional tag
+            var optionalDependModules = moduleNode?.SelectSingleNode("OptionalDependModules");
+            var optionalDependModuleList = (dependedModules?.SelectNodes("OptionalDependModule")?.Cast<XmlNode>() ?? Enumerable.Empty<XmlNode>())
+                .Concat(optionalDependModules?.SelectNodes("OptionalDependModule")?.Cast<XmlNode>() ?? Enumerable.Empty<XmlNode>()).ToList();
+            for (var i = 0; i < optionalDependModuleList.Count; i++)
+            {
+                if (optionalDependModuleList[i]?.Attributes["Id"] is { } idAttr)
                 {
                     DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, LoadType.LoadBeforeThis, true, false, ApplicationVersion.Empty));
                 }
