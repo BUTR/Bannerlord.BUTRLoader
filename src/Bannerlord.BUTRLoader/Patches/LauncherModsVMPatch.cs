@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Extensions;
+﻿using System;
+using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.ModuleInfoExtended;
 
@@ -70,74 +71,80 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool IsAllDependenciesOfModulePresentPrefix(LauncherModsVM __instance, ModuleInfo info, List<ModuleInfo> ____modulesCache, ref bool __result)
         {
-            __result = true;
-            var extendedModuleInfo = GetExtendedModuleInfo(info);
-
-            // Merge TW's dependency implementation and BUTR implementation
-            var allDependencies = extendedModuleInfo.DependedModules.Select(dm => dm.ModuleId).Concat(
-                extendedModuleInfo.DependedModuleMetadatas.Where(dmm => dmm.LoadType == LoadType.LoadBeforeThis).Select(dmm => dmm.Id))
-                .ToArray();
-
-            // Check that the dependencies themselves have all dependencies present
-            foreach (var dependedModuleId in allDependencies)
+            try
             {
-                var metadata = extendedModuleInfo.DependedModuleMetadatas.Find(dmm => dmm.Id == dependedModuleId);
+                __result = true;
+                var extendedModuleInfo = GetExtendedModuleInfo(info);
 
-                // Ignore the check for Optional
-                if (metadata.IsOptional)
-                    continue;
+                // Merge TW's dependency implementation and BUTR implementation
+                var allDependencies = extendedModuleInfo.DependedModules.Select(dm => dm.ModuleId).Concat(
+                        extendedModuleInfo.DependedModuleMetadatas.Where(dmm => dmm.LoadType == LoadType.LoadBeforeThis).Select(dmm => dmm.Id))
+                    .ToArray();
 
-                var module = ____modulesCache.Find(m => m.Id == dependedModuleId);
-
-                if (!AreAllDependenciesOfModulePresent(__instance, module, ____modulesCache))
+                // Check that the dependencies themselves have all dependencies present
+                foreach (var dependedModuleId in allDependencies)
                 {
-                    __result = false;
-                    return false;
-                }
-            }
+                    var metadata = extendedModuleInfo.DependedModuleMetadatas.Find(dmm => dmm.Id == dependedModuleId);
 
-            // Check that all dependencies are present
-            foreach (var dependedModuleId in allDependencies)
+                    // Ignore the check for Optional
+                    if (metadata.IsOptional)
+                        continue;
+
+                    var module = ____modulesCache.Find(m => m.Id == dependedModuleId);
+
+                    if (!AreAllDependenciesOfModulePresent(__instance, module, ____modulesCache))
+                    {
+                        __result = false;
+                        return false;
+                    }
+                }
+
+                // Check that all dependencies are present
+                foreach (var dependedModuleId in allDependencies)
+                {
+                    var metadata = extendedModuleInfo.DependedModuleMetadatas.Find(dmm => dmm.Id == dependedModuleId);
+
+                    if (metadata.LoadType != LoadType.LoadBeforeThis)
+                        continue;
+
+                    // Ignore the check for Optional
+                    if (metadata.IsOptional)
+                        continue;
+
+                    if (!ExtendedModuleInfoCache.ContainsKey(dependedModuleId))
+                    {
+                        __result = false;
+                        return false;
+                    }
+                }
+
+                // Check that the dependencies have the minimum required version set by DependedModuleMetadatas
+                var comparer = new ApplicationVersionFullComparer();
+                foreach (var metadata in extendedModuleInfo.DependedModuleMetadatas)
+                {
+                    // Ignore the check for Optional
+                    if (metadata.IsOptional)
+                        continue;
+
+                    // Ignore the check for non-provided versions
+                    if (metadata.Version == ApplicationVersion.Empty)
+                        continue;
+
+                    var dependedModule = ExtendedModuleInfoCache[metadata.Id];
+                    // dependedModuleMetadata.Version > dependedModule.Version
+                    if (dependedModule is null || comparer.Compare(metadata.Version, dependedModule.Version) > 0)
+                    {
+                        __result = false;
+                        return false;
+                    }
+                }
+
+                return false;
+            }
+            catch
             {
-                var metadata = extendedModuleInfo.DependedModuleMetadatas.Find(dmm => dmm.Id == dependedModuleId);
-
-                if (metadata.LoadType != LoadType.LoadBeforeThis)
-                    continue;
-
-                // Ignore the check for Optional
-                if (metadata.IsOptional)
-                    continue;
-
-                if (!ExtendedModuleInfoCache.ContainsKey(dependedModuleId))
-                {
-                    __result = false;
-                    return false;
-                }
+                return true;
             }
-
-            // Check that the dependencies have the minimum required version set by DependedModuleMetadatas
-            var comparer = new ApplicationVersionFullComparer();
-            foreach (var metadata in extendedModuleInfo.DependedModuleMetadatas)
-            {
-                // Ignore the check for Optional
-                if (metadata.IsOptional)
-                    continue;
-
-                // Ignore the check for non-provided versions
-                if (metadata.Version == ApplicationVersion.Empty)
-                    continue;
-
-                var dependedModule = ExtendedModuleInfoCache[metadata.Id];
-                // dependedModuleMetadata.Version > dependedModule.Version
-                if (dependedModule is null || comparer.Compare(metadata.Version, dependedModule.Version) > 0)
-                {
-                    __result = false;
-                    return false;
-                }
-            }
-
-
-            return false;
         }
 
 
