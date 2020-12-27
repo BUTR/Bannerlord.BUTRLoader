@@ -7,7 +7,6 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -20,19 +19,6 @@ namespace Bannerlord.BUTRLoader
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal sealed class BUTRLoaderAppDomainManager : AppDomainManager
     {
-        private static readonly string ConfigPath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-            "Mount and Blade II Bannerlord",
-            "Configs"
-        );
-
-        private static readonly string OptionsPath = Path.Combine(
-            ConfigPath,
-            "ModSettings",
-            "BUTRLoader",
-            "Options.json"
-        );
-
         public static bool ExtendedSorting
         {
             get => _extendedSorting;
@@ -58,14 +44,6 @@ namespace Bannerlord.BUTRLoader
         public override void InitializeNewDomain(AppDomainSetup appDomainInfo)
         {
             base.InitializeNewDomain(appDomainInfo);
-
-            if (Directory.Exists(ConfigPath))
-            {
-                if (File.Exists(OptionsPath))
-                {
-
-                }
-            }
 
 #if STABLE_DEBUG || BETA_DEBUG
             if (AutomaticallyCheckForUpdates)
