@@ -18,8 +18,8 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
         public static string PathPrefix => Path.Combine(BasePath.Name, "Modules/");
 
         public string Id { get; private set; } = string.Empty;
-		public string Name { get; private set; } = string.Empty;
-		public bool IsOfficial { get; private set; }
+        public string Name { get; private set; } = string.Empty;
+        public bool IsOfficial { get; private set; }
         public ApplicationVersion Version { get; private set; }
         public string Alias { get; private set; } = string.Empty;
         public bool IsSingleplayerModule { get; private set; }
@@ -34,22 +34,22 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
 
         public void Load(string alias)
         {
-			Alias = alias;
-			SubModules.Clear();
-			DependedModules.Clear();
+            Alias = alias;
+            SubModules.Clear();
+            DependedModules.Clear();
             DependedModuleMetadatas.Clear();
 
             var xmlDocument = new XmlDocument();
-			xmlDocument.Load(ModuleInfo.GetPath(alias));
+            xmlDocument.Load(ModuleInfo.GetPath(alias));
 
-			var moduleNode = xmlDocument.SelectSingleNode("Module");
+            var moduleNode = xmlDocument.SelectSingleNode("Module");
 
-			Name = moduleNode?.SelectSingleNode("Name")?.Attributes?["value"]?.InnerText ?? string.Empty;
-			Id = moduleNode?.SelectSingleNode("Id")?.Attributes?["value"]?.InnerText ?? string.Empty;
+            Name = moduleNode?.SelectSingleNode("Name")?.Attributes?["value"]?.InnerText ?? string.Empty;
+            Id = moduleNode?.SelectSingleNode("Id")?.Attributes?["value"]?.InnerText ?? string.Empty;
             ApplicationVersionUtils.TryParse(moduleNode?.SelectSingleNode("Version")?.Attributes?["value"]?.InnerText, out var parsedVersion);
             Version = parsedVersion;
 
-			IsOfficial = moduleNode?.SelectSingleNode("Official")?.Attributes?["value"]?.InnerText?.Equals("true") == true;
+            IsOfficial = moduleNode?.SelectSingleNode("Official")?.Attributes?["value"]?.InnerText?.Equals("true") == true;
             IsSelected = moduleNode?.SelectSingleNode("DefaultModule")?.Attributes?["value"]?.InnerText?.Equals("true") == true || IsNative();
             IsSingleplayerModule = moduleNode?.SelectSingleNode("SingleplayerModule")?.Attributes?["value"]?.InnerText?.Equals("true") == true;
             IsMultiplayerModule = moduleNode?.SelectSingleNode("MultiplayerModule")?.Attributes?["value"]?.InnerText?.Equals("true") == true;
@@ -114,8 +114,10 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
 
             // Bannerlord Launcher supported optional tag
             var optionalDependModules = moduleNode?.SelectSingleNode("OptionalDependModules");
-            var optionalDependModuleList = (dependedModules?.SelectNodes("OptionalDependModule")?.Cast<XmlNode>() ?? Enumerable.Empty<XmlNode>())
-                .Concat(optionalDependModules?.SelectNodes("OptionalDependModule")?.Cast<XmlNode>() ?? Enumerable.Empty<XmlNode>()).ToList();
+            var optionalDependModuleList =
+                (dependedModules?.SelectNodes("OptionalDependModule")?.Cast<XmlNode>() ?? Enumerable.Empty<XmlNode>())
+                .Concat(optionalDependModules?.SelectNodes("OptionalDependModule")?.Cast<XmlNode>() ?? Enumerable.Empty<XmlNode>())
+                .Concat(optionalDependModules?.SelectNodes("DependModule")?.Cast<XmlNode>() ?? Enumerable.Empty<XmlNode>()).ToList();
             for (var i = 0; i < optionalDependModuleList.Count; i++)
             {
                 if (optionalDependModuleList[i]?.Attributes["Id"] is { } idAttr)
