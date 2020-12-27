@@ -10,24 +10,28 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
         public readonly string Id;
         public readonly LoadType LoadType;
         public readonly bool IsOptional;
+        public readonly bool IsIncompatible;
         public readonly ApplicationVersion Version;
 
-        public DependedModuleMetadata(string id, LoadType loadType, bool isOptional, ApplicationVersion version)
+        public DependedModuleMetadata(string id, LoadType loadType, bool isOptional, bool isIncompatible, ApplicationVersion version)
         {
             Id = id;
             LoadType = loadType;
             IsOptional = isOptional;
+            IsIncompatible = isIncompatible;
             Version = version;
         }
 
         internal static string GetLoadType(LoadType loadType) => loadType switch
         {
-            LoadType.LoadAfterThis  => "Before ",
-            LoadType.LoadBeforeThis => "After  ",
-            _                       => "ERROR  "
+            LoadType.NONE           => "",
+            LoadType.LoadAfterThis  => "Before       ",
+            LoadType.LoadBeforeThis => "After        ",
+            _                       => "ERROR        "
         };
         private static string GetVersion(ApplicationVersion av) => av.IsSame(ApplicationVersion.Empty) ? "" : $" {av}";
         private static string GetOptional(bool isOptional) => isOptional ? " Optional" : "";
-        public override string ToString() => GetLoadType(LoadType) + Id + GetVersion(Version) + GetOptional(IsOptional);
+        private static string GetIncompatible(bool isOptional) => isOptional ? "Incompatible " : "";
+        public override string ToString() => GetLoadType(LoadType) + GetIncompatible(IsIncompatible) + Id + GetVersion(Version) + GetOptional(IsOptional);
     }
 }

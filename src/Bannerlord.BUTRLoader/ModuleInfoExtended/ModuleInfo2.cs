@@ -79,11 +79,19 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
             var dependedModuleMetadatas = moduleNode?.SelectSingleNode("DependedModuleMetadatas");
             foreach (var xmlElement in dependedModuleMetadatas?.OfType<XmlElement>() ?? Enumerable.Empty<XmlElement>())
             {
-                if (xmlElement.Attributes["id"] is { } idAttr && xmlElement.Attributes["order"] is { } orderAttr && Enum.TryParse<LoadType>(orderAttr.InnerText, out var order))
+                if (xmlElement.Attributes["id"] is { } idAttr)
                 {
-                    var optional = xmlElement.Attributes["optional"]?.InnerText.Equals("true") ?? false;
-                    var version = ApplicationVersionUtils.TryParse(xmlElement.Attributes["version"]?.InnerText, out var v) ? v : ApplicationVersion.Empty;
-                    DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, order, optional, version));
+                    var incompatible = xmlElement.Attributes["incompatible"]?.InnerText.Equals("true") ?? false;
+                    if (incompatible)
+                    {
+                        DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, LoadType.NONE, false, incompatible, ApplicationVersion.Empty));
+                    }
+                    else if (xmlElement.Attributes["order"] is { } orderAttr && Enum.TryParse<LoadTypeParse>(orderAttr.InnerText, out var order))
+                    {
+                        var optional = xmlElement.Attributes["optional"]?.InnerText.Equals("true") ?? false;
+                        var version = ApplicationVersionUtils.TryParse(xmlElement.Attributes["version"]?.InnerText, out var v) ? v : ApplicationVersion.Empty;
+                        DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, (LoadType) order, optional, incompatible, version));
+                    }
                 }
             }
         }
