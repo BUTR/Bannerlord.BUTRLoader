@@ -94,6 +94,16 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
                     }
                 }
             }
+
+            // Fixed Launcher supported optional tag
+            var loadAfterModules = moduleNode?.SelectSingleNode("LoadAfterModules");
+            foreach (var xmlElement in loadAfterModules?.OfType<XmlElement>() ?? Enumerable.Empty<XmlElement>())
+            {
+                if (xmlElement.Attributes["Id"] is { } idAttr)
+                {
+                    DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, LoadType.LoadBeforeThis, true, false, ApplicationVersion.Empty));
+                }
+            }
         }
 
         public bool IsNative() => Id.Equals("native", StringComparison.OrdinalIgnoreCase);
