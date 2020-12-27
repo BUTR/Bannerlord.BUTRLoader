@@ -15,8 +15,8 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools.Method("TaleWorlds.MountAndBlade.Launcher.Program:StartGame"),
-                postfix: AccessTools.Method(typeof(ProgramPatch), nameof(StartGamePrefix)));
+                AccessTools.Method("TaleWorlds.MountAndBlade.Launcher.LauncherVM:ExecuteStartGame"),
+                prefix: AccessTools.Method(typeof(ProgramPatch), nameof(StartGamePrefix)));
             if (!res1) return false;
 
             return true;
@@ -27,16 +27,26 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void StartGamePrefix()
+        private static bool StartGamePrefix()
         {
             if (BUTRLoaderAppDomainManager.UnblockFiles)
             {
-                if (!Directory.Exists(ModuleInfo2.PathPrefix))
-                    return;
-
-                try { NtfsUnblocker.UnblockPath(ModuleInfo2.PathPrefix, "*.dll"); }
-                catch { }
+                if (Directory.Exists(ModuleInfo2.PathPrefix))
+                {
+                    try
+                    {
+                        NtfsUnblocker.UnblockPath(ModuleInfo2.PathPrefix, "*.dll");
+                    }
+                    catch { }
+                }
             }
+
+            if (BUTRLoaderAppDomainManager.FixCommonIssues)
+            {
+                IssuesChecker.CheckForRootHarmony();
+            }
+
+            return true;
         }
     }
 }

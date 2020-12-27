@@ -53,6 +53,12 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.UnblockFiles))!, this)
             }));
+            SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
+            {
+                DisplayName = "Fix Common Issues",
+                SettingType = SettingType.Bool,
+                PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.FixCommonIssues))!, this)
+            }));
             /*
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {

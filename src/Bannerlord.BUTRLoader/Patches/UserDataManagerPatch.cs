@@ -65,6 +65,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 BUTRLoaderAppDomainManager.ExtendedSorting = userDataOptions.ExtendedSorting;
                 BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates = userDataOptions.AutomaticallyCheckForUpdates;
                 BUTRLoaderAppDomainManager.UnblockFiles = userDataOptions.UnblockFiles;
+                BUTRLoaderAppDomainManager.FixCommonIssues = userDataOptions.FixCommonIssues;
             }
             catch (Exception value)
             {
@@ -89,7 +90,8 @@ namespace Bannerlord.BUTRLoader.Patches
                     __instance.UserData,
                     BUTRLoaderAppDomainManager.ExtendedSorting,
                     BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates,
-                    BUTRLoaderAppDomainManager.UnblockFiles));
+                    BUTRLoaderAppDomainManager.UnblockFiles,
+                    BUTRLoaderAppDomainManager.FixCommonIssues));
             }
             catch (Exception value)
             {

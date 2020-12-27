@@ -37,6 +37,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
   <!--NuGet References-->
 
   <Target Name="SetBUTRBaseUrl" BeforeTargets="BeforeCompile">

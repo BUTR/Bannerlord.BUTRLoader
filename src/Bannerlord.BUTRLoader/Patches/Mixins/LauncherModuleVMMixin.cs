@@ -39,7 +39,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             void SetVMProperty(string property)
             {
                 propsObject[property] = new WrappedPropertyInfo(
-                    AccessTools.Property(typeof(LauncherVMMixin), property),
+                    AccessTools.Property(typeof(LauncherModuleVMMixin), property),
                     this,
                     () => _launcherModuleVM.OnPropertyChanged(property));
             }

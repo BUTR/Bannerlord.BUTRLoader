@@ -242,6 +242,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                 if (userData.UnblockFiles != BUTRLoaderAppDomainManager.UnblockFiles)
                     Save();
+
+                if (userData.UnblockFiles != BUTRLoaderAppDomainManager.FixCommonIssues)
+                    Save();
             }
         }
     }

@@ -40,6 +40,13 @@ namespace Bannerlord.BUTRLoader
         }
         private static bool _unblockFiles;
 
+        public static bool FixCommonIssues
+        {
+            get => _fixCommonIssues;
+            set => _fixCommonIssues = value;
+        }
+        private static bool _fixCommonIssues;
+
 
         public override void InitializeNewDomain(AppDomainSetup appDomainInfo)
         {
