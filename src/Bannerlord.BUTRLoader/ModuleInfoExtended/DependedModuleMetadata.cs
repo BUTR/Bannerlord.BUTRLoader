@@ -7,20 +7,11 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
     /// </summary>
     internal readonly struct DependedModuleMetadata
     {
-        public readonly string Id;
-        public readonly LoadType LoadType;
-        public readonly bool IsOptional;
-        public readonly bool IsIncompatible;
-        public readonly ApplicationVersion Version;
-
-        public DependedModuleMetadata(string id, LoadType loadType, bool isOptional, bool isIncompatible, ApplicationVersion version)
-        {
-            Id = id;
-            LoadType = loadType;
-            IsOptional = isOptional;
-            IsIncompatible = isIncompatible;
-            Version = version;
-        }
+        public string Id { get; init; }
+        public LoadType LoadType { get; init; }
+        public bool IsOptional { get; init; }
+        public bool IsIncompatible { get; init; }
+        public ApplicationVersion Version { get; init; }
 
         internal static string GetLoadType(LoadType loadType) => loadType switch
         {

@@ -15,7 +15,7 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
     /// </summary>
     internal sealed class ModuleInfo2
     {
-        public static string PathPrefix => Path.Combine(BasePath.Name, "Modules/");
+        public static string PathPrefix => Path.Combine(BasePath.Name, "Modules");
 
         public string Id { get; private set; } = string.Empty;
         public string Name { get; private set; } = string.Empty;
@@ -61,7 +61,11 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
                 if (dependedModulesList[i]?.Attributes["Id"] is { } idAttr)
                 {
                     ApplicationVersionUtils.TryParse(dependedModulesList[i]?.Attributes?["DependentVersion"]?.InnerText, out var version);
-                    DependedModules.Add(new DependedModule(idAttr.InnerText, version));
+                    DependedModules.Add(new DependedModule
+                    {
+                        ModuleId = idAttr.InnerText,
+                        Version = version
+                    });
                 }
             }
 
@@ -72,7 +76,7 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
                 var subModuleInfo = new SubModuleInfo();
                 try
                 {
-                    subModuleInfo.LoadFrom(subModuleList[i], PathPrefix + alias);
+                    subModuleInfo.LoadFrom(subModuleList[i], Path.Combine(PathPrefix, alias));
                     SubModules.Add(subModuleInfo);
                 }
                 catch { }
@@ -90,13 +94,27 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
                     var incompatible = dependedModuleMetadatasList[i]?.Attributes["incompatible"]?.InnerText.Equals("true") ?? false;
                     if (incompatible)
                     {
-                        DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, LoadType.NONE, false, incompatible, ApplicationVersion.Empty));
+                        DependedModuleMetadatas.Add(new DependedModuleMetadata
+                        {
+                            Id = idAttr.InnerText,
+                            LoadType = LoadType.NONE,
+                            IsOptional = false,
+                            IsIncompatible = incompatible,
+                            Version = ApplicationVersion.Empty
+                        });
                     }
                     else if (dependedModuleMetadatasList[i]?.Attributes["order"] is { } orderAttr && Enum.TryParse<LoadTypeParse>(orderAttr.InnerText, out var order))
                     {
                         var optional = dependedModuleMetadatasList[i]?.Attributes["optional"]?.InnerText.Equals("true") ?? false;
                         var version = ApplicationVersionUtils.TryParse(dependedModuleMetadatasList[i]?.Attributes["version"]?.InnerText, out var v) ? v : ApplicationVersion.Empty;
-                        DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, (LoadType) order, optional, incompatible, version));
+                        DependedModuleMetadatas.Add(new DependedModuleMetadata
+                        {
+                            Id = idAttr.InnerText,
+                            LoadType = (LoadType) order,
+                            IsOptional = optional,
+                            IsIncompatible = incompatible,
+                            Version = version
+                        });
                     }
                 }
             }
@@ -108,7 +126,14 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
             {
                 if (loadAfterModuleList[i]?.Attributes["Id"] is { } idAttr)
                 {
-                    DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, LoadType.LoadBeforeThis, true, false, ApplicationVersion.Empty));
+                    DependedModuleMetadatas.Add(new DependedModuleMetadata
+                    {
+                        Id = idAttr.InnerText,
+                        LoadType = LoadType.NONE,
+                        IsOptional = true,
+                        IsIncompatible = false,
+                        Version = ApplicationVersion.Empty
+                    });
                 }
             }
 
@@ -122,7 +147,14 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
             {
                 if (optionalDependModuleList[i]?.Attributes["Id"] is { } idAttr)
                 {
-                    DependedModuleMetadatas.Add(new DependedModuleMetadata(idAttr.InnerText, LoadType.LoadBeforeThis, true, false, ApplicationVersion.Empty));
+                    DependedModuleMetadatas.Add(new DependedModuleMetadata
+                    {
+                        Id = idAttr.InnerText,
+                        LoadType = LoadType.NONE,
+                        IsOptional = true,
+                        IsIncompatible = false,
+                        Version = ApplicationVersion.Empty
+                    });
                 }
             }
         }

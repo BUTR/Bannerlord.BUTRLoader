@@ -7,13 +7,7 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
     /// </summary>
     internal readonly struct DependedModule
     {
-        public string ModuleId { get; }
-        public ApplicationVersion Version { get; }
-
-        public DependedModule(string moduleId, ApplicationVersion version)
-        {
-            ModuleId = moduleId;
-            Version = version;
-        }
+        public string ModuleId { get; init; }
+        public ApplicationVersion Version { get; init; }
     }
 }

@@ -39,7 +39,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         public IRef PropertyReference { get; init; } = default!;
         public SettingType SettingType { get; init; } = default!;
 
-        public decimal MinValue { get; set; }
-        public decimal MaxValue { get; set; }
+        public decimal MinValue { get; init; }
+        public decimal MaxValue { get; init; }
     }
 }
