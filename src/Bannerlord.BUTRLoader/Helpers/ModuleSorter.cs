@@ -1,5 +1,6 @@
 ﻿using Bannerlord.BUTRLoader.ModuleInfoExtended;
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,6 +8,21 @@ namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class ModuleSorter
     {
+        public static void Visit<T>(T item, Func<T, IEnumerable<T>> getDependencies, List<T> sorted, Dictionary<T, bool> visited)
+        {
+            if (visited.TryGetValue(item, out _))
+                return;
+
+            visited[item] = true;
+            if (getDependencies(item) is { } enumerable)
+            {
+                foreach (var item2 in enumerable)
+                    Visit(item2, getDependencies, sorted, visited);
+            }
+            visited[item] = false;
+            sorted.Add(item);
+        }
+
         public static IEnumerable<ModuleInfo2> GetDependentModulesOf(IEnumerable<ModuleInfo2> source, ModuleInfo2 module)
         {
             var sourceList = source.ToList();
@@ -35,7 +51,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 }
             }
 
-            foreach (var moduleInfo in sourceList)
+            foreach (var moduleInfo in sourceList.Where(mi => mi.IsSelected))
             {
                 foreach (var dependedModuleMetadata in moduleInfo.DependedModuleMetadatas)
                 {

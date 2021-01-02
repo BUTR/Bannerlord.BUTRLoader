@@ -13,24 +13,24 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
     /// <summary>
     /// https://github.com/BUTR/Bannerlord.ButterLib/blob/dev/src/Bannerlord.ButterLib/Helpers/ModuleInfo/ExtendedModuleInfo.cs
     /// </summary>
-    internal sealed class ModuleInfo2
+    internal sealed class ModuleInfo2 : IEquatable<ModuleInfo2>, IEquatable<ModuleInfo>
     {
         public static string PathPrefix => Path.Combine(BasePath.Name, "Modules");
 
-        public string Id { get; private set; } = string.Empty;
-        public string Name { get; private set; } = string.Empty;
-        public bool IsOfficial { get; private set; }
-        public ApplicationVersion Version { get; private set; }
-        public string Alias { get; private set; } = string.Empty;
-        public bool IsSingleplayerModule { get; private set; }
-        public bool IsMultiplayerModule { get; private set; }
+        public string Id { get; internal set; } = string.Empty;
+        public string Name { get; internal set; } = string.Empty;
+        public bool IsOfficial { get; internal set; }
+        public ApplicationVersion Version { get; internal set; }
+        public string Alias { get; internal set; } = string.Empty;
+        public bool IsSingleplayerModule { get; internal set; }
+        public bool IsMultiplayerModule { get; internal set; }
         public bool IsSelected { get; set; }
-        public List<SubModuleInfo> SubModules { get; } = new();
-        public List<DependedModule> DependedModules { get; } = new();
+        public List<SubModuleInfo> SubModules { get; internal set; } = new();
+        public List<DependedModule> DependedModules { get; internal set; } = new();
 
-        public string Url { get; private set; } = string.Empty;
+        public string Url { get; internal set; } = string.Empty;
 
-        public List<DependedModuleMetadata> DependedModuleMetadatas { get; }  = new();
+        public List<DependedModuleMetadata> DependedModuleMetadatas { get; internal set; }  = new();
 
         public void Load(string alias)
         {
@@ -162,5 +162,24 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
         public bool IsNative() => Id.Equals("native", StringComparison.OrdinalIgnoreCase);
 
         public override string ToString() => $"{Id} - {Version}";
+
+        public bool Equals(ModuleInfo2? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Id == other.Id;
+        }
+        public bool Equals(ModuleInfo? other)
+        {
+            if (other is null) return false;
+            return Id == other.Id;
+        }
+        public override bool Equals(object? obj) =>
+            ReferenceEquals(this, obj) || (obj is ModuleInfo2 other && Equals(other)) || (obj is ModuleInfo other2 && Equals(other2));
+
+        public override int GetHashCode() => Id.GetHashCode();
+
+        public static bool operator ==(ModuleInfo2? left, ModuleInfo2? right) => Equals(left, right);
+        public static bool operator !=(ModuleInfo2? left, ModuleInfo2? right) => !Equals(left, right);
     }
 }
