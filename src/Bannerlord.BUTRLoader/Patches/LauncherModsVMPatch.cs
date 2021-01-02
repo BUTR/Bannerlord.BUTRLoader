@@ -94,6 +94,9 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool AreAllDependenciesOfModulePresentPrefix(LauncherModsVM __instance, ModuleInfo info, List<ModuleInfo> ____modulesCache, ref bool __result)
         {
+            if (!BUTRLoaderAppDomainManager.ExtendedSorting)
+                return true;
+
             var info2 = GetExtendedModuleInfo(info);
 
             var dependencies = new List<ModuleInfo2>();
@@ -212,6 +215,9 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool ChangeIsSelectedOfPrefix(LauncherModsVM __instance, LauncherModuleVM targetModule, List<ModuleInfo> ____modulesCache)
         {
+            if (!BUTRLoaderAppDomainManager.ExtendedSorting)
+                return true;
+
             if (!AreAllDependenciesOfModulePresent(__instance, targetModule.Info, ____modulesCache))
             {
                 // Direct and current External Dependencies are not valid, do nothing

@@ -10,7 +10,6 @@
     <Configurations>Stable_Debug;Stable_Release;Beta_Debug;Beta_Release</Configurations>
 
     <BUTRBaseUrl>$(BANNERLORD_BUTR_BASE_URL)</BUTRBaseUrl>
-    <BUTRBaseUrl>http://butr.dev</BUTRBaseUrl>
   </PropertyGroup>
 
   <ItemGroup>
