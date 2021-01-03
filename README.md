@@ -38,6 +38,7 @@ BUTRLoader adds support for a new tag DependedModuleMetadatas that allows you to
   <!-- order: [ "LoadBeforeThis", "LoadAfterThis" ] -->
   <!-- optional: [ "true", "false" ] -->
   <!-- version: [ "e1.0.0.0", "e1.*", "e1.0.*", "e1.0.0.*" ] -->
+  <!-- incompatible: [ "true", "false" ] -->
 
   <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" />
 
@@ -46,5 +47,7 @@ BUTRLoader adds support for a new tag DependedModuleMetadatas that allows you to
   <DependedModuleMetadata id="Sandbox" order="LoadAfterThis" />
   <DependedModuleMetadata id="StoryMode" order="LoadAfterThis" version="e1.*" optional="true" />
   <DependedModuleMetadata id="CustomBattle" order="LoadAfterThis" optional="true" />
+
+  <DependedModuleMetadata id="MyCustomMod" incompatible="true" />
 </DependedModuleMetadatas>
 ```
