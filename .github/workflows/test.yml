@@ -31,7 +31,7 @@ env:
   # Disable sending .NET CLI telemetry to Microsoft.
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   #
-  MIN_VERSION: 'e1.4.3'
+  MIN_VERSION: 'e1.5.0'
 
 jobs:
   test:
