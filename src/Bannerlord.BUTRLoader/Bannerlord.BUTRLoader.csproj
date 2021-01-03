@@ -57,26 +57,4 @@
     <Exec Command="xcopy /Y &quot;$(MSBuildProjectDirectory)\$(OutputPath)Bannerlord.BUTRLoader.*&quot; &quot;$(GameFolder)\bin\Win64_Shipping_Client&quot;" />
   </Target>
 
-  <Target Name="ILRepacker" AfterTargets="Build">
-
-    <ItemGroup>
-      <InputAssemblies Include="$(OutputPath)\Bannerlord.BUTRLoader.dll" />
-      <InputAssemblies Include="$(OutputPath)\0Harmony.dll" />
-      <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll" />
-      <InputAssemblies Include="$(OutputPath)\Microsoft.Bcl.HashCode.dll" />
-    </ItemGroup>
-
-    <!-- ReSharper disable once UnknownTask -->
-    <ILRepack
-      Parallel="true"
-      DebugInfo="$(Configuration.Contains('Debug'))"
-      Internalize="true"
-      InputAssemblies="@(InputAssemblies)"
-      TargetKind="SameAsPrimaryAssembly"
-      OutputFile="$(OutputPath)\$(AssemblyName).dll"
-      LibraryPath="$(GameFolder)\bin\Win64_Shipping_Client"
-    />
-
-  </Target>
-
 </Project>

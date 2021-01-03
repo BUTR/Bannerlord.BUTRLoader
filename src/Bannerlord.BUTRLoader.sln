@@ -25,6 +25,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{AF17B088
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bannerlord.BUTRLoader.Tests", "..\tests\Bannerlord.BUTRLoader.Tests\Bannerlord.BUTRLoader.Tests.csproj", "{C392E7E8-6705-4EC3-A0E6-31CE7DA298E4}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{9CE609F3-8001-4E56-B409-06FE9A1E3496}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\publish.yml = ..\.github\workflows\publish.yml
+		..\.github\workflows\test.yml = ..\.github\workflows\test.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Beta Debug|Any CPU = Beta Debug|Any CPU
@@ -59,6 +65,7 @@ Global
 		{89CB6521-38F6-417A-B871-1DFC52B0DB8D} = {18F85D07-5188-4633-BC5D-24E75DF10113}
 		{AF17B088-4E44-4AF3-9464-7F13BD8789DA} = {18F85D07-5188-4633-BC5D-24E75DF10113}
 		{C392E7E8-6705-4EC3-A0E6-31CE7DA298E4} = {AF17B088-4E44-4AF3-9464-7F13BD8789DA}
+		{9CE609F3-8001-4E56-B409-06FE9A1E3496} = {18F85D07-5188-4633-BC5D-24E75DF10113}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {89815504-1F83-4E28-8742-EC3FE40C571D}
