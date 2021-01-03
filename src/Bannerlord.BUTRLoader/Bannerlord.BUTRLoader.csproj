@@ -29,7 +29,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Lib.Harmony" Version="2.0.4" />
+    <PackageReference Include="Lib.Harmony" Version="$(HarmonyVersion)" />
     <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Nullable" Version="1.3.0">
@@ -55,6 +55,28 @@
   <Target Name="PostBuild" AfterTargets="ILRepacker" Condition="Exists($(GameFolder)) AND $(OS) == 'Windows_NT'">
     <Exec Command="xcopy /Y /S &quot;$(MSBuildProjectDirectory)\_GameRoot&quot; &quot;$(GameFolder)&quot;" />
     <Exec Command="xcopy /Y &quot;$(MSBuildProjectDirectory)\$(OutputPath)Bannerlord.BUTRLoader.*&quot; &quot;$(GameFolder)\bin\Win64_Shipping_Client&quot;" />
+  </Target>
+
+  <Target Name="ILRepacker" AfterTargets="Build">
+
+    <ItemGroup>
+      <InputAssemblies Include="$(OutputPath)\Bannerlord.BUTRLoader.dll" />
+      <InputAssemblies Include="$(OutputPath)\0Harmony.dll" />
+      <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll" />
+      <InputAssemblies Include="$(OutputPath)\Microsoft.Bcl.HashCode.dll" />
+    </ItemGroup>
+
+    <!-- ReSharper disable once UnknownTask -->
+    <ILRepack
+      Parallel="true"
+      DebugInfo="$(Configuration.Contains('Debug'))"
+      Internalize="true"
+      InputAssemblies="@(InputAssemblies)"
+      TargetKind="SameAsPrimaryAssembly"
+      OutputFile="$(OutputPath)\$(AssemblyName).dll"
+      LibraryPath="$(GameFolder)\bin\Win64_Shipping_Client"
+    />
+
   </Target>
 
 </Project>
