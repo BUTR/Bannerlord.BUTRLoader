@@ -35,6 +35,9 @@ jobs:
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.2
+
     - name: Download DepotDownloader_2.3.6
       uses: i3h/download-release-asset@v1
       with:
