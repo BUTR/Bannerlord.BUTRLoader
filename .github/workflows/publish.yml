@@ -62,6 +62,7 @@ jobs:
       run: >-
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
+          dotnet restore src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj;
           msbuild src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
