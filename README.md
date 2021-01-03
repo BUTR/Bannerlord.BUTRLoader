@@ -31,12 +31,16 @@ Download the file and extract it's contents into the game's root folder (e.g. `C
 BUTRLoader adds support for a new tag DependedModuleMetadatas that allows you to better define your load order, see the example below
 ```xml
 <DependedModuleMetadatas>
+  <!-- order: [ "LoadBeforeThis", "LoadAfterThis" ] -->
+  <!-- optional: [ "true", "false" ] -->
+  <!-- version: [ "e1.0.0.0", "e1.*", "e1.0.*", "e1.0.0.*" ] -->
+
   <DependedModuleMetadata id="Bannerlord.Harmony" order="LoadBeforeThis" />
 
-  <DependedModuleMetadata id="Native" order="LoadAfterThis" />
-  <DependedModuleMetadata id="SandBoxCore" order="LoadAfterThis" />
+  <DependedModuleMetadata id="Native" order="LoadAfterThis" version="e1.4.3.*" />
+  <DependedModuleMetadata id="SandBoxCore" order="LoadAfterThis" version="e1.5.*" />
   <DependedModuleMetadata id="Sandbox" order="LoadAfterThis" />
-  <DependedModuleMetadata id="StoryMode" order="LoadAfterThis" />
-  <DependedModuleMetadata id="CustomBattle" order="LoadAfterThis" />
+  <DependedModuleMetadata id="StoryMode" order="LoadAfterThis" version="e1.*" optional="true" />
+  <DependedModuleMetadata id="CustomBattle" order="LoadAfterThis" optional="true" />
 </DependedModuleMetadatas>
 ```
