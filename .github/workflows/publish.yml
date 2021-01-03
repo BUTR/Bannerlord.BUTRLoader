@@ -66,19 +66,12 @@ jobs:
           msbuild src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
-    - name: Build
-      run: >-
-          $game_version=$env:MIN_VERSION;
-          $game_version=$game_version.substring(1);
-          dotnet restore src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj;
-          msbuild src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
-      shell: pwsh
-
-    - name: Build
+    - name: Cleanup
       run: >-
           cd $PWD/bannerlord;
           Get-ChildItem -Exclude bin | Remove-Item -Recurse -Force
-          cd bin/Win64_Shipping_Client;
+          cd bin;
+          cd Win64_Shipping_Client;
           Get-ChildItem -Exclude Bannerlord.BUTRLoader.dll,Bannerlord.BUTRLoader.pdb,TaleWorlds.MountAndBlade.Launcher.exe.config | Remove-Item -Recurse -Force
       shell: pwsh
 
