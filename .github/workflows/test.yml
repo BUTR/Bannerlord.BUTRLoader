@@ -30,6 +30,8 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   # Disable sending .NET CLI telemetry to Microsoft.
   DOTNET_CLI_TELEMETRY_OPTOUT: true
+  #
+  MIN_VERSION: 'e1.4.3'
 
 jobs:
   test:
@@ -42,7 +44,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@master
       with:
-        dotnet-version: 3.1.x
+        dotnet-version: 5.0.x
 
     - name: Setup BUTR GPR
       uses: actions/setup-dotnet@master
@@ -67,21 +69,14 @@ jobs:
 
     - name: Download Bannerlord binaries
       run: >-
-        dotnet depotdownloader/DepotDownloader.dll -app 261550 -depot 261551 -beta e1.4.3 -username ${{secrets.STEAM_LOGIN}}
+        dotnet depotdownloader/DepotDownloader.dll -app 261550 -depot 261551 -beta $env:MIN_VERSION -username ${{secrets.STEAM_LOGIN}}
         -password ${{secrets.STEAM_PASSWORD}} -filelist ./.github/resources/FileFilters.regexp -dir bannerlord
       shell: pwsh
 
     - name: Test
       run: >-
-          $stable_game_version=$env:STABLE_VERSION;
-          $stable_game_version=$stable_game_version.substring(1);
-          dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Debug -p:GameVersion=$stable_game_version -p:GameFolder="$PWD/bannerlord";
-          dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Release -p:GameVersion=$stable_game_version -p:GameFolder="$PWD/bannerlord";
-          $beta_game_version=$env:BETA_VERSION;
-          $beta_game_version=$beta_game_version.substring(1);
-          dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Debug -p:GameVersion=$beta_game_version -p:GameFolder="$PWD/bannerlord";
-          dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Release -p:GameVersion=$beta_game_version -p:GameFolder="$PWD/bannerlord";
-      env:
-        STABLE_VERSION: ${{secrets.SYNCED_GAME_STABLE_VERSION}}
-        BETA_VERSION: ${{secrets.SYNCED_GAME_BETA_VERSION}}
+          $game_version=$env:MIN_VERSION;
+          $game_version=$game_version.substring(1);
+          dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Debug -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
+          dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
       shell: pwsh
