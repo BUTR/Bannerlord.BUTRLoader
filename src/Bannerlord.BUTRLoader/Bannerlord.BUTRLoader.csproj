@@ -13,10 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\Prefabs\Launcher.Options.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Resources\Prefabs\Launcher.Options.xml" />
   </ItemGroup>
 

@@ -66,6 +66,22 @@ jobs:
           msbuild src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
+    - name: Build
+      run: >-
+          $game_version=$env:MIN_VERSION;
+          $game_version=$game_version.substring(1);
+          dotnet restore src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj;
+          msbuild src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
+      shell: pwsh
+
+    - name: Build
+      run: >-
+          cd $PWD/bannerlord;
+          Get-ChildItem -Exclude bin | Remove-Item -Recurse -Force
+          cd bin/Win64_Shipping_Client;
+          Get-ChildItem -Exclude Bannerlord.BUTRLoader.dll,Bannerlord.BUTRLoader.pdb,TaleWorlds.MountAndBlade.Launcher.exe.config | Remove-Item -Recurse -Force
+      shell: pwsh
+
     - name: Upload Bannerlord folder
       uses: actions/upload-artifact@v2
       with:
@@ -90,7 +106,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@master
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 3.1.x
 
     - name: Setup BUTR GPR
       uses: actions/setup-dotnet@master
