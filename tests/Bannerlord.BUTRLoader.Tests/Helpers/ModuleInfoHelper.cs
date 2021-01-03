@@ -1,6 +1,11 @@
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.ModuleInfoExtended;
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
 using TaleWorlds.Library;
 
 namespace Bannerlord.BUTRLoader.Tests.Helpers
@@ -31,7 +36,19 @@ namespace Bannerlord.BUTRLoader.Tests.Helpers
             SymbolExtensions2.GetPropertyInfo((ModuleInfo mi) => mi.IsMultiplayerModule).SetValue(moduleInfo, model.IsMultiplayerModule);
             SymbolExtensions2.GetPropertyInfo((ModuleInfo mi) => mi.IsSelected).SetValue(moduleInfo, model.IsSelected);
             SymbolExtensions2.GetFieldInfo((ModuleInfo mi) => mi.SubModules).SetValue(moduleInfo, model.SubModules);
-            SymbolExtensions2.GetFieldInfo((ModuleInfo mi) => mi.DependedModules).SetValue(moduleInfo, model.DependedModules);
+            if (typeof(ModuleInfo).GetField("DependedModules")?.GetValue(moduleInfo) is IList originaNewList)
+            {
+                var dependedModuleType = typeof(ApplicationVersion).Assembly.GetType("TaleWorlds.Library.DependedModule");
+                originaNewList.Clear();
+                foreach (var dependedModule in model.DependedModules.Select(dm => Activator.CreateInstance(dependedModuleType, dm.ModuleId, dm.Version)))
+                    originaNewList.Add(dependedModule);
+            }
+            if (typeof(ModuleInfo).GetField("DependedModuleIds")?.GetValue(moduleInfo) is List<string> originalList)
+            {
+                originalList.Clear();
+                foreach (var dependedModule in model.DependedModules)
+                    originalList.Add(dependedModule.ModuleId);
+            }
         }
 
         public static void Populate(ModuleInfoModel model, ModuleInfo2 moduleInfo)

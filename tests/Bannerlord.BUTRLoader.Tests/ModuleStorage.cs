@@ -7,8 +7,6 @@ using System.Linq;
 
 using TaleWorlds.Library;
 
-using DependedModule = TaleWorlds.Library.DependedModule;
-
 namespace Bannerlord.BUTRLoader.Tests
 {
     internal static class ModuleTemplates
@@ -34,9 +32,13 @@ namespace Bannerlord.BUTRLoader.Tests
             IsOfficial = true,
             IsSingleplayerModule = true,
             IsMultiplayerModule = false,
-            DependedModules = new List<DependedModule>
+            DependedModules = new List<ModuleInfoExtended.DependedModule>
             {
-                new("NativeModule", ApplicationVersion.Empty)
+                new()
+                {
+                    ModuleId = "NativeModule",
+                    Version = ApplicationVersion.Empty
+                }
             },
         };
 
@@ -50,9 +52,13 @@ namespace Bannerlord.BUTRLoader.Tests
             IsOfficial = false,
             IsSingleplayerModule = true,
             IsMultiplayerModule = false,
-            DependedModules = new List<DependedModule>
+            DependedModules = new List<ModuleInfoExtended.DependedModule>
             {
-                new("NativeModule", ApplicationVersion.Empty)
+                new()
+                {
+                    ModuleId = "NativeModule",
+                    Version = ApplicationVersion.Empty
+                }
             },
             DependedModuleMetadatas = new List<DependedModuleMetadata>
             {
@@ -93,9 +99,13 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public static ModuleInfoModel CustomModuleWithNativeDM => CustomModuleBase with
         {
-            DependedModules = new List<DependedModule>
+            DependedModules = new List<ModuleInfoExtended.DependedModule>
             {
-                new("NativeModule", ApplicationVersion.Empty)
+                new()
+                {
+                    ModuleId = "NativeModule",
+                    Version = ApplicationVersion.Empty
+                }
             },
         };
         public static ModuleInfoModel CustomModuleWithNativeDMM => CustomModuleBase with
@@ -127,9 +137,13 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public static ModuleInfoModel CustomModule2WithCustomModuleDM => Custom2ModuleBase with
         {
-            DependedModules = new List<DependedModule>
+            DependedModules = new List<ModuleInfoExtended.DependedModule>
             {
-                new("CustomModule", ApplicationVersion.Empty)
+                new()
+                {
+                    ModuleId = "CustomModule",
+                    Version = ApplicationVersion.Empty
+                }
             },
         };
         public static ModuleInfoModel CustomModule2WithCustomModuleDMM => Custom2ModuleBase with

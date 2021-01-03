@@ -4,8 +4,6 @@ using System.Collections.Generic;
 
 using TaleWorlds.Library;
 
-using DependedModule = TaleWorlds.Library.DependedModule;
-
 namespace Bannerlord.BUTRLoader.Tests
 {
     internal record ModuleInfoModel
@@ -28,7 +26,7 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public List<SubModuleInfo> SubModules { get; init; } = new();
 
-        public List<DependedModule> DependedModules { get; init; } = new();
+        public List<ModuleInfoExtended.DependedModule> DependedModules { get; init; } = new();
 
         public List<DependedModuleMetadata> DependedModuleMetadatas { get; init; }  = new();
     }
