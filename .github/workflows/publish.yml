@@ -112,7 +112,6 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: bannerlord
-        path: ./bannerlord
 
     - name: Zip Bannerlord.BUTRLoader
       run: 7z a -tzip Bannerlord.BUTRLoader.zip ./bannerlord/*
