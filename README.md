@@ -29,7 +29,7 @@ Download the file and extract it's contents into the game's root folder (e.g. `C
 
 ## Troubleshooting
 ### Unblocking DLL's
-You may need to right click on Bannerlord.BUTRLoader.dll  file, click Properties, and click Unblock if you extracted the zip file with Windows Explorer or other programs that try to secure extracted files.
+You may need to right click on Bannerlord.BUTRLoader.dll  file, click Properties, and click `Unblock` if you extracted the zip file with Windows Explorer or other programs that try to secure extracted files.
 
 ## For Modders
 BUTRLoader adds support for a new tag DependedModuleMetadatas that allows you to better define your load order, see the example below
