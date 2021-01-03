@@ -69,10 +69,10 @@ jobs:
     - name: Cleanup
       run: >-
           cd $PWD/bannerlord;
-          Get-ChildItem -Exclude bin | Remove-Item -Recurse -Force
+          Get-ChildItem -Exclude bin | Remove-Item -Recurse -Force;
           cd bin;
           cd Win64_Shipping_Client;
-          Get-ChildItem -Exclude Bannerlord.BUTRLoader.dll,Bannerlord.BUTRLoader.pdb,TaleWorlds.MountAndBlade.Launcher.exe.config | Remove-Item -Recurse -Force
+          Get-ChildItem -Exclude Bannerlord.BUTRLoader.dll,Bannerlord.BUTRLoader.pdb,TaleWorlds.MountAndBlade.Launcher.exe.config | Remove-Item -Recurse -Force;
       shell: pwsh
 
     - name: Upload Bannerlord folder
