@@ -32,7 +32,7 @@ namespace Bannerlord.BUTRLoader.Tests
             IsOfficial = true,
             IsSingleplayerModule = true,
             IsMultiplayerModule = false,
-            DependedModules = new List<ModuleInfoExtended.DependedModule>
+            DependedModules = new List<DependedModule>
             {
                 new()
                 {
@@ -52,7 +52,7 @@ namespace Bannerlord.BUTRLoader.Tests
             IsOfficial = false,
             IsSingleplayerModule = true,
             IsMultiplayerModule = false,
-            DependedModules = new List<ModuleInfoExtended.DependedModule>
+            DependedModules = new List<DependedModule>
             {
                 new()
                 {
@@ -99,7 +99,7 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public static ModuleInfoModel CustomModuleWithNativeDM => CustomModuleBase with
         {
-            DependedModules = new List<ModuleInfoExtended.DependedModule>
+            DependedModules = new List<DependedModule>
             {
                 new()
                 {
@@ -137,7 +137,7 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public static ModuleInfoModel CustomModule2WithCustomModuleDM => Custom2ModuleBase with
         {
-            DependedModules = new List<ModuleInfoExtended.DependedModule>
+            DependedModules = new List<DependedModule>
             {
                 new()
                 {
@@ -156,6 +156,19 @@ namespace Bannerlord.BUTRLoader.Tests
                     IsOptional = false,
                     LoadType = LoadType.LoadBeforeThis,
                     Version = ApplicationVersion.Empty
+                }
+            }
+        };
+        public static ModuleInfoModel CustomModule2WithCustomModuleDMMVersion => Custom2ModuleBase with
+        {
+            DependedModuleMetadatas = new List<DependedModuleMetadata>
+            {
+                new()
+                {
+                    Id = "CustomModule",
+                    IsOptional = false,
+                    LoadType = LoadType.LoadBeforeThis,
+                    Version = new ApplicationVersion(ApplicationVersionType.EarlyAccess, 1, 0, 0, 0, ApplicationVersionGameType.Singleplayer)
                 }
             }
         };
@@ -257,6 +270,17 @@ namespace Bannerlord.BUTRLoader.Tests
         /// Custom2   - incompatible with Custom
         /// </summary>
         Complex2,
+
+        /// <summary>
+        /// Native    - nothing
+        /// Custom2   - load after with Custom
+        /// </summary>
+        MissingModule1,
+        /// <summary>
+        /// Native    - nothing
+        /// Custom2   - load after with Custom with version check
+        /// </summary>
+        MissingModule2,
     }
 
     internal class ModuleStorage
@@ -409,6 +433,27 @@ namespace Bannerlord.BUTRLoader.Tests
                     ModuleTemplates.CommunityFrameworkModuleBeforeNative.Id,
                     ModuleTemplates.NativeModuleBase.Id,
                     ModuleTemplates.CustomModuleWithNativeDMM.Id,
+                }),
+
+            ModuleListTemplates.MissingModule1 => (
+                new()
+                {
+                    ModuleTemplates.CustomModule2WithCustomModuleDMM,
+                    ModuleTemplates.NativeModuleBase,
+                },
+                new()
+                {
+                    ModuleTemplates.NativeModuleBase.Id
+                }),
+            ModuleListTemplates.MissingModule2 => (
+                new()
+                {
+                    ModuleTemplates.CustomModule2WithCustomModuleDMMVersion,
+                    ModuleTemplates.NativeModuleBase,
+                },
+                new()
+                {
+                    ModuleTemplates.NativeModuleBase.Id
                 }),
 
             _ => (new(), new())

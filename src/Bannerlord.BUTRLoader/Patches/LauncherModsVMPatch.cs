@@ -115,6 +115,25 @@ namespace Bannerlord.BUTRLoader.Patches
         }
         private static bool ModuleIsCorrect(LauncherModsVM instance, ModuleInfo2 moduleInfo2, List<ModuleInfo> modules, Dictionary<ModuleInfo2, bool> visited)
         {
+            // Check that all dependencies are present
+            foreach (var dependency in moduleInfo2.DependedModules)
+            {
+                if (!ExtendedModuleInfoCache.ContainsKey(dependency.ModuleId))
+                    return false;
+            }
+            foreach (var metadata in moduleInfo2.DependedModuleMetadatas)
+            {
+                // Handle only direct dependencies
+                if (metadata.LoadType != LoadType.LoadBeforeThis) continue;
+
+                // Ignore the check for Optional
+                if (metadata.IsOptional) continue;
+
+                if (!ExtendedModuleInfoCache.ContainsKey(metadata.Id))
+                    return false;
+            }
+
+
             var dependencies = new List<ModuleInfo2>();
             ModuleSorter.Visit(moduleInfo2, x => ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, x), dependencies, visited);
 
@@ -128,12 +147,10 @@ namespace Bannerlord.BUTRLoader.Patches
 
                 var module = modules.Find(m => m.Id == dependency.Id);
                 if (!ModuleIsCorrect(instance, GetExtendedModuleInfo(module), modules, visited))
-                {
                     return false;
-                }
             }
 
-            // Check that all dependencies are present
+            // Check that all present dependencies are valid
             foreach (var dependency in dependencies)
             {
                 var metadata = moduleInfo2.DependedModuleMetadatas.Find(dmm => dmm.Id == dependency.Id);
@@ -145,9 +162,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 if (metadata.IsOptional) continue;
 
                 if (!ExtendedModuleInfoCache.ContainsKey(dependency.Id))
-                {
                     return false;
-                }
             }
 
             // Check that the dependencies have the minimum required version set by DependedModuleMetadatas
@@ -167,9 +182,7 @@ namespace Bannerlord.BUTRLoader.Patches
                     return false;
                 // dependedModuleMetadata.Version > dependedModule.Version
                 if (dependedModule is null || comparer.Compare(metadata.Version, dependedModule.Version) > 0)
-                {
                     return false;
-                }
             }
 
             // Do not load this mod if an incompatible mod is selected
@@ -181,9 +194,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
                     // If the incompatible mod is selected, this mod is disabled
                     if (moduleVM?.IsSelected == true)
-                    {
                         return false;
-                    }
                 }
             }
 
@@ -200,9 +211,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
                         // If the incompatible mod is selected, this mod is disabled
                         if (moduleVM?.IsSelected == true)
-                        {
                             return false;
-                        }
                     }
                 }
             }

@@ -26,7 +26,7 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public List<SubModuleInfo> SubModules { get; init; } = new();
 
-        public List<ModuleInfoExtended.DependedModule> DependedModules { get; init; } = new();
+        public List<DependedModule> DependedModules { get; init; } = new();
 
         public List<DependedModuleMetadata> DependedModuleMetadatas { get; init; }  = new();
     }
