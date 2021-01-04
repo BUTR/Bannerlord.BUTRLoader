@@ -163,7 +163,8 @@ namespace Bannerlord.BUTRLoader.Patches
                 // Ignore the check for non-provided versions
                 if (metadata.Version == ApplicationVersion.Empty) continue;
 
-                var dependedModule = ExtendedModuleInfoCache[metadata.Id];
+                if (!ExtendedModuleInfoCache.TryGetValue(metadata.Id, out var dependedModule))
+                    return false;
                 // dependedModuleMetadata.Version > dependedModule.Version
                 if (dependedModule is null || comparer.Compare(metadata.Version, dependedModule.Version) > 0)
                 {
