@@ -142,6 +142,9 @@ namespace Bannerlord.BUTRLoader.Patches
                 // Ignore the check for Optional
                 if (metadata.IsOptional) continue;
 
+                // Ignore the check for Incompatible
+                if (metadata.IsIncompatible) continue;
+
                 var module = modules.Find(m => m.Id == dependency.Id);
                 if (!ModuleIsCorrect(instance, GetExtendedModuleInfo(module), modules, visited))
                     return false;
@@ -157,6 +160,9 @@ namespace Bannerlord.BUTRLoader.Patches
 
                 // Ignore the check for Optional
                 if (metadata.IsOptional) continue;
+
+                // Ignore the check for Incompatible
+                if (metadata.IsIncompatible) continue;
 
                 if (!ExtendedModuleInfoCache.ContainsKey(dependency.Id))
                     return false;
@@ -191,6 +197,8 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 if (key == moduleInfo2.Id) continue;
 
+                if (!moduleInfo.IsSelected) continue;
+
                 foreach (var metadata in moduleInfo.DependedModuleMetadatas.Where(m => m.IsIncompatible && m.Id == moduleInfo2.Id))
                 {
                     var moduleVM = instance.Modules.FirstOrDefault(m => m.Info.Id == key);
@@ -219,16 +227,15 @@ namespace Bannerlord.BUTRLoader.Patches
                 return false;
             }
 
-            ChangeIsSelectedOf(__instance, targetModule, ____modulesCache);
+            var visited = new HashSet<ModuleInfo2>();
+            ChangeIsSelectedOf(__instance, targetModule, ____modulesCache, visited);
 
             return false;
         }
-        private static void ChangeIsSelectedOf(LauncherModsVM instance, LauncherModuleVM targetModule, List<ModuleInfo> modules)
+        private static void ChangeIsSelectedOf(LauncherModsVM instance, LauncherModuleVM targetModule, List<ModuleInfo> modules, HashSet<ModuleInfo2> visited)
         {
             var targetModuleInfo2 = GetExtendedModuleInfo(targetModule.Info);
-
-            var visited = new HashSet<ModuleInfo2>();
-            var dependencies = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, targetModuleInfo2, visited).ToArray();
+            var dependencies = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, targetModuleInfo2, visited, skipExternalDependencies: true).ToArray();
 
             targetModule.IsSelected = !targetModule.IsSelected;
 
@@ -239,7 +246,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 foreach (var module in instance.Modules)
                 {
                     if (!module.IsSelected && dependencies.Any(d => d.Id == module.Info.Id))
-                        ChangeIsSelectedOf(instance, module, modules);
+                        ChangeIsSelectedOf(instance, module, modules, visited);
                         //module.IsSelected |= allDependencies.Any(id => id == module.Info.Id);
                 }
 
@@ -250,7 +257,7 @@ namespace Bannerlord.BUTRLoader.Patches
                     if (incompatibleModuleVM is not null)
                     {
                         if (incompatibleModuleVM.IsSelected)
-                            ChangeIsSelectedOf(instance, incompatibleModuleVM, modules);
+                            ChangeIsSelectedOf(instance, incompatibleModuleVM, modules, visited);
 
                         incompatibleModuleVM.IsDisabled = true;
                     }
@@ -265,7 +272,7 @@ namespace Bannerlord.BUTRLoader.Patches
                         if (incompatibleModuleVM is not null)
                         {
                             if (incompatibleModuleVM.IsSelected)
-                                ChangeIsSelectedOf(instance, incompatibleModuleVM, modules);
+                                ChangeIsSelectedOf(instance, incompatibleModuleVM, modules, visited);
 
                             // We need to re-check that everything is alright with the external dependency
                             incompatibleModuleVM.IsDisabled |= !AreAllDependenciesOfModulePresent(instance, incompatibleModuleVM.Info, modules);
@@ -277,12 +284,12 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 // Vanilla check
                 // Deselect all modules that depend on this module if they are selected
-                foreach (var module in instance.Modules.Where(m => !m.IsOfficial && m.IsSelected))
+                foreach (var module in instance.Modules.Where(m => !m.IsOfficial))
                 {
                     var moduleInfo2 = GetExtendedModuleInfo(module.Info);
                     var dependencies2 = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, moduleInfo2, skipExternalDependencies: true);
-                    if (dependencies2.Any(d => d.Id == targetModuleInfo2.Id))
-                        ChangeIsSelectedOf(instance, module, modules);
+                    if (module.IsSelected && dependencies2.Any(d => d.Id == targetModuleInfo2.Id))
+                        ChangeIsSelectedOf(instance, module, modules, visited);
                 }
 
                 // Enable for selection any mod that is incompatible with this one
