@@ -3,7 +3,7 @@
 
   <!--Development Variables-->
   <PropertyGroup>
-    <Version>1.4.3</Version>
+    <Version>1.4.4</Version>
     <HarmonyVersion>2.0.4</HarmonyVersion>
     <DebugType>full</DebugType>
   </PropertyGroup>

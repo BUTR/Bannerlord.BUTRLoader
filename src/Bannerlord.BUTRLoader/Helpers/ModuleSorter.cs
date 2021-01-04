@@ -8,22 +8,21 @@ namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class ModuleSorter
     {
-        public static void Visit<T>(T item, Func<T, IEnumerable<T>> getDependencies, List<T> sorted, Dictionary<T, bool> visited)
+        private static void Visit<T>(T item, Func<T, IEnumerable<T>> getDependencies, ICollection<T> sorted, HashSet<T> visited)
         {
             if (visited.TryGetValue(item, out _))
                 return;
 
-            visited[item] = true;
+            visited.Add(item);
             if (getDependencies(item) is { } enumerable)
             {
                 foreach (var item2 in enumerable)
                     Visit(item2, getDependencies, sorted, visited);
             }
-            visited[item] = false;
             sorted.Add(item);
         }
 
-        public static IEnumerable<ModuleInfo2> GetDependentModulesOf(IEnumerable<ModuleInfo2> source, ModuleInfo2 module)
+        private static IEnumerable<ModuleInfo2> GetDependentModulesOfInternal(IEnumerable<ModuleInfo2> source, ModuleInfo2 module, bool skipExternalDependencies = false)
         {
             var sourceList = source.ToList();
 
@@ -51,19 +50,35 @@ namespace Bannerlord.BUTRLoader.Helpers
                 }
             }
 
-            foreach (var moduleInfo in sourceList.Where(mi => mi.IsSelected))
+            if (!skipExternalDependencies)
             {
-                foreach (var dependedModuleMetadata in moduleInfo.DependedModuleMetadatas)
+                foreach (var moduleInfo in sourceList)
                 {
-                    if (dependedModuleMetadata.LoadType != LoadType.LoadAfterThis)
-                        continue;
-
-                    if (dependedModuleMetadata.Id == module.Id)
+                    foreach (var dependedModuleMetadata in moduleInfo.DependedModuleMetadatas)
                     {
+                        if (dependedModuleMetadata.LoadType != LoadType.LoadAfterThis)
+                            continue;
+
+                        if (dependedModuleMetadata.Id != module.Id)
+                            continue;
+
                         yield return moduleInfo;
                     }
                 }
             }
+        }
+
+        public static IEnumerable<ModuleInfo2> GetDependentModulesOf(IEnumerable<ModuleInfo2> source, ModuleInfo2 module, HashSet<ModuleInfo2> visited, bool skipExternalDependencies = false)
+        {
+            var dependencies = new List<ModuleInfo2>();
+            Visit(module, x => GetDependentModulesOfInternal(source, x, skipExternalDependencies), dependencies, visited);
+            return dependencies;
+        }
+
+        public static IEnumerable<ModuleInfo2> GetDependentModulesOf(IEnumerable<ModuleInfo2> source, ModuleInfo2 module, bool skipExternalDependencies = false)
+        {
+            var visited = new HashSet<ModuleInfo2>();
+            return GetDependentModulesOf(source, module, visited, skipExternalDependencies);
         }
     }
 }
