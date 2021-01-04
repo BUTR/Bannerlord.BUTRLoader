@@ -167,14 +167,8 @@ namespace Bannerlord.BUTRLoader.Patches
 
             // Check that the dependencies have the minimum required version set by DependedModuleMetadatas
             var comparer = new ApplicationVersionFullComparer();
-            foreach (var metadata in moduleInfo2.DependedModuleMetadatas)
+            foreach (var metadata in moduleInfo2.DependedModuleMetadatas.Where(m => !m.IsOptional && !m.IsIncompatible))
             {
-                // Ignore the check for Optional
-                if (metadata.IsOptional) continue;
-
-                // Ignore the check for Incompatible
-                if (metadata.IsIncompatible) continue;
-
                 // Ignore the check for non-provided versions
                 if (metadata.Version == ApplicationVersion.Empty) continue;
 
@@ -186,16 +180,13 @@ namespace Bannerlord.BUTRLoader.Patches
             }
 
             // Do not load this mod if an incompatible mod is selected
-            foreach (var metadata in moduleInfo2.DependedModuleMetadatas)
+            foreach (var metadata in moduleInfo2.DependedModuleMetadatas.Where(m => m.IsIncompatible))
             {
-                if (metadata.IsIncompatible)
-                {
-                    var moduleVM = instance.Modules.FirstOrDefault(m => m.Info.Id == metadata.Id);
+                var moduleVM = instance.Modules.FirstOrDefault(m => m.Info.Id == metadata.Id);
 
-                    // If the incompatible mod is selected, this mod is disabled
-                    if (moduleVM?.IsSelected == true)
-                        return false;
-                }
+                // If the incompatible mod is selected, this mod is disabled
+                if (moduleVM?.IsSelected == true)
+                    return false;
             }
 
             // If another mod declared incompatibility and is selected, disable this
@@ -203,16 +194,13 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 if (key == moduleInfo2.Id) continue;
 
-                foreach (var metadata in moduleInfo.DependedModuleMetadatas)
+                foreach (var metadata in moduleInfo.DependedModuleMetadatas.Where(m => m.IsIncompatible && m.Id == moduleInfo2.Id))
                 {
-                    if (metadata.IsIncompatible && metadata.Id == moduleInfo2.Id)
-                    {
-                        var moduleVM = instance.Modules.FirstOrDefault(m => m.Info.Id == key);
+                    var moduleVM = instance.Modules.FirstOrDefault(m => m.Info.Id == key);
 
-                        // If the incompatible mod is selected, this mod is disabled
-                        if (moduleVM?.IsSelected == true)
-                            return false;
-                    }
+                    // If the incompatible mod is selected, this mod is disabled
+                    if (moduleVM?.IsSelected == true)
+                        return false;
                 }
             }
 
@@ -265,7 +253,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 // Deselect and disable any mod that is incompatible with this one
                 foreach (var dmm in targetModuleInfo2.DependedModuleMetadatas.Where(dmm => dmm.IsIncompatible))
                 {
-                    var incompatibleModuleVM = instance.Modules.First(m => m.Info.Id == dmm.Id);
+                    var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => m.Info.Id == dmm.Id);
                     if (incompatibleModuleVM is not null)
                     {
                         if (incompatibleModuleVM.IsSelected)
@@ -296,10 +284,8 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 // Vanilla check
                 // Deselect all modules that depend on this module if they are selected
-                foreach (var module in instance.Modules)
+                foreach (var module in instance.Modules.Where(m => !m.IsOfficial && m.IsSelected))
                 {
-                    if (module.IsOfficial || !module.IsSelected) continue;
-
                     var moduleInfo2 = GetExtendedModuleInfo(module.Info);
                     var dependencies2 = new List<ModuleInfo2>();
                     var visited2 = new Dictionary<ModuleInfo2, bool>();
@@ -313,7 +299,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 // Enable for selection any mod that is incompatible with this one
                 foreach (var dmm in targetModuleInfo2.DependedModuleMetadatas.Where(dmm => dmm.IsIncompatible))
                 {
-                    var incompatibleModuleVM = instance.Modules.First(m => m.Info.Id == dmm.Id);
+                    var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => m.Info.Id == dmm.Id);
                     if (incompatibleModuleVM is not null )
                     {
                         incompatibleModuleVM.IsDisabled = false;
