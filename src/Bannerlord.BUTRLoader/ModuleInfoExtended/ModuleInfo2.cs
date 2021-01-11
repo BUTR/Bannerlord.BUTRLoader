@@ -15,6 +15,8 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
     /// </summary>
     internal sealed class ModuleInfo2 : IEquatable<ModuleInfo2>, IEquatable<ModuleInfo>
     {
+        private static string NativeModuleId = "Native";
+        private static string[] OfficialModuleIds = { NativeModuleId, "SandBox", "SandBoxCore", "StoryMode", "CustomBattle" };
         public static string PathPrefix => Path.Combine(BasePath.Name, "Modules");
 
         public string Id { get; internal set; } = string.Empty;
@@ -157,9 +159,33 @@ namespace Bannerlord.BUTRLoader.ModuleInfoExtended
                     });
                 }
             }
+
+            var requiredGameVersion = moduleNode?.SelectSingleNode("RequiredGameVersion");
+            var requiredGameVersionVal = requiredGameVersion?.Attributes?["value"]?.InnerText ?? string.Empty;
+            var requiredGameVersionOptional = requiredGameVersion?.Attributes?["optional"]?.InnerText?.Equals("true") == true;
+            if (!string.IsNullOrWhiteSpace(requiredGameVersionVal) && ApplicationVersionUtils.TryParse(requiredGameVersionVal, out var gameVersion))
+            {
+                foreach (var moduleId in OfficialModuleIds)
+                {
+                    var isNative = moduleId.Equals(NativeModuleId);
+
+                    // Override any existing metadata
+                    if (DependedModuleMetadatas.Find(dmm => dmm.Id.Equals(moduleId, StringComparison.Ordinal)) is { } module)
+                        DependedModuleMetadatas.Remove(module);
+
+                    DependedModuleMetadatas.Add(new DependedModuleMetadata
+                    {
+                        Id = moduleId,
+                        LoadType = LoadType.LoadBeforeThis,
+                        IsOptional = requiredGameVersionOptional && !isNative,
+                        IsIncompatible = false,
+                        Version = gameVersion
+                    });
+                }
+            }
         }
 
-        public bool IsNative() => Id.Equals("native", StringComparison.OrdinalIgnoreCase);
+        public bool IsNative() => Id.Equals(NativeModuleId, StringComparison.OrdinalIgnoreCase);
 
         public override string ToString() => $"{Id} - {Version}";
 
