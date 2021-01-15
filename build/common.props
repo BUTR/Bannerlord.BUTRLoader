@@ -3,8 +3,9 @@
 
   <!--Development Variables-->
   <PropertyGroup>
-    <Version>1.4.5</Version>
+    <Version>1.5.0</Version>
     <HarmonyVersion>2.0.4</HarmonyVersion>
+    <BUTRSharedVersion>1.5.1.5</BUTRSharedVersion>
     <DebugType>full</DebugType>
   </PropertyGroup>
 

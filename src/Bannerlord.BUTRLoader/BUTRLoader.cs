@@ -1,6 +1,7 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.ModuleInfoExtended;
+﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
+using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches;
+using Bannerlord.BUTRLoader.Patches.Widgets;
 
 using HarmonyLib;
 
@@ -12,9 +13,10 @@ using System.Threading.Tasks;
 using System.Xml;
 
 using TaleWorlds.Core;
+using TaleWorlds.Core.ViewModelCollection;
 using TaleWorlds.MountAndBlade.Launcher.UserDatas;
 
-[assembly:InternalsVisibleTo("Bannerlord.BUTRLoader.Tests")]
+[assembly: InternalsVisibleTo("Bannerlord.BUTRLoader.Tests")]
 
 namespace Bannerlord.BUTRLoader
 {

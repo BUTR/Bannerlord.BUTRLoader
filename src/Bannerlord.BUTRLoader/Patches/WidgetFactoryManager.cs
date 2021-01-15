@@ -9,7 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml;
-
+using TaleWorlds.GauntletUI;
 using TaleWorlds.GauntletUI.PrefabSystem;
 
 namespace Bannerlord.BUTRLoader.Patches
@@ -20,6 +20,7 @@ namespace Bannerlord.BUTRLoader.Patches
     internal static class WidgetFactoryManager
     {
         private static readonly Dictionary<string, Func<WidgetPrefab?>> CustomTypes = new();
+        private static readonly Dictionary<string, Type> BuiltinTypes = new();
         private static readonly Dictionary<string, WidgetPrefab> LiveCustomTypes = new();
         private static readonly Dictionary<string, int> LiveInstanceTracker = new();
 
@@ -42,6 +43,12 @@ namespace Bannerlord.BUTRLoader.Patches
                 widgetFactory.WidgetAttributeContext,
                 string.Empty,
                 doc);
+        }
+
+        public static void Register(Type widgetType)
+        {
+            BuiltinTypes[widgetType.Name] = widgetType;
+            WidgetInfo.ReLoad();
         }
 
         public static void Register(string name, Func<WidgetPrefab?> create)
@@ -81,6 +88,11 @@ namespace Bannerlord.BUTRLoader.Patches
                 prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
             if (!res5) return false;
 
+            var res6 = harmony.TryPatch(
+                SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.CreateBuiltinWidget(null!, null!)),
+                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(CreateBuiltinWidgetPrefix)));
+            if (!res6) return false;
+
             return true;
         }
 
@@ -89,7 +101,19 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void GetWidgetTypesPostfix(ref IEnumerable<string> __result)
         {
-            __result = __result.Concat(CustomTypes.Keys);
+            __result = __result.Concat(BuiltinTypes.Keys).Concat(CustomTypes.Keys);
+        }
+
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool CreateBuiltinWidgetPrefix(UIContext context, string typeName, ref Widget? __result)
+        {
+            if (!BuiltinTypes.TryGetValue(typeName, out var type))
+                return true;
+
+            __result = type.GetConstructor(AccessTools.all, null, new[] { typeof(UIContext) }, null)?.Invoke(new object[] { context }) as Widget;
+            return false;
         }
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
