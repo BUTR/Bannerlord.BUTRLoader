@@ -1,5 +1,5 @@
+using Bannerlord.BUTR.Shared.ModuleInfoExtended;
 using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.ModuleInfoExtended;
 
 using System;
 using System.Collections;
@@ -63,7 +63,7 @@ namespace Bannerlord.BUTRLoader.Tests.Helpers
             SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.IsSelected).SetValue(moduleInfo, model.IsSelected);
             SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.SubModules).SetValue(moduleInfo, model.SubModules);
             SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.DependedModules).SetValue(moduleInfo, model.DependedModules
-                .ConvertAll(dm => new ModuleInfoExtended.DependedModule { ModuleId = dm.ModuleId, Version = dm.Version})
+                .ConvertAll(dm => new BUTR.Shared.ModuleInfoExtended.DependedModule { ModuleId = dm.ModuleId, Version = dm.Version})
             );
             SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.DependedModuleMetadatas).SetValue(moduleInfo, model.DependedModuleMetadatas);
         }

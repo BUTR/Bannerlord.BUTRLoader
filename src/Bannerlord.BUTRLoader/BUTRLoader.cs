@@ -1,7 +1,6 @@
 ﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches;
-using Bannerlord.BUTRLoader.Patches.Widgets;
 
 using HarmonyLib;
 

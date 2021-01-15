@@ -23,10 +23,6 @@
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ApplicationVersionUtils.cs" Link="BUTRLoader\Helpers\ApplicationVersionUtils.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleSorter.cs" Link="BUTRLoader\Helpers\ModuleSorter.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\SymbolExtensions2.cs" Link="BUTRLoader\Helpers\SymbolExtensions2.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\ModuleInfoExtended\DependedModule.cs" Link="BUTRLoader\ModuleInfoExtended\DependedModule.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\ModuleInfoExtended\DependedModuleMetadata.cs" Link="BUTRLoader\ModuleInfoExtended\DependedModuleMetadata.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\ModuleInfoExtended\LoadType.cs" Link="BUTRLoader\ModuleInfoExtended\LoadType.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\ModuleInfoExtended\ModuleInfo2.cs" Link="BUTRLoader\ModuleInfoExtended\ModuleInfo2.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Patches\LauncherModsVMPatch.cs" Link="BUTRLoader\Patches\LauncherModsVMPatch.cs" />
   </ItemGroup>
 
