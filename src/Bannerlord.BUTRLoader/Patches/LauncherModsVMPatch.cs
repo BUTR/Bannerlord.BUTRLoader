@@ -9,50 +9,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher;
 
+using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper;
+
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
     {
-        private static readonly Type? OldModuleInfoType = Type.GetType("TaleWorlds.Library.ModuleInfo, TaleWorlds.Library", false);
-        private static readonly Type? NewModuleInfoType = Type.GetType("TaleWorlds.ModuleManager.ModuleInfo, TaleWorlds.ModuleManager", false);
-
-        private static readonly MethodInfo? GetId;
-        private static readonly MethodInfo? GetAlias;
-
-        private static readonly FieldInfo? GetInfo;
-
-        private static readonly MethodInfo? CastMethod;
-        private static readonly MethodInfo? ToListMethod;
-
-        private delegate string GetIdDelegate(object instance);
-        private delegate string GetAliasDelegate(object instance);
-
-        static LauncherModsVMPatch()
-        {
-            GetInfo = AccessTools.Field(typeof(LauncherModuleVM), "Info");
-
-            if (OldModuleInfoType is { })
-            {
-                GetId = AccessTools.PropertyGetter(OldModuleInfoType, "Id");
-                GetAlias = AccessTools.PropertyGetter(OldModuleInfoType, "Alias");
-                CastMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(OldModuleInfoType);
-                ToListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(OldModuleInfoType);
-            }
-            if (NewModuleInfoType is { })
-            {
-                GetId = AccessTools.PropertyGetter(NewModuleInfoType, "Id");
-                GetAlias = AccessTools.PropertyGetter(NewModuleInfoType, "Alias");
-                CastMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(NewModuleInfoType);
-                ToListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(NewModuleInfoType);
-            }
-        }
-
         internal static readonly Dictionary<string, ModuleInfo2> ExtendedModuleInfoCache = new();
         private static ModuleInfo2 GetExtendedModuleInfo(object moduleInfo)
         {

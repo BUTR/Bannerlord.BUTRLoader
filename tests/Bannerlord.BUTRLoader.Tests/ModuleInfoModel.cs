@@ -1,8 +1,10 @@
-using Bannerlord.BUTRLoader.ModuleInfoExtended;
+using Bannerlord.BUTR.Shared.ModuleInfoExtended;
 
 using System.Collections.Generic;
 
 using TaleWorlds.Library;
+
+using DependedModule = Bannerlord.BUTR.Shared.ModuleInfoExtended.DependedModule;
 
 namespace Bannerlord.BUTRLoader.Tests
 {
@@ -24,7 +26,7 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public bool IsSelected { get; init; }
 
-        public List<SubModuleInfo> SubModules { get; init; } = new();
+        public List<SubModuleInfo2> SubModules { get; init; } = new();
 
         public List<DependedModule> DependedModules { get; init; } = new();
 

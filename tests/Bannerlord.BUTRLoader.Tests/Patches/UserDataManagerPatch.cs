@@ -11,6 +11,8 @@ using System.Runtime.CompilerServices;
 
 using TaleWorlds.MountAndBlade.Launcher.UserDatas;
 
+using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper;
+
 namespace Bannerlord.BUTRLoader.Tests.Patches
 {
     internal class UserDataManagerPatch : IDisposable
@@ -74,7 +76,9 @@ namespace Bannerlord.BUTRLoader.Tests.Patches
                 GameType = GameType.Singleplayer,
                 SingleplayerData = new UserGameTypeData
                 {
-                    ModDatas = _currentModuleStorage!.GetModuleInfos().ConvertAll(mi => new UserModData(mi.Id, mi.IsSelected))
+                    ModDatas = _currentModuleStorage!.GetModuleInfos().ConvertAll(mi => new UserModData(
+                        (string) GetId.Invoke(mi, Array.Empty<object>()),
+                        (bool) GetIsSelected.Invoke(mi, Array.Empty<object>())))
                 }
             };
 

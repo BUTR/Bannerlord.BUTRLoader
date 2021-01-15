@@ -1,20 +1,22 @@
 using Bannerlord.BUTR.Shared.ModuleInfoExtended;
 using Bannerlord.BUTRLoader.Helpers;
 
+using HarmonyLib;
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using TaleWorlds.Library;
+using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper;
 
 namespace Bannerlord.BUTRLoader.Tests.Helpers
 {
     internal static class ModuleInfoHelper
     {
-        public static ModuleInfo ModuleInfo(ModuleInfoModel model)
+        public static object ModuleInfo(ModuleInfoModel model)
         {
-            var moduleInfo = new ModuleInfo();
+            var moduleInfo = Activator.CreateInstance(OldModuleInfoType ?? NewModuleInfoType);
             Populate(model, moduleInfo);
             return moduleInfo;
         }
@@ -25,25 +27,52 @@ namespace Bannerlord.BUTRLoader.Tests.Helpers
             return moduleInfo;
         }
 
-        public static void Populate(ModuleInfoModel model, ModuleInfo moduleInfo)
+        public static void Populate(SubModuleInfo2 model, object subModule)
         {
-            SymbolExtensions2.GetPropertyInfo((ModuleInfo mi) => mi.Id).SetValue(moduleInfo, model.Id);
-            SymbolExtensions2.GetPropertyInfo((ModuleInfo mi) => mi.Name).SetValue(moduleInfo, model.Name);
-            SymbolExtensions2.GetPropertyInfo((ModuleInfo mi) => mi.IsOfficial).SetValue(moduleInfo, model.IsOfficial);
-            SymbolExtensions2.GetPropertyInfo((ModuleInfo mi) => mi.Version).SetValue(moduleInfo, model.Version);
-            SymbolExtensions2.GetPropertyInfo((ModuleInfo mi) => mi.Alias).SetValue(moduleInfo, model.Alias);
-            SymbolExtensions2.GetPropertyInfo((ModuleInfo mi) => mi.IsSingleplayerModule).SetValue(moduleInfo, model.IsSingleplayerModule);
-            SymbolExtensions2.GetPropertyInfo((ModuleInfo mi) => mi.IsMultiplayerModule).SetValue(moduleInfo, model.IsMultiplayerModule);
-            SymbolExtensions2.GetPropertyInfo((ModuleInfo mi) => mi.IsSelected).SetValue(moduleInfo, model.IsSelected);
-            SymbolExtensions2.GetFieldInfo((ModuleInfo mi) => mi.SubModules).SetValue(moduleInfo, model.SubModules);
-            if (typeof(ModuleInfo).GetField("DependedModules")?.GetValue(moduleInfo) is IList originaNewList)
+            var type = OldSubModuleInfoType ?? NewSubModuleInfoType;
+
+            AccessTools.Property(type, "Name")?.SetValue(subModule, model.Name);
+            AccessTools.Property(type, "DLLName")?.SetValue(subModule, model.DLLName);
+            AccessTools.Property(type, "DLLExists")?.SetValue(subModule, model.DLLExists);
+            AccessTools.Property(type, "Assemblies")?.SetValue(subModule, model.Assemblies);
+            AccessTools.Property(type, "SubModuleClassType")?.SetValue(subModule, model.SubModuleClassType);
+            AccessTools.Property(type, "Tags")?.SetValue(subModule, model.Tags);
+        }
+
+        public static void Populate(ModuleInfoModel model, object moduleInfo)
+        {
+            var type = OldModuleInfoType ?? NewModuleInfoType;
+
+            AccessTools.Property(type, "Id")?.SetValue(moduleInfo, model.Id);
+            AccessTools.Property(type, "Name")?.SetValue(moduleInfo, model.Name);
+            AccessTools.Property(type, "IsOfficial")?.SetValue(moduleInfo, model.IsOfficial);
+            AccessTools.Property(type, "Version")?.SetValue(moduleInfo, model.Version);
+            AccessTools.Property(type, "Alias")?.SetValue(moduleInfo, model.Alias);
+            AccessTools.Property(type, "IsSingleplayerModule")?.SetValue(moduleInfo, model.IsSingleplayerModule);
+            AccessTools.Property(type, "IsMultiplayerModule")?.SetValue(moduleInfo, model.IsMultiplayerModule);
+            AccessTools.Property(type, "IsSelected")?.SetValue(moduleInfo, model.IsSelected);
+            if (type.GetField("SubModules")?.GetValue(moduleInfo) is IList subModules)
             {
-                var dependedModuleType = typeof(ApplicationVersion).Assembly.GetType("TaleWorlds.Library.DependedModule");
-                originaNewList.Clear();
-                foreach (var dependedModule in model.DependedModules.Select(dm => Activator.CreateInstance(dependedModuleType, dm.ModuleId, dm.Version)))
-                    originaNewList.Add(dependedModule);
+                var subModuleInfoType = OldSubModuleInfoType ?? NewSubModuleInfoType;
+                subModules.Clear();
+                foreach (var subModule in model.SubModules.Select(dm =>
+                {
+                    var sub = Activator.CreateInstance(subModuleInfoType);
+                    Populate(dm, sub);
+                    return sub;
+                }))
+                {
+                    subModules.Add(subModule);
+                }
             }
-            if (typeof(ModuleInfo).GetField("DependedModuleIds")?.GetValue(moduleInfo) is List<string> originalList)
+            if (type.GetField("DependedModules")?.GetValue(moduleInfo) is IList originalNewList)
+            {
+                var dependedModuleType = OldDependedModuleType ?? NewDependedModuleType;
+                originalNewList.Clear();
+                foreach (var dependedModule in model.DependedModules.Select(dm => Activator.CreateInstance(dependedModuleType, dm.ModuleId, dm.Version)))
+                    originalNewList.Add(dependedModule);
+            }
+            if (type.GetField("DependedModuleIds")?.GetValue(moduleInfo) is List<string> originalList)
             {
                 originalList.Clear();
                 foreach (var dependedModule in model.DependedModules)

@@ -1,11 +1,13 @@
+using Bannerlord.BUTR.Shared.ModuleInfoExtended;
 using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.ModuleInfoExtended;
-using Bannerlord.BUTRLoader.Tests.Helpers;
 
 using System.Collections.Generic;
 using System.Linq;
 
 using TaleWorlds.Library;
+
+using DependedModule = Bannerlord.BUTR.Shared.ModuleInfoExtended.DependedModule;
+using ModuleInfoHelper = Bannerlord.BUTRLoader.Tests.Helpers.ModuleInfoHelper;
 
 namespace Bannerlord.BUTRLoader.Tests
 {
@@ -462,7 +464,7 @@ namespace Bannerlord.BUTRLoader.Tests
         public List<ModuleInfoModel> ModuleInfoModels => Tuple.ModuleInfoModels;
         public List<string> ExpectedIdOrder => Tuple.ExpectedIdOrder;
 
-        public List<ModuleInfo> GetModuleInfos() => PreSort(ModuleInfoModels).Select(ModuleInfoHelper.ModuleInfo).ToList();
+        public List<object> GetModuleInfos() => PreSort(ModuleInfoModels).Select(ModuleInfoHelper.ModuleInfo).ToList();
         public List<ModuleInfo2> GetModuleInfo2s() => PreSort(ModuleInfoModels).Select(ModuleInfoHelper.ModuleInfo2).ToList();
 
         private static IEnumerable<ModuleInfoModel> PreSort(IEnumerable<ModuleInfoModel> source) => source
