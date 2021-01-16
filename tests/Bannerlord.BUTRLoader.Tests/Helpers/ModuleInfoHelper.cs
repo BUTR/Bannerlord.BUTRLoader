@@ -86,7 +86,6 @@ namespace Bannerlord.BUTRLoader.Tests.Helpers
             SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.Name).SetValue(moduleInfo, model.Name);
             SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.IsOfficial).SetValue(moduleInfo, model.IsOfficial);
             SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.Version).SetValue(moduleInfo, model.Version);
-            SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.Alias).SetValue(moduleInfo, model.Alias);
             SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.IsSingleplayerModule).SetValue(moduleInfo, model.IsSingleplayerModule);
             SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.IsMultiplayerModule).SetValue(moduleInfo, model.IsMultiplayerModule);
             SymbolExtensions2.GetPropertyInfo((ModuleInfo2 mi) => mi.IsSelected).SetValue(moduleInfo, model.IsSelected);
