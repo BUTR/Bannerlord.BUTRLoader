@@ -193,7 +193,7 @@ namespace Bannerlord.BUTRLoader.Patches
             // Do not load this mod if an incompatible mod is selected
             foreach (var metadata in moduleInfo2.DependedModuleMetadatas.Where(m => m.IsIncompatible))
             {
-                var moduleVM = instance.Modules.FirstOrDefault(m => (string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>()) == metadata.Id);
+                var moduleVM = instance.Modules.FirstOrDefault(m => ((string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>())) == metadata.Id);
 
                 // If the incompatible mod is selected, this mod is disabled
                 if (moduleVM?.IsSelected == true)
@@ -209,7 +209,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
                 foreach (var metadata in moduleInfo.DependedModuleMetadatas.Where(m => m.IsIncompatible && m.Id == moduleInfo2.Id))
                 {
-                    var moduleVM = instance.Modules.FirstOrDefault(m => (string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>()) == key);
+                    var moduleVM = instance.Modules.FirstOrDefault(m => ((string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>())) == key);
 
                     // If the incompatible mod is selected, this mod is disabled
                     if (moduleVM?.IsSelected == true)
@@ -253,7 +253,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 // Select all dependencies if they are not selected
                 foreach (var module in instance.Modules)
                 {
-                    if (!module.IsSelected && dependencies.Any(d => d.Id == (string) GetId.Invoke(GetInfo.GetValue(module), Array.Empty<object>())))
+                    if (!module.IsSelected && dependencies.Any(d => d.Id == ((string) GetId.Invoke(GetInfo.GetValue(module), Array.Empty<object>()))))
                         ChangeIsSelectedOf(instance, module, modules, visited);
                         //module.IsSelected |= allDependencies.Any(id => id == module.Info.Id);
                 }
@@ -261,7 +261,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 // Deselect and disable any mod that is incompatible with this one
                 foreach (var dmm in targetModuleInfo2.DependedModuleMetadatas.Where(dmm => dmm.IsIncompatible))
                 {
-                    var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => (string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>()) == dmm.Id);
+                    var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => ((string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>())) == dmm.Id);
                     if (incompatibleModuleVM is not null)
                     {
                         if (incompatibleModuleVM.IsSelected)
@@ -276,7 +276,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 {
                     foreach (var dmm in moduleInfo.DependedModuleMetadatas.Where(dmm => dmm.IsIncompatible && dmm.Id == targetModuleInfo2.Id))
                     {
-                        var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => (string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>()) == key);
+                        var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => ((string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>())) == key);
                         if (incompatibleModuleVM is not null)
                         {
                             if (incompatibleModuleVM.IsSelected)
@@ -292,7 +292,7 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 // Vanilla check
                 // Deselect all modules that depend on this module if they are selected
-                foreach (var module in instance.Modules.Where(m => !m.IsOfficial))
+                foreach (var module in instance.Modules/*.Where(m => !m.IsOfficial)*/)
                 {
                     var moduleInfo2 = GetExtendedModuleInfo(GetInfo.GetValue(module));
                     var dependencies2 = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, moduleInfo2, skipExternalDependencies: true);

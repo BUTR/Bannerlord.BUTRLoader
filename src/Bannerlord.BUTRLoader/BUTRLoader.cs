@@ -96,6 +96,7 @@ namespace Bannerlord.BUTRLoader
 
             ProgramPatch.Enable(harmony);
             UserDataManagerPatch.Enable(harmony);
+            LauncherModuleVMPatch.Enable(harmony);
             LauncherModsVMPatch.Enable(harmony);
             LauncherUIPatch.Enable(harmony);
             WidgetPrefabPatch.Enable(harmony);
