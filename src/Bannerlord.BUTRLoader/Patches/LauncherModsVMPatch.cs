@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
+﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.BUTR.Shared.ModuleInfoExtended;
 using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 
@@ -107,11 +108,20 @@ namespace Bannerlord.BUTRLoader.Patches
 
             var info2 = GetExtendedModuleInfo(info);
 
+            // External dependencies should not disable a mod. Instead, they itself should be disabled
+            __result = true;
             var visited = new HashSet<ModuleInfo2>();
-            var dependencies = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, info2, visited);
+            foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, info2, visited, true))
+            {
+                if (!ModuleIsCorrect(__instance, dependency, ____modulesCache, visited))
+                {
+                    if (dependency != info2)
+                        AppendIssue(__instance, info2, $"'{dependency.Name}' has unresolved issues!");
 
-            // Iterate each dependency including this
-            __result = dependencies.All(dependency => ModuleIsCorrect(__instance, dependency, ____modulesCache, visited));
+                    __result = false;
+                    return false;
+                }
+            }
             return false;
         }
         private static bool AreAllDependenciesOfModulePresent(LauncherModsVM launcherModsVM, object moduleInfo, List<object> modulesCache)
@@ -126,7 +136,10 @@ namespace Bannerlord.BUTRLoader.Patches
             foreach (var dependency in moduleInfo2.DependedModules)
             {
                 if (!ExtendedModuleInfoCache.ContainsKey(dependency.ModuleId))
+                {
+                    AppendIssue(instance, moduleInfo2, $"Missing {dependency.ModuleId} {dependency.Version}");
                     return false;
+                }
             }
             foreach (var metadata in moduleInfo2.DependedModuleMetadatas)
             {
@@ -136,30 +149,17 @@ namespace Bannerlord.BUTRLoader.Patches
                 if (metadata.IsIncompatible) continue;
 
                 if (!ExtendedModuleInfoCache.ContainsKey(metadata.Id))
+                {
+                    if (metadata.Version != ApplicationVersionHelper.Empty)
+                        AppendIssue(instance, moduleInfo2, $"Missing {metadata.Id} {metadata.Version}");
+                    if (metadata.VersionRange != ApplicationVersionRange.Empty)
+                        AppendIssue(instance, moduleInfo2, $"Missing {metadata.Id} {metadata.VersionRange}");
                     return false;
+                }
             }
-
-
-            var dependencies = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, moduleInfo2, visited).ToArray();
 
             // Check that the dependencies themselves have all dependencies present
-            foreach (var dependency in dependencies)
-            {
-                var metadata = moduleInfo2.DependedModuleMetadatas.Find(dmm => dmm.Id == dependency.Id);
-
-                // Ignore the check for Optional
-                if (metadata.IsOptional) continue;
-
-                // Ignore the check for Incompatible
-                if (metadata.IsIncompatible) continue;
-
-                var module = modules.Find(m => ((string) GetId!.Invoke(m, Array.Empty<object>())) == dependency.Id);
-                if (!ModuleIsCorrect(instance, GetExtendedModuleInfo(module), modules, visited))
-                    return false;
-            }
-
-            // Check that all present dependencies are valid
-            foreach (var dependency in dependencies)
+            foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, moduleInfo2, visited).ToArray())
             {
                 var metadata = moduleInfo2.DependedModuleMetadatas.Find(dmm => dmm.Id == dependency.Id);
 
@@ -172,32 +172,71 @@ namespace Bannerlord.BUTRLoader.Patches
                 // Ignore the check for Incompatible
                 if (metadata.IsIncompatible) continue;
 
-                if (!ExtendedModuleInfoCache.ContainsKey(dependency.Id))
+                var module = modules.Find(m => ((string) GetId!.Invoke(m, Array.Empty<object>())) == dependency.Id);
+                var moduleIsCorrect = ModuleIsCorrect(instance, GetExtendedModuleInfo(module), modules, visited);
+                //if (!moduleIsCorrect)
+                //    return false;
+                // Handle only direct dependencies
+                if (metadata.LoadType != LoadType.LoadAfterThis && !moduleIsCorrect)
+                {
+                    AppendIssue(instance, moduleInfo2, $"'{dependency.Name}' has unresolved issues!");
                     return false;
+                }
             }
 
             // Check that the dependencies have the minimum required version set by DependedModuleMetadatas
             var comparer = new ApplicationVersionFullComparer();
-            foreach (var metadata in moduleInfo2.DependedModuleMetadatas.Where(m => !m.IsOptional && !m.IsIncompatible))
+            foreach (var metadata in moduleInfo2.DependedModuleMetadatas.Where(m => /*!m.IsOptional &&*/ !m.IsIncompatible))
             {
-                // Ignore the check for non-provided versions
-                if (metadata.Version == ApplicationVersion.Empty) continue;
+                // Handle only direct dependencies
+                if (metadata.LoadType != LoadType.LoadBeforeThis) continue;
 
-                if (!ExtendedModuleInfoCache.TryGetValue(metadata.Id, out var dependedModule))
-                    return false;
-                // dependedModuleMetadata.Version > dependedModule.Version
-                if (dependedModule is null || comparer.Compare(metadata.Version, dependedModule.Version) > 0)
-                    return false;
+                // Ignore the check for non-provided versions
+                if (metadata.Version == ApplicationVersionHelper.Empty && metadata.VersionRange == ApplicationVersionRange.Empty) continue;
+
+                var dependedModule = ExtendedModuleInfoCache[metadata.Id];
+
+                if (metadata.Version != ApplicationVersion.Empty)
+                {
+                    // dependedModuleMetadata.Version > dependedModule.Version
+                    if (!metadata.IsOptional && (comparer.Compare(metadata.Version, dependedModule.Version) > 0))
+                    {
+                        AppendIssue(instance, moduleInfo2, $"'{dependedModule.Name}' wrong version <= {metadata.Version}");
+                        return false;
+                    }
+                }
+
+                if (metadata.VersionRange != ApplicationVersionRange.Empty)
+                {
+                    // dependedModuleMetadata.Version > dependedModule.VersionRange.Min
+                    // dependedModuleMetadata.Version < dependedModule.VersionRange.Max
+                    if (!metadata.IsOptional)
+                    {
+                        if (comparer.Compare(metadata.VersionRange.Min, dependedModule.Version) > 0)
+                        {
+                            AppendIssue(instance, moduleInfo2, $"'{dependedModule.Name}' wrong version < [{metadata.VersionRange}]");
+                            return false;
+                        }
+                        if (comparer.Compare(metadata.VersionRange.Max, dependedModule.Version) < 0)
+                        {
+                            AppendIssue(instance, moduleInfo2, $"'{dependedModule.Name}' wrong version > [{metadata.VersionRange}]");
+                            return false;
+                        }
+                    }
+                }
             }
 
             // Do not load this mod if an incompatible mod is selected
             foreach (var metadata in moduleInfo2.DependedModuleMetadatas.Where(m => m.IsIncompatible))
             {
-                var moduleVM = instance.Modules.FirstOrDefault(m => ((string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>())) == metadata.Id);
+                var moduleVM2 = instance.Modules.FirstOrDefault(m => ((string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>())) == metadata.Id);
 
                 // If the incompatible mod is selected, this mod is disabled
-                if (moduleVM?.IsSelected == true)
+                if (moduleVM2?.IsSelected == true)
+                {
+                    AppendIssue(instance, moduleInfo2, $"'{moduleVM2.Name}' is incompatible with this");
                     return false;
+                }
             }
 
             // If another mod declared incompatibility and is selected, disable this
@@ -209,14 +248,18 @@ namespace Bannerlord.BUTRLoader.Patches
 
                 foreach (var metadata in moduleInfo.DependedModuleMetadatas.Where(m => m.IsIncompatible && m.Id == moduleInfo2.Id))
                 {
-                    var moduleVM = instance.Modules.FirstOrDefault(m => ((string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>())) == key);
+                    var moduleVM2 = instance.Modules.FirstOrDefault(m => ((string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>())) == key);
 
                     // If the incompatible mod is selected, this mod is disabled
-                    if (moduleVM?.IsSelected == true)
+                    if (moduleVM2?.IsSelected == true)
+                    {
+                        AppendIssue(instance, moduleInfo2, $"'{moduleVM2.Name}' is incompatible with this");
                         return false;
+                    }
                 }
             }
 
+            ClearIssues(instance, moduleInfo2);
             return true;
         }
 
@@ -268,6 +311,7 @@ namespace Bannerlord.BUTRLoader.Patches
                             ChangeIsSelectedOf(instance, incompatibleModuleVM, modules, visited);
 
                         incompatibleModuleVM.IsDisabled = true;
+                        AppendIssue(incompatibleModuleVM, $"'{targetModuleInfo2.Name}' is incompatible with this");
                     }
                 }
 
@@ -307,6 +351,7 @@ namespace Bannerlord.BUTRLoader.Patches
                     if (incompatibleModuleVM is not null )
                     {
                         incompatibleModuleVM.IsDisabled = false;
+                        ClearIssues(incompatibleModuleVM);
                     }
                 }
 
@@ -326,6 +371,59 @@ namespace Bannerlord.BUTRLoader.Patches
             }
 
             //targetModule.IsDisabled = !AreAllDependenciesOfModulePresent(instance, targetModule.Info, modules);
+        }
+
+
+        public static void AppendIssue(LauncherModsVM viewModel, ModuleInfo2 moduleInfo2, string issue)
+        {
+            //viewModel.ExecuteCommand("SetIssue", new object[] { moduleInfo2.Id,  new string[] { issue } });
+            SetIssue(moduleInfo2.Id,  new string[] { issue });
+
+            var moduleVM = viewModel.Modules.FirstOrDefault(m => ((string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>())) == moduleInfo2.Id);
+            moduleVM?.ExecuteCommand("UpdateIssues", Array.Empty<object>());
+        }
+        public static void AppendIssue(LauncherModuleVM viewModel, string issue)
+        {
+            var id = ((string) GetId.Invoke(GetInfo.GetValue(viewModel), Array.Empty<object>()));
+            SetIssue(id,  new string[] { issue });
+
+            viewModel.ExecuteCommand("UpdateIssues", Array.Empty<object>());
+        }
+        public static void ClearIssues(LauncherModsVM viewModel, ModuleInfo2 moduleInfo2)
+        {
+            //Issues.Remove(moduleInfo2.Id);
+            if (Issues.TryGetValue(moduleInfo2.Id, out var list))
+                list.Clear();
+
+            var moduleVM = viewModel.Modules.FirstOrDefault(m => ((string) GetId.Invoke(GetInfo.GetValue(m), Array.Empty<object>())) == moduleInfo2.Id);
+            moduleVM?.ExecuteCommand("UpdateIssues", Array.Empty<object>());
+        }
+        public static void ClearIssues(LauncherModuleVM viewModel)
+        {
+            var id = ((string) GetId.Invoke(GetInfo.GetValue(viewModel), Array.Empty<object>()));
+
+            //Issues.Remove(moduleInfo2.Id);
+            if (Issues.TryGetValue(id, out var list))
+                list.Clear();
+
+            viewModel.ExecuteCommand("UpdateIssues", Array.Empty<object>());
+        }
+
+        public static Dictionary<string, HashSet<string>> Issues = new();
+        private static void SetIssue(string moduleId, string[] issues)
+        {
+            if (Issues.TryGetValue(moduleId, out var list))
+            {
+                foreach (var issue in issues)
+                {
+                    if (!list.Contains(issue))
+                        list.Add(issue);
+                }
+            }
+            else
+            {
+                Issues.Add(moduleId, new HashSet<string>(issues));
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
+﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.BUTR.Shared.ModuleInfoExtended;
 
 using Newtonsoft.Json;
 
@@ -70,7 +71,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             var modData = moduleInfos
                 .Where(m => !string.IsNullOrWhiteSpace(m.Url))
-                .Select(m => new RequestModData(m.Id, ApplicationVersionUtils.ToString(m.Version), m.Url))
+                .Select(m => new RequestModData(m.Id, ApplicationVersionHelper.ToString(m.Version), m.Url))
                 .ToList();
             if (checkLauncher)
             {

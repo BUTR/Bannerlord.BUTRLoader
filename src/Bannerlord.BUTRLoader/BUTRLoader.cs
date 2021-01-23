@@ -99,7 +99,10 @@ namespace Bannerlord.BUTRLoader
             LauncherModuleVMPatch.Enable(harmony);
             LauncherModsVMPatch.Enable(harmony);
             LauncherUIPatch.Enable(harmony);
+            ViewModelPatch.Enable(harmony);
             WidgetPrefabPatch.Enable(harmony);
+            BrushFactoryManager.Enable(harmony);
+            BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
             WidgetFactoryManager.Enable(harmony);
             WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
 

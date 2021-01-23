@@ -1,0 +1,12 @@
+<Brushes>
+
+  <Brush Name="Launcher.Mods.IssueText" Font="FiraSansExtraCondensed-Regular" TextHorizontalAlignment="Left" TextVerticalAlignment="Center">
+    <Layers>
+    </Layers>
+    <Styles>
+      <Style Name="Default" FontColor="#E6C8A6FF" TextAlphaFactor="0.8" TextBlur="0" TextOutlineAmount="0" TextGlowRadius="0" FontSize="20" />
+      <Style Name="Hovered" TextAlphaFactor="1.0" />
+    </Styles>
+  </Brush>
+
+</Brushes>

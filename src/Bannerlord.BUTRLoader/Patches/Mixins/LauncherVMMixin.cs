@@ -6,6 +6,7 @@ using HarmonyLib;
 using System.Collections.Generic;
 using System.Reflection;
 
+using TaleWorlds.GauntletUI;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher;
 using TaleWorlds.MountAndBlade.Launcher.UserDatas;
@@ -45,7 +46,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     _launcherVM.OnPropertyChanged(nameof(IsSingleplayer));
                     _launcherVM.OnPropertyChanged(nameof(IsOptions));
 
+                    _launcherVM.OnPropertyChanged(nameof(IsNotSingleplayer));
                     _launcherVM.OnPropertyChanged(nameof(IsNotOptions));
+                    _launcherVM.OnPropertyChanged(nameof(PlayButtonAlignment));
                     _launcherVM.OnPropertyChanged(nameof(SkipNews));
                     _launcherVM.OnPropertyChanged(nameof(SkipMods));
 
@@ -57,6 +60,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 }
             }
         }
+        public bool IsNotSingleplayer => !IsSingleplayer;
 
         public bool IsMultiplayer
         {
@@ -76,7 +80,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     _launcherVM.OnPropertyChanged(nameof(IsMultiplayer));
                     _launcherVM.OnPropertyChanged(nameof(IsOptions));
 
+                    _launcherVM.OnPropertyChanged(nameof(IsNotSingleplayer));
                     _launcherVM.OnPropertyChanged(nameof(IsNotOptions));
+                    _launcherVM.OnPropertyChanged(nameof(PlayButtonAlignment));
                     _launcherVM.OnPropertyChanged(nameof(SkipNews));
                     _launcherVM.OnPropertyChanged(nameof(SkipMods));
 
@@ -104,7 +110,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     RandomImageSwitch = !RandomImageSwitch;
 
+                    _launcherVM.OnPropertyChanged(nameof(IsNotSingleplayer));
                     _launcherVM.OnPropertyChanged(nameof(IsNotOptions));
+                    _launcherVM.OnPropertyChanged(nameof(PlayButtonAlignment));
                     _launcherVM.OnPropertyChanged(nameof(SkipNews));
                     _launcherVM.OnPropertyChanged(nameof(SkipMods));
 
@@ -115,6 +123,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             }
         }
         public bool IsNotOptions => !IsOptions;
+
+        public HorizontalAlignment PlayButtonAlignment => _state == TopTabs.Singleplayer ? HorizontalAlignment.Right : HorizontalAlignment.Center;
 
         public bool SkipNews => !IsSingleplayer && !IsMultiplayer;
         public bool SkipMods => !IsSingleplayer;
@@ -209,9 +219,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             }
 
             SetVMProperty(nameof(IsSingleplayer));
+            SetVMProperty(nameof(IsNotSingleplayer));
             SetVMProperty(nameof(IsMultiplayer));
             SetVMProperty(nameof(IsOptions));
             SetVMProperty(nameof(IsNotOptions));
+            SetVMProperty(nameof(PlayButtonAlignment));
             SetVMProperty(nameof(SkipNews));
             SetVMProperty(nameof(SkipMods));
             SetVMProperty(nameof(RandomImageSwitch));

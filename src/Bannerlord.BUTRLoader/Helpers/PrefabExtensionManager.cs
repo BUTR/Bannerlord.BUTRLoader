@@ -8,35 +8,15 @@ namespace Bannerlord.BUTRLoader.Helpers
     /// <summary>
     /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/IPrefabPatch.cs
     /// </summary>
-    internal interface IPrefabPatch
-    {
-        string Id { get; }
-    }
+    internal interface IPrefabPatch  { }
 
     /// <summary>
     /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/PrefabExtensionSetAttributePatch.cs
     /// </summary>
     internal abstract class PrefabExtensionSetAttributePatch : IPrefabPatch
     {
-        public abstract string Id { get; }
         public abstract string Attribute { get; }
         public abstract string Value { get; }
-    }
-
-    /// <summary>
-    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/InsertPatch.cs
-    /// </summary>
-    internal abstract class InsertPatch : IPrefabPatch
-    {
-        public const int PositionFirst = 0;
-
-        public const int PositionLast = int.MaxValue;
-
-        public abstract string Id { get; }
-
-        public abstract int Position { get; }
-
-        public abstract XmlDocument GetPrefabExtension();
     }
 
     /// <summary>
@@ -48,24 +28,23 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         public virtual InsertType Type => InsertType.Append;
 
-        public abstract string Id { get; }
-
         public abstract XmlDocument GetPrefabExtension();
     }
-
-    /// <summary>
-    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/PrefabExtensionInsertPatch.cs
-    /// </summary>
-    internal abstract class PrefabExtensionInsertPatch : InsertPatch { }
 
     /// <summary>
     /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/PrefabExtensionReplacePatch.cs
     /// </summary>
     internal abstract class PrefabExtensionReplacePatch : IPrefabPatch
     {
-        public abstract string Id { get; }
-
         public abstract XmlDocument GetPrefabExtension();
+    }
+
+    /// <summary>
+    /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/CustomPatch.cs
+    /// </summary>
+    internal abstract class PrefabExtensionCustomPatch<T> : IPrefabPatch where T : XmlNode
+    {
+        public abstract void Apply(T obj);
     }
 
     /// <summary>
@@ -121,34 +100,6 @@ namespace Bannerlord.BUTRLoader.Helpers
                 }
 
                 node.Attributes![patch.Attribute].Value = patch.Value;
-            });
-        }
-
-        public static void RegisterPatch(string movie, string? xpath, PrefabExtensionInsertPatch patch)
-        {
-            RegisterPatch(movie, xpath, node =>
-            {
-                var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument;
-                if (ownerDocument is null)
-                {
-                    return;
-                }
-
-                var extensionNode = patch.GetPrefabExtension().DocumentElement;
-                if (extensionNode is null)
-                {
-                    return;
-                }
-
-                var importedExtensionNode = ownerDocument.ImportNode(extensionNode, true);
-                var position = Math.Min(patch.Position, node.ChildNodes.Count - 1);
-                position = Math.Max(position, 0);
-                if (position >= node.ChildNodes.Count)
-                {
-                    return;
-                }
-
-                node.InsertAfter(importedExtensionNode, node.ChildNodes[position]);
             });
         }
 

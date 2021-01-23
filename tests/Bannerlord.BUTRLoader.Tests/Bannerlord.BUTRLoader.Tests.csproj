@@ -26,7 +26,6 @@
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\AlphanumComparatorFast.cs" Link="BUTRLoader\Helpers\AlphanumComparatorFast.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ApplicationVersionComparer.cs" Link="BUTRLoader\Helpers\ApplicationVersionComparer.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ApplicationVersionFullComparer.cs" Link="BUTRLoader\Helpers\ApplicationVersionFullComparer.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ApplicationVersionUtils.cs" Link="BUTRLoader\Helpers\ApplicationVersionUtils.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleSorter.cs" Link="BUTRLoader\Helpers\ModuleSorter.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleInfoHelper.cs" Link="BUTRLoader\Helpers\ModuleInfoHelper.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\SymbolExtensions2.cs" Link="BUTRLoader\Helpers\SymbolExtensions2.cs" />

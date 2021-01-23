@@ -12,7 +12,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/TextWidget[1]";
 
-        public override string Id => "UILauncherPrefabExtension1";
         public override InsertType Type { get; } = InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();
 
@@ -34,7 +33,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/TextWidget[1]";
 
-        public override string Id => "UILauncherPrefabExtension2";
         public override InsertType Type { get; } = InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();
 
@@ -57,7 +55,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/Widget[1]/Children/ListPanel/Children/ButtonWidget[1]";
 
-        public override string Id => "UILauncherPrefabExtension3";
         public override InsertType Type { get; } = InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();
 
@@ -83,7 +80,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/Widget[1]/Children/Widget[1]";
 
-        public override string Id => "UILauncherPrefabExtension4";
         public override string Attribute => "MarginLeft";
         public override string Value => "125";
     }
@@ -96,7 +92,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/Widget[1]/Children/Widget[1]";
 
-        public override string Id => "UILauncherPrefabExtension5";
         public override InsertType Type { get; } = InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();
 
@@ -118,7 +113,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[2]";
 
-        public override string Id => "UILauncherPrefabExtension6";
         public override InsertType Type { get; } = InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();
 
@@ -144,7 +138,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/TabControl/Children/Launcher.Mods";
 
-        public override string Id => "UILauncherPrefabExtension7";
         public override InsertType Type { get; } = InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();
 
@@ -166,7 +159,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[2]";
 
-        public override string Id => "UILauncherPrefabExtension8";
         public override string Attribute => "IsHidden";
         public override string Value => "@SkipMods";
     }
@@ -179,7 +171,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[1]";
 
-        public override string Id => "UILauncherPrefabExtension9";
         public override string Attribute => "IsHidden";
         public override string Value => "@SkipNews";
     }
@@ -192,7 +183,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/LauncherRandomImageWidget";
 
-        public override string Id => "UILauncherPrefabExtension10";
         public override string Attribute => "ChangeTrigger";
         public override string Value => "@RandomImageSwitch";
     }
@@ -205,7 +195,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "descendant::ButtonWidget[@Id='PlayButton']";
 
-        public override string Id => "UILauncherPrefabExtension11";
         public override string Attribute => "IsHidden";
         public override string Value => "@IsOptions";
     }
@@ -218,8 +207,42 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/TabControl/Children/Launcher.News";
 
-        public override string Id => "UILauncherPrefabExtension12";
         public override string Attribute => "IsDisabled";
         public override string Value => "@IsDisabledOnMultiplayer";
     }
+
+#if CONTINUE
+    internal sealed class UILauncherPrefabExtension13 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie { get; } = "UILauncher";
+        public static string XPath { get; } = "descendant::ButtonWidget[@Id='PlayButton']";
+
+        public override string Attribute => "HorizontalAlignment";
+        public override string Value => "@PlayButtonAlignment";
+    }
+
+    internal sealed class UILauncherPrefabExtension14 : PrefabExtensionInsertAsSiblingPatch
+    {
+        public static string Movie { get; } = "UILauncher";
+        public static string XPath { get; } = "descendant::ButtonWidget[@Id='PlayButton']";
+
+        public override InsertType Type { get; } = InsertType.Append;
+        private XmlDocument XmlDocument { get; } = new();
+
+        public UILauncherPrefabExtension14()
+        {
+            XmlDocument.LoadXml(@"
+<ButtonWidget Id=""ContinueButton"" DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""!PlayButton.Frame.Width"" SuggestedHeight=""!PlayButton.Frame.Height"" HorizontalAlignment=""Left"" VerticalAlignment=""Bottom"" MarginBottom=""18"" Command.Click=""ExecuteStartGame"" UpdateChildrenStates=""true"" IsHidden=""@IsNotSingleplayer"">
+  <Children>
+    <BrushWidget WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""!PlayButton.Inner.Width"" SuggestedHeight=""!PlayButton.Inner.Height"" HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Brush=""Launcher.PlayButton.Inner.Singleplayer"" />
+    <TextWidget  WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" PositionYOffset=""2"" Brush=""Launcher.PlayButton.Text"" Text=""Continue"" />
+    <BrushWidget WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""!PlayButton.Frame.Width"" SuggestedHeight=""!PlayButton.Frame.Height"" HorizontalAlignment=""Center"" VerticalAlignment=""Center"" Brush=""Launcher.PlayButton.Frame"" />
+  </Children>
+</ButtonWidget>
+");
+        }
+
+        public override XmlDocument GetPrefabExtension() => XmlDocument;
+    }
+#endif
 }

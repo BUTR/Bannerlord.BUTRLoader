@@ -38,12 +38,13 @@ namespace Bannerlord.BUTRLoader.Patches
         private static void LauncherModuleVMConstructorPostfix(LauncherModuleVM __instance, Delegate __3)
         {
             // Do not disable Native mods
-            if (GetInfo.GetValue(__instance) is { } info && GetId.Invoke(info, Array.Empty<object>()) is string id)
+            if (GetInfo?.GetValue(__instance) is { } info && GetId?.Invoke(info, Array.Empty<object>()) is string id)
             {
                 // Except the Native mod
                 if (id.Equals("native", StringComparison.OrdinalIgnoreCase))
                     return;
 
+                // Recalculate IsDisabled since it checked for IsOfficial
                 __instance.IsDisabled = !((bool) __3.DynamicInvoke(GetInfo.GetValue(__instance)));
             }
         }

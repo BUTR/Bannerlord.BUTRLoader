@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\Brushes\Launcher.xml" />
     <EmbeddedResource Include="Resources\Prefabs\Launcher.Options.xml" />
   </ItemGroup>
 
