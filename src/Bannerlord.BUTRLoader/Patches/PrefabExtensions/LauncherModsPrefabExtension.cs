@@ -15,14 +15,15 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public LauncherModsPrefabExtension1()
         {
             XmlDocument.LoadXml(@"
-<ButtonWidget HeightSizePolicy=""CoverChildren"" WidthSizePolicy=""Fixed"" VerticalAlignment=""Center""
-              SuggestedWidth=""200"" MarginLeft=""-200""
-              IsDisabled=""@HasNoIssues"" IsVisible=""@HasIssues"" Command.Click=""ExecuteExpander"" UpdateChildrenStates=""true"" DoNotPassEventsToChildren=""true"">
+<Widget WidthSizePolicy=""Fixed"" HeightSizePolicy=""CoverChildren"" SuggestedWidth=""200"" MarginLeft=""-200""
+        IsVisible=""@HasIssues"" UpdateChildrenStates=""true"">
   <Children>
-    <TextWidget Text=""@Expander"" HeightSizePolicy=""CoverChildren"" WidthSizePolicy=""CoverChildren"" HorizontalAlignment=""Left""
-                PositionYOffset=""2"" Brush=""Launcher.Mods.ModNameText"" VerticalAlignment=""Center""/>
+    <ButtonWidget WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""40"" SuggestedHeight=""40""
+                  HorizontalAlignment=""Left"" VerticalAlignment=""Center""
+                  ButtonType=""Toggle"" Brush=""Launcher.Mods.ExpandIndicator"" IsSelected=""@IsExpanded""
+                  DoNotPassEventsToChildren=""true""/>
   </Children>
-</ButtonWidget>
+</Widget>
 ");
         }
 

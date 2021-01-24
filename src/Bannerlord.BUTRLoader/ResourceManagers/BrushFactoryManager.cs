@@ -12,32 +12,26 @@ using System.Xml;
 
 using TaleWorlds.GauntletUI;
 
-namespace Bannerlord.BUTRLoader.Patches
+namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     public static class BrushFactoryManager
     {
-        private static readonly List<Func<IEnumerable<Brush>>> Lazy = new();
         private static readonly Dictionary<string, Brush> CustomBrushes = new();
+        private static readonly List<Func<IEnumerable<Brush>>> DeferredInitialization = new();
 
         private delegate Brush LoadBrushFromDelegate(BrushFactory instance, XmlNode brushNode);
-
         private static readonly LoadBrushFromDelegate? LoadBrushFrom =
             AccessTools2.GetDelegate<LoadBrushFromDelegate>(typeof(BrushFactory), "LoadBrushFrom");
 
         private static Harmony? _harmony;
-
         private static WeakReference<BrushFactory?> BrushFactoryReference { get; } = new(null);
-
         public static void SetBrushFactory(BrushFactory brushFactory)
         {
             BrushFactoryReference.SetTarget(brushFactory);
 
-            foreach (var lazy in Lazy)
+            foreach (var brush in DeferredInitialization.SelectMany(func => func()))
             {
-                foreach (var brush in lazy())
-                {
-                    CustomBrushes[brush.Name] = brush;
-                }
+                CustomBrushes[brush.Name] = brush;
             }
         }
 
@@ -55,12 +49,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 }
             }
         }
-
-        public static void Register(Func<IEnumerable<Brush>> func)
-        {
-            Lazy.Add(func);
-        }
-
+        public static void Register(Func<IEnumerable<Brush>> func) =>DeferredInitialization.Add(func);
         public static void CreateAndRegister(XmlDocument xmlDocument) => Register(() => Create(xmlDocument));
 
         internal static bool Enable(Harmony harmony)

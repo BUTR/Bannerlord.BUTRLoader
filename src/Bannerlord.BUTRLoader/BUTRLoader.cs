@@ -1,18 +1,19 @@
 ﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches;
+using Bannerlord.BUTRLoader.ResourceManagers;
 
 using HarmonyLib;
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Xml;
 
 using TaleWorlds.Core;
-using TaleWorlds.Core.ViewModelCollection;
 using TaleWorlds.MountAndBlade.Launcher.UserDatas;
 
 [assembly: InternalsVisibleTo("Bannerlord.BUTRLoader.Tests")]
@@ -101,8 +102,18 @@ namespace Bannerlord.BUTRLoader
             LauncherUIPatch.Enable(harmony);
             ViewModelPatch.Enable(harmony);
             WidgetPrefabPatch.Enable(harmony);
+
+            GraphicsContextManager.Enable(harmony);
+            GraphicsContextManager.CreateAndRegister("arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
+            GraphicsContextManager.CreateAndRegister("arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
+
+            SpriteDataManager.Enable(harmony);
+            SpriteDataManager.CreateAndRegister("arrow_down");
+            SpriteDataManager.CreateAndRegister("arrow_left");
+
             BrushFactoryManager.Enable(harmony);
             BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
+
             WidgetFactoryManager.Enable(harmony);
             WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
 
@@ -116,6 +127,24 @@ namespace Bannerlord.BUTRLoader
             var doc = new XmlDocument();
             doc.Load(xmlReader);
             return doc;
+        }
+        private static byte[] LoadRaw(string embedPath)
+        {
+            static byte[] ReadFully(Stream input)
+            {
+                byte[] buffer = new byte[16 * 1024];
+                using var ms = new MemoryStream();
+                int read;
+                while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    ms.Write(buffer, 0, read);
+                }
+                return ms.ToArray();
+            }
+
+            using var stream = typeof(BUTRLoaderAppDomainManager).Assembly.GetManifestResourceStream(embedPath);
+            if (stream is null) throw new Exception($"Could not find embed resource '{embedPath}'!");
+            return ReadFully(stream);
         }
     }
 }

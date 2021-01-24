@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Patches;
 
 using HarmonyLib;
 
@@ -13,7 +14,7 @@ using System.Xml;
 using TaleWorlds.GauntletUI;
 using TaleWorlds.GauntletUI.PrefabSystem;
 
-namespace Bannerlord.BUTRLoader.Patches
+namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     /// <summary>
     /// https://github.com/Aragas/Bannerlord.MBOptionScreen/blob/dev/src/MCM.UI/Patches/WidgetFactoryManager.cs
@@ -26,9 +27,7 @@ namespace Bannerlord.BUTRLoader.Patches
         private static readonly Dictionary<string, int> LiveInstanceTracker = new();
 
         private static Harmony? _harmony;
-
         private static WeakReference<WidgetFactory?> WidgetFactoryReference { get; } = new(null);
-
         public static void SetWidgetFactory(WidgetFactory widgetFactory)
         {
             WidgetFactoryReference.SetTarget(widgetFactory);
@@ -45,20 +44,13 @@ namespace Bannerlord.BUTRLoader.Patches
                 string.Empty,
                 doc);
         }
-
         public static void Register(Type widgetType)
         {
             BuiltinTypes[widgetType.Name] = widgetType;
             WidgetInfo.ReLoad();
         }
-
-        public static void Register(string name, Func<WidgetPrefab?> create)
-        {
-            CustomTypes.Add(name, create);
-        }
-
+        public static void Register(string name, Func<WidgetPrefab?> create) => CustomTypes.Add(name, create);
         public static void CreateAndRegister(string name, XmlDocument xmlDocument) => Register(name, () => Create(xmlDocument));
-
 
         public static bool Enable(Harmony harmony)
         {

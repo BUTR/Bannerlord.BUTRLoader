@@ -1,0 +1,71 @@
+﻿using Bannerlord.BUTRLoader.Extensions;
+
+using HarmonyLib;
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Runtime.CompilerServices;
+
+using TaleWorlds.TwoDimension.Standalone;
+
+namespace Bannerlord.BUTRLoader.ResourceManagers
+{
+    internal static class GraphicsContextManager
+    {
+        public static GraphicsContext Instance { get; private set; }
+
+        private static readonly Dictionary<string, OpenGLTexture> Textures = new();
+        private static readonly Dictionary<string, Func<OpenGLTexture>> DeferredInitialization = new();
+
+        public static OpenGLTexture Create(byte[] data)
+        {
+            var path = Path.GetTempFileName();
+            File.WriteAllBytes(path, data);
+            var openGLTexture = OpenGLTexture.FromFile(path);
+            File.Delete(path);
+
+            return openGLTexture;
+        }
+        public static void Register(string name, Func<OpenGLTexture> func) => DeferredInitialization.Add(name, func);
+        public static void CreateAndRegister(string name, byte[] data) => Register(name, () => Create(data));
+
+        internal static bool Enable(Harmony harmony)
+        {
+            var res1 = harmony.TryPatch(
+                SymbolExtensions.GetMethodInfo((GraphicsContext gc) => gc.GetTexture(null!)),
+                prefix: AccessTools.DeclaredMethod(typeof(GraphicsContextManager), nameof(GetTexturePrefix)));
+            if (!res1) return false;
+
+            var res2 = harmony.TryPatch(
+                SymbolExtensions.GetMethodInfo((GraphicsContext gc) => gc.CreateContext(null!)),
+                postfix: AccessTools.DeclaredMethod(typeof(GraphicsContextManager), nameof(CreateContextPostfix)));
+            if (!res2) return false;
+
+            return true;
+        }
+
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "RedundantAssignment")]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool GetTexturePrefix(string textureName, ref OpenGLTexture __result)
+        {
+            return !Textures.TryGetValue(textureName, out __result);
+        }
+
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void CreateContextPostfix(GraphicsContext __instance)
+        {
+            Instance = __instance;
+
+            foreach (var (name, func) in DeferredInitialization)
+            {
+                Textures[name] = func();
+            }
+        }
+    }
+}
