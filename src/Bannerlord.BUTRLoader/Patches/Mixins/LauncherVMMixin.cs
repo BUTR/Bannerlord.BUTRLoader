@@ -199,6 +199,22 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
         private LauncherOptionsVM _optionsData = new ();
 
+#if CONTINUE
+        public string Continue
+        {
+            get => _continue;
+            set
+            {
+                if (value != _continue)
+                {
+                    _continue = value;
+                    _launcherVM.OnPropertyChangedWithValue(value, nameof(Continue));
+                }
+            }
+        }
+        private string _continue = "No save found!";
+#endif
+
         private readonly LauncherVM _launcherVM;
         private readonly UserDataManager _userDataManager;
 
@@ -234,10 +250,21 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(VersionTextSingleplayer));
             SetVMProperty(nameof(OptionsData));
 
+#if CONTINUE
+            SetVMProperty(nameof(Continue));
+#endif
+
             if (_launcherVM.IsMultiplayer)
                 IsMultiplayer = true;
             else
                 IsSingleplayer = true;
+
+#if CONTINUE
+            if (SaveUtils.GetLatestSave() is { } latestSave)
+            {
+                Continue = $"{latestSave.Name}";
+            }
+#endif
         }
 
         private void SaveOptions()

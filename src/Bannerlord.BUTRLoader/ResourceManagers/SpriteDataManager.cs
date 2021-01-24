@@ -13,7 +13,7 @@ using TaleWorlds.TwoDimension;
 
 namespace Bannerlord.BUTRLoader.ResourceManagers
 {
-    public static class SpriteDataManager
+    internal static class SpriteDataManager
     {
         internal sealed class SpriteFromTexture : Sprite
         {

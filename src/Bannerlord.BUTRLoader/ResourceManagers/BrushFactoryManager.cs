@@ -14,7 +14,7 @@ using TaleWorlds.GauntletUI;
 
 namespace Bannerlord.BUTRLoader.ResourceManagers
 {
-    public static class BrushFactoryManager
+    internal static class BrushFactoryManager
     {
         private static readonly Dictionary<string, Brush> CustomBrushes = new();
         private static readonly List<Func<IEnumerable<Brush>>> DeferredInitialization = new();
