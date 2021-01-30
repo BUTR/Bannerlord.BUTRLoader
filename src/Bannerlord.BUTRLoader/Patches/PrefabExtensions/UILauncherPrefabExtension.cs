@@ -211,8 +211,20 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public override string Value => "@IsDisabledOnMultiplayer";
     }
 
-#if CONTINUE
+    /// <summary>
+    /// Hides Caution window
+    /// </summary>
     internal sealed class UILauncherPrefabExtension13 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie { get; } = "UILauncher";
+        public static string XPath { get; } = "descendant::ButtonWidget[@Id='PlayButton']";
+
+        public override string Attribute => "Command.Click";
+        public override string Value => "ExecuteConfirmUnverifiedDLLStart";
+    }
+
+#if CONTINUE
+    internal sealed class UILauncherPrefabExtension21 : PrefabExtensionSetAttributePatch
     {
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "descendant::ButtonWidget[@Id='PlayButton']";
@@ -221,7 +233,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public override string Value => "@PlayButtonAlignment";
     }
 
-    internal sealed class UILauncherPrefabExtension14 : PrefabExtensionInsertAsSiblingPatch
+    internal sealed class UILauncherPrefabExtension22 : PrefabExtensionInsertAsSiblingPatch
     {
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "descendant::ButtonWidget[@Id='PlayButton']";
@@ -229,7 +241,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public override InsertType Type { get; } = InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();
 
-        public UILauncherPrefabExtension14()
+        public UILauncherPrefabExtension22()
         {
             XmlDocument.LoadXml(@"
 <ButtonWidget Id=""ContinueButton""
@@ -270,14 +282,14 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public override XmlDocument GetPrefabExtension() => XmlDocument;
     }
 
-    internal sealed class UILauncherPrefabExtension15 : PrefabExtensionCustomPatch<XmlNode>
+    internal sealed class UILauncherPrefabExtension23 : PrefabExtensionCustomPatch<XmlNode>
     {
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "descendant::ButtonWidget[@Id='PlayButton']";
 
         private XmlDocument XmlDocument { get; } = new();
 
-        public UILauncherPrefabExtension15()
+        public UILauncherPrefabExtension23()
         {
             XmlDocument.LoadXml(@"
 <ListPanel LayoutImp.LayoutMethod=""HorizontalCentered""
