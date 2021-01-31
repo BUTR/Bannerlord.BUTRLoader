@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 using TaleWorlds.MountAndBlade.Launcher.UserDatas;
 
-using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper;
+using static Bannerlord.BUTRLoader.Helpers.LauncherModuleVMExtensions;
 
 namespace Bannerlord.BUTRLoader.Tests.Patches
 {

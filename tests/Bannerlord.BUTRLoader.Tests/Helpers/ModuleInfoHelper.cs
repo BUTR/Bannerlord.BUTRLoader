@@ -8,7 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper;
+using static Bannerlord.BUTRLoader.Helpers.LauncherModuleVMExtensions;
 
 namespace Bannerlord.BUTRLoader.Tests.Helpers
 {

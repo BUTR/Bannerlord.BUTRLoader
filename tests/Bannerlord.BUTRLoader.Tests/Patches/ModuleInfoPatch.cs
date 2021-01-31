@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper;
+using static Bannerlord.BUTRLoader.Helpers.LauncherModuleVMExtensions;
 
 namespace Bannerlord.BUTRLoader.Tests.Patches
 {

@@ -43,16 +43,16 @@ namespace Bannerlord.BUTRLoader.Helpers
 
     internal static class LauncherModuleVMExtensions
     {
-        //public static readonly Type? OldDependedModuleType = Type.GetType("TaleWorlds.Library.DependedModule, TaleWorlds.Library", false);
-        //public static readonly Type? NewDependedModuleType = Type.GetType("TaleWorlds.ModuleManager.DependedModule, TaleWorlds.ModuleManager", false);
+        public static readonly Type? OldDependedModuleType = Type.GetType("TaleWorlds.Library.DependedModule, TaleWorlds.Library", false);
+        public static readonly Type? NewDependedModuleType = Type.GetType("TaleWorlds.ModuleManager.DependedModule, TaleWorlds.ModuleManager", false);
 
-        //public static readonly Type? ModuleHelperType = Type.GetType("TaleWorlds.ModuleManager.ModuleHelper, TaleWorlds.ModuleManager", false);
+        public static readonly Type? ModuleHelperType = Type.GetType("TaleWorlds.ModuleManager.ModuleHelper, TaleWorlds.ModuleManager", false);
 
         public static readonly Type? OldModuleInfoType = Type.GetType("TaleWorlds.Library.ModuleInfo, TaleWorlds.Library", false);
         public static readonly Type? NewModuleInfoType = Type.GetType("TaleWorlds.ModuleManager.ModuleInfo, TaleWorlds.ModuleManager", false);
 
-        //public static readonly Type? OldSubModuleInfoType = Type.GetType("TaleWorlds.Library.SubModuleInfo, TaleWorlds.Library", false);
-        //public static readonly Type? NewSubModuleInfoType = Type.GetType("TaleWorlds.ModuleManager.SubModuleInfo, TaleWorlds.ModuleManager", false);
+        public static readonly Type? OldSubModuleInfoType = Type.GetType("TaleWorlds.Library.SubModuleInfo, TaleWorlds.Library", false);
+        public static readonly Type? NewSubModuleInfoType = Type.GetType("TaleWorlds.ModuleManager.SubModuleInfo, TaleWorlds.ModuleManager", false);
 
         public static readonly MethodInfo? GetId;
         public static readonly MethodInfo? GetAlias;
