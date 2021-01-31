@@ -33,7 +33,7 @@ namespace Bannerlord.BUTRLoader.Helpers
     /// <summary>
     /// https://github.com/Aragas/Bannerlord.MBOptionScreen/blob/dev/src/MCM/Abstractions/Settings/Models/SettingsPropertyDefinition.cs
     /// </summary>
-    internal class SettingsPropertyDefinition : ISettingsPropertyDefinition
+    internal sealed class SettingsPropertyDefinition : ISettingsPropertyDefinition
     {
         public string DisplayName { get; init; } = default!;
         public IRef PropertyReference { get; init; } = default!;

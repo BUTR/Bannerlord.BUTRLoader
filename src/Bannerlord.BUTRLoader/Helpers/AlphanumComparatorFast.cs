@@ -10,7 +10,7 @@ namespace Bannerlord.BUTRLoader.Helpers
     /// Highway names like 50F and 100F will be sorted wrongly with ASCII sort.
     /// It is different from alphabetic, ASCII or numeric sorting. This algorithmic approach is used in file managers.
     /// </summary>
-    public class AlphanumComparatorFast : IComparer<string?>, IComparer
+    internal sealed class AlphanumComparatorFast : IComparer<string?>, IComparer
     {
         /// <inheritdoc/>
         public int Compare(object? x, object? y) => Compare(x as string, y as string);

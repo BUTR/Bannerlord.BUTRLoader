@@ -8,7 +8,7 @@ using TaleWorlds.MountAndBlade.Launcher;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    internal class ModuleInfoWrapper
+    internal sealed class ModuleInfoWrapper
     {
         public static ModuleInfoWrapper Create(object? @object) => new(@object);
 
@@ -26,7 +26,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         }
     }
 
-    internal class LauncherModuleVMWrapper
+    internal sealed class LauncherModuleVMWrapper
     {
         public static LauncherModuleVMWrapper Create(object @object) => new(@object);
 

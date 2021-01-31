@@ -17,7 +17,7 @@ namespace Bannerlord.BUTRLoader.Helpers
     /// <summary>
     /// https://github.com/Aragas/Bannerlord.MBOptionScreen/blob/dev/src/MCM/Abstractions/Ref/PropertyRef.cs
     /// </summary>
-    internal class PropertyRef : IRef, IEquatable<PropertyRef>
+    internal sealed class PropertyRef : IRef, IEquatable<PropertyRef>
     {
         /// <inheritdoc/>
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -47,7 +47,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             Instance = instance;
         }
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
+        private void OnPropertyChanged([CallerMemberName] string? propertyName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
         public bool Equals(PropertyRef? other)

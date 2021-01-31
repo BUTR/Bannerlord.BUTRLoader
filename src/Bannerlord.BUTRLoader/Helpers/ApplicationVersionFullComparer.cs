@@ -2,7 +2,7 @@
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    internal class ApplicationVersionFullComparer : ApplicationVersionComparer
+    internal sealed class ApplicationVersionFullComparer : ApplicationVersionComparer
     {
         public override int Compare(ApplicationVersion x, ApplicationVersion y)
         {

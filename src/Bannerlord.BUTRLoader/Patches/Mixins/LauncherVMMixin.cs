@@ -16,7 +16,7 @@ using UserDataOptions = Bannerlord.BUTRLoader.Options.UserData;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
-    internal class LauncherVMMixin
+    internal sealed class LauncherVMMixin
     {
         private enum TopTabs
         {

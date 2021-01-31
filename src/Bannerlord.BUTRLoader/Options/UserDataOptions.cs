@@ -2,7 +2,7 @@
 
 namespace Bannerlord.BUTRLoader.Options
 {
-    public class UserData : UserDataOld
+    public sealed class UserData : UserDataOld
     {
         public bool ExtendedSorting { get; set; } = true;
         public bool AutomaticallyCheckForUpdates { get; set; }

@@ -10,7 +10,7 @@ using TaleWorlds.MountAndBlade.Launcher;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
-    internal class LauncherModuleVMMixin
+    internal sealed class LauncherModuleVMMixin
     {
         public bool IsExpanded
         {

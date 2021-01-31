@@ -18,7 +18,7 @@ namespace Ikriv.Xml
     /// <summary>
     /// Creates XmlAttributeOverrides instance using an easy-to-use fluent interface
     /// </summary>
-    internal class OverrideXml
+    internal sealed class OverrideXml
     {
         private Type? _currentType;
         private string _currentMember = "";

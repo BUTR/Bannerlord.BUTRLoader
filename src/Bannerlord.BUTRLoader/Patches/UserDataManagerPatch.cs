@@ -19,7 +19,7 @@ using UserDataOptions = Bannerlord.BUTRLoader.Options.UserData;
 
 namespace Bannerlord.BUTRLoader.Patches
 {
-    internal class UserDataManagerPatch
+    internal static class UserDataManagerPatch
     {
         public static bool Enable(Harmony harmony)
         {
