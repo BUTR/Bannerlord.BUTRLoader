@@ -123,7 +123,7 @@ namespace Bannerlord.BUTRLoader.Patches
             }
             return false;
         }
-        private static bool AreAllDependenciesOfModulePresent(LauncherModsVM launcherModsVM, ModuleInfoWrapper moduleInfo, List<object> modulesCache)
+        private static bool AreAllDependenciesOfModulePresent(LauncherModsVM launcherModsVM, object moduleInfo, List<object> modulesCache)
         {
             var result = false;
             AreAllDependenciesOfModulePresentPrefix(launcherModsVM, moduleInfo, modulesCache, ref result);
@@ -271,7 +271,7 @@ namespace Bannerlord.BUTRLoader.Patches
             if (!BUTRLoaderAppDomainManager.ExtendedSorting)
                 return true;
 
-            if (!AreAllDependenciesOfModulePresent(__instance, LauncherModuleVMWrapper.Create(targetModule).Info, ____modulesCache))
+            if (!AreAllDependenciesOfModulePresent(__instance, LauncherModuleVMWrapper.Create(targetModule).Info.Object, ____modulesCache))
             {
                 // Direct and current External Dependencies are not valid, do nothing
                 return false;
@@ -327,7 +327,7 @@ namespace Bannerlord.BUTRLoader.Patches
                                 ChangeIsSelectedOf(instance, incompatibleModuleVM, modules, visited);
 
                             // We need to re-check that everything is alright with the external dependency
-                            incompatibleModuleVM.IsDisabled |= !AreAllDependenciesOfModulePresent(instance, LauncherModuleVMWrapper.Create(incompatibleModuleVM).Info, modules);
+                            incompatibleModuleVM.IsDisabled |= !AreAllDependenciesOfModulePresent(instance, LauncherModuleVMWrapper.Create(incompatibleModuleVM).Info.Object, modules);
                         }
                     }
                 }
@@ -364,7 +364,7 @@ namespace Bannerlord.BUTRLoader.Patches
                         if (incompatibleModuleVM is not null)
                         {
                             // We need to re-check that everything is alright with the external dependency
-                            incompatibleModuleVM.IsDisabled &= !AreAllDependenciesOfModulePresent(instance, LauncherModuleVMWrapper.Create(incompatibleModuleVM).Info, modules);
+                            incompatibleModuleVM.IsDisabled &= !AreAllDependenciesOfModulePresent(instance, LauncherModuleVMWrapper.Create(incompatibleModuleVM).Info.Object, modules);
                         }
                     }
                 }
