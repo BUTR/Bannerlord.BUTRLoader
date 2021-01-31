@@ -2,21 +2,16 @@
 
 using HarmonyLib;
 
-using System;
 using System.Collections.Generic;
 using System.Reflection;
 
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher;
 
-using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper;
-
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal class LauncherModuleVMMixin
     {
-        public string Expander => IsExpanded ? "[-]" : "[X]";
-
         public bool IsExpanded
         {
             get => _isExpanded;
@@ -26,7 +21,6 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 {
                     _isExpanded = value;
                     _launcherModuleVM.OnPropertyChangedWithValue(value, nameof(IsExpanded));
-                    _launcherModuleVM.OnPropertyChanged(nameof(Expander));
                 }
             }
         }
@@ -82,20 +76,14 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     () => _launcherModuleVM.OnPropertyChanged(property));
             }
 
-            SetVMProperty(nameof(Expander));
             SetVMProperty(nameof(IsExpanded));
             SetVMProperty(nameof(IssuesText));
             SetVMProperty(nameof(HasIssues));
             SetVMProperty(nameof(HasNoIssues));
             SetVMProperty(nameof(IsNoUpdateAvailable));
 
-            _moduleId = ((string) GetId.Invoke(GetInfo.GetValue(launcherModuleVM), Array.Empty<object>()));
+            _moduleId = LauncherModuleVMWrapper.Create(launcherModuleVM).Info.Id;
             UpdateIssues();
-        }
-
-        public void ExecuteExpander()
-        {
-            IsExpanded = !IsExpanded;
         }
 
         public void UpdateIssues()

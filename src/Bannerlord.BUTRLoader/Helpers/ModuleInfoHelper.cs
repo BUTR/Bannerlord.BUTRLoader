@@ -8,18 +8,51 @@ using TaleWorlds.MountAndBlade.Launcher;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    internal static class ModuleInfoHelper
+    internal class ModuleInfoWrapper
     {
-        public static readonly Type? OldDependedModuleType = Type.GetType("TaleWorlds.Library.DependedModule, TaleWorlds.Library", false);
-        public static readonly Type? NewDependedModuleType = Type.GetType("TaleWorlds.ModuleManager.DependedModule, TaleWorlds.ModuleManager", false);
+        public static ModuleInfoWrapper Create(object? @object) => new(@object);
 
-        public static readonly Type? ModuleHelperType = Type.GetType("TaleWorlds.ModuleManager.ModuleHelper, TaleWorlds.ModuleManager", false);
+        public string Id => _id ??= Object is null ? string.Empty : LauncherModuleVMExtensions.GetId?.Invoke(Object, Array.Empty<object>()) as string ?? string.Empty;
+        private string? _id;
+        public string Alias => _alias ??= Object is null ? string.Empty : LauncherModuleVMExtensions.GetAlias?.Invoke(Object, Array.Empty<object>()) as string ?? string.Empty;
+        private string? _alias;
+        public bool IsSelected => Object is null ? false : LauncherModuleVMExtensions.GetIsSelected?.Invoke(Object, Array.Empty<object>()) as bool? ?? false;
+
+        public object? Object { get; }
+
+        private ModuleInfoWrapper(object? @object)
+        {
+            Object = @object;
+        }
+    }
+
+    internal class LauncherModuleVMWrapper
+    {
+        public static LauncherModuleVMWrapper Create(object @object) => new(@object);
+
+        public ModuleInfoWrapper Info => _info ??= ModuleInfoWrapper.Create(LauncherModuleVMExtensions.GetInfo?.GetValue(Object));
+        private ModuleInfoWrapper? _info;
+
+        public object Object { get; }
+
+        private LauncherModuleVMWrapper(object @object)
+        {
+            Object = @object;
+        }
+    }
+
+    internal static class LauncherModuleVMExtensions
+    {
+        //public static readonly Type? OldDependedModuleType = Type.GetType("TaleWorlds.Library.DependedModule, TaleWorlds.Library", false);
+        //public static readonly Type? NewDependedModuleType = Type.GetType("TaleWorlds.ModuleManager.DependedModule, TaleWorlds.ModuleManager", false);
+
+        //public static readonly Type? ModuleHelperType = Type.GetType("TaleWorlds.ModuleManager.ModuleHelper, TaleWorlds.ModuleManager", false);
 
         public static readonly Type? OldModuleInfoType = Type.GetType("TaleWorlds.Library.ModuleInfo, TaleWorlds.Library", false);
         public static readonly Type? NewModuleInfoType = Type.GetType("TaleWorlds.ModuleManager.ModuleInfo, TaleWorlds.ModuleManager", false);
 
-        public static readonly Type? OldSubModuleInfoType = Type.GetType("TaleWorlds.Library.SubModuleInfo, TaleWorlds.Library", false);
-        public static readonly Type? NewSubModuleInfoType = Type.GetType("TaleWorlds.ModuleManager.SubModuleInfo, TaleWorlds.ModuleManager", false);
+        //public static readonly Type? OldSubModuleInfoType = Type.GetType("TaleWorlds.Library.SubModuleInfo, TaleWorlds.Library", false);
+        //public static readonly Type? NewSubModuleInfoType = Type.GetType("TaleWorlds.ModuleManager.SubModuleInfo, TaleWorlds.ModuleManager", false);
 
         public static readonly MethodInfo? GetId;
         public static readonly MethodInfo? GetAlias;
@@ -30,10 +63,10 @@ namespace Bannerlord.BUTRLoader.Helpers
         public static readonly MethodInfo? CastMethod;
         public static readonly MethodInfo? ToListMethod;
 
-        private delegate string GetIdDelegate(object instance);
-        private delegate string GetAliasDelegate(object instance);
+        //private delegate string GetIdDelegate(object instance);
+        //private delegate string GetAliasDelegate(object instance);
 
-        static ModuleInfoHelper()
+        static LauncherModuleVMExtensions()
         {
             GetInfo = AccessTools.Field(typeof(LauncherModuleVM), "Info");
 

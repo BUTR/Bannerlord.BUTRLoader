@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
 
@@ -7,8 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 using TaleWorlds.MountAndBlade.Launcher;
-
-using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper;
 
 namespace Bannerlord.BUTRLoader.Patches
 {
@@ -37,16 +36,16 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void LauncherModuleVMConstructorPostfix(LauncherModuleVM __instance, Delegate __3)
         {
-            // Do not disable Native mods
-            if (GetInfo?.GetValue(__instance) is { } info && GetId?.Invoke(info, Array.Empty<object>()) is string id)
-            {
-                // Except the Native mod
-                if (id.Equals("native", StringComparison.OrdinalIgnoreCase))
-                    return;
+            var wrapper = LauncherModuleVMWrapper.Create(__instance);
 
-                // Recalculate IsDisabled since it checked for IsOfficial
-                __instance.IsDisabled = !((bool) __3.DynamicInvoke(GetInfo.GetValue(__instance)));
-            }
+            // Do not disable Native mods
+
+            // Except the Native mod
+            if (wrapper.Info.Id.Equals("native", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            // Recalculate IsDisabled since it checked for IsOfficial
+            __instance.IsDisabled = !((bool) __3.DynamicInvoke(wrapper.Info.Object));
         }
     }
 }
