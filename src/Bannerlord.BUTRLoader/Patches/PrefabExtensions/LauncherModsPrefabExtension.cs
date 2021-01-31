@@ -16,6 +16,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         {
             XmlDocument.LoadXml(@"
 <Widget WidthSizePolicy=""Fixed"" HeightSizePolicy=""CoverChildren"" SuggestedWidth=""200"" MarginLeft=""-200""
+        VerticalAlignment=""Center""
         IsVisible=""@HasIssues"" UpdateChildrenStates=""true"">
   <Children>
     <ButtonWidget WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""40"" SuggestedHeight=""40""
