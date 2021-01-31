@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using System;
+using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
 
@@ -39,7 +40,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 }
             }
         }
-        private string _issuesText;
+        private string _issuesText = string.Empty;
 
         public bool HasIssues => !string.IsNullOrWhiteSpace(IssuesText);
         public bool HasNoIssues => !HasIssues;

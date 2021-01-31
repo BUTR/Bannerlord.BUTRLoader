@@ -78,6 +78,20 @@ namespace Bannerlord.BUTRLoader.Helpers
             });
         }
 
+        public static void RegisterPatch(string movie, string? xpath, PrefabExtensionCustomPatch<XmlNode> patcher)
+        {
+            RegisterPatch(movie, document =>
+            {
+                var node = document.SelectSingleNode(xpath ?? string.Empty);
+                if (node is null)
+                {
+                    return;
+                }
+
+                patcher.Apply(node);
+            });
+        }
+
         public static void RegisterPatch(string movie, string? xpath, PrefabExtensionSetAttributePatch patch)
         {
             RegisterPatch(movie, xpath, node =>
