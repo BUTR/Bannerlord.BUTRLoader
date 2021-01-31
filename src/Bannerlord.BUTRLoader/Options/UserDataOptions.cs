@@ -8,10 +8,12 @@ namespace Bannerlord.BUTRLoader.Options
         public bool AutomaticallyCheckForUpdates { get; set; }
         public bool UnblockFiles { get; set; } = true;
         public bool FixCommonIssues { get; set; }
+        public bool CompactModuleList { get; set; }
 
         public UserData() { }
 
-        public UserData(UserDataOld userData, bool extendedSorting, bool automaticallyCheckForUpdates, bool unblockFiles, bool fixCommonIssues)
+        public UserData(UserDataOld userData,
+            bool extendedSorting, bool automaticallyCheckForUpdates, bool unblockFiles, bool fixCommonIssues, bool compactModuleList)
         {
             GameType = userData.GameType;
             SingleplayerData = userData.SingleplayerData;
@@ -20,6 +22,7 @@ namespace Bannerlord.BUTRLoader.Options
             AutomaticallyCheckForUpdates = automaticallyCheckForUpdates;
             UnblockFiles = unblockFiles;
             FixCommonIssues = fixCommonIssues;
+            CompactModuleList = compactModuleList;
         }
     }
 }

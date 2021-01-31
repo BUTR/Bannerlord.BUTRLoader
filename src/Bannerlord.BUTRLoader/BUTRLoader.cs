@@ -52,6 +52,13 @@ namespace Bannerlord.BUTRLoader
         }
         private static bool _fixCommonIssues;
 
+        public static bool CompactModuleList
+        {
+            get => _compactMods;
+            set => _compactMods = value;
+        }
+        private static bool _compactMods;
+
 
         public override void InitializeNewDomain(AppDomainSetup appDomainInfo)
         {
