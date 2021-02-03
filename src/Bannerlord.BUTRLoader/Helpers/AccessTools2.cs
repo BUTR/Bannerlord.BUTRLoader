@@ -12,10 +12,15 @@ namespace Bannerlord.BUTRLoader.Helpers
     /// </summary>
     internal static class AccessTools2
     {
+        public static FieldRef<TType, TField>? FieldRefAccess<TType, TField>(string fieldName)
+        {
+            var field = Field(typeof(TType), fieldName);
+            return field is null ? null : HarmonyLib.AccessTools.FieldRefAccess<TType, TField>(field);
+        }
         public static FieldRef<object, TField>? FieldRefAccess<TField>(Type type, string fieldName)
         {
             var field = Field(type, fieldName);
-            return field is null ? null : FieldRefAccess<object, TField>(field);
+            return field is null ? null : HarmonyLib.AccessTools.FieldRefAccess<object, TField>(field);
         }
 
         public static TDelegate? GetDelegate<TDelegate>(MethodInfo? methodInfo) where TDelegate : Delegate => ReflectionHelper.GetDelegate<TDelegate>(methodInfo);

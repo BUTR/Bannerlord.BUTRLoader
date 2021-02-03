@@ -1,5 +1,4 @@
-﻿using System;
-using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
 

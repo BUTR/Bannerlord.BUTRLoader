@@ -18,14 +18,18 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherVMMixin
     {
-        private enum TopTabs
+        private delegate void ExecuteConfirmUnverifiedDLLStartDelegate(LauncherVM instance);
+        private static readonly ExecuteConfirmUnverifiedDLLStartDelegate? ExecuteConfirmUnverifiedDLLStartOriginal;
+        private static readonly AccessTools.FieldRef<LauncherVM, UserDataManager>? UserDataManagerFieldRef =
+            AccessTools2.FieldRefAccess<LauncherVM, UserDataManager>("_userDataManager");
+
+        static LauncherVMMixin()
         {
-            NONE,
-            Singleplayer,
-            Multiplayer,
-            Options
+            ExecuteConfirmUnverifiedDLLStartOriginal =
+                AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>(typeof(LauncherVM), "ExecuteConfirmUnverifiedDLLStart");
         }
 
+        private enum TopTabs { NONE, Singleplayer, Multiplayer, Options }
         private TopTabs _state;
 
         public bool IsSingleplayer
@@ -221,7 +225,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public LauncherVMMixin(LauncherVM launcherVM)
         {
             _launcherVM = launcherVM;
-            _userDataManager = (UserDataManager) AccessTools.Field(typeof(LauncherVM), "_userDataManager").GetValue(launcherVM);
+            _userDataManager = UserDataManagerFieldRef(launcherVM);
 
             var propsObject = AccessTools.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherVM) as Dictionary<string, PropertyInfo>
                               ?? new Dictionary<string, PropertyInfo>();
@@ -265,6 +269,13 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 Continue = $"{latestSave.Name}";
             }
 #endif
+        }
+
+        // Ensure save is triggered when launching the game
+        private void ExecuteConfirmUnverifiedDLLStart()
+        {
+            SaveOptions();
+            ExecuteConfirmUnverifiedDLLStartOriginal?.Invoke(_launcherVM);
         }
 
         private void SaveOptions()
