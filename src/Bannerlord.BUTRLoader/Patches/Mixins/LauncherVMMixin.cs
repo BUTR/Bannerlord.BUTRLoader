@@ -280,25 +280,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         private void SaveOptions()
         {
-            void Save() => _userDataManager.SaveUserData();
-
-            if (_userDataManager.UserData is UserDataOptions userData)
-            {
-                if (userData.ExtendedSorting != BUTRLoaderAppDomainManager.ExtendedSorting)
-                    Save();
-
-                if (userData.AutomaticallyCheckForUpdates != BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates)
-                    Save();
-
-                if (userData.UnblockFiles != BUTRLoaderAppDomainManager.UnblockFiles)
-                    Save();
-
-                if (userData.FixCommonIssues != BUTRLoaderAppDomainManager.FixCommonIssues)
-                    Save();
-
-                if (userData.CompactModuleList != BUTRLoaderAppDomainManager.CompactModuleList)
-                    Save();
-            }
+            _userDataManager.SaveUserData();
         }
     }
 }

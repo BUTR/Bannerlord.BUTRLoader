@@ -53,7 +53,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     <Widget WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""CoverChildren"" MarginLeft=""30""
             IsDisabled=""true"" IsVisible=""@IsExpanded"">
       <Children>
-        <RichTextWidget Text=""@IssuesText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""CoverChildren"" SuggestedHeight=""500"" MarginBottom=""10""
+        <TextWidget Text=""@IssuesText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""CoverChildren"" SuggestedHeight=""500"" MarginBottom=""10""
                         Brush=""Launcher.Mods.IssueText"" Brush.TextHorizontalAlignment=""Left"" />
       </Children>
     </Widget>
