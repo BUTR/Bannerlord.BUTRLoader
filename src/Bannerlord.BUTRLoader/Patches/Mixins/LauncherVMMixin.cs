@@ -271,16 +271,36 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 #endif
         }
 
+        private void Save() => _userDataManager.SaveUserData();
+
         // Ensure save is triggered when launching the game
         private void ExecuteConfirmUnverifiedDLLStart()
         {
-            SaveOptions();
+            Save();
+            BUTRLoaderAppDomainManager.UnpatchAll();
             ExecuteConfirmUnverifiedDLLStartOriginal?.Invoke(_launcherVM);
         }
 
         private void SaveOptions()
         {
-            _userDataManager.SaveUserData();
+
+            if (_userDataManager.UserData is UserDataOptions userData)
+            {
+                if (userData.ExtendedSorting != BUTRLoaderAppDomainManager.ExtendedSorting)
+                    Save();
+
+                if (userData.AutomaticallyCheckForUpdates != BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates)
+                    Save();
+
+                if (userData.UnblockFiles != BUTRLoaderAppDomainManager.UnblockFiles)
+                    Save();
+
+                if (userData.FixCommonIssues != BUTRLoaderAppDomainManager.FixCommonIssues)
+                    Save();
+
+                if (userData.CompactModuleList != BUTRLoaderAppDomainManager.CompactModuleList)
+                    Save();
+            }
         }
     }
 }

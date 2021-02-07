@@ -59,6 +59,8 @@ namespace Bannerlord.BUTRLoader
         }
         private static bool _compactMods;
 
+        private static readonly Harmony _harmony = new("Bannerlord.BUTRLoader");
+
 
         public override void InitializeNewDomain(AppDomainSetup appDomainInfo)
         {
@@ -100,28 +102,26 @@ namespace Bannerlord.BUTRLoader
 
         private static bool Initialize()
         {
-            var harmony = new Harmony("Bannerlord.BUTRLoader");
+            ProgramPatch.Enable(_harmony);
+            UserDataManagerPatch.Enable(_harmony);
+            LauncherModuleVMPatch.Enable(_harmony);
+            LauncherModsVMPatch.Enable(_harmony);
+            LauncherUIPatch.Enable(_harmony);
+            ViewModelPatch.Enable(_harmony);
+            WidgetPrefabPatch.Enable(_harmony);
 
-            ProgramPatch.Enable(harmony);
-            UserDataManagerPatch.Enable(harmony);
-            LauncherModuleVMPatch.Enable(harmony);
-            LauncherModsVMPatch.Enable(harmony);
-            LauncherUIPatch.Enable(harmony);
-            ViewModelPatch.Enable(harmony);
-            WidgetPrefabPatch.Enable(harmony);
-
-            GraphicsContextManager.Enable(harmony);
+            GraphicsContextManager.Enable(_harmony);
             GraphicsContextManager.CreateAndRegister("arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
             GraphicsContextManager.CreateAndRegister("arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
 
-            SpriteDataManager.Enable(harmony);
+            SpriteDataManager.Enable(_harmony);
             SpriteDataManager.CreateAndRegister("arrow_down");
             SpriteDataManager.CreateAndRegister("arrow_left");
 
-            BrushFactoryManager.Enable(harmony);
+            BrushFactoryManager.Enable(_harmony);
             BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
 
-            WidgetFactoryManager.Enable(harmony);
+            WidgetFactoryManager.Enable(_harmony);
             WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
 
             return true;
@@ -152,6 +152,11 @@ namespace Bannerlord.BUTRLoader
             using var stream = typeof(BUTRLoaderAppDomainManager).Assembly.GetManifestResourceStream(embedPath);
             if (stream is null) throw new Exception($"Could not find embed resource '{embedPath}'!");
             return ReadFully(stream);
+        }
+
+        public static void UnpatchAll()
+        {
+            _harmony.UnpatchAll("Bannerlord.BUTRLoader");
         }
     }
 }
