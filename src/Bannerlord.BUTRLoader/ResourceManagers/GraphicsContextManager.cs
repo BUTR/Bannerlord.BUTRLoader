@@ -43,6 +43,10 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 postfix: AccessTools.DeclaredMethod(typeof(GraphicsContextManager), nameof(CreateContextPostfix)));
             if (!res2) return false;
 
+            // Preventing inlining GetTexture
+
+            // Preventing inlining GetTexture
+
             return true;
         }
 
@@ -67,5 +71,8 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 Textures[name] = func();
             }
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static IEnumerable<CodeInstruction> BlankTranspiler(IEnumerable<CodeInstruction> instructions) => instructions;
     }
 }

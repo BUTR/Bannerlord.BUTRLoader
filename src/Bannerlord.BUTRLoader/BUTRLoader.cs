@@ -54,10 +54,17 @@ namespace Bannerlord.BUTRLoader
 
         public static bool CompactModuleList
         {
-            get => _compactMods;
-            set => _compactMods = value;
+            get => _compactModuleList;
+            set => _compactModuleList = value;
         }
-        private static bool _compactMods;
+        private static bool _compactModuleList;
+
+        public static bool ResetModuleList
+        {
+            get => _resetModuleList;
+            set => _resetModuleList = value;
+        }
+        private static bool _resetModuleList;
 
         private static readonly Harmony _harmony = new("Bannerlord.BUTRLoader");
 
@@ -104,6 +111,7 @@ namespace Bannerlord.BUTRLoader
         {
             ProgramPatch.Enable(_harmony);
             UserDataManagerPatch.Enable(_harmony);
+            LauncherVMPatch.Enable(_harmony);
             LauncherModuleVMPatch.Enable(_harmony);
             LauncherModsVMPatch.Enable(_harmony);
             LauncherUIPatch.Enable(_harmony);

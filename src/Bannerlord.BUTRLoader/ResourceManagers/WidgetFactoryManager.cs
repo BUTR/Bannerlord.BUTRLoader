@@ -86,6 +86,21 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(CreateBuiltinWidgetPrefix)));
             if (!res6) return false;
 
+            // GetCustomType is too complex to be inlined
+            // CreateBuiltinWidget is too complex to be inlined
+            // GetWidgetTypes is not used?
+            // Preventing inlining IsCustomType
+            harmony.TryPatch(
+                AccessTools.Method(typeof(WidgetTemplate), "CreateWidgets"),
+                transpiler: AccessTools.Method(typeof(WidgetFactoryManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(WidgetTemplate), "OnRelease"),
+                transpiler: AccessTools.Method(typeof(WidgetFactoryManager), nameof(BlankTranspiler)));
+            // Preventing inlining GetCustomType
+            //harmony.Patch(
+            //    AccessTools.Method(typeof(GauntletMovie), "LoadMovie"),
+            //    transpiler: new HarmonyMethod(AccessTools.Method(typeof(WidgetFactoryManager), nameof(BlankTranspiler))));
+
             return true;
         }
 
@@ -176,5 +191,8 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.Initialize()),
                 AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static IEnumerable<CodeInstruction> BlankTranspiler(IEnumerable<CodeInstruction> instructions) => instructions;
     }
 }

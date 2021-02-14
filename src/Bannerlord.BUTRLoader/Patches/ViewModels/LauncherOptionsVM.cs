@@ -65,6 +65,12 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.CompactModuleList))!, this)
             }));
+            SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
+            {
+                DisplayName = "Reset Module List (Requires restart)",
+                SettingType = SettingType.Bool,
+                PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.ResetModuleList))!, this)
+            }));
             /*
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {

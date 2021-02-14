@@ -6,6 +6,7 @@ using HarmonyLib;
 using Ikriv.Xml;
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -60,13 +61,19 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 using var xmlReader = XmlReader.Create(____filePath);
                 var userDataOptions = (UserDataOptions) xmlSerializer.Deserialize(xmlReader);
-                var setMethod = SymbolExtensions2.GetPropertyInfo((UserDataManager ud) => ud.UserData).SetMethod;
-                setMethod.Invoke(__instance, new object?[] { userDataOptions as UserDataOld });
                 BUTRLoaderAppDomainManager.ExtendedSorting = userDataOptions.ExtendedSorting;
                 BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates = userDataOptions.AutomaticallyCheckForUpdates;
                 BUTRLoaderAppDomainManager.UnblockFiles = userDataOptions.UnblockFiles;
                 BUTRLoaderAppDomainManager.FixCommonIssues = userDataOptions.FixCommonIssues;
                 BUTRLoaderAppDomainManager.CompactModuleList = userDataOptions.CompactModuleList;
+                BUTRLoaderAppDomainManager.ResetModuleList = userDataOptions.ResetModuleList;
+                if (BUTRLoaderAppDomainManager.ResetModuleList)
+                {
+                    userDataOptions.SingleplayerData.ModDatas = new List<UserModData>();
+                    BUTRLoaderAppDomainManager.ResetModuleList = false;
+                }
+                var setMethod = SymbolExtensions2.GetPropertyInfo((UserDataManager ud) => ud.UserData).SetMethod;
+                setMethod.Invoke(__instance, new object?[] { userDataOptions as UserDataOld });
             }
             catch (Exception value)
             {
@@ -93,7 +100,8 @@ namespace Bannerlord.BUTRLoader.Patches
                     BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates,
                     BUTRLoaderAppDomainManager.UnblockFiles,
                     BUTRLoaderAppDomainManager.FixCommonIssues,
-                    BUTRLoaderAppDomainManager.CompactModuleList));
+                    BUTRLoaderAppDomainManager.CompactModuleList,
+                    BUTRLoaderAppDomainManager.ResetModuleList));
             }
             catch (Exception value)
             {

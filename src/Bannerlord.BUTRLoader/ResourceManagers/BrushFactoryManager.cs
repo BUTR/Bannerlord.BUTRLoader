@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using System.Xml;
 
 using TaleWorlds.GauntletUI;
+using TaleWorlds.GauntletUI.PrefabSystem;
 
 namespace Bannerlord.BUTRLoader.ResourceManagers
 {
@@ -69,6 +70,24 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 prefix: AccessTools.DeclaredMethod(typeof(BrushFactoryManager), nameof(InitializePostfix)));
             if (!res3) return false;
 
+            // Preventing inlining GetBrush
+            harmony.TryPatch(
+                AccessTools.Method(typeof(ConstantDefinition), "GetValue"),
+                transpiler: AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(WidgetExtensions), "SetWidgetAttributeFromString"),
+                transpiler: AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(UIContext), "GetBrush"),
+                transpiler: AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(WidgetExtensions), "ConvertObject"),
+                transpiler: AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+            //harmony.Patch(
+            //    AccessTools.Method(typeof(BoolBrushChanger), "OnBooleanUpdated"),
+            //    transpiler: new HarmonyMethod(AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler))));
+            // Preventing inlining GetBrush
+
             return true;
         }
 
@@ -109,5 +128,8 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 SymbolExtensions.GetMethodInfo((BrushFactory bf) => bf.Initialize()),
                 AccessTools.DeclaredMethod(typeof(BrushFactoryManager), nameof(InitializePostfix)));
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static IEnumerable<CodeInstruction> BlankTranspiler(IEnumerable<CodeInstruction> instructions) => instructions;
     }
 }

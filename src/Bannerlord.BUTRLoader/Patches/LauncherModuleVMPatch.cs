@@ -23,13 +23,6 @@ namespace Bannerlord.BUTRLoader.Patches
             return true;
         }
 
-        public static void Disable(Harmony harmony)
-        {
-            harmony.Unpatch(
-                AccessTools.Constructor(typeof(LauncherModuleVM)),
-                AccessTools.Method(typeof(LauncherModuleVMPatch), nameof(LauncherModuleVMConstructorPostfix)));
-        }
-
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]

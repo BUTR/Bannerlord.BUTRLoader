@@ -1,4 +1,6 @@
-﻿using UserDataOld = TaleWorlds.MountAndBlade.Launcher.UserDatas.UserData;
+﻿using System.Collections.Generic;
+using TaleWorlds.MountAndBlade.Launcher.UserDatas;
+using UserDataOld = TaleWorlds.MountAndBlade.Launcher.UserDatas.UserData;
 
 namespace Bannerlord.BUTRLoader.Options
 {
@@ -9,11 +11,13 @@ namespace Bannerlord.BUTRLoader.Options
         public bool UnblockFiles { get; set; } = true;
         public bool FixCommonIssues { get; set; }
         public bool CompactModuleList { get; set; }
+        public bool ResetModuleList { get; set; }
 
         public UserData() { }
 
         public UserData(UserDataOld userData,
-            bool extendedSorting, bool automaticallyCheckForUpdates, bool unblockFiles, bool fixCommonIssues, bool compactModuleList)
+            bool extendedSorting, bool automaticallyCheckForUpdates, bool unblockFiles,
+            bool fixCommonIssues, bool compactModuleList, bool resetModuleList)
         {
             GameType = userData.GameType;
             SingleplayerData = userData.SingleplayerData;
@@ -23,6 +27,7 @@ namespace Bannerlord.BUTRLoader.Options
             UnblockFiles = unblockFiles;
             FixCommonIssues = fixCommonIssues;
             CompactModuleList = compactModuleList;
+            ResetModuleList = resetModuleList;
         }
     }
 }

@@ -8,7 +8,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-
+using TaleWorlds.Engine.GauntletUI;
+using TaleWorlds.GauntletUI;
+using TaleWorlds.GauntletUI.PrefabSystem;
 using TaleWorlds.TwoDimension;
 
 namespace Bannerlord.BUTRLoader.ResourceManagers
@@ -185,6 +187,47 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 postfix: AccessTools.DeclaredMethod(typeof(SpriteDataManager), nameof(LoadPostfix)));
             if (!res2) return false;
 
+            // Preventing inlining GetSprite
+            harmony.TryPatch(
+                AccessTools.Method(typeof(BrushFactory), "LoadBrushAnimationFrom"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(BrushFactory), "LoadBrushLayerInto"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(CanvasImage), "LoadFrom"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(CanvasLineImage), "LoadFrom"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(EditableTextWidget), "OnRender"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(ConstantDefinition), "GetValue"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(WidgetExtensions), "ConvertObject"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(WidgetExtensions), "SetWidgetAttributeFromString"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Constructor(typeof(Font), new[] { typeof(string), typeof(string), typeof(SpriteData) }),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(RichText), "FillPartsWithTokens"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            // Preventing inlining GetSprite
+            // Preventing inlining Load
+            harmony.TryPatch(
+                AccessTools.Method(typeof(UIResourceManager), "Initialize"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            harmony.TryPatch(
+                AccessTools.Method(typeof(UIContext), "Initialize"),
+                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+            // Preventing inlining Load
+
             return true;
         }
 
@@ -206,5 +249,8 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 SpriteNames[sprite.Name] = sprite;
             }
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static IEnumerable<CodeInstruction> BlankTranspiler(IEnumerable<CodeInstruction> instructions) => instructions;
     }
 }

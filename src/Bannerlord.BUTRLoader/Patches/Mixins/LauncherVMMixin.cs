@@ -5,6 +5,7 @@ using HarmonyLib;
 
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using TaleWorlds.GauntletUI;
 using TaleWorlds.Library;
@@ -271,10 +272,15 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 #endif
         }
 
-        private void Save() => _userDataManager.SaveUserData();
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        private void Save()
+        {
+            LauncherVMPatch.UpdateAndSaveUserModsData(_launcherVM, false);
+        }
 
         // Ensure save is triggered when launching the game
-        private void ExecuteConfirmUnverifiedDLLStart()
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public void ExecuteConfirmUnverifiedDLLStart()
         {
             Save();
             BUTRLoaderAppDomainManager.UnpatchAll();
@@ -299,6 +305,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     Save();
 
                 if (userData.CompactModuleList != BUTRLoaderAppDomainManager.CompactModuleList)
+                    Save();
+
+                if (userData.ResetModuleList != BUTRLoaderAppDomainManager.ResetModuleList)
                     Save();
             }
         }

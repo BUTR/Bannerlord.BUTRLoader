@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
 
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-
+using TaleWorlds.GauntletUI.Data;
 using TaleWorlds.Library;
 
 namespace Bannerlord.BUTRLoader.Patches
@@ -19,8 +20,14 @@ namespace Bannerlord.BUTRLoader.Patches
         public static void Enable(Harmony harmony)
         {
             harmony.Patch(
-                AccessTools.DeclaredMethod(typeof(ViewModel), nameof(ViewModel.ExecuteCommand)),
+                AccessTools.Method(typeof(ViewModel), nameof(ViewModel.ExecuteCommand)),
                 transpiler: new HarmonyMethod(SymbolExtensions.GetMethodInfo(() => ViewModel_ExecuteCommand_Transpiler(null!, null!))));
+
+            // Preventing inlining ExecuteCommand
+            harmony.TryPatch(
+                AccessTools.Method(typeof(GauntletView), "OnCommand"),
+                transpiler: AccessTools.Method(typeof(ViewModelPatch), nameof(BlankTranspiler)));
+            // Preventing inlining ExecuteCommand
         }
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
@@ -97,5 +104,8 @@ namespace Bannerlord.BUTRLoader.Patches
 
             return true;
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static IEnumerable<CodeInstruction> BlankTranspiler(IEnumerable<CodeInstruction> instructions) => instructions;
     }
 }

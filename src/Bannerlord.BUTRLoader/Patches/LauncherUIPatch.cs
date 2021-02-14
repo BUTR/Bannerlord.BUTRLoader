@@ -3,6 +3,7 @@ using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
 
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
@@ -20,6 +21,12 @@ namespace Bannerlord.BUTRLoader.Patches
                 postfix: AccessTools.Method(typeof(LauncherUIPatch), nameof(InitializePostfix)));
             if (!res1) return false;
 
+            // Preventing inlining Initialize
+            harmony.TryPatch(
+                AccessTools.Method(typeof(LauncherUI), "Update"),
+                transpiler: AccessTools.Method(typeof(LauncherUIPatch), nameof(BlankTranspiler)));
+            // Preventing inlining Initialize
+
             return true;
         }
 
@@ -34,5 +41,8 @@ namespace Bannerlord.BUTRLoader.Patches
             MixinManager.AddMixins(____viewModel);
             ____movie.RefreshDataSource(____viewModel);
         }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static IEnumerable<CodeInstruction> BlankTranspiler(IEnumerable<CodeInstruction> instructions) => instructions;
     }
 }
