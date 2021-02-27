@@ -275,7 +275,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         [MethodImpl(MethodImplOptions.NoOptimization)]
         private void Save()
         {
-            LauncherVMPatch.UpdateAndSaveUserModsData(_launcherVM, false);
+            LauncherVMPatch.UpdateAndSaveUserModsData(_launcherVM, IsMultiplayer);
         }
 
         // Ensure save is triggered when launching the game
