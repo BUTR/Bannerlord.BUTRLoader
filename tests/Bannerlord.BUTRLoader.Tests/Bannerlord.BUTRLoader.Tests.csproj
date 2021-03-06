@@ -22,13 +22,11 @@
   <ItemGroup>
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Extensions\DictionaryExtensions.cs" Link="BUTRLoader\Extensions\DictionaryExtensions.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Extensions\HarmonyExtensions.cs" Link="BUTRLoader\Extensions\HarmonyExtensions.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\AccessTools2.cs" Link="BUTRLoader\Helpers\AccessTools2.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\AlphanumComparatorFast.cs" Link="BUTRLoader\Helpers\AlphanumComparatorFast.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ApplicationVersionComparer.cs" Link="BUTRLoader\Helpers\ApplicationVersionComparer.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ApplicationVersionFullComparer.cs" Link="BUTRLoader\Helpers\ApplicationVersionFullComparer.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleSorter.cs" Link="BUTRLoader\Helpers\ModuleSorter.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleInfoHelper.cs" Link="BUTRLoader\Helpers\ModuleInfoHelper.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\SymbolExtensions2.cs" Link="BUTRLoader\Helpers\SymbolExtensions2.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Patches\LauncherModsVMPatch.cs" Link="BUTRLoader\Patches\LauncherModsVMPatch.cs" />
   </ItemGroup>
 
@@ -47,6 +45,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Bannerlord.ReferenceAssemblies.Core.EarlyAccess" Version="$(GameVersion).*" PrivateAssets="All" />
+    <PackageReference Include="Harmony.Extensions" Version="$(HarmonyExtensionsVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
 
     <PackageReference Include="IsExternalInit" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
