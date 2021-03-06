@@ -2,6 +2,7 @@
 using Bannerlord.BUTRLoader.Patches.ViewModels;
 
 using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System.Collections.Generic;
 using System.Reflection;

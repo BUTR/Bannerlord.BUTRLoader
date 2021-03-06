@@ -12,6 +12,10 @@
     <BUTRBaseUrl>$(BANNERLORD_BUTR_BASE_URL)</BUTRBaseUrl>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Beta_Debug|AnyCPU'">
+    <DefineConstants>TRACE;_CONTINUE</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Resources\Brushes\Launcher.xml" />
     <EmbeddedResource Include="Resources\Prefabs\Launcher.Options.xml" />
@@ -26,6 +30,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Bannerlord.ReferenceAssemblies.Core.EarlyAccess" Version="$(GameVersion).*" PrivateAssets="All" />
+    <PackageReference Include="Harmony.Extensions" Version="$(HarmonyExtensionsVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="ILRepack" Version="2.1.0-beta1" PrivateAssets="All" />
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" PrivateAssets="All" />
     <PackageReference Include="IsExternalInit" Version="1.0.0">

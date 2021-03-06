@@ -76,7 +76,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetDependentModulesOfPrefix(IEnumerable<object> source, object module, ref IEnumerable __result)
         {
-            if (!BUTRLoaderAppDomainManager.ExtendedSorting)
+            if (!BUTRLoaderAppDomainManager.ExtendedSorting || CastMethod is null || ToListMethod is null)
                 return true;
 
             var sourceList = source.ToList();
