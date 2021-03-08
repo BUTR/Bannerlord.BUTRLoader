@@ -1,6 +1,7 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System.Collections.Generic;
 using System.Reflection;
@@ -12,6 +13,24 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherModsVMMixin
     {
+        private delegate void ExecuteSelectDelegate(LauncherModuleVM instance);
+        private static readonly ExecuteSelectDelegate? ExecuteSelect =
+            AccessTools2.GetDelegateObjectInstance<ExecuteSelectDelegate>(typeof(LauncherModuleVM), "ExecuteSelect");
+
+        public bool GlobalCheckboxState
+        {
+            get => _isDisabled;
+            set
+            {
+                if (value != _isDisabled)
+                {
+                    _isDisabled = value;
+                    _launcherModsVM.OnPropertyChangedWithValue(value, nameof(GlobalCheckboxState));
+                }
+            }
+        }
+        private bool _isDisabled;
+
         private readonly LauncherModsVM _launcherModsVM;
 
         public LauncherModsVMMixin(LauncherModsVM launcherModsVM)
@@ -29,6 +48,24 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     () => _launcherModsVM.OnPropertyChanged(property));
             }
 
+            SetVMProperty(nameof(GlobalCheckboxState));
+        }
+
+        public void ExecuteGlobalCheckbox()
+        {
+            GlobalCheckboxState = !GlobalCheckboxState;
+
+            foreach (var launcherModuleVM in _launcherModsVM.Modules)
+            {
+                if (GlobalCheckboxState)
+                {
+                    ExecuteSelect?.Invoke(launcherModuleVM);
+                }
+                else
+                {
+                    launcherModuleVM.IsSelected = false;
+                }
+            }
         }
     }
 }
