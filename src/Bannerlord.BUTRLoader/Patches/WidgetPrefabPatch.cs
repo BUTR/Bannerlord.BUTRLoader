@@ -1,8 +1,8 @@
-﻿using Bannerlord.BUTRLoader.Extensions;
-using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches.PrefabExtensions;
 
 using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System.Collections.Generic;
 using System.IO;

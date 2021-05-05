@@ -1,9 +1,8 @@
 ﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
-
-using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System.Diagnostics.CodeAnalysis;
 using System.IO;

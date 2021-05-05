@@ -1,7 +1,7 @@
-﻿using Bannerlord.BUTRLoader.Extensions;
-using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;

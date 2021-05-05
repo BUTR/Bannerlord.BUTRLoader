@@ -1,6 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Extensions;
-
-using HarmonyLib;
+﻿using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections.Generic;

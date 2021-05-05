@@ -1,7 +1,7 @@
-﻿using Bannerlord.BUTRLoader.Extensions;
-using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+
 using TaleWorlds.GauntletUI.Data;
 using TaleWorlds.Library;
 
