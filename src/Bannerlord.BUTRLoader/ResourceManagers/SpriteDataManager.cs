@@ -237,7 +237,9 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetSpritePrefix(string name, ref Sprite __result)
         {
-            return !SpriteNames.TryGetValue(name, out __result);
+            if (!SpriteNames.TryGetValue(name, out __result))
+                return true;
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

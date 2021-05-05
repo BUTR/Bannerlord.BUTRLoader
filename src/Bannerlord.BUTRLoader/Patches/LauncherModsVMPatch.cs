@@ -4,6 +4,7 @@ using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections;

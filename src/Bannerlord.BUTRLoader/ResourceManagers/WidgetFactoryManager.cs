@@ -2,6 +2,7 @@
 using Bannerlord.BUTRLoader.Patches;
 
 using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections;
@@ -21,6 +22,9 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
     /// </summary>
     internal static class WidgetFactoryManager
     {
+        private static readonly AccessTools.FieldRef<WidgetFactory, IDictionary>? _liveCustomTypes =
+            AccessTools2.FieldRefAccess<WidgetFactory, IDictionary>("_liveCustomTypes");
+
         private static readonly Dictionary<string, Func<WidgetPrefab?>> CustomTypes = new();
         private static readonly Dictionary<string, Type> BuiltinTypes = new();
         private static readonly Dictionary<string, WidgetPrefab> LiveCustomTypes = new();
@@ -74,7 +78,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             var res4 = harmony.TryPatch(
                 AccessTools.DeclaredMethod(typeof(WidgetFactory), "OnUnload"),
                 prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(OnUnloadPrefix)));
-            if (!res4) return false;
+            //if (!res4) return false;
 
             var res5 = harmony.TryPatch(
                 SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.Initialize()),
@@ -139,9 +143,10 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool GetCustomTypePrefix(string typeName, IDictionary ____liveCustomTypes, ref WidgetPrefab __result)
+        private static bool GetCustomTypePrefix(WidgetFactory __instance, string typeName, ref WidgetPrefab __result)
         {
-            if (____liveCustomTypes.Contains(typeName) || !CustomTypes.ContainsKey(typeName))
+            if (_liveCustomTypes?.Invoke(__instance) is { } ____liveCustomTypes &&
+                ____liveCustomTypes.Contains(typeName) || !CustomTypes.ContainsKey(typeName))
                 return true;
 
             if (LiveCustomTypes.TryGetValue(typeName, out var liveWidgetPrefab))

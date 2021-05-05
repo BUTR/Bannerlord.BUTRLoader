@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Extensions\DictionaryExtensions.cs" Link="BUTRLoader\Extensions\DictionaryExtensions.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Extensions\HarmonyExtensions.cs" Link="BUTRLoader\Extensions\HarmonyExtensions.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\AlphanumComparatorFast.cs" Link="BUTRLoader\Helpers\AlphanumComparatorFast.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ApplicationVersionComparer.cs" Link="BUTRLoader\Helpers\ApplicationVersionComparer.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ApplicationVersionFullComparer.cs" Link="BUTRLoader\Helpers\ApplicationVersionFullComparer.cs" />

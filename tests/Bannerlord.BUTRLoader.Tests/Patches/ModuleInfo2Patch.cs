@@ -1,8 +1,8 @@
 using Bannerlord.BUTR.Shared.ModuleInfoExtended;
-using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Tests.Helpers;
 
 using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using NUnit.Framework;
 

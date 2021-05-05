@@ -56,7 +56,9 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetTexturePrefix(string textureName, ref OpenGLTexture __result)
         {
-            return !Textures.TryGetValue(textureName, out __result);
+            if (!Textures.TryGetValue(textureName, out __result))
+                return true;
+            return false;
         }
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]

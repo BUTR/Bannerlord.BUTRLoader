@@ -66,10 +66,14 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 prefix: new HarmonyMethod(AccessTools.Method(typeof(BrushFactoryManager), nameof(GetBrushPrefix))));
 
             var res3 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((BrushFactory bf) => bf.Initialize()),
-                prefix: AccessTools.DeclaredMethod(typeof(BrushFactoryManager), nameof(InitializePostfix)));
+                AccessTools.Method(typeof(BrushFactory), "LoadBrushes"),
+                prefix: AccessTools.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
             if (!res3) return false;
 
+            // Preventing inlining Initialize
+            harmony.TryPatch(
+                AccessTools.Method(typeof(BrushFactory), "Initialize"),
+                transpiler: AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             // Preventing inlining GetBrush
             harmony.TryPatch(
                 AccessTools.Method(typeof(ConstantDefinition), "GetValue"),
@@ -120,13 +124,13 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void InitializePostfix(ref BrushFactory __instance)
+        private static void LoadBrushesPostfix(ref BrushFactory __instance)
         {
             SetBrushFactory(__instance);
 
             _harmony?.Unpatch(
-                SymbolExtensions.GetMethodInfo((BrushFactory bf) => bf.Initialize()),
-                AccessTools.DeclaredMethod(typeof(BrushFactoryManager), nameof(InitializePostfix)));
+                AccessTools.Method(typeof(BrushFactory), "LoadBrushes"),
+                AccessTools.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
