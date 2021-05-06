@@ -21,6 +21,7 @@
   <a href="https://www.nexusmods.com/mountandblade2bannerlord/mods/2513" alt="NexusMods BUTRLoader">
   <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnexusmods-downloads-ayuqql60xfxb.runkit.sh%2F%3Ftype%3Dviews%26gameId%3D3174%26modId%3D2513" /></a>
   </br>
+   <img src="https://staticdelivery.nexusmods.com/mods/3174/images/2513/2513-1612129311-35018174.png" width="800">
 </p>
 
 Extends the native launcher.  
