@@ -109,28 +109,36 @@ namespace Bannerlord.BUTRLoader
 
         private static bool Initialize()
         {
-            ProgramPatch.Enable(_harmony);
-            UserDataManagerPatch.Enable(_harmony);
-            LauncherVMPatch.Enable(_harmony);
-            LauncherModuleVMPatch.Enable(_harmony);
-            LauncherModsVMPatch.Enable(_harmony);
-            LauncherUIPatch.Enable(_harmony);
-            ViewModelPatch.Enable(_harmony);
-            WidgetPrefabPatch.Enable(_harmony);
+            try
+            {
+                ProgramPatch.Enable(_harmony);
+                UserDataManagerPatch.Enable(_harmony);
+                LauncherVMPatch.Enable(_harmony);
+                LauncherModuleVMPatch.Enable(_harmony);
+                LauncherModsVMPatch.Enable(_harmony);
+                LauncherUIPatch.Enable(_harmony);
+                ViewModelPatch.Enable(_harmony);
+                WidgetPrefabPatch.Enable(_harmony);
 
-            GraphicsContextManager.Enable(_harmony);
-            GraphicsContextManager.CreateAndRegister("arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
-            GraphicsContextManager.CreateAndRegister("arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
+                GraphicsContextManager.Enable(_harmony);
+                GraphicsContextManager.CreateAndRegister("arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
+                GraphicsContextManager.CreateAndRegister("arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
 
-            SpriteDataManager.Enable(_harmony);
-            SpriteDataManager.CreateAndRegister("arrow_down");
-            SpriteDataManager.CreateAndRegister("arrow_left");
+                SpriteDataManager.Enable(_harmony);
+                SpriteDataManager.CreateAndRegister("arrow_down");
+                SpriteDataManager.CreateAndRegister("arrow_left");
 
-            BrushFactoryManager.Enable(_harmony);
-            BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
+                BrushFactoryManager.Enable(_harmony);
+                BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
 
-            WidgetFactoryManager.Enable(_harmony);
-            WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
+                WidgetFactoryManager.Enable(_harmony);
+                WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
 
             return true;
         }
