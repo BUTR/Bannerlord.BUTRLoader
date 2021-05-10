@@ -16,8 +16,7 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
         private delegate void OnLoadSubModulesPostfixDelegate();
 
         private static IEnumerable<Type> GetInterceptorTypes() => AppDomain.CurrentDomain.GetAssemblies()
-            .Where(asm => !asm.IsDynamic)
-            .Where(asm => asm.CodeBase.Contains("Modules"))
+            .Where(asm => !asm.IsDynamic && asm.CodeBase.Contains("Modules"))
             .SelectMany(asm => asm.DefinedTypes.Where(type => type.GetCustomAttributes().Any(att =>
                 string.Equals(att.GetType().FullName, typeof(BUTRLoaderInterceptorAttribute).FullName, StringComparison.Ordinal))));
 

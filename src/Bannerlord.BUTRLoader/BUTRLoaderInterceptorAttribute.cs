@@ -2,5 +2,6 @@
 
 namespace Bannerlord.BUTRLoader
 {
-    public class BUTRLoaderInterceptorAttribute : Attribute { }
+    [AttributeUsage(AttributeTargets.Class)]
+    public sealed class BUTRLoaderInterceptorAttribute : Attribute { }
 }
