@@ -12,6 +12,9 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
 {
     internal static class InterceptorFeature
     {
+        private delegate void OnInitializeSubModulesPrefixDelegate();
+        private delegate void OnLoadSubModulesPostfixDelegate();
+
         private static IEnumerable<Type> GetInterceptorTypes() => AppDomain.CurrentDomain.GetAssemblies()
             .Where(asm => !asm.IsDynamic)
             .Where(asm => asm.CodeBase.Contains("Modules"))
@@ -27,22 +30,22 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
 
         private static void OnInitializeSubModulesPrefix()
         {
-            foreach (var interceptorType in GetInterceptorTypes())
+            foreach (var type in GetInterceptorTypes())
             {
-                if (AccessTools2.Method(interceptorType, "OnInitializeSubModulesPrefix") is { IsStatic: true } methodInfo)
+                if (AccessTools2.GetDelegate<OnInitializeSubModulesPrefixDelegate>(type, "OnInitializeSubModulesPrefix") is { } method)
                 {
-                    methodInfo.Invoke(null, Array.Empty<object>());
+                    method();
                 }
             }
         }
 
         private static void OnLoadSubModulesPostfix()
         {
-            foreach (var interceptorType in GetInterceptorTypes())
+            foreach (var type in GetInterceptorTypes())
             {
-                if (AccessTools2.Method(interceptorType, "OnLoadSubModulesPostfix") is { IsStatic: true } methodInfo)
+                if (AccessTools2.GetDelegate<OnLoadSubModulesPostfixDelegate>(type, "OnLoadSubModulesPostfix") is { } method)
                 {
-                    methodInfo.Invoke(null, Array.Empty<object>());
+                    method();
                 }
             }
         }
