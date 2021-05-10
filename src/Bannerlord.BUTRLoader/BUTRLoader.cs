@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
+using Bannerlord.BUTRLoader.Features.Interceptor;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches;
 using Bannerlord.BUTRLoader.ResourceManagers;
@@ -66,7 +67,8 @@ namespace Bannerlord.BUTRLoader
         }
         private static bool _resetModuleList;
 
-        private static readonly Harmony _harmony = new("Bannerlord.BUTRLoader");
+        private static readonly Harmony _launcherHarmony = new("bannerlord.butrloader.launcher");
+        private static readonly Harmony _featureHarmony = new("bannerlord.butrloader.features");
 
 
         public override void InitializeNewDomain(AppDomainSetup appDomainInfo)
@@ -109,36 +111,31 @@ namespace Bannerlord.BUTRLoader
 
         private static bool Initialize()
         {
-            try
-            {
-                ProgramPatch.Enable(_harmony);
-                UserDataManagerPatch.Enable(_harmony);
-                LauncherVMPatch.Enable(_harmony);
-                LauncherModuleVMPatch.Enable(_harmony);
-                LauncherModsVMPatch.Enable(_harmony);
-                LauncherUIPatch.Enable(_harmony);
-                ViewModelPatch.Enable(_harmony);
-                WidgetPrefabPatch.Enable(_harmony);
+            ProgramPatch.Enable(_launcherHarmony);
+            UserDataManagerPatch.Enable(_launcherHarmony);
+            LauncherVMPatch.Enable(_launcherHarmony);
+            LauncherModuleVMPatch.Enable(_launcherHarmony);
+            LauncherModsVMPatch.Enable(_launcherHarmony);
+            LauncherUIPatch.Enable(_launcherHarmony);
+            ViewModelPatch.Enable(_launcherHarmony);
+            WidgetPrefabPatch.Enable(_launcherHarmony);
 
-                GraphicsContextManager.Enable(_harmony);
-                GraphicsContextManager.CreateAndRegister("arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
-                GraphicsContextManager.CreateAndRegister("arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
+            GraphicsContextManager.Enable(_launcherHarmony);
+            GraphicsContextManager.CreateAndRegister("arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
+            GraphicsContextManager.CreateAndRegister("arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
 
-                SpriteDataManager.Enable(_harmony);
-                SpriteDataManager.CreateAndRegister("arrow_down");
-                SpriteDataManager.CreateAndRegister("arrow_left");
+            SpriteDataManager.Enable(_launcherHarmony);
+            SpriteDataManager.CreateAndRegister("arrow_down");
+            SpriteDataManager.CreateAndRegister("arrow_left");
 
-                BrushFactoryManager.Enable(_harmony);
-                BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
+            BrushFactoryManager.Enable(_launcherHarmony);
+            BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
 
-                WidgetFactoryManager.Enable(_harmony);
-                WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            WidgetFactoryManager.Enable(_launcherHarmony);
+            WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
+
+
+            InterceptorFeature.Enable(_featureHarmony);
 
             return true;
         }
@@ -172,7 +169,7 @@ namespace Bannerlord.BUTRLoader
 
         public static void UnpatchAll()
         {
-            _harmony.UnpatchAll("Bannerlord.BUTRLoader");
+            _launcherHarmony.UnpatchAll(_launcherHarmony.Id);
         }
     }
 }
