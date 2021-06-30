@@ -11,9 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{18F85D07-5
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{600040EC-083E-4F50-B808-EC9642699634}"
-	ProjectSection(SolutionItems) = preProject
-		nuget.config = nuget.config
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{89CB6521-38F6-417A-B871-1DFC52B0DB8D}"
 	ProjectSection(SolutionItems) = preProject
