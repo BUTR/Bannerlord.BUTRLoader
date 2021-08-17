@@ -1,4 +1,4 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTR.Shared.Utils;
 using Bannerlord.BUTRLoader.Patches.ViewModels;
 
 using HarmonyLib;
@@ -234,10 +234,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             void SetVMProperty(string property)
             {
-                propsObject[property] = new WrappedPropertyInfo(
+                var propertyInfo = new WrappedPropertyInfo(
                     AccessTools.Property(typeof(LauncherVMMixin), property),
-                    this,
-                    () => _launcherVM.OnPropertyChanged(property));
+                    this);
+                propertyInfo.PropertyChanged += (_, e) => _launcherVM.OnPropertyChanged(e.PropertyName);
+                propsObject[property] = propertyInfo;
             }
 
             SetVMProperty(nameof(IsSingleplayer));

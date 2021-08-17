@@ -1,4 +1,4 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTR.Shared.Utils;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -42,10 +42,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             void SetVMProperty(string property)
             {
-                propsObject[property] = new WrappedPropertyInfo(
+                var propertyInfo = new WrappedPropertyInfo(
                     AccessTools.Property(typeof(LauncherModsVMMixin), property),
-                    this,
-                    () => _launcherModsVM.OnPropertyChanged(property));
+                    this);
+                propertyInfo.PropertyChanged += (_, e) => _launcherModsVM.OnPropertyChanged(e.PropertyName);
+                propsObject[property] = propertyInfo;
             }
 
             SetVMProperty(nameof(GlobalCheckboxState));

@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTR.Shared.Utils;
+using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
 
@@ -70,10 +71,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             void SetVMProperty(string property)
             {
-                propsObject[property] = new WrappedPropertyInfo(
+                var propertyInfo = new WrappedPropertyInfo(
                     AccessTools.Property(typeof(LauncherModuleVMMixin), property),
-                    this,
-                    () => _launcherModuleVM.OnPropertyChanged(property));
+                    this);
+                propertyInfo.PropertyChanged += (_, e) => _launcherModuleVM.OnPropertyChanged(e.PropertyName);
+                propsObject[property] = propertyInfo;
             }
 
             SetVMProperty(nameof(IsExpanded));
