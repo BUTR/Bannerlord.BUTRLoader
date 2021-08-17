@@ -1,27 +1,36 @@
 # Bannerlord.BUTRLoader
 <p align="center">
   <a href="https://github.com/BUTR/Bannerlord.BUTRLoader" alt="Lines Of Code">
-  <img src="https://tokei.rs/b1/github/BUTR/Bannerlord.BUTRLoader?category=code" /></a>
-  <a href="https://www.codefactor.io/repository/github/butr/bannerlord.butrloader"><img src="https://www.codefactor.io/repository/github/butr/bannerlord.butrloader/badge" alt="CodeFactor" /></a>
+    <img src="https://tokei.rs/b1/github/BUTR/Bannerlord.BUTRLoader?category=code" />
+  </a>
+  <a href="https://www.codefactor.io/repository/github/butr/bannerlord.butrloader">
+    <img src="https://www.codefactor.io/repository/github/butr/bannerlord.butrloader/badge" alt="CodeFactor" />
+  </a>
+  <a href="https://codeclimate.com/github/BUTR/Bannerlord.BUTRLoader/maintainability">
+    <img alt="Code Climate maintainability" src="https://img.shields.io/codeclimate/maintainability-percentage/BUTR/Bannerlord.BUTRLoader">
+  </a>
   </br>
-  <!--
-  <a href="https://github.com/BUTR/Bannerlord.BUTRLoader/actions?query=workflow%3ATest"><img src="https://github.com/BUTR/Bannerlord.BUTRLoader/workflows/Test/badge.svg?branch=dev&event=push" alt="Test" /></a>
-  <a href="https://codecov.io/gh/BUTR/Bannerlord.BUTRLoader"><img src="https://codecov.io/gh/BUTR/Bannerlord.BUTRLoader/branch/dev/graph/badge.svg" />
-   </a>
+  <a href="https://github.com/BUTR/Bannerlord.BUTRLoader/actions/workflows/test.yml?query=branch%3Amaster">
+    <img alt="GitHub Workflow Status (event)" src="https://img.shields.io/github/workflow/status/BUTR/Bannerlord.BUTRLoader/Test?branch=master&label=Game%20Stable%20and%20Beta">
+  </a>
   </br>
-  -->
   <a href="https://www.nexusmods.com/mountandblade2bannerlord/mods/2513" alt="NexusMods BUTRLoader">
-  <img src="https://img.shields.io/badge/NexusMods-BUTRLoader-yellow.svg" /></a>
+    <img src="https://img.shields.io/badge/NexusMods-BUTRLoader-yellow.svg" />
+  </a>
   <a href="https://www.nexusmods.com/mountandblade2bannerlord/mods/2513" alt="NexusMods BUTRLoader">
-  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnexusmods-version-pzk4e0ejol6j.runkit.sh%3FgameId%3Dmountandblade2bannerlord%26modId%3D2513" /></a>
+    <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnexusmods-version-pzk4e0ejol6j.runkit.sh%3FgameId%3Dmountandblade2bannerlord%26modId%3D2513" />
+  </a>
   <a href="https://www.nexusmods.com/mountandblade2bannerlord/mods/2513" alt="NexusMods BUTRLoader">
-  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnexusmods-downloads-ayuqql60xfxb.runkit.sh%2F%3Ftype%3Dunique%26gameId%3D3174%26modId%3D2513" /></a>
+    <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnexusmods-downloads-ayuqql60xfxb.runkit.sh%2F%3Ftype%3Dunique%26gameId%3D3174%26modId%3D2513" />
+  </a>
   <a href="https://www.nexusmods.com/mountandblade2bannerlord/mods/2513" alt="NexusMods BUTRLoader">
-  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnexusmods-downloads-ayuqql60xfxb.runkit.sh%2F%3Ftype%3Dtotal%26gameId%3D3174%26modId%3D2513" /></a>
+    <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnexusmods-downloads-ayuqql60xfxb.runkit.sh%2F%3Ftype%3Dtotal%26gameId%3D3174%26modId%3D2513" />
+  </a>
   <a href="https://www.nexusmods.com/mountandblade2bannerlord/mods/2513" alt="NexusMods BUTRLoader">
-  <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnexusmods-downloads-ayuqql60xfxb.runkit.sh%2F%3Ftype%3Dviews%26gameId%3D3174%26modId%3D2513" /></a>
+    <img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fnexusmods-downloads-ayuqql60xfxb.runkit.sh%2F%3Ftype%3Dviews%26gameId%3D3174%26modId%3D2513" />
+  </a>
   </br>
-   <img src="https://staticdelivery.nexusmods.com/mods/3174/images/2513/2513-1612129311-35018174.png" width="800">
+  <img src="https://staticdelivery.nexusmods.com/mods/3174/images/2513/2513-1612129311-35018174.png" width="800">
 </p>
 
 Extends the native launcher.  
