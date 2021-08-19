@@ -20,20 +20,10 @@ jobs:
     name: Build for NexusMods
     runs-on: windows-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@master
+    - name: Setup
+      uses: butr/actions-common-setup@v1.1
       with:
-        dotnet-version: 5.0.x
-
-    - name: Setup BUTR GPR
-      uses: actions/setup-dotnet@master
-      with:
-        source-url: https://nuget.pkg.github.com/BUTR/index.json
-      env:
-        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        github-token: ${{secrets.GITHUB_TOKEN}}
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
