@@ -48,7 +48,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 }
             }
         }
-        public static void Register(Func<IEnumerable<Brush>> func) =>DeferredInitialization.Add(func);
+        public static void Register(Func<IEnumerable<Brush>> func) => DeferredInitialization.Add(func);
         public static void CreateAndRegister(XmlDocument xmlDocument) => Register(() => Create(xmlDocument));
 
         internal static bool Enable(Harmony harmony)

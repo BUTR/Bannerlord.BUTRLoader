@@ -203,7 +203,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 }
             }
         }
-        private LauncherOptionsVM _optionsData = new ();
+        private LauncherOptionsVM _optionsData = new();
 
 #if CONTINUE
         public string Continue

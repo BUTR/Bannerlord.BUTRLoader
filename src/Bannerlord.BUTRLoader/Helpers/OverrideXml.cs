@@ -39,7 +39,7 @@ namespace Ikriv.Xml
         /// <summary>
         /// Specifies that subsequent attributes wil be applied to type T
         /// </summary>
-        public OverrideXml Override<T>() => Override(typeof (T));
+        public OverrideXml Override<T>() => Override(typeof(T));
 
         /// <summary>
         /// Specifies that subsequent attributes wil be applied to the given member of the current type
@@ -159,7 +159,7 @@ namespace Ikriv.Xml
         /// Adds [XmlIgnore] attribute to current type or member
         /// </summary>
         /// <param name="bIgnore"></param>
-        public OverrideXml XmlIgnore(bool bIgnore=true)
+        public OverrideXml XmlIgnore(bool bIgnore = true)
         {
             Open();
             _attributes!.XmlIgnore = bIgnore;

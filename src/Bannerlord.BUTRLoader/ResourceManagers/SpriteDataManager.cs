@@ -35,7 +35,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 AccessTools.StructFieldRefAccess<SpriteDrawData, bool>("VerticalFlip");
 
             private static readonly Type Vector2 = Type.GetType("System.Numerics.Vector2, System.Numerics.Vectors");
-            private static readonly ConstructorInfo Vector2Constructor = AccessTools.Constructor(Vector2, new [] { typeof(float), typeof(float) });
+            private static readonly ConstructorInfo Vector2Constructor = AccessTools.Constructor(Vector2, new[] { typeof(float), typeof(float) });
             private static readonly MethodInfo CreateQuad = AccessTools.Method(typeof(DrawObject2D), "CreateQuad");
 
 

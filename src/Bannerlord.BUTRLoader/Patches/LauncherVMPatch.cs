@@ -27,7 +27,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
             // Preventing inlining ExecuteConfirmUnverifiedDLLStart
             harmony.TryPatch(
-                AccessTools.Constructor(typeof(LauncherVM), new []{ typeof(UserDataManager), typeof(Action), typeof(Action) }),
+                AccessTools.Constructor(typeof(LauncherVM), new[] { typeof(UserDataManager), typeof(Action), typeof(Action) }),
                 transpiler: AccessTools.Method(typeof(LauncherVMPatch), nameof(BlankTranspiler)));
             // Preventing inlining ExecuteConfirmUnverifiedDLLStart
 

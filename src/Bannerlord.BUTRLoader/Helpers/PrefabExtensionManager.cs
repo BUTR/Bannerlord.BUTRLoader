@@ -8,7 +8,7 @@ namespace Bannerlord.BUTRLoader.Helpers
     /// <summary>
     /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/IPrefabPatch.cs
     /// </summary>
-    internal interface IPrefabPatch  { }
+    internal interface IPrefabPatch { }
 
     /// <summary>
     /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/PrefabExtensionSetAttributePatch.cs

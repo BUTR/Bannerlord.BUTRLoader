@@ -5,7 +5,7 @@ using TaleWorlds.Library;
 namespace Bannerlord.BUTRLoader.Patches.ViewModels
 {
     internal sealed class LauncherOptionsVM : ViewModel
-	{
+    {
         [DataSourceProperty]
         public bool IsDisabled
         {
