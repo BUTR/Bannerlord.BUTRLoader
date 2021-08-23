@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+
 using TaleWorlds.MountAndBlade.Launcher.UserDatas;
+
 using UserDataOld = TaleWorlds.MountAndBlade.Launcher.UserDatas.UserData;
 
 namespace Bannerlord.BUTRLoader.Options

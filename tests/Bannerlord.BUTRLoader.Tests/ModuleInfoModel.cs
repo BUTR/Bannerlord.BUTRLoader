@@ -1,4 +1,4 @@
-using Bannerlord.BUTR.Shared.ModuleInfoExtended;
+﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
 
 using System.Collections.Generic;
 
@@ -30,6 +30,6 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public List<DependedModule> DependedModules { get; init; } = new();
 
-        public List<DependedModuleMetadata> DependedModuleMetadatas { get; init; }  = new();
+        public List<DependedModuleMetadata> DependedModuleMetadatas { get; init; } = new();
     }
 }

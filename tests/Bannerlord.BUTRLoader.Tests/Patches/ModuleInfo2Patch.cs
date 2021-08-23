@@ -1,4 +1,4 @@
-using Bannerlord.BUTR.Shared.ModuleInfoExtended;
+﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
 using Bannerlord.BUTRLoader.Tests.Helpers;
 
 using HarmonyLib;

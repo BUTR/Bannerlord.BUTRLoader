@@ -62,7 +62,7 @@ namespace Bannerlord.BUTRLoader.Helpers
     {
         private const string UpdateCheckerUrl = "/update-checker";
 
-        public static async Task<ResponseData?> GetAsync(IEnumerable<ModuleInfo2> moduleInfos,  bool checkLauncher = true)
+        public static async Task<ResponseData?> GetAsync(IEnumerable<ModuleInfo2> moduleInfos, bool checkLauncher = true)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var baseUrlAttr = assembly.GetCustomAttributes<AssemblyMetadataAttribute>().FirstOrDefault(a => a.Key == "BUTRBaseUrl");
