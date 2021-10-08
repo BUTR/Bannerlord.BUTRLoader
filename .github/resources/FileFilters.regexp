@@ -1,1 +1,3 @@
-bin\/Win64_Shipping_Client\/(?<=\/)[^\/]*TaleWorlds.+
+bin/Win64_Shipping_Client/Steamworks.NET.dll
+bin/Win64_Shipping_Client/Epic.OnlineServices.dll
+regex:bin\/Win64_Shipping_Client\/[^\/]*TaleWorlds.+
