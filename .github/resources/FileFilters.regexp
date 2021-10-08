@@ -1,1 +1,1 @@
-bin\\Win64_Shipping_Client\\(?<=\\)[^\\]*TaleWorlds.+
+bin\/Win64_Shipping_Client\/(?<=\/)[^\/]*TaleWorlds.+
