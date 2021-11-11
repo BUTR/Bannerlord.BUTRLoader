@@ -21,7 +21,7 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Setup
-      uses: butr/actions-common-setup@v1.3
+      uses: butr/actions-common-setup@v2.0
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
 
@@ -84,7 +84,7 @@ jobs:
     needs: ["build-module"]
     steps:
     - name: Setup
-      uses: butr/actions-common-setup@v1.3
+      uses: butr/actions-common-setup@v2.0
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
 
