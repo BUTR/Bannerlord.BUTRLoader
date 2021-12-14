@@ -19,24 +19,24 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
     {
         internal sealed class SpriteFromTexture : Sprite
         {
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float> FieldMapX =
-                AccessTools.StructFieldRefAccess<SpriteDrawData, float>("MapX");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float> FieldMapY =
-                AccessTools.StructFieldRefAccess<SpriteDrawData, float>("MapY");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float> FieldScale =
-                AccessTools.StructFieldRefAccess<SpriteDrawData, float>("Scale");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float> FieldWidth =
-                AccessTools.StructFieldRefAccess<SpriteDrawData, float>("Width");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float> FieldHeight =
-                AccessTools.StructFieldRefAccess<SpriteDrawData, float>("Height");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, bool> FieldHorizontalFlip =
-                AccessTools.StructFieldRefAccess<SpriteDrawData, bool>("HorizontalFlip");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, bool> FieldVerticalFlip =
-                AccessTools.StructFieldRefAccess<SpriteDrawData, bool>("VerticalFlip");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldMapX =
+                AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("MapX");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldMapY =
+                AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("MapY");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldScale =
+                AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("Scale");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldWidth =
+                AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("Width");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldHeight =
+                AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("Height");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, bool>? FieldHorizontalFlip =
+                AccessTools2.StructFieldRefAccess<SpriteDrawData, bool>("HorizontalFlip");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, bool>? FieldVerticalFlip =
+                AccessTools2.StructFieldRefAccess<SpriteDrawData, bool>("VerticalFlip");
 
-            private static readonly Type Vector2 = Type.GetType("System.Numerics.Vector2, System.Numerics.Vectors");
-            private static readonly ConstructorInfo Vector2Constructor = AccessTools.Constructor(Vector2, new[] { typeof(float), typeof(float) });
-            private static readonly MethodInfo CreateQuad = AccessTools.Method(typeof(DrawObject2D), "CreateQuad");
+            private static readonly Type? Vector2 = Type.GetType("System.Numerics.Vector2, System.Numerics.Vectors");
+            private static readonly ConstructorInfo? Vector2Constructor = AccessTools2.Constructor(Vector2!, new[] { typeof(float), typeof(float) });
+            private static readonly MethodInfo? CreateQuad = AccessTools2.Method(typeof(DrawObject2D), "CreateQuad");
 
 
             public override Texture Texture { get; }
@@ -66,6 +66,9 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             {
                 if (CachedDrawObject != null && CachedDrawData == spriteDrawData)
                     return CachedDrawObject;
+
+                if (FieldMapX is null || FieldMapY is null || FieldWidth is null || FieldHeight is null || FieldHorizontalFlip is null || FieldVerticalFlip is null)
+                    return null!;
 
                 var mapX = FieldMapX(ref spriteDrawData);
                 var mapY = FieldMapY(ref spriteDrawData);
@@ -178,54 +181,54 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         internal static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((SpriteData sd) => sd.GetSprite(null!)),
-                prefix: AccessTools.DeclaredMethod(typeof(SpriteDataManager), nameof(GetSpritePrefix)));
+                SymbolExtensions2.GetMethodInfo((SpriteData sd) => sd.GetSprite(null!)),
+                prefix: AccessTools2.DeclaredMethod(typeof(SpriteDataManager), nameof(GetSpritePrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((SpriteData sd) => sd.Load(null!)),
-                postfix: AccessTools.DeclaredMethod(typeof(SpriteDataManager), nameof(LoadPostfix)));
+                SymbolExtensions2.GetMethodInfo((SpriteData sd) => sd.Load(null!)),
+                postfix: AccessTools2.DeclaredMethod(typeof(SpriteDataManager), nameof(LoadPostfix)));
             if (!res2) return false;
 
             // Preventing inlining GetSprite
             harmony.TryPatch(
-                AccessTools.Method(typeof(BrushFactory), "LoadBrushAnimationFrom"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(BrushFactory), "LoadBrushAnimationFrom"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(BrushFactory), "LoadBrushLayerInto"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(BrushFactory), "LoadBrushLayerInto"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(CanvasImage), "LoadFrom"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(CanvasImage), "LoadFrom"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(CanvasLineImage), "LoadFrom"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(CanvasLineImage), "LoadFrom"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(EditableTextWidget), "OnRender"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(EditableTextWidget), "OnRender"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(ConstantDefinition), "GetValue"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(ConstantDefinition), "GetValue"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(WidgetExtensions), "ConvertObject"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(WidgetExtensions), "ConvertObject"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(WidgetExtensions), "SetWidgetAttributeFromString"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(WidgetExtensions), "SetWidgetAttributeFromString"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Constructor(typeof(Font), new[] { typeof(string), typeof(string), typeof(SpriteData) }),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Constructor(typeof(Font), new[] { typeof(string), typeof(string), typeof(SpriteData) }),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(RichText), "FillPartsWithTokens"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(RichText), "FillPartsWithTokens"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             // Preventing inlining GetSprite
             // Preventing inlining Load
             harmony.TryPatch(
-                AccessTools.Method(typeof(UIResourceManager), "Initialize"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(UIResourceManager), "Initialize"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(UIContext), "Initialize"),
-                transpiler: AccessTools.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(UIContext), "Initialize"),
+                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             // Preventing inlining Load
 
             return true;

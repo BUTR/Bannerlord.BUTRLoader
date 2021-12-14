@@ -1,5 +1,4 @@
-﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
-using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -15,8 +14,8 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools.Method("TaleWorlds.MountAndBlade.Launcher.LauncherVM:ExecuteStartGame"),
-                prefix: AccessTools.Method(typeof(ProgramPatch), nameof(StartGamePrefix)));
+                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.LauncherVM:ExecuteStartGame"),
+                prefix: AccessTools2.Method(typeof(ProgramPatch), nameof(StartGamePrefix)));
             if (!res1) return false;
 
             return true;
@@ -29,13 +28,14 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool StartGamePrefix()
         {
+            var pathPrefix = PathPrefix();
             if (BUTRLoaderAppDomainManager.UnblockFiles)
             {
-                if (Directory.Exists(ModuleInfo2.PathPrefix))
+                if (Directory.Exists(pathPrefix))
                 {
                     try
                     {
-                        NtfsUnblocker.UnblockPath(ModuleInfo2.PathPrefix, "*.dll");
+                        NtfsUnblocker.UnblockPath(pathPrefix, "*.dll");
                     }
                     catch { }
                 }
@@ -48,5 +48,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
             return true;
         }
+
+        private static string PathPrefix() => Path.Combine(TaleWorlds.Library.BasePath.Name, "Modules");
     }
 }

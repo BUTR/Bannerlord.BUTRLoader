@@ -1,5 +1,4 @@
-﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
-using Bannerlord.BUTRLoader.Features.Interceptor;
+﻿using Bannerlord.BUTRLoader.Features.Interceptor;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches;
 using Bannerlord.BUTRLoader.ResourceManagers;
@@ -92,6 +91,7 @@ namespace Bannerlord.BUTRLoader
 
         private static Task CheckForUpdates()
         {
+            /*
             var userDataManager = new UserDataManager();
             if (userDataManager.HasUserData())
                 userDataManager.LoadUserData();
@@ -105,6 +105,7 @@ namespace Bannerlord.BUTRLoader
             }
 
             var newVersions = UpdateChecker.GetAsync(moduleInfos).ConfigureAwait(false).GetAwaiter().GetResult();
+            */
 
             return Task.CompletedTask;
         }
@@ -116,6 +117,7 @@ namespace Bannerlord.BUTRLoader
             LauncherVMPatch.Enable(_launcherHarmony);
             LauncherModuleVMPatch.Enable(_launcherHarmony);
             LauncherModsVMPatch.Enable(_launcherHarmony);
+            LauncherConfirmStartVMPatch.Enable(_launcherHarmony);
             LauncherUIPatch.Enable(_launcherHarmony);
             ViewModelPatch.Enable(_launcherHarmony);
             WidgetPrefabPatch.Enable(_launcherHarmony);

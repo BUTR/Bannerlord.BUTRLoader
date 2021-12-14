@@ -227,15 +227,15 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public LauncherVMMixin(LauncherVM launcherVM)
         {
             _launcherVM = launcherVM;
-            _userDataManager = UserDataManagerFieldRef(launcherVM);
+            _userDataManager = UserDataManagerFieldRef is not null ? UserDataManagerFieldRef(launcherVM) : default!;
 
-            var propsObject = AccessTools.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherVM) as Dictionary<string, PropertyInfo>
+            var propsObject = AccessTools2.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherVM) as Dictionary<string, PropertyInfo>
                               ?? new Dictionary<string, PropertyInfo>();
 
             void SetVMProperty(string property)
             {
                 var propertyInfo = new WrappedPropertyInfo(
-                    AccessTools.Property(typeof(LauncherVMMixin), property),
+                    AccessTools2.Property(typeof(LauncherVMMixin), property)!,
                     this);
                 propertyInfo.PropertyChanged += (_, e) => _launcherVM.OnPropertyChanged(e.PropertyName);
                 propsObject[property] = propertyInfo;

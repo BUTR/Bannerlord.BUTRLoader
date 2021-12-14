@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.BUTRLoader.Helpers;
 
 using System.Xml;
 
@@ -9,16 +10,18 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     /// </summary>
     internal sealed class LauncherModsPrefabExtension1 : PrefabExtensionInsertAsSiblingPatch
     {
-        public static string Movie { get; } = "Launcher.Mods";
-        public static string XPath { get; } = "descendant::Widget[@Id='DragWidget']";
+        public static string Movie { get; } = ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 }
+            ? "Launcher.Mods.ModuleTuple" 
+            : "Launcher.Mods";
+        public static string XPath { get; } = "descendant::TextWidget[2]";
 
         public override InsertType Type => InsertType.Prepend;
         private XmlDocument XmlDocument { get; } = new();
 
         public LauncherModsPrefabExtension1()
         {
-            XmlDocument.LoadXml(@"
-<Widget WidthSizePolicy=""Fixed"" HeightSizePolicy=""CoverChildren"" SuggestedWidth=""200"" MarginLeft=""-200""
+            XmlDocument.LoadXml(@$"
+<Widget WidthSizePolicy=""Fixed"" HeightSizePolicy=""CoverChildren"" SuggestedWidth=""40""
         VerticalAlignment=""Center""
         IsVisible=""@HasIssues"" UpdateChildrenStates=""true"">
   <Children>
@@ -40,8 +43,12 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     /// </summary>
     internal sealed class LauncherModsPrefabExtension2 : PrefabExtensionCustomPatch<XmlNode>
     {
-        public static string Movie { get; } = "Launcher.Mods";
-        public static string XPath { get; } = "descendant::ListPanel[@Id='InnerPanel']/ItemTemplate/ListPanel";
+        public static string Movie { get; } = ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 }
+            ? "Launcher.Mods.ModuleTuple"
+            : "Launcher.Mods";
+        public static string XPath { get; } = ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 }
+            ? "/Prefab/Window/ListPanel"
+            : "descendant::ListPanel[@Id='InnerPanel']/ItemTemplate/ListPanel";
 
         private XmlDocument XmlDocument { get; } = new();
 

@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.BUTRLoader.Helpers;
 
 using System.Xml;
 
@@ -16,11 +17,17 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 
         public LauncherModsPrefabExtension3()
         {
-            XmlDocument.LoadXml(@"
+            var horizontalOffset = 120;
+            if (ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 })
+            {
+                horizontalOffset = 50;
+            }
+
+            XmlDocument.LoadXml(@$"
 <ScrollbarWidget Id=""Scrollbar"" Handle=""ScrollbarHandle"" AlignmentAxis=""Vertical"" MinValue=""0"" MaxValue=""100""
                  HorizontalAlignment=""Right"" VerticalAlignment=""Center""
                  WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent""
-                 SuggestedWidth=""20"" MarginTop=""46"" MarginBottom=""23"" MarginRight=""120""
+                 SuggestedWidth=""20"" MarginTop=""46"" MarginBottom=""23"" MarginRight=""{horizontalOffset}""
                  UpdateChildrenStates=""true"" >
   <Children>
     <Widget

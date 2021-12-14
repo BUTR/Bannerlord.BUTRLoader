@@ -55,14 +55,18 @@ namespace Bannerlord.BUTRLoader.Patches
 
             PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension8.Movie, LauncherModsPrefabExtension8.XPath, new LauncherModsPrefabExtension8());
 
+            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension9.Movie, LauncherModsPrefabExtension9.XPath, new LauncherModsPrefabExtension9());
+            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension10.Movie, LauncherModsPrefabExtension10.XPath, new LauncherModsPrefabExtension10());
+            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension11.Movie, LauncherModsPrefabExtension11.XPath, new LauncherModsPrefabExtension11());
+
             var res1 = harmony.TryPatch(
-                AccessTools.DeclaredMethod(typeof(WidgetPrefab), nameof(WidgetPrefab.LoadFrom)),
-                transpiler: AccessTools.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(WidgetPrefab_LoadFrom_Transpiler)));
+                AccessTools2.DeclaredMethod(typeof(WidgetPrefab), nameof(WidgetPrefab.LoadFrom)),
+                transpiler: AccessTools2.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(WidgetPrefab_LoadFrom_Transpiler)));
             if (!res1) return false;
 
             var res2 = harmony.TryCreateReversePatcher(
-                SymbolExtensions.GetMethodInfo(() => WidgetPrefab.LoadFrom(null!, null!, null!)),
-                SymbolExtensions.GetMethodInfo(() => LoadFromDocument(null!, null!, null!, null!)));
+                SymbolExtensions2.GetMethodInfo(() => WidgetPrefab.LoadFrom(null!, null!, null!)),
+                SymbolExtensions2.GetMethodInfo(() => LoadFromDocument(null!, null!, null!, null!)));
             if (res2 is null) return false;
             res2.Patch();
 
@@ -86,7 +90,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 return instructionsList.AsEnumerable();
             }
 
-            var constructor = AccessTools.DeclaredConstructor(typeof(WidgetPrefab));
+            var constructor = AccessTools2.DeclaredConstructor(typeof(WidgetPrefab));
 
             var locals = method.GetMethodBody()?.LocalVariables;
             var typeLocal = locals?.FirstOrDefault(x => x.LocalType == typeof(WidgetPrefab));
@@ -115,7 +119,7 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 new (OpCodes.Ldarg_2),
                 new (OpCodes.Ldloc_0),
-                new (OpCodes.Call, SymbolExtensions.GetMethodInfo(() => ProcessMovie(null!, null!)))
+                new (OpCodes.Call, SymbolExtensions2.GetMethodInfo(() => ProcessMovie(null!, null!)))
             });
             return instructionsList.AsEnumerable();
         }
@@ -144,7 +148,7 @@ namespace Bannerlord.BUTRLoader.Patches
                     return returnNull;
 
                 var constructorIndex = -1;
-                var constructor = AccessTools.Constructor(typeof(WidgetPrefab));
+                var constructor = AccessTools2.Constructor(typeof(WidgetPrefab));
                 for (var i = 0; i < instructionList.Count; i++)
                 {
                     if (instructionList[i].opcode == OpCodes.Newobj && Equals(instructionList[i].operand, constructor))

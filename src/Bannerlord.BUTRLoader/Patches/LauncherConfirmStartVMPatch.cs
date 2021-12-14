@@ -1,0 +1,31 @@
+﻿using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
+
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+using TaleWorlds.MountAndBlade.Launcher;
+using TaleWorlds.MountAndBlade.Launcher.UserDatas;
+
+namespace Bannerlord.BUTRLoader.Patches
+{
+    internal static class LauncherConfirmStartVMPatch
+    {
+        public static bool Enable(Harmony harmony)
+        {
+            var res1 = harmony.TryPatch(
+                AccessTools2.Method(typeof(LauncherConfirmStartVM), "EnableWith"),
+                prefix: AccessTools2.Method(typeof(LauncherConfirmStartVMPatch), nameof(EnableWithPrefix)));
+            if (!res1) return false;
+
+            return true;
+        }
+
+        public static bool EnableWithPrefix(LauncherConfirmStartVM instance, Action ___onConfirm)
+        {
+            ___onConfirm?.Invoke();
+            return false;
+        }
+    }
+}

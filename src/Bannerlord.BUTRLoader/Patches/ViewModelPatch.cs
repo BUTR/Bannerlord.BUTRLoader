@@ -21,13 +21,13 @@ namespace Bannerlord.BUTRLoader.Patches
         public static void Enable(Harmony harmony)
         {
             harmony.Patch(
-                AccessTools.Method(typeof(ViewModel), nameof(ViewModel.ExecuteCommand)),
-                transpiler: new HarmonyMethod(SymbolExtensions.GetMethodInfo(() => ViewModel_ExecuteCommand_Transpiler(null!, null!))));
+                AccessTools2.Method(typeof(ViewModel), nameof(ViewModel.ExecuteCommand)),
+                transpiler: new HarmonyMethod(SymbolExtensions2.GetMethodInfo(() => ViewModel_ExecuteCommand_Transpiler(null!, null!))));
 
             // Preventing inlining ExecuteCommand
             harmony.TryPatch(
-                AccessTools.Method(typeof(GauntletView), "OnCommand"),
-                transpiler: AccessTools.Method(typeof(ViewModelPatch), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(GauntletView), "OnCommand"),
+                transpiler: AccessTools2.Method(typeof(ViewModelPatch), nameof(BlankTranspiler)));
             // Preventing inlining ExecuteCommand
         }
 
@@ -46,7 +46,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 new(OpCodes.Ldarg_0),
                 new(OpCodes.Ldarg_1),
                 new(OpCodes.Ldarg_2),
-                new(OpCodes.Call, SymbolExtensions.GetMethodInfo(() => ExecuteCommand(null!, null!, null!))),
+                new(OpCodes.Call, SymbolExtensions2.GetMethodInfo(() => ExecuteCommand(null!, null!, null!))),
                 new(OpCodes.Brtrue, jmpOriginalFlow),
                 new(OpCodes.Ret)
             });

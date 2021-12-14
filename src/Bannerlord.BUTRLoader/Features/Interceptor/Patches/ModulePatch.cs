@@ -16,13 +16,13 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools.Method(typeof(Module), "LoadSubModules"),
-                postfix: AccessTools.Method(typeof(ModulePatch), nameof(LoadSubModulesPostfix)));
+                AccessTools2.Method(typeof(Module), "LoadSubModules"),
+                postfix: AccessTools2.Method(typeof(ModulePatch), nameof(LoadSubModulesPostfix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                AccessTools.Method(typeof(Module), "InitializeSubModules"),
-                prefix: AccessTools.Method(typeof(ModulePatch), nameof(InitializeSubModulesPrefix)));
+                AccessTools2.Method(typeof(Module), "InitializeSubModules"),
+                prefix: AccessTools2.Method(typeof(ModulePatch), nameof(InitializeSubModulesPrefix)));
             if (!res2) return false;
 
             return true;

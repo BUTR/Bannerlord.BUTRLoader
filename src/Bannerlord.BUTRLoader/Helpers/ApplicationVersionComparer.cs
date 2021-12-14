@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Bannerlord.ModuleManager;
 
-using TaleWorlds.Library;
+using System.Collections.Generic;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
@@ -11,6 +11,9 @@ namespace Bannerlord.BUTRLoader.Helpers
     {
         public virtual int Compare(ApplicationVersion x, ApplicationVersion y)
         {
+            var versionTypeComparison = x.ApplicationVersionType.CompareTo(y.ApplicationVersionType);
+            if (versionTypeComparison != 0) return versionTypeComparison;
+
             var majorComparison = x.Major.CompareTo(y.Major);
             if (majorComparison != 0) return majorComparison;
 

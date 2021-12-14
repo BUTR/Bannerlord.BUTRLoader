@@ -1,5 +1,5 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
-using Bannerlord.BUTR.Shared.ModuleInfoExtended;
+using Bannerlord.ModuleManager;
 
 using Newtonsoft.Json;
 
@@ -62,7 +62,7 @@ namespace Bannerlord.BUTRLoader.Helpers
     {
         private const string UpdateCheckerUrl = "/update-checker";
 
-        public static async Task<ResponseData?> GetAsync(IEnumerable<ModuleInfo2> moduleInfos, bool checkLauncher = true)
+        public static async Task<ResponseData?> GetAsync(IEnumerable<ModuleInfoExtended> moduleInfos, bool checkLauncher = true)
         {
             var assembly = Assembly.GetExecutingAssembly();
             var baseUrlAttr = assembly.GetCustomAttributes<AssemblyMetadataAttribute>().FirstOrDefault(a => a.Key == "BUTRBaseUrl");
@@ -71,7 +71,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             var modData = moduleInfos
                 .Where(m => !string.IsNullOrWhiteSpace(m.Url))
-                .Select(m => new RequestModData(m.Id, ApplicationVersionHelper.ToString(m.Version), m.Url))
+                .Select(m => new RequestModData(m.Id, m.Version.ToString(), m.Url))
                 .ToList();
             if (checkLauncher)
             {

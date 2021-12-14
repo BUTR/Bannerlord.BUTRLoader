@@ -1,7 +1,7 @@
-﻿using Bannerlord.BUTR.Shared.Helpers;
-using Bannerlord.BUTR.Shared.ModuleInfoExtended;
-using Bannerlord.BUTRLoader.Extensions;
+﻿using Bannerlord.BUTR.Shared.Extensions;
+using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.ModuleManager;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -13,7 +13,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher;
 
 using static Bannerlord.BUTRLoader.Helpers.LauncherModuleVMExtensions;
@@ -22,16 +21,15 @@ namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
     {
-        internal static readonly Dictionary<string, ModuleInfo2> ExtendedModuleInfoCache = new();
+        internal static readonly Dictionary<string, ModuleInfoExtended> ExtendedModuleInfoCache = new();
 
-        private static ModuleInfo2 GetExtendedModuleInfo(object moduleInfo) => GetExtendedModuleInfo(ModuleInfoWrapper.Create(moduleInfo));
-        private static ModuleInfo2 GetExtendedModuleInfo(ModuleInfoWrapper moduleInfoWrapper)
+        private static ModuleInfoExtended GetExtendedModuleInfo(object moduleInfo) => GetExtendedModuleInfo(ModuleInfoWrapper.Create(moduleInfo));
+        private static ModuleInfoExtended GetExtendedModuleInfo(ModuleInfoWrapper moduleInfoWrapper)
         {
             if (ExtendedModuleInfoCache.ContainsKey(moduleInfoWrapper.Id))
                 return ExtendedModuleInfoCache[moduleInfoWrapper.Id];
 
-            var extendedModuleInfo = new ModuleInfo2();
-            extendedModuleInfo.Load(string.IsNullOrEmpty(moduleInfoWrapper.Alias) ? moduleInfoWrapper.Id : moduleInfoWrapper.Alias);
+            var extendedModuleInfo = ModuleInfoHelper.LoadFromId(string.IsNullOrEmpty(moduleInfoWrapper.Alias) ? moduleInfoWrapper.Id : moduleInfoWrapper.Alias)!;
             ExtendedModuleInfoCache[moduleInfoWrapper.Id] = extendedModuleInfo;
             return extendedModuleInfo;
         }
@@ -39,18 +37,18 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools.Method(typeof(LauncherModsVM), "GetDependentModulesOf"),
-                prefix: AccessTools.Method(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix)));
+                AccessTools2.Method(typeof(LauncherModsVM), "GetDependentModulesOf"),
+                prefix: AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                AccessTools.Method(typeof(LauncherModsVM), "IsAllDependenciesOfModulePresent"),
-                prefix: AccessTools.Method(typeof(LauncherModsVMPatch), nameof(AreAllDependenciesOfModulePresentPrefix)));
+                AccessTools2.Method(typeof(LauncherModsVM), "IsAllDependenciesOfModulePresent"),
+                prefix: AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(AreAllDependenciesOfModulePresentPrefix)));
             if (!res2) return false;
 
             var res3 = harmony.TryPatch(
-                AccessTools.Method(typeof(LauncherModsVM), "ChangeIsSelectedOf"),
-                prefix: AccessTools.Method(typeof(LauncherModsVMPatch), nameof(ChangeIsSelectedOfPrefix)));
+                AccessTools2.Method(typeof(LauncherModsVM), "ChangeIsSelectedOf"),
+                prefix: AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(ChangeIsSelectedOfPrefix)));
             if (!res3) return false;
 
             return true;
@@ -59,16 +57,16 @@ namespace Bannerlord.BUTRLoader.Patches
         public static void Disable(Harmony harmony)
         {
             harmony.Unpatch(
-                AccessTools.Method(typeof(LauncherModsVM), "GetDependentModulesOf"),
-                AccessTools.Method(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix)));
+                AccessTools2.Method(typeof(LauncherModsVM), "GetDependentModulesOf"),
+                AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix)));
 
             harmony.Unpatch(
-                AccessTools.Method(typeof(LauncherModsVM), "IsAllDependenciesOfModulePresent"),
-                AccessTools.Method(typeof(LauncherModsVMPatch), nameof(AreAllDependenciesOfModulePresentPrefix)));
+                AccessTools2.Method(typeof(LauncherModsVM), "IsAllDependenciesOfModulePresent"),
+                AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(AreAllDependenciesOfModulePresentPrefix)));
 
             harmony.Unpatch(
-                AccessTools.Method(typeof(LauncherModsVM), "ChangeIsSelectedOf"),
-                AccessTools.Method(typeof(LauncherModsVMPatch), nameof(ChangeIsSelectedOfPrefix)));
+                AccessTools2.Method(typeof(LauncherModsVM), "ChangeIsSelectedOf"),
+                AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(ChangeIsSelectedOfPrefix)));
         }
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
@@ -110,7 +108,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
             // External dependencies should not disable a mod. Instead, they itself should be disabled
             __result = true;
-            var visited = new HashSet<ModuleInfo2>();
+            var visited = new HashSet<ModuleInfoExtended>();
             foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, info2, visited, true))
             {
                 if (!ModuleIsCorrect(__instance, dependency, ____modulesCache, visited))
@@ -130,18 +128,18 @@ namespace Bannerlord.BUTRLoader.Patches
             AreAllDependenciesOfModulePresentPrefix(launcherModsVM, moduleInfo, modulesCache, ref result);
             return result;
         }
-        private static bool ModuleIsCorrect(LauncherModsVM instance, ModuleInfo2 moduleInfo2, List<object> modules, HashSet<ModuleInfo2> visited)
+        private static bool ModuleIsCorrect(LauncherModsVM instance, ModuleInfoExtended ModuleInfoExtended, List<object> modules, HashSet<ModuleInfoExtended> visited)
         {
             // Check that all dependencies are present
-            foreach (var dependency in moduleInfo2.DependedModules)
+            foreach (var dependency in ModuleInfoExtended.DependentModules)
             {
-                if (!ExtendedModuleInfoCache.ContainsKey(dependency.ModuleId))
+                if (!ExtendedModuleInfoCache.ContainsKey(dependency.Id))
                 {
-                    AppendIssue(instance, moduleInfo2, $"Missing {dependency.ModuleId} {dependency.Version}");
+                    AppendIssue(instance, ModuleInfoExtended, $"Missing {dependency.Id} {dependency.Version}");
                     return false;
                 }
             }
-            foreach (var metadata in moduleInfo2.DependedModuleMetadatas)
+            foreach (var metadata in ModuleInfoExtended.DependentModuleMetadatas)
             {
                 // Ignore the check for Optional
                 if (metadata.IsOptional) continue;
@@ -150,18 +148,18 @@ namespace Bannerlord.BUTRLoader.Patches
 
                 if (!ExtendedModuleInfoCache.ContainsKey(metadata.Id))
                 {
-                    if (metadata.Version != ApplicationVersionHelper.Empty)
-                        AppendIssue(instance, moduleInfo2, $"Missing {metadata.Id} {metadata.Version}");
+                    if (metadata.Version != ApplicationVersion.Empty)
+                        AppendIssue(instance, ModuleInfoExtended, $"Missing {metadata.Id} {metadata.Version}");
                     if (metadata.VersionRange != ApplicationVersionRange.Empty)
-                        AppendIssue(instance, moduleInfo2, $"Missing {metadata.Id} {metadata.VersionRange}");
+                        AppendIssue(instance, ModuleInfoExtended, $"Missing {metadata.Id} {metadata.VersionRange}");
                     return false;
                 }
             }
 
             // Check that the dependencies themselves have all dependencies present
-            foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, moduleInfo2, visited).ToArray())
+            foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, ModuleInfoExtended, visited).ToArray())
             {
-                var metadata = moduleInfo2.DependedModuleMetadatas.Find(dmm => dmm.Id == dependency.Id);
+                var metadata = ModuleInfoExtended.DependentModuleMetadatas.FirstOrDefault(dmm => dmm.Id == dependency.Id);
 
                 // Handle only direct dependencies
                 if (metadata.LoadType != LoadType.LoadBeforeThis) continue;
@@ -179,20 +177,20 @@ namespace Bannerlord.BUTRLoader.Patches
                 // Handle only direct dependencies
                 if (metadata.LoadType != LoadType.LoadAfterThis && !moduleIsCorrect)
                 {
-                    AppendIssue(instance, moduleInfo2, $"'{dependency.Name}' has unresolved issues!");
+                    AppendIssue(instance, ModuleInfoExtended, $"'{dependency.Name}' has unresolved issues!");
                     return false;
                 }
             }
 
             // Check that the dependencies have the minimum required version set by DependedModuleMetadatas
-            var comparer = new ApplicationVersionFullComparer();
-            foreach (var metadata in moduleInfo2.DependedModuleMetadatas.Where(m => /*!m.IsOptional &&*/ !m.IsIncompatible))
+            var comparer = new ApplicationVersionComparer();
+            foreach (var metadata in ModuleInfoExtended.DependentModuleMetadatas.Where(m => /*!m.IsOptional &&*/ !m.IsIncompatible))
             {
                 // Handle only direct dependencies
                 if (metadata.LoadType != LoadType.LoadBeforeThis) continue;
 
                 // Ignore the check for non-provided versions
-                if (metadata.Version == ApplicationVersionHelper.Empty && metadata.VersionRange == ApplicationVersionRange.Empty) continue;
+                if (metadata.Version == ApplicationVersion.Empty && metadata.VersionRange == ApplicationVersionRange.Empty) continue;
 
                 if (!ExtendedModuleInfoCache.TryGetValue(metadata.Id, out var dependedModule) && metadata.IsOptional) continue;
 
@@ -201,7 +199,7 @@ namespace Bannerlord.BUTRLoader.Patches
                     // dependedModuleMetadata.Version > dependedModule.Version
                     if (!metadata.IsOptional && (comparer.Compare(metadata.Version, dependedModule.Version) > 0))
                     {
-                        AppendIssue(instance, moduleInfo2, $"'{dependedModule.Name}' wrong version <= {metadata.Version}");
+                        AppendIssue(instance, ModuleInfoExtended, $"'{dependedModule.Name}' wrong version <= {metadata.Version}");
                         return false;
                     }
                 }
@@ -214,12 +212,12 @@ namespace Bannerlord.BUTRLoader.Patches
                     {
                         if (comparer.Compare(metadata.VersionRange.Min, dependedModule.Version) > 0)
                         {
-                            AppendIssue(instance, moduleInfo2, $"'{dependedModule.Name}' wrong version < [{metadata.VersionRange}]");
+                            AppendIssue(instance, ModuleInfoExtended, $"'{dependedModule.Name}' wrong version < [{metadata.VersionRange}]");
                             return false;
                         }
                         if (comparer.Compare(metadata.VersionRange.Max, dependedModule.Version) < 0)
                         {
-                            AppendIssue(instance, moduleInfo2, $"'{dependedModule.Name}' wrong version > [{metadata.VersionRange}]");
+                            AppendIssue(instance, ModuleInfoExtended, $"'{dependedModule.Name}' wrong version > [{metadata.VersionRange}]");
                             return false;
                         }
                     }
@@ -227,14 +225,14 @@ namespace Bannerlord.BUTRLoader.Patches
             }
 
             // Do not load this mod if an incompatible mod is selected
-            foreach (var metadata in moduleInfo2.DependedModuleMetadatas.Where(m => m.IsIncompatible))
+            foreach (var metadata in ModuleInfoExtended.DependentModuleMetadatas.Where(m => m.IsIncompatible))
             {
                 var moduleVM2 = instance.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == metadata.Id);
 
                 // If the incompatible mod is selected, this mod is disabled
                 if (moduleVM2?.IsSelected == true)
                 {
-                    AppendIssue(instance, moduleInfo2, $"'{moduleVM2.Name}' is incompatible with this");
+                    AppendIssue(instance, ModuleInfoExtended, $"'{moduleVM2.Name}' is incompatible with this");
                     return false;
                 }
             }
@@ -242,24 +240,24 @@ namespace Bannerlord.BUTRLoader.Patches
             // If another mod declared incompatibility and is selected, disable this
             foreach (var (key, moduleInfo) in ExtendedModuleInfoCache)
             {
-                if (key == moduleInfo2.Id) continue;
+                if (key == ModuleInfoExtended.Id) continue;
 
-                if (!moduleInfo.IsSelected) continue;
+                //if (!moduleInfo.IsSelected) continue;
 
-                foreach (var metadata in moduleInfo.DependedModuleMetadatas.Where(m => m.IsIncompatible && m.Id == moduleInfo2.Id))
+                foreach (var metadata in moduleInfo.DependentModuleMetadatas.Where(m => m.IsIncompatible && m.Id == ModuleInfoExtended.Id))
                 {
                     var moduleVM2 = instance.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == key);
 
                     // If the incompatible mod is selected, this mod is disabled
                     if (moduleVM2?.IsSelected == true)
                     {
-                        AppendIssue(instance, moduleInfo2, $"'{moduleVM2.Name}' is incompatible with this");
+                        AppendIssue(instance, ModuleInfoExtended, $"'{moduleVM2.Name}' is incompatible with this");
                         return false;
                     }
                 }
             }
 
-            ClearIssues(instance, moduleInfo2);
+            ClearIssues(instance, ModuleInfoExtended);
             return true;
         }
 
@@ -278,15 +276,15 @@ namespace Bannerlord.BUTRLoader.Patches
                 return false;
             }
 
-            var visited = new HashSet<ModuleInfo2>();
+            var visited = new HashSet<ModuleInfoExtended>();
             ChangeIsSelectedOf(__instance, targetModule, ____modulesCache, visited);
 
             return false;
         }
-        private static void ChangeIsSelectedOf(LauncherModsVM instance, LauncherModuleVM targetModule, List<object> modules, HashSet<ModuleInfo2> visited)
+        private static void ChangeIsSelectedOf(LauncherModsVM instance, LauncherModuleVM targetModule, List<object> modules, HashSet<ModuleInfoExtended> visited)
         {
-            var targetModuleInfo2 = GetExtendedModuleInfo(LauncherModuleVMWrapper.Create(targetModule).Info);
-            var dependencies = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, targetModuleInfo2, visited, skipExternalDependencies: true).ToArray();
+            var targetModuleInfoExtended = GetExtendedModuleInfo(LauncherModuleVMWrapper.Create(targetModule).Info);
+            var dependencies = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, targetModuleInfoExtended, visited, skipExternalDependencies: true).ToArray();
 
             targetModule.IsSelected = !targetModule.IsSelected;
 
@@ -303,7 +301,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 }
 
                 // Deselect and disable any mod that is incompatible with this one
-                foreach (var dmm in targetModuleInfo2.DependedModuleMetadatas.Where(dmm => dmm.IsIncompatible))
+                foreach (var dmm in targetModuleInfoExtended.DependentModuleMetadatas.Where(dmm => dmm.IsIncompatible))
                 {
                     var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == dmm.Id);
                     if (incompatibleModuleVM is not null)
@@ -312,14 +310,14 @@ namespace Bannerlord.BUTRLoader.Patches
                             ChangeIsSelectedOf(instance, incompatibleModuleVM, modules, visited);
 
                         incompatibleModuleVM.IsDisabled = true;
-                        AppendIssue(incompatibleModuleVM, $"'{targetModuleInfo2.Name}' is incompatible with this");
+                        AppendIssue(incompatibleModuleVM, $"'{targetModuleInfoExtended.Name}' is incompatible with this");
                     }
                 }
 
                 // Disable any mod that declares this mod as incompatible
                 foreach (var (key, moduleInfo) in ExtendedModuleInfoCache)
                 {
-                    foreach (var dmm in moduleInfo.DependedModuleMetadatas.Where(dmm => dmm.IsIncompatible && dmm.Id == targetModuleInfo2.Id))
+                    foreach (var dmm in moduleInfo.DependentModuleMetadatas.Where(dmm => dmm.IsIncompatible && dmm.Id == targetModuleInfoExtended.Id))
                     {
                         var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == key);
                         if (incompatibleModuleVM is not null)
@@ -339,14 +337,14 @@ namespace Bannerlord.BUTRLoader.Patches
                 // Deselect all modules that depend on this module if they are selected
                 foreach (var module in instance.Modules/*.Where(m => !m.IsOfficial)*/)
                 {
-                    var moduleInfo2 = GetExtendedModuleInfo(LauncherModuleVMWrapper.Create(module).Info);
-                    var dependencies2 = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, moduleInfo2, skipExternalDependencies: true);
-                    if (module.IsSelected && dependencies2.Any(d => d.Id == targetModuleInfo2.Id))
+                    var ModuleInfoExtended = GetExtendedModuleInfo(LauncherModuleVMWrapper.Create(module).Info);
+                    var dependencies2 = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, ModuleInfoExtended, skipExternalDependencies: true);
+                    if (module.IsSelected && dependencies2.Any(d => d.Id == targetModuleInfoExtended.Id))
                         ChangeIsSelectedOf(instance, module, modules, visited);
                 }
 
                 // Enable for selection any mod that is incompatible with this one
-                foreach (var dmm in targetModuleInfo2.DependedModuleMetadatas.Where(dmm => dmm.IsIncompatible))
+                foreach (var dmm in targetModuleInfoExtended.DependentModuleMetadatas.Where(dmm => dmm.IsIncompatible))
                 {
                     var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == dmm.Id);
                     if (incompatibleModuleVM is not null)
@@ -359,7 +357,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 // Check if any mod that declares this mod as incompatible can be Enabled
                 foreach (var (key, moduleInfo) in ExtendedModuleInfoCache)
                 {
-                    foreach (var dmm in moduleInfo.DependedModuleMetadatas.Where(dmm => dmm.IsIncompatible && dmm.Id == targetModuleInfo2.Id))
+                    foreach (var dmm in moduleInfo.DependentModuleMetadatas.Where(dmm => dmm.IsIncompatible && dmm.Id == targetModuleInfoExtended.Id))
                     {
                         var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == key);
                         if (incompatibleModuleVM is not null)
@@ -375,12 +373,12 @@ namespace Bannerlord.BUTRLoader.Patches
         }
 
 
-        public static void AppendIssue(LauncherModsVM viewModel, ModuleInfo2 moduleInfo2, string issue)
+        public static void AppendIssue(LauncherModsVM viewModel, ModuleInfoExtended ModuleInfoExtended, string issue)
         {
-            //viewModel.ExecuteCommand("SetIssue", new object[] { moduleInfo2.Id,  new string[] { issue } });
-            SetIssue(moduleInfo2.Id, new string[] { issue });
+            //viewModel.ExecuteCommand("SetIssue", new object[] { ModuleInfoExtended.Id,  new string[] { issue } });
+            SetIssue(ModuleInfoExtended.Id, new string[] { issue });
 
-            var moduleVM = viewModel.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == moduleInfo2.Id);
+            var moduleVM = viewModel.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == ModuleInfoExtended.Id);
             moduleVM?.ExecuteCommand("UpdateIssues", Array.Empty<object>());
         }
         public static void AppendIssue(LauncherModuleVM viewModel, string issue)
@@ -390,20 +388,20 @@ namespace Bannerlord.BUTRLoader.Patches
 
             viewModel.ExecuteCommand("UpdateIssues", Array.Empty<object>());
         }
-        public static void ClearIssues(LauncherModsVM viewModel, ModuleInfo2 moduleInfo2)
+        public static void ClearIssues(LauncherModsVM viewModel, ModuleInfoExtended ModuleInfoExtended)
         {
-            //Issues.Remove(moduleInfo2.Id);
-            if (Issues.TryGetValue(moduleInfo2.Id, out var list))
+            //Issues.Remove(ModuleInfoExtended.Id);
+            if (Issues.TryGetValue(ModuleInfoExtended.Id, out var list))
                 list.Clear();
 
-            var moduleVM = viewModel.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == moduleInfo2.Id);
+            var moduleVM = viewModel.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == ModuleInfoExtended.Id);
             moduleVM?.ExecuteCommand("UpdateIssues", Array.Empty<object>());
         }
         public static void ClearIssues(LauncherModuleVM viewModel)
         {
             var id = LauncherModuleVMWrapper.Create(viewModel).Info.Id;
 
-            //Issues.Remove(moduleInfo2.Id);
+            //Issues.Remove(ModuleInfoExtended.Id);
             if (Issues.TryGetValue(id, out var list))
                 list.Clear();
 

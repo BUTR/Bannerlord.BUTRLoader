@@ -56,38 +56,38 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             _harmony = harmony;
 
             harmony.Patch(
-                SymbolExtensions2.GetPropertyInfo((BrushFactory bf) => bf.Brushes).GetMethod,
-                postfix: new HarmonyMethod(AccessTools.Method(typeof(BrushFactoryManager), nameof(GetBrushesPostfix))));
+                SymbolExtensions2.GetPropertyInfo((BrushFactory bf) => bf.Brushes)?.GetMethod,
+                postfix: new HarmonyMethod(AccessTools2.Method(typeof(BrushFactoryManager), nameof(GetBrushesPostfix))));
 
             harmony.Patch(
-                SymbolExtensions.GetMethodInfo((BrushFactory bf) => bf.GetBrush(null!)),
-                prefix: new HarmonyMethod(AccessTools.Method(typeof(BrushFactoryManager), nameof(GetBrushPrefix))));
+                SymbolExtensions2.GetMethodInfo((BrushFactory bf) => bf.GetBrush(null!)),
+                prefix: new HarmonyMethod(AccessTools2.Method(typeof(BrushFactoryManager), nameof(GetBrushPrefix))));
 
             var res3 = harmony.TryPatch(
-                AccessTools.Method(typeof(BrushFactory), "LoadBrushes"),
-                prefix: AccessTools.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
+                AccessTools2.Method(typeof(BrushFactory), "LoadBrushes"),
+                prefix: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
             if (!res3) return false;
 
             // Preventing inlining Initialize
             harmony.TryPatch(
-                AccessTools.Method(typeof(BrushFactory), "Initialize"),
-                transpiler: AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(BrushFactory), "Initialize"),
+                transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             // Preventing inlining GetBrush
             harmony.TryPatch(
-                AccessTools.Method(typeof(ConstantDefinition), "GetValue"),
-                transpiler: AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(ConstantDefinition), "GetValue"),
+                transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(WidgetExtensions), "SetWidgetAttributeFromString"),
-                transpiler: AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(WidgetExtensions), "SetWidgetAttributeFromString"),
+                transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(UIContext), "GetBrush"),
-                transpiler: AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(UIContext), "GetBrush"),
+                transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(WidgetExtensions), "ConvertObject"),
-                transpiler: AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(WidgetExtensions), "ConvertObject"),
+                transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             //harmony.Patch(
-            //    AccessTools.Method(typeof(BoolBrushChanger), "OnBooleanUpdated"),
-            //    transpiler: new HarmonyMethod(AccessTools.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler))));
+            //    AccessTools2.Method(typeof(BoolBrushChanger), "OnBooleanUpdated"),
+            //    transpiler: new HarmonyMethod(AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler))));
             // Preventing inlining GetBrush
 
             return true;
@@ -127,8 +127,8 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             SetBrushFactory(__instance);
 
             _harmony?.Unpatch(
-                AccessTools.Method(typeof(BrushFactory), "LoadBrushes"),
-                AccessTools.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
+                AccessTools2.Method(typeof(BrushFactory), "LoadBrushes"),
+                AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

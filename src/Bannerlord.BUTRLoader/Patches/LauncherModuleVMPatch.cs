@@ -17,7 +17,7 @@ namespace Bannerlord.BUTRLoader.Patches
         {
             var res1 = harmony.TryPatch(
                 AccessTools.FirstConstructor(typeof(LauncherModuleVM), ci => ci.GetParameters().Length > 0),
-                postfix: AccessTools.Method(typeof(LauncherModuleVMPatch), nameof(LauncherModuleVMConstructorPostfix)));
+                postfix: AccessTools2.Method(typeof(LauncherModuleVMPatch), nameof(LauncherModuleVMConstructorPostfix)));
             if (!res1) return false;
 
             return true;

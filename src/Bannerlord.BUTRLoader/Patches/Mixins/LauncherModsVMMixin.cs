@@ -1,6 +1,5 @@
 ﻿using Bannerlord.BUTR.Shared.Utils;
 
-using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using System.Collections.Generic;
@@ -37,13 +36,13 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             _launcherModsVM = launcherModsVM;
 
-            var propsObject = AccessTools.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherModsVM) as Dictionary<string, PropertyInfo>
+            var propsObject = AccessTools2.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherModsVM) as Dictionary<string, PropertyInfo>
                               ?? new Dictionary<string, PropertyInfo>();
 
             void SetVMProperty(string property)
             {
                 var propertyInfo = new WrappedPropertyInfo(
-                    AccessTools.Property(typeof(LauncherModsVMMixin), property),
+                    AccessTools2.Property(typeof(LauncherModsVMMixin), property),
                     this);
                 propertyInfo.PropertyChanged += (_, e) => _launcherModsVM.OnPropertyChanged(e.PropertyName);
                 propsObject[property] = propertyInfo;

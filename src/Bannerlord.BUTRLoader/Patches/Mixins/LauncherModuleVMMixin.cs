@@ -1,7 +1,8 @@
-﻿using Bannerlord.BUTR.Shared.Utils;
+﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.BUTR.Shared.Utils;
 using Bannerlord.BUTRLoader.Helpers;
 
-using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System.Collections.Generic;
 using System.Reflection;
@@ -59,6 +60,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
         private bool _isNoUpdateAvailable;
 
+        public object DependencyHint2 { get; }
+        public bool AnyDependencyAvailable2 { get; }
+
+        public bool IsDangerous2 { get; }
+
+
         private readonly LauncherModuleVM _launcherModuleVM;
         private readonly string _moduleId;
 
@@ -66,13 +73,15 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             _launcherModuleVM = launcherModuleVM;
 
-            var propsObject = AccessTools.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherModuleVM) as Dictionary<string, PropertyInfo>
+            var moduleInfoWrapper = LauncherModuleVMWrapper.Create(launcherModuleVM);
+
+            var propsObject = AccessTools2.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherModuleVM) as Dictionary<string, PropertyInfo>
                               ?? new Dictionary<string, PropertyInfo>();
 
             void SetVMProperty(string property)
             {
                 var propertyInfo = new WrappedPropertyInfo(
-                    AccessTools.Property(typeof(LauncherModuleVMMixin), property),
+                    AccessTools2.Property(typeof(LauncherModuleVMMixin), property)!,
                     this);
                 propertyInfo.PropertyChanged += (_, e) => _launcherModuleVM.OnPropertyChanged(e.PropertyName);
                 propsObject[property] = propertyInfo;
@@ -84,7 +93,20 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(HasNoIssues));
             SetVMProperty(nameof(IsNoUpdateAvailable));
 
-            _moduleId = LauncherModuleVMWrapper.Create(launcherModuleVM).Info.Id;
+            if (ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 })
+            {
+                var id = moduleInfoWrapper.Info.Id;
+                if (ModuleInfoHelper.LoadFromId(id) is { } moduleInfo && ModuleInfoHelper2.GetDependencyHint(moduleInfo) is { } str && LauncherHintVMWrapper.Create(str) is { } hint)
+                {
+                    DependencyHint2 = hint.Object;
+                    AnyDependencyAvailable2 = !string.IsNullOrEmpty(str);
+                    SetVMProperty(nameof(DependencyHint2));
+                    SetVMProperty(nameof(AnyDependencyAvailable2));
+                    SetVMProperty(nameof(IsDangerous2));
+                }
+            }
+
+            _moduleId = moduleInfoWrapper.Info.Id;
             UpdateIssues();
         }
 

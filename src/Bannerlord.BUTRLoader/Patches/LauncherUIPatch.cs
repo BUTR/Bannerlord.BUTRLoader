@@ -17,14 +17,14 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools.Method(typeof(LauncherUI), nameof(LauncherUI.Initialize)),
-                postfix: AccessTools.Method(typeof(LauncherUIPatch), nameof(InitializePostfix)));
+                AccessTools2.Method(typeof(LauncherUI), nameof(LauncherUI.Initialize)),
+                postfix: AccessTools2.Method(typeof(LauncherUIPatch), nameof(InitializePostfix)));
             if (!res1) return false;
 
             // Preventing inlining Initialize
             harmony.TryPatch(
-                AccessTools.Method(typeof(LauncherUI), "Update"),
-                transpiler: AccessTools.Method(typeof(LauncherUIPatch), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(LauncherUI), "Update"),
+                transpiler: AccessTools2.Method(typeof(LauncherUIPatch), nameof(BlankTranspiler)));
             // Preventing inlining Initialize
 
             return true;

@@ -1,5 +1,4 @@
-﻿using Bannerlord.BUTRLoader.Extensions;
-using Bannerlord.BUTRLoader.Patches;
+﻿using Bannerlord.BUTRLoader.Patches;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -61,33 +60,33 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             _harmony = harmony;
 
             var res1 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.GetCustomType(null!)),
-                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetCustomTypePrefix)));
+                SymbolExtensions2.GetMethodInfo((WidgetFactory wf) => wf.GetCustomType(null!)),
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetCustomTypePrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.GetWidgetTypes()),
-                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetWidgetTypesPostfix)));
+                SymbolExtensions2.GetMethodInfo((WidgetFactory wf) => wf.GetWidgetTypes()),
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetWidgetTypesPostfix)));
             if (!res2) return false;
 
             var res3 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.IsCustomType(null!)),
-                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(IsCustomTypePrefix)));
+                SymbolExtensions2.GetMethodInfo((WidgetFactory wf) => wf.IsCustomType(null!)),
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(IsCustomTypePrefix)));
             if (!res3) return false;
 
             var res4 = harmony.TryPatch(
-                AccessTools.DeclaredMethod(typeof(WidgetFactory), "OnUnload"),
-                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(OnUnloadPrefix)));
+                AccessTools2.DeclaredMethod(typeof(WidgetFactory), "OnUnload"),
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(OnUnloadPrefix)));
             //if (!res4) return false;
 
             var res5 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.Initialize()),
-                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
+                SymbolExtensions2.GetMethodInfo((WidgetFactory wf) => wf.Initialize()),
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
             if (!res5) return false;
 
             var res6 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.CreateBuiltinWidget(null!, null!)),
-                prefix: AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(CreateBuiltinWidgetPrefix)));
+                SymbolExtensions2.GetMethodInfo((WidgetFactory wf) => wf.CreateBuiltinWidget(null!, null!)),
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(CreateBuiltinWidgetPrefix)));
             if (!res6) return false;
 
             // GetCustomType is too complex to be inlined
@@ -95,15 +94,15 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             // GetWidgetTypes is not used?
             // Preventing inlining IsCustomType
             harmony.TryPatch(
-                AccessTools.Method(typeof(WidgetTemplate), "CreateWidgets"),
-                transpiler: AccessTools.Method(typeof(WidgetFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(WidgetTemplate), "CreateWidgets"),
+                transpiler: AccessTools2.Method(typeof(WidgetFactoryManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools.Method(typeof(WidgetTemplate), "OnRelease"),
-                transpiler: AccessTools.Method(typeof(WidgetFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method(typeof(WidgetTemplate), "OnRelease"),
+                transpiler: AccessTools2.Method(typeof(WidgetFactoryManager), nameof(BlankTranspiler)));
             // Preventing inlining GetCustomType
             //harmony.Patch(
-            //    AccessTools.Method(typeof(GauntletMovie), "LoadMovie"),
-            //    transpiler: new HarmonyMethod(AccessTools.Method(typeof(WidgetFactoryManager), nameof(BlankTranspiler))));
+            //    AccessTools2.Method(typeof(GauntletMovie), "LoadMovie"),
+            //    transpiler: new HarmonyMethod(AccessTools2.Method(typeof(WidgetFactoryManager), nameof(BlankTranspiler))));
 
             return true;
         }
@@ -193,8 +192,8 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             SetWidgetFactory(__instance);
 
             _harmony?.Unpatch(
-                SymbolExtensions.GetMethodInfo((WidgetFactory wf) => wf.Initialize()),
-                AccessTools.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
+                SymbolExtensions2.GetMethodInfo((WidgetFactory wf) => wf.Initialize()),
+                AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

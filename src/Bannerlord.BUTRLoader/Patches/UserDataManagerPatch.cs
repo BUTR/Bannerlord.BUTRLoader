@@ -23,13 +23,13 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((UserDataManager udm) => udm.LoadUserData()),
-                prefix: AccessTools.Method(typeof(UserDataManagerPatch), nameof(LoadUserDataPrefix)));
+                SymbolExtensions2.GetMethodInfo((UserDataManager udm) => udm.LoadUserData()),
+                prefix: AccessTools2.Method(typeof(UserDataManagerPatch), nameof(LoadUserDataPrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((UserDataManager udm) => udm.SaveUserData()),
-                prefix: AccessTools.Method(typeof(UserDataManagerPatch), nameof(SaveUserDataPrefix)));
+                SymbolExtensions2.GetMethodInfo((UserDataManager udm) => udm.SaveUserData()),
+                prefix: AccessTools2.Method(typeof(UserDataManagerPatch), nameof(SaveUserDataPrefix)));
             if (!res2) return false;
 
             return true;
@@ -70,8 +70,8 @@ namespace Bannerlord.BUTRLoader.Patches
                     userDataOptions.SingleplayerData.ModDatas = new List<UserModData>();
                     BUTRLoaderAppDomainManager.ResetModuleList = false;
                 }
-                var setMethod = SymbolExtensions2.GetPropertyInfo((UserDataManager ud) => ud.UserData).SetMethod;
-                setMethod.Invoke(__instance, new object?[] { userDataOptions as UserDataOld });
+                var setMethod = SymbolExtensions2.GetPropertyInfo((UserDataManager ud) => ud.UserData)?.SetMethod;
+                setMethod?.Invoke(__instance, new object?[] { userDataOptions as UserDataOld });
             }
             catch (Exception value)
             {

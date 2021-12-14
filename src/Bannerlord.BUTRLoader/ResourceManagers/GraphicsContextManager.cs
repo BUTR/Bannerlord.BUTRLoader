@@ -1,4 +1,4 @@
-﻿using Bannerlord.BUTRLoader.Extensions;
+﻿using Bannerlord.BUTR.Shared.Extensions;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -15,7 +15,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     internal static class GraphicsContextManager
     {
-        public static GraphicsContext Instance { get; private set; }
+        public static GraphicsContext Instance { get; private set; } = default!;
 
         private static readonly Dictionary<string, OpenGLTexture> Textures = new();
         private static readonly Dictionary<string, Func<OpenGLTexture>> DeferredInitialization = new();
@@ -35,13 +35,13 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         internal static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((GraphicsContext gc) => gc.GetTexture(null!)),
-                prefix: AccessTools.DeclaredMethod(typeof(GraphicsContextManager), nameof(GetTexturePrefix)));
+                SymbolExtensions2.GetMethodInfo((GraphicsContext gc) => gc.GetTexture(null!)),
+                prefix: AccessTools2.DeclaredMethod(typeof(GraphicsContextManager), nameof(GetTexturePrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((GraphicsContext gc) => gc.CreateContext(null!)),
-                postfix: AccessTools.DeclaredMethod(typeof(GraphicsContextManager), nameof(CreateContextPostfix)));
+                SymbolExtensions2.GetMethodInfo((GraphicsContext gc) => gc.CreateContext(null!)),
+                postfix: AccessTools2.DeclaredMethod(typeof(GraphicsContextManager), nameof(CreateContextPostfix)));
             if (!res2) return false;
 
             // Preventing inlining GetTexture
