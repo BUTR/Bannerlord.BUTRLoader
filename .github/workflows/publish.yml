@@ -18,12 +18,17 @@ env:
 jobs:
   build-module:
     name: Build for NexusMods
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Setup
       uses: butr/actions-common-setup@v2.0
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.1
+      with:
+        msbuild-architecture: x64
 
     - name: Download DepotDownloader_2.4.5
       uses: i3h/download-release-asset@v1
@@ -49,7 +54,8 @@ jobs:
       run: >-
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
-          dotnet build src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
+          dotnet restore src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj;
+          msbuild src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
     - name: Cleanup
