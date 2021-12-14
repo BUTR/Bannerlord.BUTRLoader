@@ -35,12 +35,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Costura.Fody" Version="5.7.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Harmony.Extensions" Version="$(HarmonyExtensionsVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="ILRepack" Version="2.1.0-beta1" PrivateAssets="All" />
-    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" PrivateAssets="All" />
     <PackageReference Include="IsExternalInit" Version="1.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -68,7 +70,7 @@
     <Warning Condition="$(BUTRBaseUrl) == ''" Text="Environment variable 'BANNERLORD_BUTR_BASE_URL' is not set!"></Warning>
   </Target>
 
-  <Target Name="PostBuild" AfterTargets="ILRepacker" Condition="Exists($(GameFolder)) AND $(OS) == 'Windows_NT'">
+  <Target Name="PostBuild" AfterTargets="Build" Condition="Exists($(GameFolder)) AND $(OS) == 'Windows_NT'">
     <Exec Command="xcopy /Y /S &quot;$(MSBuildProjectDirectory)\_GameRoot&quot; &quot;$(GameFolder)&quot;" />
     <Exec Command="xcopy /Y &quot;$(MSBuildProjectDirectory)\$(OutputPath)Bannerlord.BUTRLoader.*&quot; &quot;$(GameFolder)\bin\Win64_Shipping_Client&quot;" />
   </Target>
