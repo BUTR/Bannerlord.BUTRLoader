@@ -26,7 +26,7 @@ jobs:
         github-token: ${{secrets.GITHUB_TOKEN}}
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v1.1.1
       with:
         msbuild-architecture: x64
 
@@ -55,7 +55,7 @@ jobs:
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
           dotnet restore src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj;
-          msbuild src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
+          msbuild src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj /verbosity:diag /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
     - name: Cleanup
