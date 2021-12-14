@@ -21,25 +21,25 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Setup
-      uses: butr/actions-common-setup@v1.3
+      uses: butr/actions-common-setup@v2.0
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
 
-    - name: Download DepotDownloader_2.3.6
+    - name: Download DepotDownloader_2.4.5
       uses: i3h/download-release-asset@v1
       with:
         owner: SteamRE
         repo: DepotDownloader
-        tag: DepotDownloader_2.3.6
-        file: depotdownloader-2.3.6.zip
+        tag: DepotDownloader_2.4.5
+        file: depotdownloader-2.4.5.zip
 
-    - name: Extract DepotDownloader_2.3.6
+    - name: Extract DepotDownloader_2.4.5
       uses: DuckSoft/extract-7z-action@v1.0
       with:
-        pathSource: depotdownloader-2.3.6.zip
+        pathSource: depotdownloader-2.4.5.zip
         pathTarget: depotdownloader
 
     - name: Download Bannerlord binaries
