@@ -45,7 +45,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             foreach (var dependentModule in moduleInfoExtended.DependentModules)
             {
-                directDeps[dependentModule.Id]= $"{dependentModule.Id}{GetOptional(dependentModule.IsOptional)}{GetVersionV(dependentModule)}\n";
+                directDeps[dependentModule.Id] = $"{dependentModule.Id}{GetOptional(dependentModule.IsOptional)}{GetVersionV(dependentModule)}\n";
             }
 
             foreach (var dependentModule in moduleInfoExtended.IncompatibleModules)
