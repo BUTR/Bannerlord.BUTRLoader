@@ -55,7 +55,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 
 
     /// <summary>
-    /// Hides Caution window
+    /// Hides Caution window. Legacy
     /// </summary>
     internal sealed class UILauncherPrefabExtension13 : PrefabExtensionSetAttributePatch
     {

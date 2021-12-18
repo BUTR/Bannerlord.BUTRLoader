@@ -65,6 +65,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         public bool IsDangerous2 { get; }
 
+        public bool IsDisabled2 { get; }
+
 
         private readonly LauncherModuleVM _launcherModuleVM;
         private readonly string _moduleId;
@@ -92,6 +94,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(HasIssues));
             SetVMProperty(nameof(HasNoIssues));
             SetVMProperty(nameof(IsNoUpdateAvailable));
+            SetVMProperty(nameof(IsDisabled2));
+            SetVMProperty(nameof(IsDangerous2));
 
             if (ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 })
             {
@@ -102,12 +106,19 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     AnyDependencyAvailable2 = !string.IsNullOrEmpty(str);
                     SetVMProperty(nameof(DependencyHint2));
                     SetVMProperty(nameof(AnyDependencyAvailable2));
-                    SetVMProperty(nameof(IsDangerous2));
                 }
             }
 
             _moduleId = moduleInfoWrapper.Info.Id;
+
             UpdateIssues();
+
+            IsDisabled2 = LauncherModuleVMPatch.AreAllDepenenciesPresentReferencrs.TryGetValue(launcherModuleVM, out var del)
+                ? !(bool) del.DynamicInvoke(moduleInfoWrapper.Info.Object)
+                : true;
+
+            // Remove danger warnings
+            IsDangerous2 = false;
         }
 
         public void UpdateIssues()

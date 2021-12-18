@@ -13,6 +13,8 @@ namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModuleVMPatch
     {
+        public static readonly ConditionalWeakTable<LauncherModuleVM, Delegate> AreAllDepenenciesPresentReferencrs = new();
+
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
@@ -30,15 +32,12 @@ namespace Bannerlord.BUTRLoader.Patches
         private static void LauncherModuleVMConstructorPostfix(LauncherModuleVM __instance, Delegate __3)
         {
             var wrapper = LauncherModuleVMWrapper.Create(__instance);
-
-            // Do not disable Native mods
-
-            // Except the Native mod
+            // Except the Native module
             if (wrapper.Info.Id.Equals("native", StringComparison.OrdinalIgnoreCase))
                 return;
 
-            // Recalculate IsDisabled since it checked for IsOfficial
-            __instance.IsDisabled = !((bool) __3.DynamicInvoke(wrapper.Info.Object));
+            // We need to save isAllDepenenciesPresent delegate for Mixin's usage
+            AreAllDepenenciesPresentReferencrs.Add(__instance, __3);
         }
     }
 }

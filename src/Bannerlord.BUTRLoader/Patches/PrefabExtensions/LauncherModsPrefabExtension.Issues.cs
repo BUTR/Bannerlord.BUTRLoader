@@ -13,7 +13,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string Movie { get; } = ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 }
             ? "Launcher.Mods.ModuleTuple"
             : "Launcher.Mods";
-        public static string XPath { get; } = "descendant::TextWidget[2]";
+        public static string XPath { get; } = "descendant::TextWidget[@Text='@VersionText']";
 
         public override InsertType Type => InsertType.Prepend;
         private XmlDocument XmlDocument { get; } = new();

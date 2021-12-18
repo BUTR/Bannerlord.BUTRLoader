@@ -18,7 +18,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public LauncherModsPrefabExtension3()
         {
             var horizontalOffset = 120;
-            if (ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 })
+            if (ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 6, Minor: >= 5 })
             {
                 horizontalOffset = 50;
             }
