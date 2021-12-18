@@ -11,7 +11,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     internal sealed class LauncherModsPrefabExtension1 : PrefabExtensionInsertAsSiblingPatch
     {
         public static string Movie { get; } = ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 }
-            ? "Launcher.Mods.ModuleTuple" 
+            ? "Launcher.Mods.ModuleTuple"
             : "Launcher.Mods";
         public static string XPath { get; } = "descendant::TextWidget[2]";
 

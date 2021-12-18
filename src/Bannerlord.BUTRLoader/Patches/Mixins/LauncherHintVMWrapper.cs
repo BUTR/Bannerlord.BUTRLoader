@@ -9,7 +9,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private delegate object ConstructorV1Delegate(string text);
 
         private static readonly Type? Type = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherHintVM");
-        private static readonly ConstructorV1Delegate? ConstructorV1 = AccessTools2.GetConstructorDelegate<ConstructorV1Delegate>(Type!, new []{ typeof(string) });
+        private static readonly ConstructorV1Delegate? ConstructorV1 = AccessTools2.GetConstructorDelegate<ConstructorV1Delegate>(Type!, new[] { typeof(string) });
 
         public static LauncherHintVMWrapper? Create(string text) => ConstructorV1 is null ? null : new(ConstructorV1(text));
 
