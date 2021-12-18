@@ -1,5 +1,4 @@
-﻿using Bannerlord.BUTR.Shared.Helpers;
-using Bannerlord.ModuleManager;
+﻿using Bannerlord.ModuleManager;
 
 using Newtonsoft.Json;
 

@@ -1,20 +1,15 @@
 ﻿using Bannerlord.BUTRLoader.Features.Interceptor;
-using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches;
 using Bannerlord.BUTRLoader.ResourceManagers;
 
 using HarmonyLib;
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Xml;
-
-using TaleWorlds.Core;
-using TaleWorlds.MountAndBlade.Launcher.UserDatas;
 
 [assembly: InternalsVisibleTo("Bannerlord.BUTRLoader.Tests")]
 
