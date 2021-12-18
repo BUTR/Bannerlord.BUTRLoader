@@ -38,12 +38,6 @@ namespace Bannerlord.BUTRLoader.Patches
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension13.Movie, UILauncherPrefabExtension13.XPath, new UILauncherPrefabExtension13());
             // Options
 
-#if CONTINUE
-            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension21.Movie, UILauncherPrefabExtension21.XPath, new UILauncherPrefabExtension21());
-            //PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension22.Movie, UILauncherPrefabExtension22.XPath, new UILauncherPrefabExtension22());
-            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension23.Movie, UILauncherPrefabExtension23.XPath, new UILauncherPrefabExtension23().Apply);
-#endif
-
             PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension1.Movie, LauncherModsPrefabExtension1.XPath, new LauncherModsPrefabExtension1());
             PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension2.Movie, LauncherModsPrefabExtension2.XPath, new LauncherModsPrefabExtension2());
             PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension3.Movie, LauncherModsPrefabExtension3.XPath, new LauncherModsPrefabExtension3());

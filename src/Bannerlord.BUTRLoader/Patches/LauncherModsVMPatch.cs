@@ -15,12 +15,17 @@ using System.Runtime.CompilerServices;
 
 using TaleWorlds.MountAndBlade.Launcher;
 
-using static Bannerlord.BUTRLoader.Helpers.LauncherModuleVMExtensions;
-
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
     {
+        private delegate IEnumerable CastDelegate(IEnumerable instance);
+        private delegate IEnumerable ToListDelegate(IEnumerable instance);
+
+        private static readonly CastDelegate? CastMethod = AccessTools2.GetDelegate<CastDelegate>(typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(ModuleInfoWrapper.ModuleInfoType)!);
+        private static readonly ToListDelegate? ToListMethod = AccessTools2.GetDelegate<ToListDelegate>(typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(ModuleInfoWrapper.ModuleInfoType)!);
+
+
         internal static readonly Dictionary<string, ModuleInfoExtended> ExtendedModuleInfoCache = new();
 
         private static ModuleInfoExtended GetExtendedModuleInfo(object moduleInfo) => GetExtendedModuleInfo(ModuleInfoWrapper.Create(moduleInfo));
@@ -85,9 +90,9 @@ namespace Bannerlord.BUTRLoader.Patches
 
             var extendedDependencies = ModuleSorter.GetDependentModulesOf(extendedSourceList, extendedModuleInfo).Except(new[] { extendedModuleInfo });
             var dependencies = extendedDependencies.Select(em => sourceList.Find(m => ModuleInfoWrapper.Create(m).Id == em.Id));
-
-            var castedItems = CastMethod.Invoke(null, new object[] { dependencies });
-            __result = (IEnumerable) ToListMethod.Invoke(null, new object[] { castedItems });
+            
+            var castedItems = CastMethod.Invoke(dependencies);
+            __result = ToListMethod.Invoke(castedItems);
             return false;
         }
 
@@ -109,7 +114,7 @@ namespace Bannerlord.BUTRLoader.Patches
             // External dependencies should not disable a mod. Instead, they itself should be disabled
             __result = true;
             var visited = new HashSet<ModuleInfoExtended>();
-            foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, info2, visited, true))
+            foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, info2, visited, new ModuleSorterOptions { SkipOptionals = true, SkipExternalDependencies = true }))
             {
                 if (!ModuleIsCorrect(__instance, dependency, ____modulesCache, visited))
                 {
@@ -133,6 +138,8 @@ namespace Bannerlord.BUTRLoader.Patches
             // Check that all dependencies are present
             foreach (var dependency in ModuleInfoExtended.DependentModules)
             {
+                if (dependency.IsOptional) continue;
+
                 if (!ExtendedModuleInfoCache.ContainsKey(dependency.Id))
                 {
                     AppendIssue(instance, ModuleInfoExtended, $"Missing {dependency.Id} {dependency.Version}");
@@ -157,7 +164,7 @@ namespace Bannerlord.BUTRLoader.Patches
             }
 
             // Check that the dependencies themselves have all dependencies present
-            foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, ModuleInfoExtended, visited).ToArray())
+            foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, ModuleInfoExtended, visited, new ModuleSorterOptions { SkipOptionals = true, SkipExternalDependencies = true }).ToArray())
             {
                 var metadata = ModuleInfoExtended.DependentModuleMetadatas.FirstOrDefault(dmm => dmm.Id == dependency.Id);
 
@@ -225,6 +232,17 @@ namespace Bannerlord.BUTRLoader.Patches
             }
 
             // Do not load this mod if an incompatible mod is selected
+            foreach (var dependency in ModuleInfoExtended.IncompatibleModules)
+            {
+                var moduleVM2 = instance.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == dependency.Id);
+
+                // If the incompatible mod is selected, this mod is disabled
+                if (moduleVM2?.IsSelected == true)
+                {
+                    AppendIssue(instance, ModuleInfoExtended, $"'{moduleVM2.Name}' is incompatible with this");
+                    return false;
+                }
+            }
             foreach (var metadata in ModuleInfoExtended.DependentModuleMetadatas.Where(m => m.IsIncompatible))
             {
                 var moduleVM2 = instance.Modules.FirstOrDefault(m => LauncherModuleVMWrapper.Create(m).Info.Id == metadata.Id);
@@ -283,8 +301,10 @@ namespace Bannerlord.BUTRLoader.Patches
         }
         private static void ChangeIsSelectedOf(LauncherModsVM instance, LauncherModuleVM targetModule, List<object> modules, HashSet<ModuleInfoExtended> visited)
         {
+            var opt = new ModuleSorterOptions { SkipOptionals = true, SkipExternalDependencies = true };
+
             var targetModuleInfoExtended = GetExtendedModuleInfo(LauncherModuleVMWrapper.Create(targetModule).Info);
-            var dependencies = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, targetModuleInfoExtended, visited, skipExternalDependencies: true).ToArray();
+            var dependencies = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, targetModuleInfoExtended, visited, opt).ToArray();
 
             targetModule.IsSelected = !targetModule.IsSelected;
 
@@ -338,7 +358,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 foreach (var module in instance.Modules/*.Where(m => !m.IsOfficial)*/)
                 {
                     var ModuleInfoExtended = GetExtendedModuleInfo(LauncherModuleVMWrapper.Create(module).Info);
-                    var dependencies2 = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, ModuleInfoExtended, skipExternalDependencies: true);
+                    var dependencies2 = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, ModuleInfoExtended, opt);
                     if (module.IsSelected && dependencies2.Any(d => d.Id == targetModuleInfoExtended.Id))
                         ChangeIsSelectedOf(instance, module, modules, visited);
                 }

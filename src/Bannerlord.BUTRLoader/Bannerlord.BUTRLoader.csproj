@@ -1,19 +1,15 @@
-<!--EXTERNAL_PROPERTIES: GameFolder;GameVersion;BANNERLORD_BUTR_BASE_URL-->
+﻿<!--EXTERNAL_PROPERTIES: GameFolder;GameVersion;BANNERLORD_BUTR_BASE_URL-->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    <LangVersion>9.0</LangVersion>
+    <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
 
     <Configurations>Stable_Debug;Stable_Release;Beta_Debug;Beta_Release</Configurations>
 
     <BUTRBaseUrl>$(BANNERLORD_BUTR_BASE_URL)</BUTRBaseUrl>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Beta_Debug|AnyCPU'">
-    <DefineConstants>TRACE;_CONTINUE</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,14 +1,11 @@
 ﻿using Bannerlord.ModuleManager;
 
+using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Text;
-
-using TaleWorlds.MountAndBlade.Launcher;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
@@ -118,13 +115,25 @@ namespace Bannerlord.BUTRLoader.Helpers
 
     internal sealed class ModuleInfoWrapper
     {
+        private delegate string GetIdDelegate(object instance);
+        private delegate string GetAliasDelegate(object instance);
+        private delegate bool GetIsSelectedDelegate(object instance);
+
+        private static readonly Type? OldModuleInfoType = AccessTools2.TypeByName("TaleWorlds.Library.ModuleInfo");
+        private static readonly Type? NewModuleInfoType = AccessTools2.TypeByName("TaleWorlds.ModuleManager.ModuleInfo");
+        public static readonly Type? ModuleInfoType = OldModuleInfoType ?? NewModuleInfoType;
+
+        private static readonly GetIdDelegate? GetId = AccessTools2.GetPropertyGetterDelegate<GetIdDelegate>(ModuleInfoType, "Id");
+        private static readonly GetAliasDelegate? GetAlias = AccessTools2.GetPropertyGetterDelegate<GetAliasDelegate>(ModuleInfoType, "Alias");
+        private static readonly GetIsSelectedDelegate? GetIsSelected = AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>(ModuleInfoType, "IsSelected");
+
         public static ModuleInfoWrapper Create(object? @object) => new(@object);
 
-        public string Id => _id ??= Object is null ? string.Empty : LauncherModuleVMExtensions.GetId?.Invoke(Object, Array.Empty<object>()) as string ?? string.Empty;
+        public string Id => _id ??= Object is null ? string.Empty : GetId?.Invoke(Object) ?? string.Empty;
         private string? _id;
-        public string Alias => _alias ??= Object is null ? string.Empty : LauncherModuleVMExtensions.GetAlias?.Invoke(Object, Array.Empty<object>()) as string ?? string.Empty;
+        public string Alias => _alias ??= Object is null ? string.Empty : GetAlias?.Invoke(Object) ?? string.Empty;
         private string? _alias;
-        public bool IsSelected => Object is null ? false : LauncherModuleVMExtensions.GetIsSelected?.Invoke(Object, Array.Empty<object>()) as bool? ?? false;
+        public bool IsSelected => Object is null ? false : GetIsSelected?.Invoke(Object) ?? false;
 
         public object? Object { get; }
 
@@ -136,9 +145,12 @@ namespace Bannerlord.BUTRLoader.Helpers
 
     internal sealed class LauncherModuleVMWrapper
     {
+        private static readonly Type? LauncherModuleVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM");
+        private static readonly AccessTools.FieldRef<object, object>? GetInfo = AccessTools2.FieldRefAccess<object>(LauncherModuleVMType!, "Info");
+
         public static LauncherModuleVMWrapper Create(object @object) => new(@object);
 
-        public ModuleInfoWrapper Info => _info ??= ModuleInfoWrapper.Create(LauncherModuleVMExtensions.GetInfo?.GetValue(Object));
+        public ModuleInfoWrapper Info => _info ??= ModuleInfoWrapper.Create(GetInfo?.Invoke(Object));
         private ModuleInfoWrapper? _info;
 
         public object Object { get; }
@@ -146,54 +158,6 @@ namespace Bannerlord.BUTRLoader.Helpers
         private LauncherModuleVMWrapper(object @object)
         {
             Object = @object;
-        }
-    }
-
-    internal static class LauncherModuleVMExtensions
-    {
-        public static readonly Type? OldDependedModuleType = Type.GetType("TaleWorlds.Library.DependedModule, TaleWorlds.Library", false);
-        public static readonly Type? NewDependedModuleType = Type.GetType("TaleWorlds.ModuleManager.DependedModule, TaleWorlds.ModuleManager", false);
-
-        public static readonly Type? ModuleHelperType = Type.GetType("TaleWorlds.ModuleManager.ModuleHelper, TaleWorlds.ModuleManager", false);
-
-        public static readonly Type? OldModuleInfoType = Type.GetType("TaleWorlds.Library.ModuleInfo, TaleWorlds.Library", false);
-        public static readonly Type? NewModuleInfoType = Type.GetType("TaleWorlds.ModuleManager.ModuleInfo, TaleWorlds.ModuleManager", false);
-
-        public static readonly Type? OldSubModuleInfoType = Type.GetType("TaleWorlds.Library.SubModuleInfo, TaleWorlds.Library", false);
-        public static readonly Type? NewSubModuleInfoType = Type.GetType("TaleWorlds.ModuleManager.SubModuleInfo, TaleWorlds.ModuleManager", false);
-
-        public static readonly MethodInfo? GetId;
-        public static readonly MethodInfo? GetAlias;
-        public static readonly MethodInfo? GetIsSelected;
-
-        public static readonly FieldInfo? GetInfo;
-
-        public static readonly MethodInfo? CastMethod;
-        public static readonly MethodInfo? ToListMethod;
-
-        //private delegate string GetIdDelegate(object instance);
-        //private delegate string GetAliasDelegate(object instance);
-
-        static LauncherModuleVMExtensions()
-        {
-            GetInfo = AccessTools2.Field(typeof(LauncherModuleVM), "Info");
-
-            if (OldModuleInfoType is { })
-            {
-                GetId = AccessTools2.PropertyGetter(OldModuleInfoType, "Id");
-                GetAlias = AccessTools2.PropertyGetter(OldModuleInfoType, "Alias");
-                GetIsSelected = AccessTools2.PropertyGetter(OldModuleInfoType, "IsSelected");
-                CastMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(OldModuleInfoType);
-                ToListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(OldModuleInfoType);
-            }
-            if (NewModuleInfoType is { })
-            {
-                GetId = AccessTools2.PropertyGetter(NewModuleInfoType, "Id");
-                GetAlias = AccessTools2.PropertyGetter(NewModuleInfoType, "Alias");
-                GetIsSelected = AccessTools2.PropertyGetter(NewModuleInfoType, "IsSelected");
-                CastMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(NewModuleInfoType);
-                ToListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(NewModuleInfoType);
-            }
         }
     }
 }
