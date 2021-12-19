@@ -12,7 +12,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
             ? "Launcher.Mods.ModuleTuple"
             : "Launcher.Mods";
 
-        public static string XPath { get; } = ApplicationVersionHelper.GameVersion() is {Major: 1, Minor: >= 7}
+        public static string XPath { get; } = ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 }
             ? "/Prefab/Window/ListPanel/Children/ListPanel/Children/ButtonWidget[1]"
             : "descendant::ListPanel[@Id='InnerPanel']/ItemTemplate/ListPanel/Children/ListPanel/Children/ButtonWidget[1]";
 
