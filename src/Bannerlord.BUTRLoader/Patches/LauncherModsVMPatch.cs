@@ -90,7 +90,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
             var extendedDependencies = ModuleSorter.GetDependentModulesOf(extendedSourceList, extendedModuleInfo).Except(new[] { extendedModuleInfo });
             var dependencies = extendedDependencies.Select(em => sourceList.Find(m => ModuleInfoWrapper.Create(m).Id == em.Id));
-            
+
             var castedItems = CastMethod.Invoke(dependencies);
             __result = ToListMethod.Invoke(castedItems);
             return false;
