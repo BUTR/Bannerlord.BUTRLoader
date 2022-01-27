@@ -19,11 +19,11 @@ namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
     {
-        private delegate IEnumerable CastDelegate(IEnumerable instance);
-        private delegate IEnumerable ToListDelegate(IEnumerable instance);
+        internal delegate IEnumerable CastDelegate(IEnumerable instance);
+        internal delegate IEnumerable ToListDelegate(IEnumerable instance);
 
-        private static readonly CastDelegate? CastMethod = AccessTools2.GetDelegate<CastDelegate>(typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(ModuleInfoWrapper.ModuleInfoType)!);
-        private static readonly ToListDelegate? ToListMethod = AccessTools2.GetDelegate<ToListDelegate>(typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(ModuleInfoWrapper.ModuleInfoType)!);
+        internal static readonly CastDelegate? CastMethod = AccessTools2.GetDelegate<CastDelegate>(typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(ModuleInfoWrapper.ModuleInfoType)!);
+        internal static readonly ToListDelegate? ToListMethod = AccessTools2.GetDelegate<ToListDelegate>(typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(ModuleInfoWrapper.ModuleInfoType)!);
 
 
         internal static readonly Dictionary<string, ModuleInfoExtended> ExtendedModuleInfoCache = new();

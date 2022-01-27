@@ -4,7 +4,6 @@
     <ItemGroup>
       <InputAssemblies Include="$(OutputPath)\$(AssemblyName).dll" />
       <InputAssemblies Include="$(OutputPath)\0Harmony.dll" />
-      <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll" />
       <InputAssemblies Include="$(OutputPath)\Microsoft.Bcl.HashCode.dll" />
     </ItemGroup>
 

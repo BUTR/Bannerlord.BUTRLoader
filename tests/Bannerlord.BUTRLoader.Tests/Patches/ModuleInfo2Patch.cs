@@ -1,5 +1,5 @@
-﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
-using Bannerlord.BUTRLoader.Tests.Helpers;
+﻿using Bannerlord.BUTRLoader.Tests.Helpers;
+using Bannerlord.ModuleManager;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -11,7 +11,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-using static Bannerlord.BUTRLoader.Helpers.LauncherModuleVMExtensions;
+using static Bannerlord.BUTRLoader.Helpers.ModuleInfoWrapper;
 
 namespace Bannerlord.BUTRLoader.Tests.Patches
 {
@@ -29,8 +29,8 @@ namespace Bannerlord.BUTRLoader.Tests.Patches
             _currentModuleStorage = moduleStorage;
 
             if (!harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((ModuleInfo2 mi2) => mi2.Load((string) null!)),
-                prefix: AccessTools.Method(typeof(ModuleInfo2Patch), nameof(LoadPrefix))))
+                original: AccessTools2.Method("Bannerlord.BUTR.Shared.Helpers.ModuleInfoHelper:LoadFromId"),
+                prefix: AccessTools2.Method(typeof(ModuleInfo2Patch), nameof(LoadPrefix))))
             {
                 Assert.Fail();
             }
@@ -41,12 +41,13 @@ namespace Bannerlord.BUTRLoader.Tests.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool LoadPrefix(ModuleInfo2 __instance, string __0)
+        private static bool LoadPrefix(ref ModuleInfoExtended __result, string __0)
         {
+            __result = new ModuleInfoExtended();
             if (OldModuleInfoType is not null)
             {
                 var model = _currentModuleStorage!.ModuleInfoModels.Find(mi => mi.Alias == __0);
-                ModuleInfoHelper.Populate(model, __instance);
+                ModuleInfoHelper.Populate(model, __result);
                 return false;
             }
 
@@ -54,7 +55,7 @@ namespace Bannerlord.BUTRLoader.Tests.Patches
             {
                 var moduleId = Path.GetFileNameWithoutExtension(__0);
                 var model = _currentModuleStorage!.ModuleInfoModels.Find(mi => mi.Alias == moduleId);
-                ModuleInfoHelper.Populate(model, __instance);
+                ModuleInfoHelper.Populate(model, __result);
                 return false;
             }
 
@@ -64,8 +65,8 @@ namespace Bannerlord.BUTRLoader.Tests.Patches
         public void Dispose()
         {
             _harmony.Unpatch(
-                SymbolExtensions.GetMethodInfo((ModuleInfo2 mi2) => mi2.Load((string) null!)),
-                AccessTools.Method(typeof(ModuleInfo2Patch), nameof(LoadPrefix)));
+                AccessTools2.Method("Bannerlord.BUTR.Shared.Helpers.ModuleInfoHelper:LoadFromId"),
+                AccessTools2.Method(typeof(ModuleInfo2Patch), nameof(LoadPrefix)));
 
             _currentModuleStorage = null;
         }

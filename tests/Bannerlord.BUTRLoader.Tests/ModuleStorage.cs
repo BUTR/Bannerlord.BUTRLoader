@@ -1,12 +1,9 @@
-﻿using Bannerlord.BUTR.Shared.ModuleInfoExtended;
-using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.ModuleManager;
 
 using System.Collections.Generic;
 using System.Linq;
 
-using TaleWorlds.Library;
-
-using DependedModule = Bannerlord.BUTR.Shared.ModuleInfoExtended.DependedModule;
 using ModuleInfoHelper = Bannerlord.BUTRLoader.Tests.Helpers.ModuleInfoHelper;
 
 namespace Bannerlord.BUTRLoader.Tests
@@ -34,11 +31,11 @@ namespace Bannerlord.BUTRLoader.Tests
             IsOfficial = true,
             IsSingleplayerModule = true,
             IsMultiplayerModule = false,
-            DependedModules = new List<DependedModule>
+            DependedModules = new List<DependentModule>
             {
                 new()
                 {
-                    ModuleId = "NativeModule",
+                    Id = "NativeModule",
                     Version = ApplicationVersion.Empty
                 }
             },
@@ -54,15 +51,15 @@ namespace Bannerlord.BUTRLoader.Tests
             IsOfficial = false,
             IsSingleplayerModule = true,
             IsMultiplayerModule = false,
-            DependedModules = new List<DependedModule>
+            DependedModules = new List<DependentModule>
             {
                 new()
                 {
-                    ModuleId = "NativeModule",
+                    Id = "NativeModule",
                     Version = ApplicationVersion.Empty
                 }
             },
-            DependedModuleMetadatas = new List<DependedModuleMetadata>
+            DependedModuleMetadatas = new List<DependentModuleMetadata>
             {
                 new()
                 {
@@ -101,18 +98,18 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public static ModuleInfoModel CustomModuleWithNativeDM => CustomModuleBase with
         {
-            DependedModules = new List<DependedModule>
+            DependedModules = new List<DependentModule>
             {
                 new()
                 {
-                    ModuleId = "NativeModule",
+                    Id = "NativeModule",
                     Version = ApplicationVersion.Empty
                 }
             },
         };
         public static ModuleInfoModel CustomModuleWithNativeDMM => CustomModuleBase with
         {
-            DependedModuleMetadatas = new List<DependedModuleMetadata>
+            DependedModuleMetadatas = new List<DependentModuleMetadata>
             {
                 new()
                 {
@@ -125,7 +122,7 @@ namespace Bannerlord.BUTRLoader.Tests
         };
         public static ModuleInfoModel CustomModuleWithNativeOptional => CustomModuleBase with
         {
-            DependedModuleMetadatas = new List<DependedModuleMetadata>
+            DependedModuleMetadatas = new List<DependentModuleMetadata>
             {
                 new()
                 {
@@ -139,18 +136,18 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public static ModuleInfoModel CustomModule2WithCustomModuleDM => Custom2ModuleBase with
         {
-            DependedModules = new List<DependedModule>
+            DependedModules = new List<DependentModule>
             {
                 new()
                 {
-                    ModuleId = "CustomModule",
+                    Id = "CustomModule",
                     Version = ApplicationVersion.Empty
                 }
             },
         };
         public static ModuleInfoModel CustomModule2WithCustomModuleDMM => Custom2ModuleBase with
         {
-            DependedModuleMetadatas = new List<DependedModuleMetadata>
+            DependedModuleMetadatas = new List<DependentModuleMetadata>
             {
                 new()
                 {
@@ -163,20 +160,20 @@ namespace Bannerlord.BUTRLoader.Tests
         };
         public static ModuleInfoModel CustomModule2WithCustomModuleDMMVersion => Custom2ModuleBase with
         {
-            DependedModuleMetadatas = new List<DependedModuleMetadata>
+            DependedModuleMetadatas = new List<DependentModuleMetadata>
             {
                 new()
                 {
                     Id = "CustomModule",
                     IsOptional = false,
                     LoadType = LoadType.LoadBeforeThis,
-                    Version = new ApplicationVersion(ApplicationVersionType.EarlyAccess, 1, 0, 0, 0, ApplicationVersionGameType.Singleplayer)
+                    Version = new ApplicationVersion(ApplicationVersionType.EarlyAccess, 1, 0, 0, 0)
                 }
             }
         };
         public static ModuleInfoModel CustomModule2WithCustomModuleOptional => Custom2ModuleBase with
         {
-            DependedModuleMetadatas = new List<DependedModuleMetadata>
+            DependedModuleMetadatas = new List<DependentModuleMetadata>
             {
                 new()
                 {
@@ -189,7 +186,7 @@ namespace Bannerlord.BUTRLoader.Tests
         };
         public static ModuleInfoModel CustomModule2WithCustomModuleIncompatible => Custom2ModuleBase with
         {
-            DependedModuleMetadatas = new List<DependedModuleMetadata>
+            DependedModuleMetadatas = new List<DependentModuleMetadata>
             {
                 new()
                 {
@@ -201,7 +198,7 @@ namespace Bannerlord.BUTRLoader.Tests
 
         public static ModuleInfoModel CommunityFrameworkModuleBeforeNative => CommunityFrameworkModuleBase with
         {
-            DependedModuleMetadatas = new List<DependedModuleMetadata>
+            DependedModuleMetadatas = new List<DependentModuleMetadata>
             {
                 new()
                 {
@@ -465,7 +462,7 @@ namespace Bannerlord.BUTRLoader.Tests
         public List<string> ExpectedIdOrder => Tuple.ExpectedIdOrder;
 
         public List<object> GetModuleInfos() => PreSort(ModuleInfoModels).Select(ModuleInfoHelper.ModuleInfo).ToList();
-        public List<ModuleInfo2> GetModuleInfo2s() => PreSort(ModuleInfoModels).Select(ModuleInfoHelper.ModuleInfo2).ToList();
+        public List<ModuleInfoExtended> GetModuleInfo2s() => PreSort(ModuleInfoModels).Select(ModuleInfoHelper.ModuleInfo2).ToList();
 
         private static IEnumerable<ModuleInfoModel> PreSort(IEnumerable<ModuleInfoModel> source) => source
             .OrderByDescending(mim => mim.Id, new AlphanumComparatorFast())

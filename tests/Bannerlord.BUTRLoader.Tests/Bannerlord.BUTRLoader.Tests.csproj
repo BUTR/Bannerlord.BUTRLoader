@@ -1,4 +1,4 @@
-<!--EXTERNAL_PROPERTIES: GameFolder;GameVersion-->
+﻿<!--EXTERNAL_PROPERTIES: GameFolder;GameVersion-->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -14,36 +14,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="BUTRLoader\ModuleInfoExtended\**" />
-    <EmbeddedResource Remove="BUTRLoader\ModuleInfoExtended\**" />
-    <None Remove="BUTRLoader\ModuleInfoExtended\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Extensions\DictionaryExtensions.cs" Link="BUTRLoader\Extensions\DictionaryExtensions.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\AlphanumComparatorFast.cs" Link="BUTRLoader\Helpers\AlphanumComparatorFast.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ApplicationVersionComparer.cs" Link="BUTRLoader\Helpers\ApplicationVersionComparer.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ApplicationVersionFullComparer.cs" Link="BUTRLoader\Helpers\ApplicationVersionFullComparer.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleSorter.cs" Link="BUTRLoader\Helpers\ModuleSorter.cs" />
+    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\LauncherModuleVMWrapper.cs" Link="BUTRLoader\Helpers\LauncherModuleVMWrapper.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleInfoHelper.cs" Link="BUTRLoader\Helpers\ModuleInfoHelper.cs" />
+    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleInfoWrapper.cs" Link="BUTRLoader\Helpers\ModuleInfoWrapper.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Patches\LauncherModsVMPatch.cs" Link="BUTRLoader\Patches\LauncherModsVMPatch.cs" />
   </ItemGroup>
 
-
   <ItemGroup>
-    <PackageReference Include="nunit" Version="3.13.2" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
-
-    <PackageReference Include="Lib.Harmony" Version="$(HarmonyVersion)" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
-
     <PackageReference Include="Bannerlord.BUTR.Shared" Version="$(BUTRSharedVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Bannerlord.ReferenceAssemblies.Core.EarlyAccess" Version="$(GameVersion).*" PrivateAssets="All" />
+    <PackageReference Include="Bannerlord.ModuleManager.Source" Version="$(BUTRModuleManagerVersion)" />
+
     <PackageReference Include="Harmony.Extensions" Version="$(HarmonyExtensionsVersion)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -59,9 +42,21 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="nunit" Version="3.13.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+
+    <PackageReference Include="Lib.Harmony" Version="$(HarmonyVersion)" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+
+    <PackageReference Include="Bannerlord.ReferenceAssemblies.Core.EarlyAccess" Version="$(GameVersion).*" PrivateAssets="All" />
+  </ItemGroup>
+
   <ItemGroup Condition="Exists($(GameFolder))">
     <Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.MountAndBlade.Launcher.exe" />
-    <Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.*.dll">
+    <Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.*.dll" Exclude="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Native.dll">
       <HintPath>%(Identity)</HintPath>
     </Reference>
   </ItemGroup>

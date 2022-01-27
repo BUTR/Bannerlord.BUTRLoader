@@ -1,5 +1,7 @@
 ﻿using Bannerlord.BUTRLoader.Tests.Helpers;
 
+using Bannerlord.BUTRLoader.Patches;
+
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
@@ -11,7 +13,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-using static Bannerlord.BUTRLoader.Helpers.LauncherModuleVMExtensions;
+using static Bannerlord.BUTRLoader.Helpers.ModuleInfoWrapper;
+
+using AccessTools2 = HarmonyLib.BUTR.Extensions.AccessTools2;
 
 namespace Bannerlord.BUTRLoader.Tests.Patches
 {
@@ -29,18 +33,18 @@ namespace Bannerlord.BUTRLoader.Tests.Patches
             _currentModuleStorage = moduleStorage;
 
             if (!harmony.TryPatch(
-                AccessTools.Method(OldModuleInfoType, "Load") ?? AccessTools.Method(NewModuleInfoType, "LoadWithFullPath"),
-                prefix: AccessTools.Method(typeof(ModuleInfo2Patch), nameof(LoadPrefix))))
+                AccessTools2.Method(OldModuleInfoType, "Load") ?? AccessTools2.Method(NewModuleInfoType, "LoadWithFullPath"),
+                prefix: AccessTools2.Method(typeof(ModuleInfoPatch), nameof(LoadPrefix))))
             {
                 Assert.Fail();
             }
 
             harmony.TryPatch(
-                AccessTools.Method(OldModuleInfoType, "GetModules"),
-                prefix: AccessTools.Method(typeof(ModuleInfoPatch), nameof(GetModulesPrefix)));
+                AccessTools2.Method(OldModuleInfoType, "GetModules"),
+                prefix: AccessTools2.Method(typeof(ModuleInfoPatch), nameof(GetModulesPrefix)));
             harmony.TryPatch(
-                AccessTools.Method(ModuleHelperType, "GetModules"),
-                prefix: AccessTools.Method(typeof(ModuleInfoPatch), nameof(GetModulesPrefix)));
+                AccessTools2.Method(ModuleHelperType, "GetModules"),
+                prefix: AccessTools2.Method(typeof(ModuleInfoPatch), nameof(GetModulesPrefix)));
         }
 
         [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
@@ -75,25 +79,25 @@ namespace Bannerlord.BUTRLoader.Tests.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetModulesPrefix(ref IEnumerable __result)
         {
-            var castedItems = CastMethod.Invoke(null, new object[] { _currentModuleStorage!.GetModuleInfos() });
-            __result = (IEnumerable) ToListMethod.Invoke(null, new object[] { castedItems });
+            var castedItems = LauncherModsVMPatch.CastMethod.Invoke(_currentModuleStorage!.GetModuleInfos());
+            __result = LauncherModsVMPatch.ToListMethod.Invoke(castedItems);
             return false;
         }
 
         public void Dispose()
         {
             _harmony.Unpatch(
-                AccessTools.Method(OldModuleInfoType, "Load") ?? AccessTools.Method(NewModuleInfoType, "LoadWithFullPath"),
-                AccessTools.Method(typeof(ModuleInfoPatch), nameof(LoadPrefix)));
+                AccessTools2.Method(OldModuleInfoType, "Load") ?? AccessTools2.Method(NewModuleInfoType, "LoadWithFullPath"),
+                AccessTools2.Method(typeof(ModuleInfoPatch), nameof(LoadPrefix)));
 
             try
             {
                 _harmony.Unpatch(
-                    AccessTools.Method(OldModuleInfoType, "GetModules"),
-                    AccessTools.Method(typeof(ModuleInfoPatch), nameof(GetModulesPrefix)));
+                    AccessTools2.Method(OldModuleInfoType, "GetModules"),
+                    AccessTools2.Method(typeof(ModuleInfoPatch), nameof(GetModulesPrefix)));
                 _harmony.Unpatch(
-                    AccessTools.Method(ModuleHelperType, "GetModules"),
-                    AccessTools.Method(typeof(ModuleInfoPatch), nameof(GetModulesPrefix)));
+                    AccessTools2.Method(ModuleHelperType, "GetModules"),
+                    AccessTools2.Method(typeof(ModuleInfoPatch), nameof(GetModulesPrefix)));
             }
             catch { }
 

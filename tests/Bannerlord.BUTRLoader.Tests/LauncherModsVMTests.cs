@@ -1,12 +1,14 @@
-﻿using Bannerlord.BUTRLoader.Patches;
-using Bannerlord.BUTRLoader.Tests.Patches;
+﻿using Bannerlord.BUTRLoader.Tests.Patches;
 
 using HarmonyLib;
+
+using Bannerlord.BUTRLoader.Patches;
 
 using NUnit.Framework;
 
 using System;
 using System.Linq;
+using System.Reflection;
 
 using TaleWorlds.MountAndBlade.Launcher;
 using TaleWorlds.MountAndBlade.Launcher.UserDatas;
@@ -22,6 +24,9 @@ namespace Bannerlord.BUTRLoader.Tests
         [OneTimeSetUp]
         public void Setup()
         {
+            Assembly.Load("TaleWorlds.Library");
+            Assembly.Load("TaleWorlds.ModuleManager");
+            
             LauncherModsVMPatch.Enable(_harmony);
         }
 
@@ -34,7 +39,7 @@ namespace Bannerlord.BUTRLoader.Tests
             var storage = new ModuleStorage(moduleListTemplate);
             using var _ = new ModuleInfoPatch(_harmony, storage);
             using var __ = new ModuleInfo2Patch(_harmony, storage);
-            using var ___ = new UserDataManagerPatch(_harmony, storage);
+            using var ___ = new UserDataManagerPatch2(_harmony, storage);
 
             var userDataManager = new UserDataManager();
             var viewModel = new LauncherModsVM(userDataManager);

@@ -1,6 +1,4 @@
-﻿using Bannerlord.BUTRLoader.Extensions;
-
-using HarmonyLib;
+﻿using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using NUnit.Framework;
@@ -11,16 +9,16 @@ using System.Runtime.CompilerServices;
 
 using TaleWorlds.MountAndBlade.Launcher.UserDatas;
 
-using static Bannerlord.BUTRLoader.Helpers.LauncherModuleVMExtensions;
+using static Bannerlord.BUTRLoader.Helpers.ModuleInfoWrapper;
 
 namespace Bannerlord.BUTRLoader.Tests.Patches
 {
-    internal class UserDataManagerPatch : IDisposable
+    internal class UserDataManagerPatch2 : IDisposable
     {
         private readonly Harmony _harmony;
         private static ModuleStorage? _currentModuleStorage;
 
-        public UserDataManagerPatch(Harmony harmony, ModuleStorage moduleStorage)
+        public UserDataManagerPatch2(Harmony harmony, ModuleStorage moduleStorage)
         {
             if (_currentModuleStorage != null)
                 throw new Exception();
@@ -30,35 +28,35 @@ namespace Bannerlord.BUTRLoader.Tests.Patches
 
             if (!harmony.TryPatch(
                 SymbolExtensions2.GetPropertyInfo((UserDataManager udm) => udm.UserData).GetMethod,
-                prefix: AccessTools.Method(typeof(UserDataManagerPatch), nameof(GetUserDataPrefix))))
+                prefix: AccessTools2.Method(typeof(UserDataManagerPatch2), nameof(GetUserDataPrefix))))
             {
                 Assert.Fail();
             }
 
             if (!harmony.TryPatch(
                 SymbolExtensions2.GetConstructorInfo(() => new UserDataManager()),
-                prefix: AccessTools.Method(typeof(UserDataManagerPatch), nameof(UserDataManagerConstructorPrefix))))
+                prefix: AccessTools2.Method(typeof(UserDataManagerPatch2), nameof(UserDataManagerConstructorPrefix))))
             {
                 Assert.Fail();
             }
 
             if (!harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((UserDataManager udm) => udm.SaveUserData()),
-                prefix: AccessTools.Method(typeof(UserDataManagerPatch), nameof(SaveUserDataPrefix))))
+                SymbolExtensions2.GetMethodInfo((UserDataManager udm) => udm.SaveUserData()),
+                prefix: AccessTools2.Method(typeof(UserDataManagerPatch2), nameof(SaveUserDataPrefix))))
             {
                 Assert.Fail();
             }
 
             if (!harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((UserDataManager udm) => udm.LoadUserData()),
-                prefix: AccessTools.Method(typeof(UserDataManagerPatch), nameof(LoadUserDataPrefix))))
+                SymbolExtensions2.GetMethodInfo((UserDataManager udm) => udm.LoadUserData()),
+                prefix: AccessTools2.Method(typeof(UserDataManagerPatch2), nameof(LoadUserDataPrefix))))
             {
                 Assert.Fail();
             }
 
             if (!harmony.TryPatch(
-                SymbolExtensions.GetMethodInfo((UserDataManager udm) => udm.HasUserData()),
-                prefix: AccessTools.Method(typeof(UserDataManagerPatch), nameof(HasUserDataPrefix))))
+                SymbolExtensions2.GetMethodInfo((UserDataManager udm) => udm.HasUserData()),
+                prefix: AccessTools2.Method(typeof(UserDataManagerPatch2), nameof(HasUserDataPrefix))))
             {
                 Assert.Fail();
             }
@@ -76,9 +74,7 @@ namespace Bannerlord.BUTRLoader.Tests.Patches
                 GameType = GameType.Singleplayer,
                 SingleplayerData = new UserGameTypeData
                 {
-                    ModDatas = _currentModuleStorage!.GetModuleInfos().ConvertAll(mi => new UserModData(
-                        (string) GetId.Invoke(mi, Array.Empty<object>()),
-                        (bool) GetIsSelected.Invoke(mi, Array.Empty<object>())))
+                    ModDatas = _currentModuleStorage!.GetModuleInfos().ConvertAll(mi => new UserModData(GetId.Invoke(mi), GetIsSelected.Invoke(mi)))
                 }
             };
 
@@ -117,23 +113,23 @@ namespace Bannerlord.BUTRLoader.Tests.Patches
         {
             _harmony.Unpatch(
                 SymbolExtensions2.GetPropertyInfo((UserDataManager udm) => udm.UserData).GetMethod,
-                AccessTools.Method(typeof(UserDataManagerPatch), nameof(GetUserDataPrefix)));
+                AccessTools2.Method(typeof(UserDataManagerPatch2), nameof(GetUserDataPrefix)));
 
             _harmony.Unpatch(
                 SymbolExtensions2.GetConstructorInfo(() => new UserDataManager()),
-                AccessTools.Method(typeof(UserDataManagerPatch), nameof(UserDataManagerConstructorPrefix)));
+                AccessTools2.Method(typeof(UserDataManagerPatch2), nameof(UserDataManagerConstructorPrefix)));
 
             _harmony.Unpatch(
-                SymbolExtensions.GetMethodInfo((UserDataManager udm) => udm.SaveUserData()),
-                AccessTools.Method(typeof(UserDataManagerPatch), nameof(SaveUserDataPrefix)));
+                SymbolExtensions2.GetMethodInfo((UserDataManager udm) => udm.SaveUserData()),
+                AccessTools2.Method(typeof(UserDataManagerPatch2), nameof(SaveUserDataPrefix)));
 
             _harmony.Unpatch(
-                SymbolExtensions.GetMethodInfo((UserDataManager udm) => udm.LoadUserData()),
-                AccessTools.Method(typeof(UserDataManagerPatch), nameof(LoadUserDataPrefix)));
+                SymbolExtensions2.GetMethodInfo((UserDataManager udm) => udm.LoadUserData()),
+                AccessTools2.Method(typeof(UserDataManagerPatch2), nameof(LoadUserDataPrefix)));
 
             _harmony.Unpatch(
-                SymbolExtensions.GetMethodInfo((UserDataManager udm) => udm.HasUserData()),
-                AccessTools.Method(typeof(UserDataManagerPatch), nameof(HasUserDataPrefix)));
+                SymbolExtensions2.GetMethodInfo((UserDataManager udm) => udm.HasUserData()),
+                AccessTools2.Method(typeof(UserDataManagerPatch2), nameof(HasUserDataPrefix)));
 
             _currentModuleStorage = null;
         }
