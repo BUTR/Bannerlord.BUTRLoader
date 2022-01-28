@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using Bannerlord.BUTRLoader.Patches;
 
 using System;
 using System.Collections.Generic;
@@ -146,6 +146,7 @@ Mismatched module versions:
                         HintManager.ShowHint("Successfully imported list!");
                     }
 
+                    LauncherVMPatch.UpdateAndSaveUserModsData(_launcherVM, false);
                 }
                 catch (Exception) { }
             }
