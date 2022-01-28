@@ -17,6 +17,6 @@
       InputAssemblies="@(InputAssemblies)"
       TargetKind="SameAsPrimaryAssembly"
       OutputFile="$(OutputPath)\$(AssemblyName).dll"
-      LibraryPath="$(GameFolder)\bin\Win64_Shipping_Client" />
+      LibraryPath="$(OutputPath);$(GameFolder)\bin\Win64_Shipping_Client" />
   </Target>
 </Project>
