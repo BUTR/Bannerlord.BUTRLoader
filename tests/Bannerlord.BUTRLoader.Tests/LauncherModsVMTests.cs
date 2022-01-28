@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Patches;
+﻿using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Patches;
 using Bannerlord.BUTRLoader.Tests.Patches;
 
 using HarmonyLib;

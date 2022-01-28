@@ -162,7 +162,7 @@ Mismatched module versions:
                 CheckFileExists = false,
                 CheckPathExists = false,
 
-                ValidateNames = true, 
+                ValidateNames = true,
             };
 
             if (dialog.ShowDialog() == DialogResult.OK)

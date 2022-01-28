@@ -270,7 +270,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             ExecuteConfirmUnverifiedDLLStartOriginal?.Invoke(_launcherVM);
         }
 
-        
+
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public void ExecuteBeginHintImport()
         {
