@@ -1,8 +1,7 @@
-﻿using Bannerlord.BUTRLoader.Tests.Patches;
+﻿using Bannerlord.BUTRLoader.Patches;
+using Bannerlord.BUTRLoader.Tests.Patches;
 
 using HarmonyLib;
-
-using Bannerlord.BUTRLoader.Patches;
 
 using NUnit.Framework;
 
@@ -26,7 +25,7 @@ namespace Bannerlord.BUTRLoader.Tests
         {
             Assembly.Load("TaleWorlds.Library");
             Assembly.Load("TaleWorlds.ModuleManager");
-            
+
             LauncherModsVMPatch.Enable(_harmony);
         }
 

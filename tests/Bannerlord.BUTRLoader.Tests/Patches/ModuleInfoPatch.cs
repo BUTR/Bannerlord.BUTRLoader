@@ -1,6 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Tests.Helpers;
-
-using Bannerlord.BUTRLoader.Patches;
+﻿using Bannerlord.BUTRLoader.Patches;
+using Bannerlord.BUTRLoader.Tests.Helpers;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
