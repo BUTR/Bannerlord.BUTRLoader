@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTR.Shared.Utils;
+using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches.ViewModels;
 
 using HarmonyLib;
@@ -20,16 +21,20 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherVMMixin
     {
+        private delegate void AddHintInformationDelegate(string message);
+        private static readonly AddHintInformationDelegate? AddHintInformation =
+            AccessTools2.GetDelegate<AddHintInformationDelegate>(typeof(LauncherUI), "AddHintInformation");
+
+        private delegate void HideHintInformationDelegate();
+        private static readonly HideHintInformationDelegate? HideHintInformation =
+            AccessTools2.GetDelegate<HideHintInformationDelegate>(typeof(LauncherUI), "HideHintInformation");
+
         private delegate void ExecuteConfirmUnverifiedDLLStartDelegate(LauncherVM instance);
-        private static readonly ExecuteConfirmUnverifiedDLLStartDelegate? ExecuteConfirmUnverifiedDLLStartOriginal;
+        private static readonly ExecuteConfirmUnverifiedDLLStartDelegate? ExecuteConfirmUnverifiedDLLStartOriginal =
+            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>(typeof(LauncherVM), "ExecuteConfirmUnverifiedDLLStart");
+
         private static readonly AccessTools.FieldRef<LauncherVM, UserDataManager>? UserDataManagerFieldRef =
             AccessTools2.FieldRefAccess<LauncherVM, UserDataManager>("_userDataManager");
-
-        static LauncherVMMixin()
-        {
-            ExecuteConfirmUnverifiedDLLStartOriginal =
-                AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>(typeof(LauncherVM), "ExecuteConfirmUnverifiedDLLStart");
-        }
 
         private enum TopTabs { NONE, Singleplayer, Multiplayer, Options }
         private TopTabs _state;
@@ -205,8 +210,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
         private LauncherOptionsVM _optionsData = new();
 
+
         private readonly LauncherVM _launcherVM;
         private readonly UserDataManager _userDataManager;
+
+        private ModuleListHandler? _currentModuleListHandler;
 
         public LauncherVMMixin(LauncherVM launcherVM)
         {
@@ -260,6 +268,49 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             Save();
             BUTRLoaderAppDomainManager.UnpatchAll();
             ExecuteConfirmUnverifiedDLLStartOriginal?.Invoke(_launcherVM);
+        }
+
+        
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public void ExecuteBeginHintImport()
+        {
+            if (AddHintInformation is not null)
+                AddHintInformation("Import Mod List");
+        }
+
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public void ExecuteBeginHintExport()
+        {
+            if (AddHintInformation is not null)
+                AddHintInformation("Export Currect Mod List");
+        }
+
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public void ExecuteEndHint()
+        {
+            if (_currentModuleListHandler is null)
+            {
+                if (HideHintInformation is not null)
+                    HideHintInformation();
+            }
+            else
+            {
+                _currentModuleListHandler = null;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public void ExecuteImport()
+        {
+            _currentModuleListHandler = new ModuleListHandler(_launcherVM, _userDataManager);
+            _currentModuleListHandler.Import();
+        }
+
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public void ExecuteExport()
+        {
+            _currentModuleListHandler = new ModuleListHandler(_launcherVM, _userDataManager);
+            _currentModuleListHandler.Export();
         }
 
         private void SaveOptions()

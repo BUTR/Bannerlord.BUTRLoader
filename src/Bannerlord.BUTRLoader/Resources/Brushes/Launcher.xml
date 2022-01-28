@@ -22,4 +22,32 @@
     </Styles>
   </Brush>
 
+  <Brush Name="Launcher.Import">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="import" Color="#E6C8A6FF" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Default" Sprite="import" Color="#FFFFFFFF" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="Launcher.Export">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="export" Color="#E6C8A6FF" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Default" Sprite="export" Color="#FFFFFFFF" />
+      </Style>
+    </Styles>
+  </Brush>
+
 </Brushes>
