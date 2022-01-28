@@ -1,4 +1,5 @@
-﻿using Bannerlord.ModuleManager;
+﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.ModuleManager;
 
 using System.Collections.Generic;
 using System.Text;
@@ -7,6 +8,19 @@ namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class ModuleInfoHelper2
     {
+        internal static readonly Dictionary<string, ModuleInfoExtended> ExtendedModuleInfoCache = new();
+
+        public static ModuleInfoExtended GetExtendedModuleInfo(object moduleInfo) => GetExtendedModuleInfo(ModuleInfoWrapper.Create(moduleInfo));
+        public static ModuleInfoExtended GetExtendedModuleInfo(ModuleInfoWrapper moduleInfoWrapper)
+        {
+            if (ExtendedModuleInfoCache.ContainsKey(moduleInfoWrapper.Id))
+                return ExtendedModuleInfoCache[moduleInfoWrapper.Id];
+
+            var extendedModuleInfo = ModuleInfoHelper.LoadFromId(string.IsNullOrEmpty(moduleInfoWrapper.Alias) ? moduleInfoWrapper.Id : moduleInfoWrapper.Alias)!;
+            ExtendedModuleInfoCache[moduleInfoWrapper.Id] = extendedModuleInfo;
+            return extendedModuleInfo;
+        }
+
         public static string GetDependencyHint(ModuleInfoExtended moduleInfoExtended)
         {
             static string GetOptional(bool isOptional) => isOptional ? " (optional)" : string.Empty;

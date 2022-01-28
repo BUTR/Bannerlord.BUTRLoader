@@ -17,6 +17,8 @@
     <EmbeddedResource Include="Resources\Prefabs\Launcher.Options.xml" />
     <EmbeddedResource Include="Resources\Textures\arrow_down.png" />
     <EmbeddedResource Include="Resources\Textures\arrow_left.png" />
+    <EmbeddedResource Include="Resources\Textures\import.png" />
+    <EmbeddedResource Include="Resources\Textures\export.png" />
   </ItemGroup>
 
   <!--NuGet References-->

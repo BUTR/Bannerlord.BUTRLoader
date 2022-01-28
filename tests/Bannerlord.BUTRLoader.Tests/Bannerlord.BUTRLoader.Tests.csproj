@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\LauncherModuleVMWrapper.cs" Link="BUTRLoader\Helpers\LauncherModuleVMWrapper.cs" />
-    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleInfoHelper.cs" Link="BUTRLoader\Helpers\ModuleInfoHelper.cs" />
+    <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleInfoHelper2.cs" Link="BUTRLoader\Helpers\ModuleInfoHelper2.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Helpers\ModuleInfoWrapper.cs" Link="BUTRLoader\Helpers\ModuleInfoWrapper.cs" />
     <Compile Include="..\..\src\Bannerlord.BUTRLoader\Patches\LauncherModsVMPatch.cs" Link="BUTRLoader\Patches\LauncherModsVMPatch.cs" />
   </ItemGroup>

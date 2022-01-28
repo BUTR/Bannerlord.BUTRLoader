@@ -1,5 +1,4 @@
 ﻿using Bannerlord.BUTR.Shared.Extensions;
-using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.ModuleManager;
 
@@ -15,6 +14,8 @@ using System.Runtime.CompilerServices;
 
 using TaleWorlds.MountAndBlade.Launcher;
 
+using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper2;
+
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
@@ -25,19 +26,6 @@ namespace Bannerlord.BUTRLoader.Patches
         internal static readonly CastDelegate? CastMethod = AccessTools2.GetDelegate<CastDelegate>(typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(ModuleInfoWrapper.ModuleInfoType)!);
         internal static readonly ToListDelegate? ToListMethod = AccessTools2.GetDelegate<ToListDelegate>(typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(ModuleInfoWrapper.ModuleInfoType)!);
 
-
-        internal static readonly Dictionary<string, ModuleInfoExtended> ExtendedModuleInfoCache = new();
-
-        private static ModuleInfoExtended GetExtendedModuleInfo(object moduleInfo) => GetExtendedModuleInfo(ModuleInfoWrapper.Create(moduleInfo));
-        private static ModuleInfoExtended GetExtendedModuleInfo(ModuleInfoWrapper moduleInfoWrapper)
-        {
-            if (ExtendedModuleInfoCache.ContainsKey(moduleInfoWrapper.Id))
-                return ExtendedModuleInfoCache[moduleInfoWrapper.Id];
-
-            var extendedModuleInfo = ModuleInfoHelper.LoadFromId(string.IsNullOrEmpty(moduleInfoWrapper.Alias) ? moduleInfoWrapper.Id : moduleInfoWrapper.Alias)!;
-            ExtendedModuleInfoCache[moduleInfoWrapper.Id] = extendedModuleInfo;
-            return extendedModuleInfo;
-        }
 
         public static bool Enable(Harmony harmony)
         {

@@ -2,11 +2,8 @@
 using HarmonyLib.BUTR.Extensions;
 
 using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
 using TaleWorlds.MountAndBlade.Launcher;
-using TaleWorlds.MountAndBlade.Launcher.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Patches
 {

@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Tests.Patches;
+﻿using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Tests.Patches;
 
 using HarmonyLib;
 
@@ -34,7 +35,7 @@ namespace Bannerlord.BUTRLoader.Tests
         [TestCaseSource(nameof(GetModuleListTemplates))]
         public void Test_Refresh(ModuleListTemplates moduleListTemplate)
         {
-            LauncherModsVMPatch.ExtendedModuleInfoCache.Clear();
+            ModuleInfoHelper2.ExtendedModuleInfoCache.Clear();
 
             var storage = new ModuleStorage(moduleListTemplate);
             using var _ = new ModuleInfoPatch(_harmony, storage);
