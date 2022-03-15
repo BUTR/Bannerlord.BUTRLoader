@@ -1,5 +1,6 @@
 ﻿using Bannerlord.BUTR.Shared.Utils;
 using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.LauncherEx;
 using Bannerlord.BUTRLoader.Patches.ViewModels;
 
 using HarmonyLib;
@@ -266,7 +267,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public void ExecuteConfirmUnverifiedDLLStart()
         {
             Save();
-            BUTRLoaderAppDomainManager.UnpatchAll();
+            Manager.UnpatchAll();
             ExecuteConfirmUnverifiedDLLStartOriginal?.Invoke(_launcherVM);
         }
 
@@ -318,22 +319,22 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             if (_userDataManager.UserData is UserDataOptions userData)
             {
-                if (userData.ExtendedSorting != BUTRLoaderAppDomainManager.ExtendedSorting)
+                if (userData.ExtendedSorting != LauncherSettings.ExtendedSorting)
                     Save();
 
-                if (userData.AutomaticallyCheckForUpdates != BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates)
+                if (userData.AutomaticallyCheckForUpdates != LauncherSettings.AutomaticallyCheckForUpdates)
                     Save();
 
-                if (userData.UnblockFiles != BUTRLoaderAppDomainManager.UnblockFiles)
+                if (userData.UnblockFiles != LauncherSettings.UnblockFiles)
                     Save();
 
-                if (userData.FixCommonIssues != BUTRLoaderAppDomainManager.FixCommonIssues)
+                if (userData.FixCommonIssues != LauncherSettings.FixCommonIssues)
                     Save();
 
-                if (userData.CompactModuleList != BUTRLoaderAppDomainManager.CompactModuleList)
+                if (userData.CompactModuleList != LauncherSettings.CompactModuleList)
                     Save();
 
-                if (userData.ResetModuleList != BUTRLoaderAppDomainManager.ResetModuleList)
+                if (userData.ResetModuleList != LauncherSettings.ResetModuleList)
                     Save();
             }
         }

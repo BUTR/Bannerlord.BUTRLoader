@@ -59,16 +59,16 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 using var xmlReader = XmlReader.Create(____filePath);
                 var userDataOptions = (UserDataOptions) xmlSerializer.Deserialize(xmlReader);
-                BUTRLoaderAppDomainManager.ExtendedSorting = userDataOptions.ExtendedSorting;
-                BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates = userDataOptions.AutomaticallyCheckForUpdates;
-                BUTRLoaderAppDomainManager.UnblockFiles = userDataOptions.UnblockFiles;
-                BUTRLoaderAppDomainManager.FixCommonIssues = userDataOptions.FixCommonIssues;
-                BUTRLoaderAppDomainManager.CompactModuleList = userDataOptions.CompactModuleList;
-                BUTRLoaderAppDomainManager.ResetModuleList = userDataOptions.ResetModuleList;
-                if (BUTRLoaderAppDomainManager.ResetModuleList)
+                LauncherSettings.ExtendedSorting = userDataOptions.ExtendedSorting;
+                LauncherSettings.AutomaticallyCheckForUpdates = userDataOptions.AutomaticallyCheckForUpdates;
+                LauncherSettings.UnblockFiles = userDataOptions.UnblockFiles;
+                LauncherSettings.FixCommonIssues = userDataOptions.FixCommonIssues;
+                LauncherSettings.CompactModuleList = userDataOptions.CompactModuleList;
+                LauncherSettings.ResetModuleList = userDataOptions.ResetModuleList;
+                if (LauncherSettings.ResetModuleList)
                 {
                     userDataOptions.SingleplayerData.ModDatas = new List<UserModData>();
-                    BUTRLoaderAppDomainManager.ResetModuleList = false;
+                    LauncherSettings.ResetModuleList = false;
                 }
                 var setMethod = SymbolExtensions2.GetPropertyInfo((UserDataManager ud) => ud.UserData)?.SetMethod;
                 setMethod?.Invoke(__instance, new object?[] { userDataOptions as UserDataOld });
@@ -94,12 +94,12 @@ namespace Bannerlord.BUTRLoader.Patches
                 using XmlWriter xmlWriter = XmlWriter.Create(____filePath, new XmlWriterSettings { Indent = true });
                 xmlSerializer.Serialize(xmlWriter, new UserDataOptions(
                     __instance.UserData,
-                    BUTRLoaderAppDomainManager.ExtendedSorting,
-                    BUTRLoaderAppDomainManager.AutomaticallyCheckForUpdates,
-                    BUTRLoaderAppDomainManager.UnblockFiles,
-                    BUTRLoaderAppDomainManager.FixCommonIssues,
-                    BUTRLoaderAppDomainManager.CompactModuleList,
-                    BUTRLoaderAppDomainManager.ResetModuleList));
+                    LauncherSettings.ExtendedSorting,
+                    LauncherSettings.AutomaticallyCheckForUpdates,
+                    LauncherSettings.UnblockFiles,
+                    LauncherSettings.FixCommonIssues,
+                    LauncherSettings.CompactModuleList,
+                    LauncherSettings.ResetModuleList));
             }
             catch (Exception value)
             {

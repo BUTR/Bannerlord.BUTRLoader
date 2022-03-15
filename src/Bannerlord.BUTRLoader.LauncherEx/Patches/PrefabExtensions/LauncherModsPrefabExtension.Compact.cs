@@ -8,7 +8,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string XPath { get; } = "descendant::ListPanel[@Id='InnerPanel']//ListPanel[@DragWidget='DragWidget']";
 
         public override string Attribute => "SuggestedHeight";
-        public override string Value => BUTRLoaderAppDomainManager.CompactModuleList ? "24" : "26";
+        public override string Value => LauncherSettings.CompactModuleList ? "24" : "26";
     }
     internal sealed class LauncherModsPrefabExtension5 : PrefabExtensionSetAttributePatch
     {
@@ -16,7 +16,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string XPath { get; } = "descendant::ListPanel[@Id='InnerPanel']//ListPanel[@DragWidget='DragWidget']";
 
         public override string Attribute => "MarginBottom";
-        public override string Value => BUTRLoaderAppDomainManager.CompactModuleList ? "2" : "10";
+        public override string Value => LauncherSettings.CompactModuleList ? "2" : "10";
     }
     internal sealed class LauncherModsPrefabExtension6 : PrefabExtensionSetAttributePatch
     {
@@ -24,7 +24,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string XPath { get; } = "descendant::ListPanel[@Id='InnerPanel']//TextWidget[@Text='@Name']";
 
         public override string Attribute => "Brush.FontSize";
-        public override string Value => BUTRLoaderAppDomainManager.CompactModuleList ? "20" : "26";
+        public override string Value => LauncherSettings.CompactModuleList ? "20" : "26";
     }
     internal sealed class LauncherModsPrefabExtension7 : PrefabExtensionSetAttributePatch
     {
@@ -32,6 +32,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string XPath { get; } = "descendant::ListPanel[@Id='InnerPanel']//TextWidget[@Text='@VersionText']";
 
         public override string Attribute => "Brush.FontSize";
-        public override string Value => BUTRLoaderAppDomainManager.CompactModuleList ? "20" : "26";
+        public override string Value => LauncherSettings.CompactModuleList ? "20" : "26";
     }
 }

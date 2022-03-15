@@ -1,4 +1,3 @@
-﻿<!--EXTERNAL_PROPERTIES: GameFolder;GameVersion;BANNERLORD_BUTR_BASE_URL-->
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -8,7 +7,18 @@
     <PlatformTarget>x64</PlatformTarget>
 
     <Configurations>Stable_Debug;Stable_Release;Beta_Debug;Beta_Release</Configurations>
+
+    <BUTRBaseUrl>$(BANNERLORD_BUTR_BASE_URL)</BUTRBaseUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Brushes\Launcher.xml" />
+    <EmbeddedResource Include="Resources\Prefabs\Launcher.Options.xml" />
+    <EmbeddedResource Include="Resources\Textures\arrow_down.png" />
+    <EmbeddedResource Include="Resources\Textures\arrow_left.png" />
+    <EmbeddedResource Include="Resources\Textures\export.png" />
+    <EmbeddedResource Include="Resources\Textures\import.png" />
+  </ItemGroup>
 
   <!--NuGet References-->
   <ItemGroup>
@@ -26,13 +36,18 @@
     <PackageReference Include="Nullable" Version="1.3.0" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bannerlord.BUTRLoader.LauncherEx\Bannerlord.BUTRLoader.LauncherEx.csproj" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <!--NuGet References-->
 
-  <Target Name="PostBuild" AfterTargets="ILRepacker" Condition="Exists($(GameFolder)) AND $(OS) == 'Windows_NT'">
-    <Exec Command="xcopy /Y /S &quot;$(MSBuildProjectDirectory)\_GameRoot&quot; &quot;$(GameFolder)&quot;" />
-    <Exec Command="xcopy /Y &quot;$(MSBuildProjectDirectory)\$(OutputPath)Bannerlord.BUTRLoader.*&quot; &quot;$(GameFolder)\bin\Win64_Shipping_Client&quot;" />
+  <Target Name="SetBUTRBaseUrl" BeforeTargets="BeforeCompile">
+    <ItemGroup Condition="$(BUTRBaseUrl) != ''">
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+        <_Parameter1>BUTRBaseUrl</_Parameter1>
+        <_Parameter2>$(BUTRBaseUrl)</_Parameter2>
+      </AssemblyAttribute>
+    </ItemGroup>
+    <Warning Condition="$(BUTRBaseUrl) == ''" Text="Environment variable 'BANNERLORD_BUTR_BASE_URL' is not set!"></Warning>
   </Target>
 
 </Project>

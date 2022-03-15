@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="ILRepacker" AfterTargets="Build">
+    <ItemGroup>
+      <InputAssemblies Include="$(OutputPath)\$(AssemblyName).dll" />
+
+      <InputAssemblies Include="$(OutputPath)\0Harmony.dll" />
+
+      <InputAssemblies Include="$(OutputPath)\Microsoft.Bcl.HashCode.dll" />
+    </ItemGroup>
+
+    <!-- ReSharper disable once UnknownTask -->
+    <ILRepack
+      Parallel="true"
+      DebugInfo="$(Configuration.Contains('Debug'))"
+      Internalize="true"
+      InputAssemblies="@(InputAssemblies)"
+      TargetKind="SameAsPrimaryAssembly"
+      OutputFile="$(OutputPath)\$(AssemblyName).dll"
+      LibraryPath="$(OutputPath);$(GameFolder)\bin\Win64_Shipping_Client" />
+  </Target>
+</Project>

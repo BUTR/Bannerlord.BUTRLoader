@@ -4,7 +4,7 @@ using HarmonyLib.BUTR.Extensions;
 using System;
 using System.Runtime.CompilerServices;
 
-using TaleWorlds.MountAndBlade;
+using Module = TaleWorlds.MountAndBlade.Module;
 
 namespace Bannerlord.BUTRLoader.Features.Interceptor.Patches
 {

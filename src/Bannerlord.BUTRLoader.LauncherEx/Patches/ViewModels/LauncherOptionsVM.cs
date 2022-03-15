@@ -45,31 +45,31 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
             {
                 DisplayName = "Enable Extended Mod Sorting",
                 SettingType = SettingType.Bool,
-                PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.ExtendedSorting))!, this)
+                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.ExtendedSorting))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
                 DisplayName = "Enable File Unblocking",
                 SettingType = SettingType.Bool,
-                PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.UnblockFiles))!, this)
+                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.UnblockFiles))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
                 DisplayName = "Fix Common Issues",
                 SettingType = SettingType.Bool,
-                PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.FixCommonIssues))!, this)
+                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.FixCommonIssues))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
                 DisplayName = "Compact Module List (Requires restart)",
                 SettingType = SettingType.Bool,
-                PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.CompactModuleList))!, this)
+                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.CompactModuleList))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
                 DisplayName = "Reset Module List (Requires restart)",
                 SettingType = SettingType.Bool,
-                PropertyReference = new PropertyRef(typeof(BUTRLoaderAppDomainManager).GetProperty(nameof(BUTRLoaderAppDomainManager.ResetModuleList))!, this)
+                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.ResetModuleList))!, this)
             }));
             /*
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition

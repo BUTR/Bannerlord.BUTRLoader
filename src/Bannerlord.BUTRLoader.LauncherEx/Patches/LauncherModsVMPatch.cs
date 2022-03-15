@@ -68,7 +68,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetDependentModulesOfPrefix(IEnumerable<object> source, object module, ref IEnumerable __result)
         {
-            if (!BUTRLoaderAppDomainManager.ExtendedSorting || CastMethod is null || ToListMethod is null)
+            if (!LauncherSettings.ExtendedSorting || CastMethod is null || ToListMethod is null)
                 return true;
 
             var sourceList = source.ToList();
@@ -94,7 +94,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool AreAllDependenciesOfModulePresentPrefix(LauncherModsVM __instance, object info, List<object> ____modulesCache, ref bool __result)
         {
-            if (!BUTRLoaderAppDomainManager.ExtendedSorting)
+            if (!LauncherSettings.ExtendedSorting)
                 return true;
 
             var info2 = GetExtendedModuleInfo(info);
@@ -273,7 +273,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool ChangeIsSelectedOfPrefix(LauncherModsVM __instance, LauncherModuleVM targetModule, List<object> ____modulesCache)
         {
-            if (!BUTRLoaderAppDomainManager.ExtendedSorting)
+            if (!LauncherSettings.ExtendedSorting)
                 return true;
 
             if (!AreAllDependenciesOfModulePresent(__instance, LauncherModuleVMWrapper.Create(targetModule).Info.Object, ____modulesCache))

@@ -29,7 +29,7 @@ namespace Bannerlord.BUTRLoader.Patches
         private static bool StartGamePrefix()
         {
             var pathPrefix = PathPrefix();
-            if (BUTRLoaderAppDomainManager.UnblockFiles)
+            if (LauncherSettings.UnblockFiles)
             {
                 if (Directory.Exists(pathPrefix))
                 {
@@ -41,7 +41,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 }
             }
 
-            if (BUTRLoaderAppDomainManager.FixCommonIssues)
+            if (LauncherSettings.FixCommonIssues)
             {
                 IssuesChecker.CheckForRootHarmony();
             }
