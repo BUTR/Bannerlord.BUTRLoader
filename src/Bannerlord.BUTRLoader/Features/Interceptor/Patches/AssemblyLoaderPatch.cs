@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 using TaleWorlds.Library;
 
 namespace Bannerlord.BUTRLoader.Features.Interceptor.Patches
-{   
+{
     internal class AssemblyWrapper : Assembly
     {
         public override string Location { get; }
