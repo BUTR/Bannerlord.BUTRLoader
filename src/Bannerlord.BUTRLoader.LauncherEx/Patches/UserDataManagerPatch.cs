@@ -1,20 +1,16 @@
-﻿using HarmonyLib;
+﻿using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Options;
+
+using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
-using Ikriv.Xml;
-
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Serialization;
-
-using TaleWorlds.MountAndBlade.Launcher.UserDatas;
-
-using UserDataOld = TaleWorlds.MountAndBlade.Launcher.UserDatas.UserData;
-using UserDataOptions = Bannerlord.BUTRLoader.Options.UserData;
 
 namespace Bannerlord.BUTRLoader.Patches
 {
@@ -23,24 +19,16 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                SymbolExtensions2.GetMethodInfo((UserDataManager udm) => udm.LoadUserData()),
+                AccessTools2.Method(UserDataManagerWrapper.UserDataManagerType!, "LoadUserData"),
                 prefix: AccessTools2.Method(typeof(UserDataManagerPatch), nameof(LoadUserDataPrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                SymbolExtensions2.GetMethodInfo((UserDataManager udm) => udm.SaveUserData()),
-                prefix: AccessTools2.Method(typeof(UserDataManagerPatch), nameof(SaveUserDataPrefix)));
+                AccessTools2.Method(UserDataManagerWrapper.UserDataManagerType!, "SaveUserData"),
+                postfix: AccessTools2.Method(typeof(UserDataManagerPatch), nameof(SaveUserDataPostfix)));
             if (!res2) return false;
 
             return true;
-        }
-
-        private static XmlAttributeOverrides GetOverrides()
-        {
-            return new OverrideXml()
-                .Override<UserDataOld>()
-                .XmlType("UserDataOld")
-                .Commit();
         }
 
         [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
@@ -48,17 +36,18 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool LoadUserDataPrefix(UserDataManager __instance, string ____filePath)
+        private static bool LoadUserDataPrefix(object __instance, string ____filePath)
         {
             if (!File.Exists(____filePath))
             {
                 return true;
             }
-            var xmlSerializer = new XmlSerializer(typeof(UserDataOptions), GetOverrides());
+
+            var xmlSerializer = new XmlSerializer(typeof(LauncherExData), new XmlRootAttribute("UserData"));
             try
             {
                 using var xmlReader = XmlReader.Create(____filePath);
-                var userDataOptions = (UserDataOptions) xmlSerializer.Deserialize(xmlReader);
+                var userDataOptions = (LauncherExData) xmlSerializer.Deserialize(xmlReader);
                 LauncherSettings.ExtendedSorting = userDataOptions.ExtendedSorting;
                 LauncherSettings.AutomaticallyCheckForUpdates = userDataOptions.AutomaticallyCheckForUpdates;
                 LauncherSettings.UnblockFiles = userDataOptions.UnblockFiles;
@@ -67,18 +56,17 @@ namespace Bannerlord.BUTRLoader.Patches
                 LauncherSettings.ResetModuleList = userDataOptions.ResetModuleList;
                 if (LauncherSettings.ResetModuleList)
                 {
-                    userDataOptions.SingleplayerData.ModDatas = new List<UserModData>();
+                    var wrapper = UserDataManagerWrapper.Create(__instance);
+                    wrapper.UserData?.SingleplayerData?.ModDatasRaw.Clear();
                     LauncherSettings.ResetModuleList = false;
                 }
-                var setMethod = SymbolExtensions2.GetPropertyInfo((UserDataManager ud) => ud.UserData)?.SetMethod;
-                setMethod?.Invoke(__instance, new object?[] { userDataOptions as UserDataOld });
             }
             catch (Exception value)
             {
                 Console.WriteLine(value);
             }
 
-            return false;
+            return true;
         }
 
         [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
@@ -86,14 +74,18 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool SaveUserDataPrefix(UserDataManager __instance, string ____filePath)
+        private static void SaveUserDataPostfix(object __instance, string ____filePath)
         {
-            var xmlSerializer = new XmlSerializer(typeof(UserDataOptions), GetOverrides());
+            var xDoc = new XmlDocument();
+            xDoc.Load(____filePath);
+            var rootNode = xDoc.DocumentElement!;
+
+            var xmlSerializer = new XmlSerializer(typeof(LauncherExData));
+            using var xout = new StringWriter();
+            using var writer = XmlWriter.Create(xout, new XmlWriterSettings { OmitXmlDeclaration = true });
             try
             {
-                using XmlWriter xmlWriter = XmlWriter.Create(____filePath, new XmlWriterSettings { Indent = true });
-                xmlSerializer.Serialize(xmlWriter, new UserDataOptions(
-                    __instance.UserData,
+                xmlSerializer.Serialize(writer, new LauncherExData(
                     LauncherSettings.ExtendedSorting,
                     LauncherSettings.AutomaticallyCheckForUpdates,
                     LauncherSettings.UnblockFiles,
@@ -106,7 +98,14 @@ namespace Bannerlord.BUTRLoader.Patches
                 Console.WriteLine(value);
             }
 
-            return false;
+            var xfrag = xDoc.CreateDocumentFragment();
+            xfrag.InnerXml = xout.ToString();
+            foreach (var element in xfrag.FirstChild.ChildNodes.OfType<XmlElement>().ToList())
+            {
+                rootNode.AppendChild(element);
+            }
+
+            xDoc.Save(____filePath);
         }
     }
 }

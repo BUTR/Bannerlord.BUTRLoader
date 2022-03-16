@@ -16,7 +16,8 @@ namespace Bannerlord.BUTRLoader.Helpers
             if (ExtendedModuleInfoCache.ContainsKey(moduleInfoWrapper.Id))
                 return ExtendedModuleInfoCache[moduleInfoWrapper.Id];
 
-            var extendedModuleInfo = ModuleInfoHelper.LoadFromId(string.IsNullOrEmpty(moduleInfoWrapper.Alias) ? moduleInfoWrapper.Id : moduleInfoWrapper.Alias)!;
+            var extendedModuleInfo = ModuleInfoHelper.LoadFromId(string.IsNullOrEmpty(moduleInfoWrapper.Alias) ? moduleInfoWrapper.Id : moduleInfoWrapper.Alias);
+            if (extendedModuleInfo is null) return null!; // Special case
             ExtendedModuleInfoCache[moduleInfoWrapper.Id] = extendedModuleInfo;
             return extendedModuleInfo;
         }

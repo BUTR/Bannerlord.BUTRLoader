@@ -31,8 +31,22 @@ namespace Bannerlord.BUTRLoader
             }
             AppDomain.CurrentDomain.AssemblyLoad += (sender, args) =>
             {
+                // Pre e1.7.2
                 // Wait for the Launcher assembly to load
                 if (args.LoadedAssembly.GetName().Name == "TaleWorlds.MountAndBlade.Launcher")
+                {
+                    if (args.LoadedAssembly.GetType("TaleWorlds.MountAndBlade.Launcher.LauncherVM") is null)
+                    {
+                        return;
+                    }
+
+                    var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Init");
+                    init?.Invoke(null, Array.Empty<object>());
+                }
+
+                // Post e1.7.2
+                // Wait for the Launcher assembly to load
+                if (args.LoadedAssembly.GetName().Name == "TaleWorlds.MountAndBlade.Launcher.Library")
                 {
                     var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Init");
                     init?.Invoke(null, Array.Empty<object>());

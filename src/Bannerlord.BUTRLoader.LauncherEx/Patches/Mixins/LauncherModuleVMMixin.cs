@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using TaleWorlds.Library;
-using TaleWorlds.MountAndBlade.Launcher;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
@@ -60,7 +59,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
         private bool _isNoUpdateAvailable;
 
-        public object DependencyHint2 { get; }
+        public object? DependencyHint2 { get; }
         public bool AnyDependencyAvailable2 { get; }
 
         public bool IsDangerous2 { get; }
@@ -68,10 +67,10 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public bool IsDisabled2 { get; }
 
 
-        private readonly LauncherModuleVM _launcherModuleVM;
+        private readonly ViewModel _launcherModuleVM;
         private readonly string _moduleId;
 
-        public LauncherModuleVMMixin(LauncherModuleVM launcherModuleVM)
+        public LauncherModuleVMMixin(ViewModel launcherModuleVM)
         {
             _launcherModuleVM = launcherModuleVM;
 
@@ -99,7 +98,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             if (ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 })
             {
-                var id = moduleInfoWrapper.Info.Id;
+                var id = moduleInfoWrapper.Info?.Id ?? string.Empty;
                 if (ModuleInfoHelper.LoadFromId(id) is { } moduleInfo && ModuleInfoHelper2.GetDependencyHint(moduleInfo) is { } str && LauncherHintVMWrapper.Create(str) is { } hint)
                 {
                     DependencyHint2 = hint.Object;
@@ -109,12 +108,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 }
             }
 
-            _moduleId = moduleInfoWrapper.Info.Id;
+            _moduleId = moduleInfoWrapper.Info?.Id ?? string.Empty;
 
             UpdateIssues();
 
-            IsDisabled2 = LauncherModuleVMPatch.AreAllDepenenciesPresentReferencrs.TryGetValue(launcherModuleVM, out var del)
-                ? !(bool) del.DynamicInvoke(moduleInfoWrapper.Info.Object)
+            IsDisabled2 = LauncherModuleVMPatch.AreAllDepenenciesPresentReferences.TryGetValue(launcherModuleVM, out var del)
+                ? !(bool) del.DynamicInvoke(moduleInfoWrapper.Info?.Object)
                 : true;
 
             // Remove danger warnings

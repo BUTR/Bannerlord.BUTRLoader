@@ -1,6 +1,7 @@
 ﻿using Bannerlord.BUTR.Shared.Utils;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
+using Bannerlord.BUTRLoader.Options;
 using Bannerlord.BUTRLoader.Patches.ViewModels;
 
 using HarmonyLib;
@@ -9,14 +10,11 @@ using HarmonyLib.BUTR.Extensions;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Contexts;
+using System.Threading;
 
 using TaleWorlds.GauntletUI;
 using TaleWorlds.Library;
-using TaleWorlds.MountAndBlade.Launcher;
-using TaleWorlds.MountAndBlade.Launcher.UserDatas;
-
-using UserDataOld = TaleWorlds.MountAndBlade.Launcher.UserDatas.UserData;
-using UserDataOptions = Bannerlord.BUTRLoader.Options.UserData;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
@@ -24,18 +22,18 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
     {
         private delegate void AddHintInformationDelegate(string message);
         private static readonly AddHintInformationDelegate? AddHintInformation =
-            AccessTools2.GetDelegate<AddHintInformationDelegate>(typeof(LauncherUI), "AddHintInformation");
+            AccessTools2.GetDelegate<AddHintInformationDelegate>(LauncherUIWrapper.LauncherUIType!, "AddHintInformation");
 
         private delegate void HideHintInformationDelegate();
         private static readonly HideHintInformationDelegate? HideHintInformation =
-            AccessTools2.GetDelegate<HideHintInformationDelegate>(typeof(LauncherUI), "HideHintInformation");
+            AccessTools2.GetDelegate<HideHintInformationDelegate>(LauncherUIWrapper.LauncherUIType!, "HideHintInformation");
 
-        private delegate void ExecuteConfirmUnverifiedDLLStartDelegate(LauncherVM instance);
+        private delegate void ExecuteConfirmUnverifiedDLLStartDelegate(object instance);
         private static readonly ExecuteConfirmUnverifiedDLLStartDelegate? ExecuteConfirmUnverifiedDLLStartOriginal =
-            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>(typeof(LauncherVM), "ExecuteConfirmUnverifiedDLLStart");
+            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>(LauncherUIWrapper.LauncherUIType!, "ExecuteConfirmUnverifiedDLLStart");
 
-        private static readonly AccessTools.FieldRef<LauncherVM, UserDataManager>? UserDataManagerFieldRef =
-            AccessTools2.FieldRefAccess<LauncherVM, UserDataManager>("_userDataManager");
+        private static readonly AccessTools.FieldRef<object, object>? UserDataManagerFieldRef =
+            AccessTools2.FieldRefAccess<object>(LauncherVMWrapper.LauncherVMType!, "_userDataManager");
 
         private enum TopTabs { NONE, Singleplayer, Multiplayer, Options }
         private TopTabs _state;
@@ -54,7 +52,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     _state = TopTabs.Singleplayer;
 
-                    _launcherVM.IsSingleplayer = true;
+                    _wrapper.IsSingleplayer = true;
                     _launcherVM.OnPropertyChanged(nameof(IsSingleplayer));
                     _launcherVM.OnPropertyChanged(nameof(IsOptions));
 
@@ -66,8 +64,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     RandomImageSwitch = !RandomImageSwitch;
 
-                    _launcherVM.ModsData.IsDisabledOnMultiplayer = false;
-                    _launcherVM.News.IsDisabledOnMultiplayer = false;
+                    _wrapper.ModsData.IsDisabledOnMultiplayer = false;
+                    _wrapper.News.IsDisabledOnMultiplayer = false;
                     OptionsData.IsDisabled = true;
                 }
             }
@@ -88,7 +86,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     _state = TopTabs.Multiplayer;
 
-                    _launcherVM.IsMultiplayer = true;
+                    _wrapper.IsMultiplayer = true;
                     _launcherVM.OnPropertyChanged(nameof(IsMultiplayer));
                     _launcherVM.OnPropertyChanged(nameof(IsOptions));
 
@@ -100,8 +98,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     RandomImageSwitch = !RandomImageSwitch;
 
-                    _launcherVM.ModsData.IsDisabledOnMultiplayer = true;
-                    _launcherVM.News.IsDisabledOnMultiplayer = false;
+                    _wrapper.ModsData.IsDisabledOnMultiplayer = true;
+                    _wrapper.News.IsDisabledOnMultiplayer = false;
                     OptionsData.IsDisabled = true;
                 }
             }
@@ -128,8 +126,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     _launcherVM.OnPropertyChanged(nameof(SkipNews));
                     _launcherVM.OnPropertyChanged(nameof(SkipMods));
 
-                    _launcherVM.News.IsDisabledOnMultiplayer = true;
-                    _launcherVM.ModsData.IsDisabledOnMultiplayer = true;
+                    _wrapper.News.IsDisabledOnMultiplayer = true;
+                    _wrapper.ModsData.IsDisabledOnMultiplayer = true;
                     OptionsData.Refresh(false);
                 }
             }
@@ -212,15 +210,25 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private LauncherOptionsVM _optionsData = new();
 
 
-        private readonly LauncherVM _launcherVM;
-        private readonly UserDataManager _userDataManager;
+        private readonly ViewModel _launcherVM;
+        private readonly LauncherVMWrapper _wrapper;
+        private readonly UserDataManagerWrapper _userDataManager;
+        private readonly LauncherExData _launcherExData;
 
         private ModuleListHandler? _currentModuleListHandler;
 
-        public LauncherVMMixin(LauncherVM launcherVM)
+        public LauncherVMMixin(ViewModel launcherVM)
         {
             _launcherVM = launcherVM;
-            _userDataManager = UserDataManagerFieldRef is not null ? UserDataManagerFieldRef(launcherVM) : default!;
+            _wrapper = LauncherVMWrapper.Create(_launcherVM);
+            _userDataManager = UserDataManagerFieldRef is not null ? UserDataManagerWrapper.Create(UserDataManagerFieldRef(launcherVM)) : default!;
+            _launcherExData = new LauncherExData(
+                LauncherSettings.ExtendedSorting,
+                LauncherSettings.AutomaticallyCheckForUpdates,
+                LauncherSettings.UnblockFiles,
+                LauncherSettings.FixCommonIssues,
+                LauncherSettings.CompactModuleList,
+                LauncherSettings.ResetModuleList);
 
             var propsObject = AccessTools2.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherVM) as Dictionary<string, PropertyInfo>
                               ?? new Dictionary<string, PropertyInfo>();
@@ -250,7 +258,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(VersionTextSingleplayer));
             SetVMProperty(nameof(OptionsData));
 
-            if (_launcherVM.IsMultiplayer)
+            if (_wrapper.IsMultiplayer)
                 IsMultiplayer = true;
             else
                 IsSingleplayer = true;
@@ -316,26 +324,40 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         private void SaveOptions()
         {
-
-            if (_userDataManager.UserData is UserDataOptions userData)
+            if (_launcherExData.ExtendedSorting != LauncherSettings.ExtendedSorting)
             {
-                if (userData.ExtendedSorting != LauncherSettings.ExtendedSorting)
-                    Save();
+                Save();
+                return;
+            }
 
-                if (userData.AutomaticallyCheckForUpdates != LauncherSettings.AutomaticallyCheckForUpdates)
-                    Save();
+            if (_launcherExData.AutomaticallyCheckForUpdates != LauncherSettings.AutomaticallyCheckForUpdates)
+            {
+                Save();
+                return;
+            }
 
-                if (userData.UnblockFiles != LauncherSettings.UnblockFiles)
-                    Save();
+            if (_launcherExData.UnblockFiles != LauncherSettings.UnblockFiles)
+            {
+                Save();
+                return;
+            }
 
-                if (userData.FixCommonIssues != LauncherSettings.FixCommonIssues)
-                    Save();
+            if (_launcherExData.FixCommonIssues != LauncherSettings.FixCommonIssues)
+            {
+                Save();
+                return;
+            }
 
-                if (userData.CompactModuleList != LauncherSettings.CompactModuleList)
-                    Save();
+            if (_launcherExData.CompactModuleList != LauncherSettings.CompactModuleList)
+            {
+                Save();
+                return;
+            }
 
-                if (userData.ResetModuleList != LauncherSettings.ResetModuleList)
-                    Save();
+            if (_launcherExData.ResetModuleList != LauncherSettings.ResetModuleList)
+            {
+                Save();
+                return;
             }
         }
     }

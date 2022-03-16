@@ -3,8 +3,6 @@
 using System;
 using System.Windows.Forms;
 
-using TaleWorlds.MountAndBlade.Launcher;
-
 namespace Bannerlord.BUTRLoader.Helpers;
 
 internal static class HintManager
@@ -15,16 +13,15 @@ internal static class HintManager
     [System.Runtime.InteropServices.DllImport("user32.dll", CharSet = System.Runtime.InteropServices.CharSet.Auto)]
     private static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
 
-    private static string _caption = "Message!";
-
+    private static readonly string _caption = "Message!";
 
     private delegate void AddHintInformationDelegate(string message);
     private static readonly AddHintInformationDelegate? AddHintInformation =
-        AccessTools2.GetDelegate<AddHintInformationDelegate>(typeof(LauncherUI), "AddHintInformation");
+        AccessTools2.GetDelegate<AddHintInformationDelegate>(LauncherUIWrapper.LauncherUIType!, "AddHintInformation");
 
     private delegate void HideHintInformationDelegate();
     private static readonly HideHintInformationDelegate? HideHintInformation =
-        AccessTools2.GetDelegate<HideHintInformationDelegate>(typeof(LauncherUI), "HideHintInformation");
+        AccessTools2.GetDelegate<HideHintInformationDelegate>(LauncherUIWrapper.LauncherUIType!, "HideHintInformation");
 
 
     public static void ShowHint(string message)

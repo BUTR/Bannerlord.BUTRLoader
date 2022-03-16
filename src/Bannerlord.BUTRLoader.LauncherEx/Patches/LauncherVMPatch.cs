@@ -1,12 +1,11 @@
-﻿using HarmonyLib;
+﻿using Bannerlord.BUTRLoader.Helpers;
+
+using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-
-using TaleWorlds.MountAndBlade.Launcher;
-using TaleWorlds.MountAndBlade.Launcher.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Patches
 {
@@ -15,19 +14,19 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method(typeof(LauncherVM), "ExecuteConfirmUnverifiedDLLStart"),
+                AccessTools2.Method(LauncherVMWrapper.LauncherVMType!, "ExecuteConfirmUnverifiedDLLStart"),
                 transpiler: AccessTools2.Method(typeof(LauncherVMPatch), nameof(BlankTranspiler)));
             if (!res1) return false;
 
             var res2 = harmony.TryCreateReversePatcher(
-                AccessTools2.Method(typeof(LauncherVM), "UpdateAndSaveUserModsData"),
+                AccessTools2.Method(LauncherVMWrapper.LauncherVMType!, "UpdateAndSaveUserModsData"),
                 AccessTools2.Method(typeof(LauncherVMPatch), "UpdateAndSaveUserModsData"));
             if (res2 is null) return false;
             res2.Patch();
 
             // Preventing inlining ExecuteConfirmUnverifiedDLLStart
             harmony.TryPatch(
-                AccessTools2.Constructor(typeof(LauncherVM), new[] { typeof(UserDataManager), typeof(Action), typeof(Action) }),
+                AccessTools2.Constructor(LauncherVMWrapper.LauncherVMType!, new[] { UserDataManagerWrapper.UserDataManagerType!, typeof(Action), typeof(Action) }),
                 transpiler: AccessTools2.Method(typeof(LauncherVMPatch), nameof(BlankTranspiler)));
             // Preventing inlining ExecuteConfirmUnverifiedDLLStart
 
@@ -35,7 +34,7 @@ namespace Bannerlord.BUTRLoader.Patches
         }
 
         [MethodImpl(MethodImplOptions.NoOptimization)]
-        public static void UpdateAndSaveUserModsData(LauncherVM instance, bool isMultiplayer)
+        public static void UpdateAndSaveUserModsData(object instance, bool isMultiplayer)
         {
             // its a stub so it has no initial content
             throw new NotImplementedException("It's a stub");

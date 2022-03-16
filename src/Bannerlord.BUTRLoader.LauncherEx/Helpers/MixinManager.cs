@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 using TaleWorlds.Library;
-using TaleWorlds.MountAndBlade.Launcher;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
@@ -24,16 +23,18 @@ namespace Bannerlord.BUTRLoader.Helpers
             }
         }
 
-        public static void AddMixins(LauncherVM launcherVM)
+        public static void AddMixins(ViewModel launcherVM)
         {
-            AddMixin(launcherVM, new LauncherVMMixin(launcherVM));
-            AddMixin(launcherVM.ModsData, new LauncherModsVMMixin(launcherVM.ModsData));
-            foreach (var launcherModuleVM in launcherVM.ModsData.Modules)
+            var wrapper = LauncherVMWrapper.Create(launcherVM);
+
+            AddMixin(wrapper.Object!, new LauncherVMMixin(launcherVM));
+            AddMixin(wrapper.ModsData.Object!, new LauncherModsVMMixin(wrapper.ModsData.Object!));
+            foreach (var launcherModuleVM in wrapper.ModsData.Modules)
             {
-                AddMixin(launcherModuleVM, new LauncherModuleVMMixin(launcherModuleVM));
+                AddMixin(launcherModuleVM.Object, new LauncherModuleVMMixin(launcherModuleVM.Object));
             }
 
-            if (launcherVM.ModsData.Modules is IMBBindingList list)
+            if (wrapper.ModsData.Modules is IMBBindingList list)
             {
                 list.ListChanged += MixinManager_ListChanged;
             }
@@ -41,12 +42,12 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         private static void MixinManager_ListChanged(object sender, ListChangedEventArgs e)
         {
-            if (sender is not MBBindingList<LauncherModuleVM> list)
+            if (sender is not MBBindingList<ViewModel> list)
                 return;
 
             if (e.ListChangedType == ListChangedType.Reset)
             {
-                var keys = Mixins.Keys.Where(x => x.GetType() == typeof(LauncherModuleVM)).ToArray();
+                var keys = Mixins.Keys.Where(x => x.GetType() == LauncherModuleVMWrapper.LauncherModuleVMType).ToArray();
                 foreach (var viewModel in keys)
                 {
                     Mixins.Remove(viewModel);

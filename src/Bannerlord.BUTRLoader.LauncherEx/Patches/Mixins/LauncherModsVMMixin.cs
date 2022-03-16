@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTR.Shared.Utils;
+using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib.BUTR.Extensions;
 
@@ -6,15 +7,14 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using TaleWorlds.Library;
-using TaleWorlds.MountAndBlade.Launcher;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherModsVMMixin
     {
-        private delegate void ExecuteSelectDelegate(LauncherModuleVM instance);
+        private delegate void ExecuteSelectDelegate(object instance);
         private static readonly ExecuteSelectDelegate? ExecuteSelect =
-            AccessTools2.GetDelegateObjectInstance<ExecuteSelectDelegate>(typeof(LauncherModuleVM), "ExecuteSelect");
+            AccessTools2.GetDelegateObjectInstance<ExecuteSelectDelegate>(LauncherModuleVMWrapper.LauncherModuleVMType!, "ExecuteSelect");
 
         public bool GlobalCheckboxState
         {
@@ -30,9 +30,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
         private bool _isDisabled;
 
-        private readonly LauncherModsVM _launcherModsVM;
+        private readonly ViewModel _launcherModsVM;
 
-        public LauncherModsVMMixin(LauncherModsVM launcherModsVM)
+        public LauncherModsVMMixin(ViewModel launcherModsVM)
         {
             _launcherModsVM = launcherModsVM;
 
@@ -41,9 +41,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             void SetVMProperty(string property)
             {
-                var propertyInfo = new WrappedPropertyInfo(
-                    AccessTools2.Property(typeof(LauncherModsVMMixin), property),
-                    this);
+                var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property(typeof(LauncherModsVMMixin), property), this);
                 propertyInfo.PropertyChanged += (_, e) => _launcherModsVM.OnPropertyChanged(e.PropertyName);
                 propsObject[property] = propertyInfo;
             }
@@ -55,7 +53,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             GlobalCheckboxState = !GlobalCheckboxState;
 
-            foreach (var launcherModuleVM in _launcherModsVM.Modules)
+            var wrapper = LauncherModsVMWrapper.Create(_launcherModsVM);
+
+            foreach (var launcherModuleVM in wrapper.Modules)
             {
                 if (GlobalCheckboxState)
                 {

@@ -4,7 +4,7 @@ using System;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
-    internal class LauncherHintVMWrapper
+    internal sealed class LauncherHintVMWrapper
     {
         private delegate object ConstructorV1Delegate(string text);
 
