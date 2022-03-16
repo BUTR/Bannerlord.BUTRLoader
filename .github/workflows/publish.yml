@@ -64,7 +64,7 @@ jobs:
           Get-ChildItem -Exclude bin | Remove-Item -Recurse -Force;
           cd bin;
           cd Win64_Shipping_Client;
-          Get-ChildItem -Exclude Bannerlord.BUTRLoader.dll,Bannerlord.BUTRLoader.pdb,TaleWorlds.MountAndBlade.Launcher.exe.config | Remove-Item -Recurse -Force;
+          Get-ChildItem -Exclude Bannerlord.BUTRLoader.dll,Bannerlord.BUTRLoader.pdb,Bannerlord.BUTRLoader.LauncherEx.dll,Bannerlord.BUTRLoader.LauncherEx.pdb,TaleWorlds.MountAndBlade.Launcher.exe.config | Remove-Item -Recurse -Force;
       shell: pwsh
 
     - name: Upload Bannerlord folder
