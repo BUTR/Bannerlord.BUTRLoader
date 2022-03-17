@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Patches;
+﻿using Bannerlord.BUTRLoader.LauncherEx.Helpers;
+using Bannerlord.BUTRLoader.Patches;
 using Bannerlord.BUTRLoader.ResourceManagers;
 
 using HarmonyLib;
@@ -12,8 +13,9 @@ namespace Bannerlord.BUTRLoader.LauncherEx
     public static class Manager
     {
         private static readonly Harmony _launcherHarmony = new("bannerlord.butrloader.launcherex");
+        internal static readonly AssemblyCompatibilityChecker _compatibilityChecker = new();
 
-        public static void Init()
+        public static void Enable()
         {
             Initialize();
         }
@@ -76,8 +78,9 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             return ReadFully(stream);
         }
 
-        public static void UnpatchAll()
+        public static void Disable()
         {
+            _compatibilityChecker.Dispose();
             _launcherHarmony.UnpatchAll(_launcherHarmony.Id);
         }
     }

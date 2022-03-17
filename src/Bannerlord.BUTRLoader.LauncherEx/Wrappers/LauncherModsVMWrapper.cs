@@ -6,13 +6,13 @@ using System.Collections.Generic;
 
 using TaleWorlds.Library;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal sealed class LauncherModsVMWrapper
     {
         private delegate string GetIdDelegate(object instance);
         private delegate IList GetModulesDelegate(object instance);
-        private delegate MBBindingList<LauncherModuleVMWrapper> GetModulesDelegate2(object instance);
         private delegate bool GetIsDisabledOnMultiplayerDelegate(object instance);
         private delegate void SetIsDisabledOnMultiplayerDelegate(object instance, bool value);
 
@@ -33,7 +33,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         public bool IsDisabledOnMultiplayer
         {
             get => Object is not null ? GetIsDisabledOnMultiplayer?.Invoke(Object) ?? false : false; 
-            set { if (Object is not null && SetIsDisabledOnMultiplayer is not null) SetIsDisabledOnMultiplayer?.Invoke(Object, value); }
+            set { if (Object is not null && SetIsDisabledOnMultiplayer is not null) SetIsDisabledOnMultiplayer(Object, value); }
         }
 
         public IList ModulesRaw => Object is not null ? GetModules?.Invoke(Object) ?? Array.Empty<object>() : Array.Empty<object>();

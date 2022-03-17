@@ -40,7 +40,7 @@ namespace Bannerlord.BUTRLoader
                         return;
                     }
 
-                    var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Init");
+                    var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Enable");
                     init?.Invoke(null, Array.Empty<object>());
                 }
 
@@ -48,7 +48,7 @@ namespace Bannerlord.BUTRLoader
                 // Wait for the Launcher assembly to load
                 if (args.LoadedAssembly.GetName().Name == "TaleWorlds.MountAndBlade.Launcher.Library")
                 {
-                    var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Init");
+                    var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Enable");
                     init?.Invoke(null, Array.Empty<object>());
                 }
             };

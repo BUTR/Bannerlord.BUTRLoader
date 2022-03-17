@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Serialization;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class UserDataManagerPatch

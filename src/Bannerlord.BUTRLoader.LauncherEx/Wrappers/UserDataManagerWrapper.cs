@@ -2,6 +2,7 @@
 
 using System;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal sealed class UserDataManagerWrapper

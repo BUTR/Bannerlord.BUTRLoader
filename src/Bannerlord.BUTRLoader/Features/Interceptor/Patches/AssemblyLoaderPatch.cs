@@ -75,6 +75,11 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor.Patches
                 prefix: AccessTools2.Method(typeof(AssemblyLoaderPatch), nameof(LoadFromPrefix)));
             if (!res1) return false;
 
+            var res2 = harmony.TryPatch(
+                AccessTools2.Method(typeof(AssemblyLoader), "OnAssemblyResolve"),
+                prefix: AccessTools2.Method(typeof(AssemblyLoaderPatch), nameof(OnAssemblyResolvePrefix)));
+            if (!res2) return false;
+
             return true;
         }
 
@@ -106,6 +111,28 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor.Patches
 
                 }
             }
+            return true;
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static bool OnAssemblyResolvePrefix(ref Assembly? __result, object sender, ResolveEventArgs args)
+        {
+            if (sender is AppDomain { FriendlyName: "Compatibility Checker" } domain)
+            {
+                foreach (var assembly in domain.GetAssemblies())
+                {
+                    if (assembly.FullName == args.Name)
+                    {
+                        __result = assembly;
+                        return false;
+                    }
+                }
+
+                var name = args.Name.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                __result = Assembly.LoadFrom(name[0]);
+                return false;
+            }
+
             return true;
         }
     }

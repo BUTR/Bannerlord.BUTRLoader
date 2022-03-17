@@ -5,6 +5,7 @@ using System;
 
 using TaleWorlds.Library;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal sealed class LauncherModuleVMWrapper

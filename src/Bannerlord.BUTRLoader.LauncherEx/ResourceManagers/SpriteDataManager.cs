@@ -13,6 +13,7 @@ using TaleWorlds.GauntletUI;
 using TaleWorlds.GauntletUI.PrefabSystem;
 using TaleWorlds.TwoDimension;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     internal static class SpriteDataManager

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Xml;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     /// <summary>

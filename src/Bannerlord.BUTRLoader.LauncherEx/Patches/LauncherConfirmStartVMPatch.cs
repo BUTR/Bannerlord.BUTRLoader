@@ -3,6 +3,7 @@ using HarmonyLib.BUTR.Extensions;
 
 using System;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherConfirmStartVMPatch
@@ -21,7 +22,7 @@ namespace Bannerlord.BUTRLoader.Patches
             return true;
         }
 
-        public static bool EnableWithPrefix(Action ___onConfirm)
+        public static bool EnableWithPrefix(Action? ___onConfirm)
         {
             ___onConfirm?.Invoke();
             return false;

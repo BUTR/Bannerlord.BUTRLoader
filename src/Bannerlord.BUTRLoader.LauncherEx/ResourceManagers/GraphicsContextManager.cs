@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 
 using TaleWorlds.TwoDimension.Standalone;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     internal static class GraphicsContextManager

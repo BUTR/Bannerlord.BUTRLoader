@@ -10,12 +10,11 @@ using HarmonyLib.BUTR.Extensions;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Contexts;
-using System.Threading;
 
 using TaleWorlds.GauntletUI;
 using TaleWorlds.Library;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherVMMixin
@@ -275,7 +274,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public void ExecuteConfirmUnverifiedDLLStart()
         {
             Save();
-            Manager.UnpatchAll();
+            Manager.Disable();
             ExecuteConfirmUnverifiedDLLStartOriginal?.Invoke(_launcherVM);
         }
 

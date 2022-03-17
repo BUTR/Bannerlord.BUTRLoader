@@ -4,6 +4,7 @@ using Bannerlord.ModuleManager;
 using System.Collections.Generic;
 using System.Text;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class ModuleInfoHelper2

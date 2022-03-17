@@ -7,6 +7,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModuleVMPatch
@@ -31,7 +32,7 @@ namespace Bannerlord.BUTRLoader.Patches
         {
             var wrapper = LauncherModuleVMWrapper.Create(__instance);
             // Except the Native module
-            if (wrapper.Info.Id.Equals("native", StringComparison.OrdinalIgnoreCase))
+            if (wrapper.Info?.Id.Equals("native", StringComparison.OrdinalIgnoreCase) == true)
                 return;
 
             // We need to save isAllDepenenciesPresent delegate for Mixin's usage

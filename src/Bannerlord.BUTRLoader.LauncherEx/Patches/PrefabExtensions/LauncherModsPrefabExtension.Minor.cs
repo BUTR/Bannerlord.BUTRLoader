@@ -1,6 +1,7 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Helpers;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 {
     /// <summary>

@@ -9,6 +9,7 @@ using System.Reflection;
 
 using TaleWorlds.Library;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherModuleVMMixin
@@ -110,11 +111,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             _moduleId = moduleInfoWrapper.Info?.Id ?? string.Empty;
 
-            UpdateIssues();
-
             IsDisabled2 = LauncherModuleVMPatch.AreAllDepenenciesPresentReferences.TryGetValue(launcherModuleVM, out var del)
                 ? !(bool) del.DynamicInvoke(moduleInfoWrapper.Info?.Object)
                 : true;
+
+            UpdateIssues();
 
             // Remove danger warnings
             IsDangerous2 = false;

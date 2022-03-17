@@ -14,6 +14,7 @@ using System.Runtime.CompilerServices;
 using TaleWorlds.GauntletUI.Data;
 using TaleWorlds.Library;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class ViewModelPatch

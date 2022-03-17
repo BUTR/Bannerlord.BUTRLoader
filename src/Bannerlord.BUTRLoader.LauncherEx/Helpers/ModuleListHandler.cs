@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 using TaleWorlds.Library;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal class ModuleListHandler
@@ -99,7 +100,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                     var wrappedModules = wrapper.ModsData.Modules
                         .Where(x => moduleIds.Contains(x.Info.Id))
                         .ToArray();
-                    var wrappedModuleIds = wrappedModules.Select(x => x.Info.Id).ToHashSet();
+                    var wrappedModuleIds = wrappedModules.Select(x => x.Info?.Id).ToHashSet();
                     if (modules.Length != wrappedModules.Length)
                     {
                         var missingModules = moduleIds.Except(wrappedModuleIds);
@@ -119,9 +120,9 @@ Missing modules:
                     {
                         var wrappedModule = wrapper.ModsData.Modules
                             .FirstOrDefault(x => x.Info.Id == id);
-                        if (wrappedModule.Object is not null)
+                        if (wrappedModule?.Object is not null)
                         {
-                            var launcherModuleVersion = ToString(wrappedModule.Info.Version);
+                            var launcherModuleVersion = ToString(wrappedModule.Info?.Version ?? ApplicationVersion.Empty);
                             if (launcherModuleVersion == version)
                             {
                                 wrappedModule.IsSelected = true;
@@ -176,14 +177,15 @@ Mismatched module versions:
 
                     try
                     {
-                        var moduleIds = _userDataManager.UserData.SingleplayerData.ModDatas
+                        var moduleIds = _userDataManager.UserData?.SingleplayerData?.ModDatas
                             .Where(x => x.IsSelected)
                             .Select(x => x.Id)
                             .ToHashSet();
                         var modules = wrapper.ModsData.Modules
                             .Select(x => x.Info)
+                            .Where(x => x is not null)
                             .Where(x => moduleIds.Contains(x.Id))
-                            .Select(x => new ModuleListEntry(x.Id, ToString(x.Version)))
+                            .Select(x => new ModuleListEntry(x!.Id, ToString(x.Version)))
                             .ToArray();
 
                         using var fs = dialog.OpenFile();

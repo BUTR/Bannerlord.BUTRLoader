@@ -14,6 +14,7 @@ using System.Xml;
 using TaleWorlds.GauntletUI;
 using TaleWorlds.GauntletUI.PrefabSystem;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     /// <summary>

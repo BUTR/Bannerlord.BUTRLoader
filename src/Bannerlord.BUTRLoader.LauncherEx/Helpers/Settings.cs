@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     /// <summary>
@@ -39,7 +40,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         public IRef PropertyReference { get; init; } = default!;
         public SettingType SettingType { get; init; } = default!;
 
-        public decimal MinValue { get; init; }
-        public decimal MaxValue { get; init; }
+        public decimal MinValue { get; init; } = default!;
+        public decimal MaxValue { get; init; } = default!;
     }
 }

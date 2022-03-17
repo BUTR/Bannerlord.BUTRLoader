@@ -14,6 +14,7 @@ using System.Xml;
 
 using TaleWorlds.GauntletUI.PrefabSystem;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     // https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Patches/WidgetPrefabPatch.cs

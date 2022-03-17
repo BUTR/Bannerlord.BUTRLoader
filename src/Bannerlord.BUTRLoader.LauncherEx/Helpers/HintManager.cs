@@ -3,6 +3,7 @@
 using System;
 using System.Windows.Forms;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers;
 
 internal static class HintManager

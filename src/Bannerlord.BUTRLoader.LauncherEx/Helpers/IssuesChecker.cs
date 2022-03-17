@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class IssuesChecker
@@ -15,16 +17,22 @@ namespace Bannerlord.BUTRLoader.Helpers
                 var harmonyBakFile = Path.Combine(folder!, "0Harmony.dll.bak");
                 if (File.Exists(harmonyFile))
                 {
-                    var result = MessageBox.Show(
-                        "BUTRLoader detected 0Harmony.dll inside the game's root bin folder!\nThis could lead to issues, remove it?",
-                        "Warning!",
-                        MessageBoxButtons.YesNoCancel);
-                    if (result == DialogResult.Yes)
+                    var thread = new Thread(() =>
                     {
-                        if (File.Exists(harmonyBakFile))
-                            File.Delete(harmonyBakFile);
-                        File.Move(harmonyFile, harmonyBakFile);
-                    }
+                        var result = MessageBox.Show(
+                            "BUTRLoader detected 0Harmony.dll inside the game's root bin folder!\nThis could lead to issues, remove it?",
+                            "Warning!",
+                            MessageBoxButtons.YesNoCancel);
+                        if (result == DialogResult.Yes)
+                        {
+                            if (File.Exists(harmonyBakFile))
+                                File.Delete(harmonyBakFile);
+                            File.Move(harmonyFile, harmonyBakFile);
+                        }
+                    });
+                    thread.SetApartmentState(ApartmentState.STA);
+                    thread.Start();
+                    thread.Join();
                 }
             }
         }
