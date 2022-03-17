@@ -35,13 +35,13 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         public bool IsSelected
         {
-            get => Object is not null ? GetIsSelected?.Invoke(Object) ?? false : false; 
-            set { if (Object is not null && SetIsSelected is not null)  SetIsSelected(Object, value); }
+            get => Object is not null ? GetIsSelected?.Invoke(Object) ?? false : false;
+            set { if (Object is not null && SetIsSelected is not null) SetIsSelected(Object, value); }
         }
 
         public bool IsDisabled
         {
-            get => Object is not null ? GetIsDisabled?.Invoke(Object) ?? false : false; 
+            get => Object is not null ? GetIsDisabled?.Invoke(Object) ?? false : false;
             set { if (Object is not null && SetIsDisabled is not null) SetIsDisabled(Object, value); }
         }
 

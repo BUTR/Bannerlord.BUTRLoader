@@ -10,7 +10,7 @@ namespace Bannerlord.BUTRLoader.Helpers
     internal sealed class UserGameTypeDataWrapper
     {
         private delegate IList GetModDatasDelegate(object instance);
-        
+
         private static readonly Type? UserGameTypeDataType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserGameTypeData");
         private static readonly GetModDatasDelegate? GetModDatas = AccessTools2.GetPropertyGetterDelegate<GetModDatasDelegate>(UserGameTypeDataType!, "ModDatas");
 

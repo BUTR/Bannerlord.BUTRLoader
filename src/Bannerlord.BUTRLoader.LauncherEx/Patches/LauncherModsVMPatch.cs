@@ -358,7 +358,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
             var wrapped = LauncherModsVMWrapper.Create(__instance);
             var targetModuleWrapped = LauncherModuleVMWrapper.Create(targetModule);
-           
+
             if (!AreAllDependenciesOfModulePresent(wrapped.Object, targetModuleWrapped.Info?.Object, ____modulesCache))
             {
                 // Direct and current External Dependencies are not valid, do nothing
