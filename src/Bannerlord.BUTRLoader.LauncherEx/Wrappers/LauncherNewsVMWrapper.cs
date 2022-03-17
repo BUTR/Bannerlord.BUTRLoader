@@ -23,7 +23,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         public bool IsDisabledOnMultiplayer
         {
             get => Object is not null ? GetIsDisabledOnMultiplayer?.Invoke(Object) ?? false : false;
-            set { if (Object is not null && SetIsDisabledOnMultiplayer is not null) SetIsDisabledOnMultiplayer(Object, value);}
+            set { if (Object is not null && SetIsDisabledOnMultiplayer is not null) SetIsDisabledOnMultiplayer(Object, value); }
         }
 
         public ViewModel? Object { get; } = default!;
