@@ -72,6 +72,12 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.ResetModuleList))!, this)
             }));
+            SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
+            {
+                DisplayName = "Disable Binary Compatibility Check (Requires restart)",
+                SettingType = SettingType.Bool,
+                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.DisableBinaryCheck))!, this)
+            }));
             /*
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {

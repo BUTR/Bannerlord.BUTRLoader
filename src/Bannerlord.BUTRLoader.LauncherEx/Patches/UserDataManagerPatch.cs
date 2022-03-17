@@ -55,6 +55,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 LauncherSettings.FixCommonIssues = userDataOptions.FixCommonIssues;
                 LauncherSettings.CompactModuleList = userDataOptions.CompactModuleList;
                 LauncherSettings.ResetModuleList = userDataOptions.ResetModuleList;
+                LauncherSettings.DisableBinaryCheck = userDataOptions.DisableBinaryCheck;
                 if (LauncherSettings.ResetModuleList)
                 {
                     var wrapper = UserDataManagerWrapper.Create(__instance);
@@ -92,7 +93,8 @@ namespace Bannerlord.BUTRLoader.Patches
                     LauncherSettings.UnblockFiles,
                     LauncherSettings.FixCommonIssues,
                     LauncherSettings.CompactModuleList,
-                    LauncherSettings.ResetModuleList));
+                    LauncherSettings.ResetModuleList,
+                    LauncherSettings.DisableBinaryCheck));
             }
             catch (Exception value)
             {

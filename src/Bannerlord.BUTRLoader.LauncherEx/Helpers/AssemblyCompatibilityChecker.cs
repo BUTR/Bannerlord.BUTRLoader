@@ -40,19 +40,19 @@ namespace Bannerlord.BUTRLoader.LauncherEx.Helpers
 
     internal sealed class AssemblyCompatibilityChecker : IDisposable
     {
-        private readonly AppDomain _domain;
-        private readonly Proxy _proxy;
-        private readonly Dictionary<string, CheckResult> _checkResult = new();
+        private AppDomain? _domain;
+        private Proxy? _proxy;
 
-        public AssemblyCompatibilityChecker()
-        {
-            var current = AppDomain.CurrentDomain;
-            _domain = AppDomain.CreateDomain("Compatibility Checker", current.Evidence, current.SetupInformation, current.PermissionSet);
-            _proxy = (Proxy)_domain.CreateInstanceAndUnwrap(typeof(Proxy).Assembly.FullName, typeof(Proxy).FullName);
-        }
+        private readonly Dictionary<string, CheckResult> _checkResult = new();
 
         public CheckResult CheckAssembly(string assemblyPath)
         {
+            if (LauncherSettings.DisableBinaryCheck)
+                return CheckResult.Success;
+
+            _domain ??= AppDomain.CreateDomain("Compatibility Checker", AppDomain.CurrentDomain.Evidence, AppDomain.CurrentDomain.SetupInformation, AppDomain.CurrentDomain.PermissionSet);
+            _proxy ??= (Proxy) _domain.CreateInstanceAndUnwrap(typeof(Proxy).Assembly.FullName, typeof(Proxy).FullName);
+
             if (!_checkResult.TryGetValue(assemblyPath, out var result))
             {
                 result = _proxy.CheckAssembly(assemblyPath);
@@ -64,7 +64,8 @@ namespace Bannerlord.BUTRLoader.LauncherEx.Helpers
 
         public void Dispose()
         {
-            AppDomain.Unload(_domain);
+            if (_domain is not null)
+                AppDomain.Unload(_domain);
         }
     }
 }

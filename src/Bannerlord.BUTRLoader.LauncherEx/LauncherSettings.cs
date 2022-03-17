@@ -51,5 +51,12 @@ namespace Bannerlord.BUTRLoader
             set => _resetModuleList = value;
         }
         private static bool _resetModuleList;
+
+        public static bool DisableBinaryCheck
+        {
+            get => _disableBinaryCheck;
+            set => _disableBinaryCheck = value;
+        }
+        private static bool _disableBinaryCheck;
     }
 }

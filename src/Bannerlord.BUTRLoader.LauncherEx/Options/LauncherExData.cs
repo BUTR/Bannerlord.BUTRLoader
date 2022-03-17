@@ -9,9 +9,13 @@ namespace Bannerlord.BUTRLoader.Options
         public bool FixCommonIssues { get; set; }
         public bool CompactModuleList { get; set; }
         public bool ResetModuleList { get; set; }
+        public bool DisableBinaryCheck { get; set; }
 
         public LauncherExData() { }
-        public LauncherExData(bool extendedSorting, bool automaticallyCheckForUpdates, bool unblockFiles, bool fixCommonIssues, bool compactModuleList, bool resetModuleList)
+        public LauncherExData(
+            bool extendedSorting, bool automaticallyCheckForUpdates,
+            bool unblockFiles, bool fixCommonIssues, bool compactModuleList, 
+            bool resetModuleList, bool disableBinaryCheck)
         {
             ExtendedSorting = extendedSorting;
             AutomaticallyCheckForUpdates = automaticallyCheckForUpdates;
@@ -19,6 +23,7 @@ namespace Bannerlord.BUTRLoader.Options
             FixCommonIssues = fixCommonIssues;
             CompactModuleList = compactModuleList;
             ResetModuleList = resetModuleList;
+            DisableBinaryCheck = disableBinaryCheck;
         }
     }
 }

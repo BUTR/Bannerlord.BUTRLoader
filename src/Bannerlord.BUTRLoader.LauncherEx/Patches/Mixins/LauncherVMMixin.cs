@@ -227,7 +227,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 LauncherSettings.UnblockFiles,
                 LauncherSettings.FixCommonIssues,
                 LauncherSettings.CompactModuleList,
-                LauncherSettings.ResetModuleList);
+                LauncherSettings.ResetModuleList,
+                LauncherSettings.DisableBinaryCheck);
 
             var propsObject = AccessTools2.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherVM) as Dictionary<string, PropertyInfo>
                               ?? new Dictionary<string, PropertyInfo>();
@@ -354,6 +355,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             }
 
             if (_launcherExData.ResetModuleList != LauncherSettings.ResetModuleList)
+            {
+                Save();
+                return;
+            }
+
+            if (_launcherExData.DisableBinaryCheck != LauncherSettings.DisableBinaryCheck)
             {
                 Save();
                 return;
