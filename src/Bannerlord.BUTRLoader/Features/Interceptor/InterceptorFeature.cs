@@ -15,10 +15,29 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
         private delegate void OnInitializeSubModulesPrefixDelegate();
         private delegate void OnLoadSubModulesPostfixDelegate();
 
-        private static IEnumerable<Type> GetInterceptorTypes() => AppDomain.CurrentDomain.GetAssemblies()
-            .Where(asm => !asm.IsDynamic && asm.CodeBase.Contains("Modules"))
-            .SelectMany(asm => asm.DefinedTypes.Where(type => type.GetCustomAttributes().Any(att =>
-                string.Equals(att.GetType().FullName, typeof(BUTRLoaderInterceptorAttribute).FullName, StringComparison.Ordinal))));
+        private static IEnumerable<Type> GetInterceptorTypes()
+        {
+            static bool CheckType(Type type) => type.GetCustomAttributes()
+                .Any(att => string.Equals(att.GetType().FullName, typeof(BUTRLoaderInterceptorAttribute).FullName, StringComparison.Ordinal));
+
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(asm => !asm.IsDynamic && asm.CodeBase.Contains("Modules")))
+            {
+                IEnumerable<Type> enumerable;
+                try
+                {
+                    var types = assembly.GetTypes(); // Force type resolution
+                    enumerable = types.Where(CheckType);
+                }
+                catch (ReflectionTypeLoadException)
+                {
+                    enumerable = Enumerable.Empty<Type>(); // ignore the incompatibility, not our problem
+                }
+                foreach (var type in enumerable)
+                {
+                    yield return type;
+                }
+            }
+        }
 
         public static void Enable(Harmony harmony)
         {
