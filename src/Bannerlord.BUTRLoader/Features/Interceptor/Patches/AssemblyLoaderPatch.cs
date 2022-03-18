@@ -128,7 +128,7 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor.Patches
                     }
                 }
 
-                var name = args.Name.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
+                var name = args.Name.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 __result = Assembly.LoadFrom(name[0]);
                 return false;
             }
