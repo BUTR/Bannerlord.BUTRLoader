@@ -25,8 +25,11 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
                 IEnumerable<Type> enumerable;
                 try
                 {
-                    var types = assembly.GetTypes(); // Force type resolution
-                    enumerable = types.Where(CheckType);
+                    enumerable = assembly.GetTypes().Where(CheckType).ToArray(); // Force type resolution
+                }
+                catch (TypeLoadException)
+                {
+                    enumerable = Enumerable.Empty<Type>(); // ignore the incompatibility, not our problem
                 }
                 catch (ReflectionTypeLoadException)
                 {
