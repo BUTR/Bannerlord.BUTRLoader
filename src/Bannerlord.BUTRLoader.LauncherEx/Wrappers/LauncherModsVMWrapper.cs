@@ -32,7 +32,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         public bool IsDisabledOnMultiplayer
         {
-            get => Object is not null ? GetIsDisabledOnMultiplayer?.Invoke(Object) ?? false : false; 
+            get => Object is not null ? GetIsDisabledOnMultiplayer?.Invoke(Object) ?? false : false;
             set { if (Object is not null && SetIsDisabledOnMultiplayer is not null) SetIsDisabledOnMultiplayer(Object, value); }
         }
 

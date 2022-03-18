@@ -73,83 +73,84 @@ namespace Bannerlord.BUTRLoader.Helpers
                 }
             }
 
-            var thread = new Thread(() => {
-            var dialog = new OpenFileDialog
+            var thread = new Thread(() =>
             {
-                FileName = "MyList.bmlist",
-                Filter = "Bannerlord Module List (*.bmlist)|*.bmlist",
-                Title = "Open a Bannerlord Module List File",
-
-                CheckFileExists = true,
-                CheckPathExists = true,
-                ReadOnlyChecked = true,
-                Multiselect = false,
-                ValidateNames = true
-            };
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                var wrapper = LauncherVMWrapper.Create(_launcherVM);
-
-                try
+                var dialog = new OpenFileDialog
                 {
-                    using var fs = dialog.OpenFile();
-                    using var reader = new StreamReader(fs);
-                    var modules = Deserialize(ReadAllLines(reader)).ToArray();
-                    var moduleIds = modules.Select(x => x.Id).ToHashSet();
-                    var wrappedModules = wrapper.ModsData.Modules
-                        .Where(x => moduleIds.Contains(x.Info.Id))
-                        .ToArray();
-                    var wrappedModuleIds = wrappedModules.Select(x => x.Info?.Id).ToHashSet();
-                    if (modules.Length != wrappedModules.Length)
+                    FileName = "MyList.bmlist",
+                    Filter = "Bannerlord Module List (*.bmlist)|*.bmlist",
+                    Title = "Open a Bannerlord Module List File",
+
+                    CheckFileExists = true,
+                    CheckPathExists = true,
+                    ReadOnlyChecked = true,
+                    Multiselect = false,
+                    ValidateNames = true
+                };
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    var wrapper = LauncherVMWrapper.Create(_launcherVM);
+
+                    try
                     {
-                        var missingModules = moduleIds.Except(wrappedModuleIds);
-                        HintManager.ShowHint(@$"Cancelled Import!
+                        using var fs = dialog.OpenFile();
+                        using var reader = new StreamReader(fs);
+                        var modules = Deserialize(ReadAllLines(reader)).ToArray();
+                        var moduleIds = modules.Select(x => x.Id).ToHashSet();
+                        var wrappedModules = wrapper.ModsData.Modules
+                            .Where(x => moduleIds.Contains(x.Info.Id))
+                            .ToArray();
+                        var wrappedModuleIds = wrappedModules.Select(x => x.Info?.Id).ToHashSet();
+                        if (modules.Length != wrappedModules.Length)
+                        {
+                            var missingModules = moduleIds.Except(wrappedModuleIds);
+                            HintManager.ShowHint(@$"Cancelled Import!
 
 Missing modules:
 {string.Join(Environment.NewLine, missingModules)}");
-                        return;
-                    }
+                            return;
+                        }
 
-                    foreach (var launcherModuleVM in wrapper.ModsData.Modules)
-                    {
-                        launcherModuleVM.IsSelected = false;
-                    }
-                    var mismatchedVersions = new List<ModuleMismatch>();
-                    foreach (var (id, version) in modules)
-                    {
-                        var wrappedModule = wrapper.ModsData.Modules
-                            .FirstOrDefault(x => x.Info.Id == id);
-                        if (wrappedModule?.Object is not null)
+                        foreach (var launcherModuleVM in wrapper.ModsData.Modules)
                         {
-                            var launcherModuleVersion = ToString(wrappedModule.Info?.Version ?? ApplicationVersion.Empty);
-                            if (launcherModuleVersion == version)
+                            launcherModuleVM.IsSelected = false;
+                        }
+                        var mismatchedVersions = new List<ModuleMismatch>();
+                        foreach (var (id, version) in modules)
+                        {
+                            var wrappedModule = wrapper.ModsData.Modules
+                                .FirstOrDefault(x => x.Info.Id == id);
+                            if (wrappedModule?.Object is not null)
                             {
-                                wrappedModule.IsSelected = true;
-                                continue;
-                            }
-                            else
-                            {
-                                mismatchedVersions.Add(new ModuleMismatch(id, version, launcherModuleVersion));
+                                var launcherModuleVersion = ToString(wrappedModule.Info?.Version ?? ApplicationVersion.Empty);
+                                if (launcherModuleVersion == version)
+                                {
+                                    wrappedModule.IsSelected = true;
+                                    continue;
+                                }
+                                else
+                                {
+                                    mismatchedVersions.Add(new ModuleMismatch(id, version, launcherModuleVersion));
+                                }
                             }
                         }
-                    }
-                    if (mismatchedVersions.Count > 0)
-                    {
-                        HintManager.ShowHint(@$"Warning!
+                        if (mismatchedVersions.Count > 0)
+                        {
+                            HintManager.ShowHint(@$"Warning!
 
 Mismatched module versions:
 {string.Join(Environment.NewLine, mismatchedVersions)}");
-                    }
-                    else
-                    {
-                        HintManager.ShowHint("Successfully imported list!");
-                    }
+                        }
+                        else
+                        {
+                            HintManager.ShowHint("Successfully imported list!");
+                        }
 
-                    LauncherVMPatch.UpdateAndSaveUserModsData(_launcherVM, false);
+                        LauncherVMPatch.UpdateAndSaveUserModsData(_launcherVM, false);
+                    }
+                    catch (Exception) { }
                 }
-                catch (Exception) { }
-            }
             });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
@@ -158,7 +159,8 @@ Mismatched module versions:
 
         public void Export()
         {
-            var thread = new Thread(() => {
+            var thread = new Thread(() =>
+            {
                 var dialog = new SaveFileDialog
                 {
                     FileName = "MyList.bmlist",
