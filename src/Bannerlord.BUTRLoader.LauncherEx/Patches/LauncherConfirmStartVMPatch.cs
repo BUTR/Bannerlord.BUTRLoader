@@ -17,7 +17,14 @@ namespace Bannerlord.BUTRLoader.Patches
             var res1 = harmony.TryPatch(
                 AccessTools2.Method(LauncherConfirmStartVMType!, "EnableWith"),
                 prefix: AccessTools2.Method(typeof(LauncherConfirmStartVMPatch), nameof(EnableWithPrefix)));
-            if (!res1) return false;
+            if (!res1)
+            {
+                var res2 = harmony.TryPatch(
+                    AccessTools2.Method(LauncherConfirmStartVMType!, "EnableWith"),
+                    prefix: AccessTools2.Method(typeof(LauncherConfirmStartVMPatch), nameof(EnableWithPrefix2)));
+                if (!res2)
+                    return false;
+            }
 
             return true;
         }
@@ -25,6 +32,11 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool EnableWithPrefix(Action? ___onConfirm)
         {
             ___onConfirm?.Invoke();
+            return false;
+        }
+        public static bool EnableWithPrefix2(Action? ____onConfirm)
+        {
+            ____onConfirm?.Invoke();
             return false;
         }
     }
