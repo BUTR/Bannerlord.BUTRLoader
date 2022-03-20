@@ -60,7 +60,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             {
                 if (GlobalCheckboxState)
                 {
-                    ExecuteSelect?.Invoke(launcherModuleVM);
+                    if (ExecuteSelect is not null && launcherModuleVM.Object is not null)
+                        ExecuteSelect(launcherModuleVM.Object);
                 }
                 else
                 {
