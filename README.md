@@ -44,7 +44,7 @@ Adds support for community used mod metadata that fixes issues with mod load ord
 * **Interceptor** - BUTRLoader checks if the is a class with a custom attribute named ***BUTRLoaderInterceptorAttribute***. If it's found it checks if there are the following signatures:
   *  **void OnInitializeSubModulesPrefix()** - will execute just before the game starts to initialize the SubModules. This gives us the ability to add SubModules declared in other programming languages like [Python](https://github.com/BUTR/Bannerlord.Python)﻿ and [Lua](https://github.com/BUTR/Bannerlord.Lua)﻿
   * **void OnLoadSubModulesPostfix()** - will execute just after all SubModules were initialized
-[*]**LoadReferencesOnLoad** - gives the ability to add <Tag key="LoadReferencesOnLoad" value="false" /> that will disable explicit dependency load. Will be useful after switch to .NET Core runtime.
+* **LoadReferencesOnLoad** - gives the ability to add <Tag key="LoadReferencesOnLoad" value="false" /> that will disable explicit dependency load. Will be useful after switch to .NET Core runtime.
 
 
 **LauncherEx** is the UI module. It expands the native launcher with the following features:
