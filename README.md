@@ -36,7 +36,7 @@
 Extends the native launcher.  
 Adds support for community used mod metadata that fixes issues with mod load order sorting! It will sort correctly Harmony, UIExtender, ButterLib and MCM. 
 
-## [size=5]Features[/size]
+## Features
 **BUTRLoader** consists of two modules - **BUTRLoader** itself and **LauncherEx**.
 
 **BUTRLoader** expands the game launch with the following features:
