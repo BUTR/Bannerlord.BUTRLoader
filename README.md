@@ -36,6 +36,33 @@
 Extends the native launcher.  
 Adds support for community used mod metadata that fixes issues with mod load order sorting! It will sort correctly Harmony, UIExtender, ButterLib and MCM. 
 
+## [size=5]Features[/size]
+**BUTRLoader** consists of two modules - **BUTRLoader** itself and **LauncherEx**.
+
+**BUTRLoader** expands the game launch with the following features:
+
+* **Interceptor** - BUTRLoader checks if the is a class with a custom attribute named ***BUTRLoaderInterceptorAttribute***. If it's found it checks if there are the following signatures:
+  *  **void OnInitializeSubModulesPrefix()** - will execute just before the game starts to initialize the SubModules. This gives us the ability to add SubModules declared in other programming languages like [Python](https://github.com/BUTR/Bannerlord.Python)﻿ and [Lua](https://github.com/BUTR/Bannerlord.Lua)﻿
+  * **void OnLoadSubModulesPostfix()** - will execute just after all SubModules were initialized
+[*]**LoadReferencesOnLoad** - gives the ability to add <Tag key="LoadReferencesOnLoad" value="false" /> that will disable explicit dependency load. Will be useful after switch to .NET Core runtime.
+
+
+**LauncherEx** is the UI module. It expands the native launcher with the following features:
+
+* **Option Screen** - provides various options that will be listed below.
+* **Extended Sorting** - the launcher now respects the community metadata when sorting. Available in Options. Enabled by default.
+* **Scrollbar** - the launcher before e1.7.2 didn't had a way to scroll without the mouse wheel. We added a scrollbar to fix this.
+* **Enable/Disable All Mods Checkbox** - added the ability to enable and disable all mods with one click.
+* **Expanded Dependencies Hint** - added our community metadata to be displayed in the Hints added in e1.7.0.
+* **Issue Hint System** - the launcher displays an arrow that when expanded, will display why a mod can't be enabled. The issue can be a wrong dependency module version, binary incompatibility with the current game version
+* **Compact Module List** - allows a more compact display of the Module List. Available in Options. Disabled by default.
+* **Fix Common Issues** - the launcher checks if 0Harmony.dll is present in the main /bin folder. If there is one, will prompt the user whether t delete it.
+* **File Unblocking** - the launcher will unblock the .dll's if they are locked itself. Available in Options. Enabled by default.
+* **Reset Module List** - will forcefully reset the module list and force the raw loaded list to be sorted. Available in Options. Will be disabled after restart.
+* **Binary Compatibility Check** - the launcher will check whether the are ABI issues in the module with the current game version. ABI issues mean the module won't work in the game and will need a new updated version.
+* **Import/Export Mod List** - provides a way to export and import Mod Lists with the correct load order and module versions. If a module version is incorrect, with highlight that.
+
+
 ## Installation
 Download the file and extract it's contents into the game's root folder (e.g. `C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord`).
 
