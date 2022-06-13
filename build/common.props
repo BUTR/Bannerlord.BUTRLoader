@@ -8,7 +8,7 @@
     <BUTRSharedVersion>2.0.0.82</BUTRSharedVersion>
     <BUTRModuleManagerVersion>3.0.97</BUTRModuleManagerVersion>
     <HarmonyExtensionsVersion>2.0.0.57</HarmonyExtensionsVersion>
-    <HarmonyAnalyzerVersion>1.0.1.27</HarmonyAnalyzerVersion>
+    <HarmonyAnalyzerVersion>1.0.1.32</HarmonyAnalyzerVersion>
     <DebugType>full</DebugType>
   </PropertyGroup>
 
