@@ -4,31 +4,36 @@ using System;
 
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
-namespace Bannerlord.BUTRLoader.Helpers
+namespace Bannerlord.BUTRLoader.Wrappers
 {
     internal sealed class LauncherVMWrapper
     {
+        internal static readonly Type? LauncherVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherVM") ??
+                                                        AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM");
+
         private delegate bool GetIsSingleplayerDelegate(object instance);
+        private static readonly GetIsSingleplayerDelegate? GetIsSingleplayer =
+            AccessTools2.GetPropertyGetterDelegate<GetIsSingleplayerDelegate>(LauncherVMType!, "IsSingleplayer");
+        
         private delegate void SetIsSingleplayerDelegate(object instance, bool value);
+        private static readonly SetIsSingleplayerDelegate? SetIsSingleplayer =
+            AccessTools2.GetPropertySetterDelegate<SetIsSingleplayerDelegate>(LauncherVMType!, "IsSingleplayer");
+
         private delegate bool GetIsMultiplayerDelegate(object instance);
+        private static readonly GetIsMultiplayerDelegate? GetIsMultiplayer =
+            AccessTools2.GetPropertyGetterDelegate<GetIsMultiplayerDelegate>(LauncherVMType!, "IsMultiplayer");
+        
         private delegate void SetIsMultiplayerDelegate(object instance, bool value);
+        private static readonly SetIsMultiplayerDelegate? SetIsMultiplayer =
+            AccessTools2.GetPropertySetterDelegate<SetIsMultiplayerDelegate>(LauncherVMType!, "IsMultiplayer");
+
         private delegate object GetModsDataDelegate(object instance);
+        private static readonly GetModsDataDelegate? GetModsData =
+            AccessTools2.GetPropertyGetterDelegate<GetModsDataDelegate>(LauncherVMType!, "ModsData");
+
         private delegate object GetNewsDelegate(object instance);
-
-        private static readonly Type? OldLauncherVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherVM");
-        private static readonly Type? NewLauncherVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM");
-        internal static readonly Type? LauncherVMType = OldLauncherVMType ?? NewLauncherVMType;
-
-        private static readonly GetIsSingleplayerDelegate? GetIsSingleplayer = AccessTools2.GetPropertyGetterDelegate<GetIsSingleplayerDelegate>(LauncherVMType!, "IsSingleplayer");
-        private static readonly SetIsSingleplayerDelegate? SetIsSingleplayer = AccessTools2.GetPropertySetterDelegate<SetIsSingleplayerDelegate>(LauncherVMType!, "IsSingleplayer");
-
-        private static readonly GetIsMultiplayerDelegate? GetIsMultiplayer = AccessTools2.GetPropertyGetterDelegate<GetIsMultiplayerDelegate>(LauncherVMType!, "IsMultiplayer");
-        private static readonly SetIsMultiplayerDelegate? SetIsMultiplayer = AccessTools2.GetPropertySetterDelegate<SetIsMultiplayerDelegate>(LauncherVMType!, "IsMultiplayer");
-
-        private static readonly GetModsDataDelegate? GetModsData = AccessTools2.GetPropertyGetterDelegate<GetModsDataDelegate>(LauncherVMType!, "ModsData");
-
-        private static readonly GetNewsDelegate? GetNews = AccessTools2.GetPropertyGetterDelegate<GetNewsDelegate>(LauncherVMType!, "News");
+        private static readonly GetNewsDelegate? GetNews =
+            AccessTools2.GetPropertyGetterDelegate<GetNewsDelegate>(LauncherVMType!, "News");
 
         public static LauncherVMWrapper Create(object @object) => new(@object);
 

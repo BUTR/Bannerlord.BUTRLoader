@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-// ReSharper disable once CheckNamespace
-namespace Bannerlord.BUTRLoader.LauncherEx.Helpers
+namespace Bannerlord.BUTRLoader.Helpers
 {
     public enum CheckResult
     {

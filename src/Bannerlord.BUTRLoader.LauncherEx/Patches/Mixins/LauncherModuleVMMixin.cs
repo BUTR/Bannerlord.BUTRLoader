@@ -1,15 +1,13 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTR.Shared.Utils;
+using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Wrappers;
 
 using HarmonyLib.BUTR.Extensions;
 
-using System.Collections.Generic;
-using System.Reflection;
-
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherModuleVMMixin
@@ -77,16 +75,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             var moduleInfoWrapper = LauncherModuleVMWrapper.Create(launcherModuleVM);
 
-            var propsObject = AccessTools2.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherModuleVM) as Dictionary<string, PropertyInfo>
-                              ?? new Dictionary<string, PropertyInfo>();
-
             void SetVMProperty(string property)
             {
-                var propertyInfo = new WrappedPropertyInfo(
-                    AccessTools2.Property(typeof(LauncherModuleVMMixin), property)!,
-                    this);
+                var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property($"Bannerlord.BUTRLoader.Patches.Mixins.LauncherModuleVMMixin:{property}")!, this);
+                _launcherModuleVM.AddProperty(property, propertyInfo);
                 propertyInfo.PropertyChanged += (_, e) => _launcherModuleVM.OnPropertyChanged(e.PropertyName);
-                propsObject[property] = propertyInfo;
             }
 
             SetVMProperty(nameof(IsExpanded));
@@ -97,7 +90,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(IsDisabled2));
             SetVMProperty(nameof(IsDangerous2));
 
-            if (ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 })
+            if (ApplicationVersionHelper.GameVersion() is {Major: 1, Minor: >= 7})
             {
                 var id = moduleInfoWrapper.Info?.Id ?? string.Empty;
                 if (ModuleInfoHelper.LoadFromId(id) is { } moduleInfo && ModuleInfoHelper2.GetDependencyHint(moduleInfo) is { } str && LauncherHintVMWrapper.Create(str) is { } hint)

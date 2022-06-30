@@ -1,35 +1,37 @@
 ﻿using Bannerlord.BUTR.Shared.Utils;
+using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
 using Bannerlord.BUTRLoader.Options;
 using Bannerlord.BUTRLoader.Patches.ViewModels;
+using Bannerlord.BUTRLoader.Wrappers;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
-using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using TaleWorlds.GauntletUI;
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherVMMixin
     {
         private delegate void AddHintInformationDelegate(string message);
         private static readonly AddHintInformationDelegate? AddHintInformation =
-            AccessTools2.GetDelegate<AddHintInformationDelegate>(LauncherUIWrapper.LauncherUIType!, "AddHintInformation");
+            AccessTools2.GetDelegate<AddHintInformationDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherUI:AddHintInformation") ??
+            AccessTools2.GetDelegate<AddHintInformationDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:AddHintInformation");
 
         private delegate void HideHintInformationDelegate();
         private static readonly HideHintInformationDelegate? HideHintInformation =
-            AccessTools2.GetDelegate<HideHintInformationDelegate>(LauncherUIWrapper.LauncherUIType!, "HideHintInformation");
+            AccessTools2.GetDelegate<HideHintInformationDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherUI:HideHintInformation") ??
+            AccessTools2.GetDelegate<HideHintInformationDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:HideHintInformation");
 
         private delegate void ExecuteConfirmUnverifiedDLLStartDelegate(object instance);
         private static readonly ExecuteConfirmUnverifiedDLLStartDelegate? ExecuteConfirmUnverifiedDLLStartOriginal =
-            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>(LauncherUIWrapper.LauncherUIType!, "ExecuteConfirmUnverifiedDLLStart");
+            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherUI:ExecuteConfirmUnverifiedDLLStart") ??
+            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:ExecuteConfirmUnverifiedDLLStart");
 
         private static readonly AccessTools.FieldRef<object, object>? UserDataManagerFieldRef =
             AccessTools2.FieldRefAccess<object>(LauncherVMWrapper.LauncherVMType!, "_userDataManager");
@@ -230,16 +232,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 LauncherSettings.ResetModuleList,
                 LauncherSettings.DisableBinaryCheck);
 
-            var propsObject = AccessTools2.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherVM) as Dictionary<string, PropertyInfo>
-                              ?? new Dictionary<string, PropertyInfo>();
-
             void SetVMProperty(string property)
             {
-                var propertyInfo = new WrappedPropertyInfo(
-                    AccessTools2.Property(typeof(LauncherVMMixin), property)!,
-                    this);
+                var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property($"Bannerlord.BUTRLoader.Patches.Mixins.LauncherVMMixin:{property}")!, this);
+                _launcherVM.AddProperty(property, propertyInfo);
                 propertyInfo.PropertyChanged += (_, e) => _launcherVM.OnPropertyChanged(e.PropertyName);
-                propsObject[property] = propertyInfo;
             }
 
             SetVMProperty(nameof(IsSingleplayer));

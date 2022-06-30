@@ -1,16 +1,13 @@
 ﻿using HarmonyLib.BUTR.Extensions;
 
-using System;
-
-// ReSharper disable once CheckNamespace
-namespace Bannerlord.BUTRLoader.Patches.Mixins
+namespace Bannerlord.BUTRLoader.Wrappers
 {
     internal sealed class LauncherHintVMWrapper
     {
         private delegate object ConstructorV1Delegate(string text);
-
-        private static readonly Type? Type = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherHintVM");
-        private static readonly ConstructorV1Delegate? ConstructorV1 = AccessTools2.GetConstructorDelegate<ConstructorV1Delegate>(Type!, new[] { typeof(string) });
+        private static readonly ConstructorV1Delegate? ConstructorV1 =
+            AccessTools2.GetConstructorDelegate<ConstructorV1Delegate>("TaleWorlds.MountAndBlade.Launcher.LauncherHintVM", new[] { typeof(string) }) ??
+            AccessTools2.GetConstructorDelegate<ConstructorV1Delegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherHintVM", new[] { typeof(string) });
 
         public static LauncherHintVMWrapper? Create(string text) => ConstructorV1 is null ? null : new(ConstructorV1(text));
 

@@ -1,33 +1,40 @@
 ﻿using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
-using System;
-
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
-namespace Bannerlord.BUTRLoader.Helpers
+namespace Bannerlord.BUTRLoader.Wrappers
 {
     internal sealed class LauncherModuleVMWrapper
     {
+        private static readonly AccessTools.FieldRef<object, object>? GetInfo =
+            AccessTools2.FieldRefAccess<object>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:Info") ??
+            AccessTools2.FieldRefAccess<object>("TaleWorlds.MountAndBlade.Launcher.Library.Info");
+
         private delegate string GetNameDelegate(object instance);
-        private delegate void SetIsSelectedDelegate(object instance, bool value);
+        private static readonly GetNameDelegate? GetName =
+            AccessTools2.GetPropertyGetterDelegate<GetNameDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:Name") ??
+            AccessTools2.GetPropertyGetterDelegate<GetNameDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:Name");
+
         private delegate bool GetIsSelectedDelegate(object instance);
+        private static readonly GetIsSelectedDelegate? GetIsSelected =
+            AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:IsSelected") ??
+            AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:IsSelected");
+        
+        private delegate void SetIsSelectedDelegate(object instance, bool value);
+        private static readonly SetIsSelectedDelegate? SetIsSelected =
+            AccessTools2.GetPropertySetterDelegate<SetIsSelectedDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:IsSelected") ??
+            AccessTools2.GetPropertySetterDelegate<SetIsSelectedDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:IsSelected");
+
         private delegate bool GetIsDisabledDelegate(object instance);
+        private static readonly GetIsDisabledDelegate? GetIsDisabled =
+            AccessTools2.GetPropertyGetterDelegate<GetIsDisabledDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:IsDisabled") ??
+            AccessTools2.GetPropertyGetterDelegate<GetIsDisabledDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:IsDisabled");
+        
         private delegate void SetIsDisabledDelegate(object instance, bool value);
-
-        public static readonly Type? LauncherModuleVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM") ??
-                                                            AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM");
-
-        private static readonly AccessTools.FieldRef<object, object>? GetInfo = AccessTools2.FieldRefAccess<object>(LauncherModuleVMType!, "Info");
-
-        private static readonly GetNameDelegate? GetName = AccessTools2.GetPropertyGetterDelegate<GetNameDelegate>(LauncherModuleVMType!, "Name");
-
-        private static readonly GetIsSelectedDelegate? GetIsSelected = AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>(LauncherModuleVMType!, "IsSelected");
-        private static readonly SetIsSelectedDelegate? SetIsSelected = AccessTools2.GetPropertySetterDelegate<SetIsSelectedDelegate>(LauncherModuleVMType!, "IsSelected");
-
-        private static readonly GetIsDisabledDelegate? GetIsDisabled = AccessTools2.GetPropertyGetterDelegate<GetIsDisabledDelegate>(LauncherModuleVMType!, "IsDisabled");
-        private static readonly SetIsDisabledDelegate? SetIsDisabled = AccessTools2.GetPropertySetterDelegate<SetIsDisabledDelegate>(LauncherModuleVMType!, "IsDisabled");
+        private static readonly SetIsDisabledDelegate? SetIsDisabled =
+            AccessTools2.GetPropertySetterDelegate<SetIsDisabledDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:IsDisabled") ??
+            AccessTools2.GetPropertySetterDelegate<SetIsDisabledDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:IsDisabled");
 
         public static LauncherModuleVMWrapper Create(object? @object) => new(@object);
 

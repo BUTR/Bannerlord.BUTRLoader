@@ -1,23 +1,20 @@
 ﻿using HarmonyLib.BUTR.Extensions;
 
-using System;
-
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
-namespace Bannerlord.BUTRLoader.Helpers
+namespace Bannerlord.BUTRLoader.Wrappers
 {
     internal sealed class LauncherNewsVMWrapper
     {
         private delegate bool GetIsDisabledOnMultiplayerDelegate(object instance);
+        private static readonly GetIsDisabledOnMultiplayerDelegate? GetIsDisabledOnMultiplayer =
+            AccessTools2.GetPropertyGetterDelegate<GetIsDisabledOnMultiplayerDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherNewsVM:IsDisabledOnMultiplayer") ??
+            AccessTools2.GetPropertyGetterDelegate<GetIsDisabledOnMultiplayerDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherNewsVM:IsDisabledOnMultiplayer");
+        
         private delegate void SetIsDisabledOnMultiplayerDelegate(object instance, bool value);
-
-        private static readonly Type? OldLauncherNewsVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherNewsVM");
-        private static readonly Type? NewLauncherNewsVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherNewsVM");
-        internal static readonly Type? LauncherNewsVMType = OldLauncherNewsVMType ?? NewLauncherNewsVMType;
-
-        private static readonly GetIsDisabledOnMultiplayerDelegate? GetIsDisabledOnMultiplayer = AccessTools2.GetPropertyGetterDelegate<GetIsDisabledOnMultiplayerDelegate>(LauncherNewsVMType!, "IsDisabledOnMultiplayer");
-        private static readonly SetIsDisabledOnMultiplayerDelegate? SetIsDisabledOnMultiplayer = AccessTools2.GetPropertySetterDelegate<SetIsDisabledOnMultiplayerDelegate>(LauncherNewsVMType!, "IsDisabledOnMultiplayer");
+        private static readonly SetIsDisabledOnMultiplayerDelegate? SetIsDisabledOnMultiplayer =
+            AccessTools2.GetPropertySetterDelegate<SetIsDisabledOnMultiplayerDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherNewsVM:IsDisabledOnMultiplayer") ??
+            AccessTools2.GetPropertySetterDelegate<SetIsDisabledOnMultiplayerDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherNewsVM:IsDisabledOnMultiplayer");
 
         public static LauncherNewsVMWrapper Create(object? @object) => new(@object);
 

@@ -3,12 +3,12 @@
 
   <!--Development Variables-->
   <PropertyGroup>
-    <Version>1.7.7</Version>
+    <Version>1.7.8</Version>
     <HarmonyVersion>2.0.4</HarmonyVersion>
     <BUTRSharedVersion>2.0.0.82</BUTRSharedVersion>
-    <BUTRModuleManagerVersion>3.0.94</BUTRModuleManagerVersion>
-    <HarmonyExtensionsVersion>2.0.0.57</HarmonyExtensionsVersion>
-    <HarmonyAnalyzerVersion>1.0.1.27</HarmonyAnalyzerVersion>
+    <BUTRModuleManagerVersion>3.0.97</BUTRModuleManagerVersion>
+    <HarmonyExtensionsVersion>3.1.0.61</HarmonyExtensionsVersion>
+    <HarmonyAnalyzerVersion>1.0.1.38</HarmonyAnalyzerVersion>
     <DebugType>full</DebugType>
   </PropertyGroup>
 
@@ -48,7 +48,7 @@
   </PropertyGroup>
   <!--SorceLink-->
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
   <!--CI Builds-->
   <ItemGroup Condition="$(TargetFramework) == 'net472' AND $(OS) != 'Windows_NT'">
@@ -57,5 +57,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
+  <ItemGroup Condition="'$(GITHUB_ACTIONS)' != 'true'">
+    <PackageReference Include="BUTR.Harmony.Analyzer" Version="$(HarmonyAnalyzerVersion)">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 
 </Project>

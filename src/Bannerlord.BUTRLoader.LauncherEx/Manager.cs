@@ -1,4 +1,4 @@
-﻿using Bannerlord.BUTRLoader.LauncherEx.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches;
 using Bannerlord.BUTRLoader.ResourceManagers;
 
@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Xml;
 
+// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.LauncherEx
 {
     public static class Manager

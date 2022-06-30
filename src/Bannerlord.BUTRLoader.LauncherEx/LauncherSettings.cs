@@ -3,7 +3,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Bannerlord.BUTRLoader.Tests")]
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader
 {
     [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]

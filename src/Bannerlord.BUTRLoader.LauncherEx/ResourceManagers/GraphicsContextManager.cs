@@ -11,7 +11,6 @@ using System.Runtime.CompilerServices;
 
 using TaleWorlds.TwoDimension.Standalone;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     internal static class GraphicsContextManager
@@ -36,13 +35,13 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         internal static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                SymbolExtensions2.GetMethodInfo((GraphicsContext gc) => gc.GetTexture(null!)),
-                prefix: AccessTools2.DeclaredMethod(typeof(GraphicsContextManager), nameof(GetTexturePrefix)));
+                AccessTools2.DeclaredMethod("TaleWorlds.TwoDimension.Standalone.GraphicsContext:GetTexture"),
+                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.GraphicsContextManager:GetTexturePrefix"));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                SymbolExtensions2.GetMethodInfo((GraphicsContext gc) => gc.CreateContext(null!)),
-                postfix: AccessTools2.DeclaredMethod(typeof(GraphicsContextManager), nameof(CreateContextPostfix)));
+                AccessTools2.DeclaredMethod("TaleWorlds.TwoDimension.Standalone.GraphicsContext:CreateContext"),
+                postfix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.GraphicsContextManager:CreateContextPostfix"));
             if (!res2) return false;
 
             // Preventing inlining GetTexture

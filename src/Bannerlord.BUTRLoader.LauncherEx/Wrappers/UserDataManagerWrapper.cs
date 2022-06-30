@@ -1,19 +1,13 @@
 ﻿using HarmonyLib.BUTR.Extensions;
 
-using System;
-
-// ReSharper disable once CheckNamespace
-namespace Bannerlord.BUTRLoader.Helpers
+namespace Bannerlord.BUTRLoader.Wrappers
 {
     internal sealed class UserDataManagerWrapper
     {
         private delegate object GetUserDataDelegate(object instance);
-
-        private static readonly Type? OldUserDataManagerType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserDataManager");
-        private static readonly Type? NewUserDataManagerType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager");
-        internal static readonly Type? UserDataManagerType = OldUserDataManagerType ?? NewUserDataManagerType;
-
-        private static readonly GetUserDataDelegate? GetUserData = AccessTools2.GetPropertyGetterDelegate<GetUserDataDelegate>(UserDataManagerType!, "UserData");
+        private static readonly GetUserDataDelegate? GetUserData =
+            AccessTools2.GetPropertyGetterDelegate<GetUserDataDelegate>("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserDataManager:UserData") ??
+            AccessTools2.GetPropertyGetterDelegate<GetUserDataDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager:UserData");
 
         public static UserDataManagerWrapper Create(object? @object) => new(@object);
 

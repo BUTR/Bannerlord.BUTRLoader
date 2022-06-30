@@ -1,17 +1,23 @@
 ﻿using Bannerlord.BUTRLoader.Patches.Mixins;
+using Bannerlord.BUTRLoader.Wrappers;
 
+using HarmonyLib.BUTR.Extensions;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class MixinManager
     {
         public static readonly Dictionary<ViewModel, List<object>> Mixins = new();
 
+        private static readonly Type? LauncherModuleVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM") ??
+                                                             AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM");
+        
         private static void AddMixin(ViewModel viewModel, object mixin)
         {
             if (Mixins.TryGetValue(viewModel, out var list))
@@ -48,7 +54,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             if (e.ListChangedType == ListChangedType.Reset)
             {
-                var keys = Mixins.Keys.Where(x => x.GetType() == LauncherModuleVMWrapper.LauncherModuleVMType).ToArray();
+                var keys = Mixins.Keys.Where(x => x.GetType() == LauncherModuleVMType).ToArray();
                 foreach (var viewModel in keys)
                 {
                     Mixins.Remove(viewModel);

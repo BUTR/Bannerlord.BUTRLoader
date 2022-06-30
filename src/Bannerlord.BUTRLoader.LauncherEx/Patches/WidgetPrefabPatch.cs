@@ -14,7 +14,6 @@ using System.Xml;
 
 using TaleWorlds.GauntletUI.PrefabSystem;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     // https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Patches/WidgetPrefabPatch.cs
@@ -61,13 +60,13 @@ namespace Bannerlord.BUTRLoader.Patches
             PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension13.Movie, LauncherModsPrefabExtension13.XPath, new LauncherModsPrefabExtension13());
 
             var res1 = harmony.TryPatch(
-                AccessTools2.DeclaredMethod(typeof(WidgetPrefab), nameof(WidgetPrefab.LoadFrom)),
-                transpiler: AccessTools2.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(WidgetPrefab_LoadFrom_Transpiler)));
+                AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab:LoadFrom"),
+                transpiler: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.WidgetPrefabPatch:WidgetPrefab_LoadFrom_Transpiler"));
             if (!res1) return false;
 
             var res2 = harmony.TryCreateReversePatcher(
-                SymbolExtensions2.GetMethodInfo(() => WidgetPrefab.LoadFrom(null!, null!, null!)),
-                SymbolExtensions2.GetMethodInfo(() => LoadFromDocument(null!, null!, null!, null!)));
+                AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab:LoadFrom"),
+                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.WidgetPrefabPatch:LoadFromDocument"));
             if (res2 is null) return false;
             res2.Patch();
 
@@ -91,7 +90,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 return instructionsList.AsEnumerable();
             }
 
-            var constructor = AccessTools2.DeclaredConstructor(typeof(WidgetPrefab));
+            var constructor = AccessTools2.DeclaredConstructor("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab");
 
             var locals = method.GetMethodBody()?.LocalVariables;
             var typeLocal = locals?.FirstOrDefault(x => x.LocalType == typeof(WidgetPrefab));
@@ -120,7 +119,7 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 new (OpCodes.Ldarg_2),
                 new (OpCodes.Ldloc_0),
-                new (OpCodes.Call, SymbolExtensions2.GetMethodInfo(() => ProcessMovie(null!, null!)))
+                new (OpCodes.Call, AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.WidgetPrefabPatch:ProcessMovie"))
             });
             return instructionsList.AsEnumerable();
         }
@@ -149,7 +148,7 @@ namespace Bannerlord.BUTRLoader.Patches
                     return returnNull;
 
                 var constructorIndex = -1;
-                var constructor = AccessTools2.Constructor(typeof(WidgetPrefab));
+                var constructor = AccessTools2.Constructor("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab");
                 for (var i = 0; i < instructionList.Count; i++)
                 {
                     if (instructionList[i].opcode == OpCodes.Newobj && Equals(instructionList[i].operand, constructor))

@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class IssuesChecker

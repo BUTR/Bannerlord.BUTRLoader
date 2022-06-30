@@ -1,18 +1,18 @@
 ﻿using HarmonyLib.BUTR.Extensions;
 
-using System;
-
-// ReSharper disable once CheckNamespace
-namespace Bannerlord.BUTRLoader.Helpers
+namespace Bannerlord.BUTRLoader.Wrappers
 {
     internal sealed class UserModDataWrapper
     {
         private delegate string GetIdDelegate(object instance);
+        private static readonly GetIdDelegate? GetId =
+            AccessTools2.GetPropertyGetterDelegate<GetIdDelegate>("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserModData:Id") ??
+            AccessTools2.GetPropertyGetterDelegate<GetIdDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserModData:Id");
+        
         private delegate bool GetIsSelectedDelegate(object instance);
-
-        private static readonly Type? UserModDataType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserModData");
-        private static readonly GetIdDelegate? GetId = AccessTools2.GetPropertyGetterDelegate<GetIdDelegate>(UserModDataType!, "Id");
-        private static readonly GetIsSelectedDelegate? GetIsSelected = AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>(UserModDataType!, "IsSelected");
+        private static readonly GetIsSelectedDelegate? GetIsSelected =
+            AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserModData:IsSelected") ??
+            AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserModData:IsSelected");
 
         public static UserModDataWrapper Create(object? @object) => new(@object);
 

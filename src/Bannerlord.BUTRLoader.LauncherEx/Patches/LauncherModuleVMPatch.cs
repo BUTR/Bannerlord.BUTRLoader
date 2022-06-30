@@ -1,4 +1,4 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Wrappers;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -7,18 +7,20 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModuleVMPatch
     {
         public static readonly ConditionalWeakTable<object, Delegate> AreAllDepenenciesPresentReferences = new();
 
+        private static readonly Type? LauncherModuleVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM") ??
+                                                            AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM");
+        
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools.FirstConstructor(LauncherModuleVMWrapper.LauncherModuleVMType, ci => ci.GetParameters().Length > 0),
-                postfix: AccessTools2.Method(typeof(LauncherModuleVMPatch), nameof(LauncherModuleVMConstructorPostfix)));
+                AccessTools.FirstConstructor(LauncherModuleVMType, ci => ci.GetParameters().Length > 0),
+                postfix: AccessTools2.Method("Bannerlord.BUTRLoader.Patches.LauncherModuleVMPatch:LauncherModuleVMConstructorPostfix"));
             if (!res1) return false;
 
             return true;

@@ -5,7 +5,6 @@ using System.Globalization;
 
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches.ViewModels
 {
     internal sealed class SettingsPropertyVM : ViewModel

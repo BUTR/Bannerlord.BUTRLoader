@@ -10,7 +10,6 @@ using System.Runtime.CompilerServices;
 using TaleWorlds.GauntletUI.Data;
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherUIPatch
@@ -18,14 +17,16 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method(LauncherUIWrapper.LauncherUIType!, "Initialize"),
-                postfix: AccessTools2.Method(typeof(LauncherUIPatch), nameof(InitializePostfix)));
+                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherUI:Initialize") ??
+                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:Initialize"),
+                postfix: AccessTools2.Method("Bannerlord.BUTRLoader.Patches.LauncherUIPatch:InitializePostfix"));
             if (!res1) return false;
 
             // Preventing inlining Initialize
             harmony.TryPatch(
-                AccessTools2.Method(LauncherUIWrapper.LauncherUIType!, "Update"),
-                transpiler: AccessTools2.Method(typeof(LauncherUIPatch), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.LauncherUI:Update") ??
+                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:Update"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.Patches.LauncherUIPatch:BlankTranspiler"));
             // Preventing inlining Initialize
 
             return true;

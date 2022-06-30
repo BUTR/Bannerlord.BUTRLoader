@@ -2,7 +2,6 @@
 
 using System.Xml;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 {
     /// <summary>
@@ -11,7 +10,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     internal sealed class UILauncherPrefabExtension3 : PrefabExtensionInsertAsSiblingPatch
     {
         public static string Movie { get; } = "UILauncher";
-        public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/Widget[1]/Children/ListPanel/Children/ButtonWidget[1]";
+        public static string XPath { get; } = "descendant::Widget[@Id='TopMenu']/Children/Widget[2]/Children/Widget[1]/Children/ListPanel/Children/ButtonWidget[1]";
 
         public override InsertType Type { get; } = InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();

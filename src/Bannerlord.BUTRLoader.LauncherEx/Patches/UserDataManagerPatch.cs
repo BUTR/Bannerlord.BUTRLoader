@@ -1,5 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.Options;
+﻿using Bannerlord.BUTRLoader.Options;
+using Bannerlord.BUTRLoader.Wrappers;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -12,7 +12,6 @@ using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Serialization;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class UserDataManagerPatch
@@ -20,13 +19,15 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method(UserDataManagerWrapper.UserDataManagerType!, "LoadUserData"),
-                prefix: AccessTools2.Method(typeof(UserDataManagerPatch), nameof(LoadUserDataPrefix)));
+                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserDataManager:LoadUserData") ??
+                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager:LoadUserData"),
+                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.UserDataManagerPatch:LoadUserDataPrefix"));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                AccessTools2.Method(UserDataManagerWrapper.UserDataManagerType!, "SaveUserData"),
-                postfix: AccessTools2.Method(typeof(UserDataManagerPatch), nameof(SaveUserDataPostfix)));
+                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserDataManager:SaveUserData") ??
+                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager:SaveUserData"),
+                postfix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.UserDataManagerPatch:SaveUserDataPostfix"));
             if (!res2) return false;
 
             return true;

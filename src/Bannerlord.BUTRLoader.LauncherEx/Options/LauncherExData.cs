@@ -1,5 +1,4 @@
-﻿// ReSharper disable once CheckNamespace
-namespace Bannerlord.BUTRLoader.Options
+﻿namespace Bannerlord.BUTRLoader.Options
 {
     public sealed class LauncherExData
     {

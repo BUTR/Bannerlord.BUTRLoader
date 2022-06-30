@@ -35,10 +35,7 @@ namespace Bannerlord.BUTRLoader
                 // Wait for the Launcher assembly to load
                 if (args.LoadedAssembly.GetName().Name == "TaleWorlds.MountAndBlade.Launcher")
                 {
-                    if (args.LoadedAssembly.GetType("TaleWorlds.MountAndBlade.Launcher.LauncherVM") is null)
-                    {
-                        return;
-                    }
+                    if (args.LoadedAssembly.GetType("TaleWorlds.MountAndBlade.Launcher.LauncherVM") is null) return;
 
                     var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Enable");
                     init?.Invoke(null, Array.Empty<object>());

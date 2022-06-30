@@ -11,10 +11,8 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
-using TaleWorlds.GauntletUI.Data;
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class ViewModelPatch
@@ -22,13 +20,13 @@ namespace Bannerlord.BUTRLoader.Patches
         public static void Enable(Harmony harmony)
         {
             harmony.Patch(
-                AccessTools2.Method(typeof(ViewModel), nameof(ViewModel.ExecuteCommand)),
-                transpiler: new HarmonyMethod(SymbolExtensions2.GetMethodInfo(() => ViewModel_ExecuteCommand_Transpiler(null!, null!))));
+                AccessTools2.DeclaredMethod("TaleWorlds.Library.ViewModel:ExecuteCommand"),
+                transpiler: new HarmonyMethod(typeof(ViewModelPatch), nameof(ViewModel_ExecuteCommand_Transpiler)));
 
             // Preventing inlining ExecuteCommand
             harmony.TryPatch(
-                AccessTools2.Method(typeof(GauntletView), "OnCommand"),
-                transpiler: AccessTools2.Method(typeof(ViewModelPatch), nameof(BlankTranspiler)));
+                AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.Data.GauntletView:OnCommand"),
+                transpiler: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.ViewModelPatch:BlankTranspiler"));
             // Preventing inlining ExecuteCommand
         }
 
@@ -43,14 +41,14 @@ namespace Bannerlord.BUTRLoader.Patches
             instructionList[0].labels.Add(jmpOriginalFlow);
 
             instructionList.InsertRange(0, new List<CodeInstruction>
-            {
-                new(OpCodes.Ldarg_0),
-                new(OpCodes.Ldarg_1),
-                new(OpCodes.Ldarg_2),
-                new(OpCodes.Call, SymbolExtensions2.GetMethodInfo(() => ExecuteCommand(null!, null!, null!))),
-                new(OpCodes.Brtrue, jmpOriginalFlow),
-                new(OpCodes.Ret)
-            });
+                {
+                    new(OpCodes.Ldarg_0),
+                    new(OpCodes.Ldarg_1),
+                    new(OpCodes.Ldarg_2),
+                    new(OpCodes.Call, AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.ViewModelPatch:ExecuteCommand")),
+                    new(OpCodes.Brtrue, jmpOriginalFlow),
+                    new(OpCodes.Ret)
+                });
             return instructionList;
         }
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]

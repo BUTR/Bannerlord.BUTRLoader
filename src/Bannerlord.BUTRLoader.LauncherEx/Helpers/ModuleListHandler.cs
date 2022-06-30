@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Patches;
+using Bannerlord.BUTRLoader.Wrappers;
 
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ using System.Windows.Forms;
 
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal class ModuleListHandler

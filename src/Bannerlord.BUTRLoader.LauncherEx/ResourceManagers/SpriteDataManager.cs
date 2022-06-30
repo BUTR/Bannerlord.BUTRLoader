@@ -8,12 +8,8 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-using TaleWorlds.Engine.GauntletUI;
-using TaleWorlds.GauntletUI;
-using TaleWorlds.GauntletUI.PrefabSystem;
 using TaleWorlds.TwoDimension;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     internal static class SpriteDataManager
@@ -37,7 +33,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
             private static readonly Type? Vector2 = Type.GetType("System.Numerics.Vector2, System.Numerics.Vectors");
             private static readonly ConstructorInfo? Vector2Constructor = AccessTools2.Constructor(Vector2!, new[] { typeof(float), typeof(float) });
-            private static readonly MethodInfo? CreateQuad = AccessTools2.Method(typeof(DrawObject2D), "CreateQuad");
+            private static readonly MethodInfo? CreateQuad = AccessTools2.Method("TaleWorlds.TwoDimension.DrawObject2D:CreateQuad");
 
 
             public override Texture Texture { get; }
@@ -182,54 +178,54 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         internal static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                SymbolExtensions2.GetMethodInfo((SpriteData sd) => sd.GetSprite(null!)),
-                prefix: AccessTools2.DeclaredMethod(typeof(SpriteDataManager), nameof(GetSpritePrefix)));
+                AccessTools2.Method("TaleWorlds.TwoDimension.SpriteData:GetSprite"),
+                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:GetSpritePrefix"));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                SymbolExtensions2.GetMethodInfo((SpriteData sd) => sd.Load(null!)),
-                postfix: AccessTools2.DeclaredMethod(typeof(SpriteDataManager), nameof(LoadPostfix)));
+                AccessTools2.Method("TaleWorlds.TwoDimension.SpriteData:Load"),
+                postfix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:LoadPostfix"));
             if (!res2) return false;
 
             // Preventing inlining GetSprite
             harmony.TryPatch(
-                AccessTools2.Method(typeof(BrushFactory), "LoadBrushAnimationFrom"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushAnimationFrom"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(BrushFactory), "LoadBrushLayerInto"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushLayerInto"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(CanvasImage), "LoadFrom"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.CanvasImage:LoadFrom"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(CanvasLineImage), "LoadFrom"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.CanvasLineImage:LoadFrom"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(EditableTextWidget), "OnRender"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.EditableTextWidget:OnRender"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(ConstantDefinition), "GetValue"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.ConstantDefinition:GetValue"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(WidgetExtensions), "ConvertObject"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:ConvertObject"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(WidgetExtensions), "SetWidgetAttributeFromString"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:SetWidgetAttributeFromString"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Constructor(typeof(Font), new[] { typeof(string), typeof(string), typeof(SpriteData) }),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Constructor("TaleWorlds.TwoDimension.Font", new[] { typeof(string), typeof(string), typeof(SpriteData) }),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(RichText), "FillPartsWithTokens"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.TwoDimension.RichText:FillPartsWithTokens"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             // Preventing inlining GetSprite
             // Preventing inlining Load
             harmony.TryPatch(
-                AccessTools2.Method(typeof(UIResourceManager), "Initialize"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.Engine.GauntletUI.UIResourceManager:Initialize"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(UIContext), "Initialize"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.UIContext:Initialize"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.SpriteDataManager:BlankTranspiler"));
             // Preventing inlining Load
 
             return true;

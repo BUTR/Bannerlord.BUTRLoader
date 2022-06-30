@@ -1,7 +1,7 @@
 ﻿using Bannerlord.BUTR.Shared.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
-using Bannerlord.BUTRLoader.LauncherEx.Helpers;
+using Bannerlord.BUTRLoader.Wrappers;
 using Bannerlord.ModuleManager;
 
 using HarmonyLib;
@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using TaleWorlds.Library;
@@ -21,32 +22,53 @@ using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper2;
 
 using ApplicationVersion = Bannerlord.ModuleManager.ApplicationVersion;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
     {
+        private static readonly MethodInfo? CastModuleInfoMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(
+                AccessTools2.TypeByName("TaleWorlds.Library.ModuleInfo") ??
+                AccessTools2.TypeByName("TaleWorlds.ModuleManager.ModuleInfo"));
+        
+        private static readonly MethodInfo? ToListModuleInfoMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(
+            AccessTools2.TypeByName("TaleWorlds.Library.ModuleInfo") ??
+            AccessTools2.TypeByName("TaleWorlds.ModuleManager.ModuleInfo"));
+        
         internal delegate IEnumerable CastDelegate(IEnumerable instance);
+        internal static readonly CastDelegate? CastMethod =
+            AccessTools2.GetDelegate<CastDelegate>(CastModuleInfoMethodInfo!);
+       
         internal delegate IEnumerable ToListDelegate(IEnumerable instance);
+        internal static readonly ToListDelegate? ToListMethod =
+            AccessTools2.GetDelegate<ToListDelegate>(ToListModuleInfoMethodInfo!);
 
-        internal static readonly CastDelegate? CastMethod = AccessTools2.GetDelegate<CastDelegate>(typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(ModuleInfoWrapper.ModuleInfoType)!);
-        internal static readonly ToListDelegate? ToListMethod = AccessTools2.GetDelegate<ToListDelegate>(typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(ModuleInfoWrapper.ModuleInfoType)!);
-
+        private static readonly MethodInfo? GetDependentModulesOfMethodInfo =
+            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:GetDependentModulesOf") ??
+            AccessTools2.DeclaredMethod("TaleWorlds.ModuleManager.ModuleHelper:GetDependentModulesOf");
+        
+        private static readonly MethodInfo? IsAllDependenciesOfModulePresentMethodInfo =
+            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:IsAllDependenciesOfModulePresent") ??
+            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:IsAllDependenciesOfModulePresent");
+        
+        private static readonly MethodInfo? ChangeIsSelectedOfMethodInfo =
+            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:ChangeIsSelectedOf") ??
+            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:ChangeIsSelectedOf");
+        
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method(LauncherModsVMWrapper.LauncherModsVMType!, "GetDependentModulesOf"),
-                prefix: AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix)));
+                GetDependentModulesOfMethodInfo,
+                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:GetDependentModulesOfPrefix"));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                AccessTools2.Method(LauncherModsVMWrapper.LauncherModsVMType!, "IsAllDependenciesOfModulePresent"),
-                prefix: AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(AreAllDependenciesOfModulePresentPrefix)));
+                IsAllDependenciesOfModulePresentMethodInfo,
+                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:AreAllDependenciesOfModulePresentPrefix"));
             if (!res2) return false;
 
             var res3 = harmony.TryPatch(
-                AccessTools2.Method(LauncherModsVMWrapper.LauncherModsVMType!, "ChangeIsSelectedOf"),
-                prefix: AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(ChangeIsSelectedOfPrefix)));
+                ChangeIsSelectedOfMethodInfo,
+                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:ChangeIsSelectedOfPrefix"));
             if (!res3) return false;
 
             return true;
@@ -55,16 +77,16 @@ namespace Bannerlord.BUTRLoader.Patches
         public static void Disable(Harmony harmony)
         {
             harmony.Unpatch(
-                AccessTools2.Method(LauncherModsVMWrapper.LauncherModsVMType!, "GetDependentModulesOf"),
-                AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix)));
+                GetDependentModulesOfMethodInfo,
+                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:GetDependentModulesOfPrefix"));
 
             harmony.Unpatch(
-                AccessTools2.Method(LauncherModsVMWrapper.LauncherModsVMType!, "IsAllDependenciesOfModulePresent"),
-                AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(AreAllDependenciesOfModulePresentPrefix)));
+                IsAllDependenciesOfModulePresentMethodInfo,
+                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:AreAllDependenciesOfModulePresentPrefix"));
 
             harmony.Unpatch(
-                AccessTools2.Method(LauncherModsVMWrapper.LauncherModsVMType!, "ChangeIsSelectedOf"),
-                AccessTools2.Method(typeof(LauncherModsVMPatch), nameof(ChangeIsSelectedOfPrefix)));
+                ChangeIsSelectedOfMethodInfo,
+                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:ChangeIsSelectedOfPrefix"));
         }
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]

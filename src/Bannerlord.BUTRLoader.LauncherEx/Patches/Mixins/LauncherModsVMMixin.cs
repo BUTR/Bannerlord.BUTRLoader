@@ -1,21 +1,19 @@
 ﻿using Bannerlord.BUTR.Shared.Utils;
-using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Wrappers;
 
 using HarmonyLib.BUTR.Extensions;
 
-using System.Collections.Generic;
-using System.Reflection;
-
 using TaleWorlds.Library;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherModsVMMixin
     {
         private delegate void ExecuteSelectDelegate(object instance);
         private static readonly ExecuteSelectDelegate? ExecuteSelect =
-            AccessTools2.GetDelegateObjectInstance<ExecuteSelectDelegate>(LauncherModuleVMWrapper.LauncherModuleVMType!, "ExecuteSelect");
+            AccessTools2.GetDelegateObjectInstance<ExecuteSelectDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:ExecuteSelect") ??
+            AccessTools2.GetDelegateObjectInstance<ExecuteSelectDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:ExecuteSelect");
 
         public bool GlobalCheckboxState
         {
@@ -37,14 +35,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             _launcherModsVM = launcherModsVM;
 
-            var propsObject = AccessTools2.Field(typeof(ViewModel), "_propertyInfos")?.GetValue(_launcherModsVM) as Dictionary<string, PropertyInfo>
-                              ?? new Dictionary<string, PropertyInfo>();
-
             void SetVMProperty(string property)
             {
-                var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property(typeof(LauncherModsVMMixin), property), this);
+                var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property($"Bannerlord.BUTRLoader.Patches.Mixins.LauncherModsVMMixin:{property}")!, this);
+                _launcherModsVM.AddProperty(property, propertyInfo);
                 propertyInfo.PropertyChanged += (_, e) => _launcherModsVM.OnPropertyChanged(e.PropertyName);
-                propsObject[property] = propertyInfo;
             }
 
             SetVMProperty(nameof(GlobalCheckboxState));

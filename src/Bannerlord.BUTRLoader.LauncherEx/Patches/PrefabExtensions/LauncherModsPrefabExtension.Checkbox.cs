@@ -2,7 +2,6 @@
 
 using System.Xml;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 {
     /// <summary>

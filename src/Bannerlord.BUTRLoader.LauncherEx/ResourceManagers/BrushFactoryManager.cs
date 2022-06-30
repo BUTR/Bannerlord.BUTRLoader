@@ -9,9 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Xml;
 
 using TaleWorlds.GauntletUI;
-using TaleWorlds.GauntletUI.PrefabSystem;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     internal static class BrushFactoryManager
@@ -21,7 +19,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
         private delegate Brush LoadBrushFromDelegate(BrushFactory instance, XmlNode brushNode);
         private static readonly LoadBrushFromDelegate? LoadBrushFrom =
-            AccessTools2.GetDelegate<LoadBrushFromDelegate>(typeof(BrushFactory), "LoadBrushFrom");
+            AccessTools2.GetDelegate<LoadBrushFromDelegate>("TaleWorlds.GauntletUI.BrushFactory:LoadBrushFrom");
 
         private static Harmony? _harmony;
         private static WeakReference<BrushFactory?> BrushFactoryReference { get; } = new(null);
@@ -57,35 +55,35 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             _harmony = harmony;
 
             harmony.Patch(
-                SymbolExtensions2.GetPropertyInfo((BrushFactory bf) => bf.Brushes)?.GetMethod,
-                postfix: new HarmonyMethod(AccessTools2.Method(typeof(BrushFactoryManager), nameof(GetBrushesPostfix))));
+                AccessTools2.PropertyGetter("TaleWorlds.GauntletUI.BrushFactory:Brushes"),
+                postfix: new HarmonyMethod(AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:GetBrushesPostfix")));
 
             harmony.Patch(
-                SymbolExtensions2.GetMethodInfo((BrushFactory bf) => bf.GetBrush(null!)),
-                prefix: new HarmonyMethod(AccessTools2.Method(typeof(BrushFactoryManager), nameof(GetBrushPrefix))));
+                AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.BrushFactory:GetBrush"),
+                new HarmonyMethod(AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:GetBrushPrefix")));
 
             var res3 = harmony.TryPatch(
-                AccessTools2.Method(typeof(BrushFactory), "LoadBrushes"),
-                prefix: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushes"),
+                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:LoadBrushesPostfix"));
             if (!res3) return false;
 
             // Preventing inlining Initialize
             harmony.TryPatch(
-                AccessTools2.Method(typeof(BrushFactory), "Initialize"),
-                transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:Initialize"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:BlankTranspiler"));
             // Preventing inlining GetBrush
             harmony.TryPatch(
-                AccessTools2.Method(typeof(ConstantDefinition), "GetValue"),
-                transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.ConstantDefinition:GetValue"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(WidgetExtensions), "SetWidgetAttributeFromString"),
-                transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:SetWidgetAttributeFromString"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(UIContext), "GetBrush"),
-                transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.UIContext:GetBrush"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:BlankTranspiler"));
             harmony.TryPatch(
-                AccessTools2.Method(typeof(WidgetExtensions), "ConvertObject"),
-                transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:ConvertObject"),
+                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:BlankTranspiler"));
             //harmony.Patch(
             //    AccessTools2.Method(typeof(BoolBrushChanger), "OnBooleanUpdated"),
             //    transpiler: new HarmonyMethod(AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler))));
@@ -128,8 +126,8 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             SetBrushFactory(__instance);
 
             _harmony?.Unpatch(
-                AccessTools2.Method(typeof(BrushFactory), "LoadBrushes"),
-                AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
+                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushes"),
+                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:LoadBrushesPostfix"));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

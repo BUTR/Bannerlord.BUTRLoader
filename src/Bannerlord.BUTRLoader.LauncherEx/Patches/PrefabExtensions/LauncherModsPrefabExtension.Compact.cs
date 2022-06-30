@@ -1,6 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 
-// ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 {
     internal sealed class LauncherModsPrefabExtension4 : PrefabExtensionSetAttributePatch

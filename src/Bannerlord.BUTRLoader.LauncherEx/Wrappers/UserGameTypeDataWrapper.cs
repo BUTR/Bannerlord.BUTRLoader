@@ -4,15 +4,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-// ReSharper disable once CheckNamespace
-namespace Bannerlord.BUTRLoader.Helpers
+namespace Bannerlord.BUTRLoader.Wrappers
 {
     internal sealed class UserGameTypeDataWrapper
     {
         private delegate IList GetModDatasDelegate(object instance);
-
-        private static readonly Type? UserGameTypeDataType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserGameTypeData");
-        private static readonly GetModDatasDelegate? GetModDatas = AccessTools2.GetPropertyGetterDelegate<GetModDatasDelegate>(UserGameTypeDataType!, "ModDatas");
+        private static readonly GetModDatasDelegate? GetModDatas =
+            AccessTools2.GetPropertyGetterDelegate<GetModDatasDelegate>("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserGameTypeData:ModDatas") ??
+            AccessTools2.GetPropertyGetterDelegate<GetModDatasDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserGameTypeData:ModDatas");
 
         public static UserGameTypeDataWrapper Create(object? @object) => new(@object);
 
