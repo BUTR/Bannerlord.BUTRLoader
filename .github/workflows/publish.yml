@@ -38,10 +38,10 @@ jobs:
         tag: DepotDownloader_2.4.5
         file: depotdownloader-2.4.5.zip
 
-    - name: Extract DepotDownloader_2.4.5
+    - name: Extract DepotDownloader_2.4.6
       uses: DuckSoft/extract-7z-action@v1.0
       with:
-        pathSource: depotdownloader-2.4.5.zip
+        pathSource: depotdownloader-2.4.6.zip
         pathTarget: depotdownloader
 
     - name: Download Bannerlord binaries
