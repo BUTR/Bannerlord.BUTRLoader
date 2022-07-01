@@ -15,7 +15,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
         private static readonly Type? LauncherModuleVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM") ??
                                                             AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM");
-        
+
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(

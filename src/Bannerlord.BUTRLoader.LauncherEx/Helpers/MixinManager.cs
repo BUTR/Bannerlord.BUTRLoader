@@ -17,7 +17,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         private static readonly Type? LauncherModuleVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM") ??
                                                              AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM");
-        
+
         private static void AddMixin(ViewModel viewModel, object mixin)
         {
             if (Mixins.TryGetValue(viewModel, out var list))

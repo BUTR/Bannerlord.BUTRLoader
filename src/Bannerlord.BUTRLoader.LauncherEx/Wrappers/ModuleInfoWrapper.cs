@@ -10,16 +10,16 @@ namespace Bannerlord.BUTRLoader.Wrappers
         internal static readonly GetIdDelegate? GetId =
             AccessTools2.GetPropertyGetterDelegate<GetIdDelegate>("TaleWorlds.Library.ModuleInfo:Id") ??
             AccessTools2.GetPropertyGetterDelegate<GetIdDelegate>("TaleWorlds.ModuleManager.ModuleInfo:Id");
-        
+
         internal delegate string GetAliasDelegate(object instance);
         internal static readonly GetAliasDelegate? GetAlias =
             AccessTools2.GetPropertyGetterDelegate<GetAliasDelegate>("TaleWorlds.Library.ModuleInfo:Alias");
-        
+
         internal delegate ApplicationVersion GetVersionDelegate(object instance);
         internal static readonly GetVersionDelegate? GetVersion =
             AccessTools2.GetPropertyGetterDelegate<GetVersionDelegate>("TaleWorlds.Library.ModuleInfo:Version") ??
             AccessTools2.GetPropertyGetterDelegate<GetVersionDelegate>("TaleWorlds.ModuleManager.ModuleInfo:Version");
-        
+
         internal delegate bool GetIsSelectedDelegate(object instance);
         internal static readonly GetIsSelectedDelegate? GetIsSelected =
             AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>("TaleWorlds.Library.ModuleInfo:IsSelected") ??

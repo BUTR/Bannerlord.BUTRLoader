@@ -90,7 +90,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(IsDisabled2));
             SetVMProperty(nameof(IsDangerous2));
 
-            if (ApplicationVersionHelper.GameVersion() is {Major: 1, Minor: >= 7})
+            if (ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 })
             {
                 var id = moduleInfoWrapper.Info?.Id ?? string.Empty;
                 if (ModuleInfoHelper.LoadFromId(id) is { } moduleInfo && ModuleInfoHelper2.GetDependencyHint(moduleInfo) is { } str && LauncherHintVMWrapper.Create(str) is { } hint)

@@ -25,7 +25,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         private static readonly ReloadDelegate? Reload =
             AccessTools2.GetDeclaredDelegate<ReloadDelegate>("TaleWorlds.GauntletUI.WidgetInfo:ReLoad") ??
             AccessTools2.GetDeclaredDelegate<ReloadDelegate>("TaleWorlds.GauntletUI.WidgetInfo:Reload");
-        
+
         private static readonly AccessTools.FieldRef<object, IDictionary>? _liveCustomTypes =
             AccessTools2.FieldRefAccess<IDictionary>("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:_liveCustomTypes");
 
@@ -55,7 +55,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         public static void Register(Type widgetType)
         {
             if (Reload is null) return;
-            
+
             BuiltinTypes[widgetType.Name] = widgetType;
             Reload();
         }

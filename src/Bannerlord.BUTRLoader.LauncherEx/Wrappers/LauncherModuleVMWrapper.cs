@@ -20,7 +20,7 @@ namespace Bannerlord.BUTRLoader.Wrappers
         private static readonly GetIsSelectedDelegate? GetIsSelected =
             AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:IsSelected") ??
             AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:IsSelected");
-        
+
         private delegate void SetIsSelectedDelegate(object instance, bool value);
         private static readonly SetIsSelectedDelegate? SetIsSelected =
             AccessTools2.GetPropertySetterDelegate<SetIsSelectedDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:IsSelected") ??
@@ -30,7 +30,7 @@ namespace Bannerlord.BUTRLoader.Wrappers
         private static readonly GetIsDisabledDelegate? GetIsDisabled =
             AccessTools2.GetPropertyGetterDelegate<GetIsDisabledDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:IsDisabled") ??
             AccessTools2.GetPropertyGetterDelegate<GetIsDisabledDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:IsDisabled");
-        
+
         private delegate void SetIsDisabledDelegate(object instance, bool value);
         private static readonly SetIsDisabledDelegate? SetIsDisabled =
             AccessTools2.GetPropertySetterDelegate<SetIsDisabledDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:IsDisabled") ??
