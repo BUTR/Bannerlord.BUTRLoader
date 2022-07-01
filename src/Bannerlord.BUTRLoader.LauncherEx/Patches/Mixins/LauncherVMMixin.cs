@@ -288,7 +288,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public void ExecuteBeginHintExport()
         {
             if (AddHintInformation is not null)
-                AddHintInformation("Export Currect Mod List");
+                AddHintInformation("Export Current Mod List");
         }
 
         [MethodImpl(MethodImplOptions.NoOptimization)]
