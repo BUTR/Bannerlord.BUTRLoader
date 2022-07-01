@@ -9,7 +9,7 @@ namespace Bannerlord.BUTRLoader.Wrappers
     {
         private static readonly AccessTools.FieldRef<object, object>? GetInfo =
             AccessTools2.FieldRefAccess<object>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:Info") ??
-            AccessTools2.FieldRefAccess<object>("TaleWorlds.MountAndBlade.Launcher.Library.Info");
+            AccessTools2.FieldRefAccess<object>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:Info");
 
         private delegate string GetNameDelegate(object instance);
         private static readonly GetNameDelegate? GetName =

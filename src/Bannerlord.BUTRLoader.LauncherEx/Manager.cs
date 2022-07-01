@@ -34,10 +34,10 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             WidgetPrefabPatch.Enable(_launcherHarmony);
 
             GraphicsContextManager.Enable(_launcherHarmony);
-            GraphicsContextManager.CreateAndRegister("arrow_down", LoadRaw("Bannerlord.BUTRLoader.LauncherEx.Resources.Textures.arrow_down.png"));
-            GraphicsContextManager.CreateAndRegister("arrow_left", LoadRaw("Bannerlord.BUTRLoader.LauncherEx.Resources.Textures.arrow_left.png"));
-            GraphicsContextManager.CreateAndRegister("import", LoadRaw("Bannerlord.BUTRLoader.LauncherEx.Resources.Textures.import.png"));
-            GraphicsContextManager.CreateAndRegister("export", LoadRaw("Bannerlord.BUTRLoader.LauncherEx.Resources.Textures.export.png"));
+            GraphicsContextManager.CreateAndRegister("arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
+            GraphicsContextManager.CreateAndRegister("arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
+            GraphicsContextManager.CreateAndRegister("import", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.import.png"));
+            GraphicsContextManager.CreateAndRegister("export", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.export.png"));
 
             SpriteDataManager.Enable(_launcherHarmony);
             SpriteDataManager.CreateAndRegister("arrow_down");
@@ -46,10 +46,10 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             SpriteDataManager.CreateAndRegister("export");
 
             BrushFactoryManager.Enable(_launcherHarmony);
-            BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.LauncherEx.Resources.Brushes.Launcher.xml"));
+            BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
 
             WidgetFactoryManager.Enable(_launcherHarmony);
-            WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.LauncherEx.Resources.Prefabs.Launcher.Options.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
         }
         private static XmlDocument Load(string embedPath)
         {

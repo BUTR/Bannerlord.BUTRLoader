@@ -30,8 +30,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         private delegate void ExecuteConfirmUnverifiedDLLStartDelegate(object instance);
         private static readonly ExecuteConfirmUnverifiedDLLStartDelegate? ExecuteConfirmUnverifiedDLLStartOriginal =
-            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherUI:ExecuteConfirmUnverifiedDLLStart") ??
-            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:ExecuteConfirmUnverifiedDLLStart");
+            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherVM:ExecuteConfirmUnverifiedDLLStart") ??
+            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM:ExecuteConfirmUnverifiedDLLStart");
 
         private static readonly AccessTools.FieldRef<object, object>? UserDataManagerFieldRef =
             AccessTools2.FieldRefAccess<object>(LauncherVMWrapper.LauncherVMType!, "_userDataManager");
