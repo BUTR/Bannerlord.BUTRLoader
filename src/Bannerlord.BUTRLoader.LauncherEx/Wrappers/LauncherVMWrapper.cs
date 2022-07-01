@@ -14,7 +14,7 @@ namespace Bannerlord.BUTRLoader.Wrappers
         private delegate bool GetIsSingleplayerDelegate(object instance);
         private static readonly GetIsSingleplayerDelegate? GetIsSingleplayer =
             AccessTools2.GetPropertyGetterDelegate<GetIsSingleplayerDelegate>(LauncherVMType!, "IsSingleplayer");
-        
+
         private delegate void SetIsSingleplayerDelegate(object instance, bool value);
         private static readonly SetIsSingleplayerDelegate? SetIsSingleplayer =
             AccessTools2.GetPropertySetterDelegate<SetIsSingleplayerDelegate>(LauncherVMType!, "IsSingleplayer");
@@ -22,7 +22,7 @@ namespace Bannerlord.BUTRLoader.Wrappers
         private delegate bool GetIsMultiplayerDelegate(object instance);
         private static readonly GetIsMultiplayerDelegate? GetIsMultiplayer =
             AccessTools2.GetPropertyGetterDelegate<GetIsMultiplayerDelegate>(LauncherVMType!, "IsMultiplayer");
-        
+
         private delegate void SetIsMultiplayerDelegate(object instance, bool value);
         private static readonly SetIsMultiplayerDelegate? SetIsMultiplayer =
             AccessTools2.GetPropertySetterDelegate<SetIsMultiplayerDelegate>(LauncherVMType!, "IsMultiplayer");

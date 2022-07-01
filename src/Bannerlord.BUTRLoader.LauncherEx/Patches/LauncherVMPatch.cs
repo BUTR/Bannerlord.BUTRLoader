@@ -11,7 +11,7 @@ namespace Bannerlord.BUTRLoader.Patches
     {
         private static readonly Type? UserDataManagerType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserDataManager") ??
                                                              AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager");
-        
+
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(

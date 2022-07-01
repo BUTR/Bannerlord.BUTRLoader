@@ -8,7 +8,7 @@ namespace Bannerlord.BUTRLoader.Wrappers
         private static readonly GetIdDelegate? GetId =
             AccessTools2.GetPropertyGetterDelegate<GetIdDelegate>("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserModData:Id") ??
             AccessTools2.GetPropertyGetterDelegate<GetIdDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserModData:Id");
-        
+
         private delegate bool GetIsSelectedDelegate(object instance);
         private static readonly GetIsSelectedDelegate? GetIsSelected =
             AccessTools2.GetPropertyGetterDelegate<GetIsSelectedDelegate>("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserModData:IsSelected") ??

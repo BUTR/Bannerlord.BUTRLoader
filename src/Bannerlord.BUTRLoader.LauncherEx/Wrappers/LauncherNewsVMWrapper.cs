@@ -10,7 +10,7 @@ namespace Bannerlord.BUTRLoader.Wrappers
         private static readonly GetIsDisabledOnMultiplayerDelegate? GetIsDisabledOnMultiplayer =
             AccessTools2.GetPropertyGetterDelegate<GetIsDisabledOnMultiplayerDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherNewsVM:IsDisabledOnMultiplayer") ??
             AccessTools2.GetPropertyGetterDelegate<GetIsDisabledOnMultiplayerDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherNewsVM:IsDisabledOnMultiplayer");
-        
+
         private delegate void SetIsDisabledOnMultiplayerDelegate(object instance, bool value);
         private static readonly SetIsDisabledOnMultiplayerDelegate? SetIsDisabledOnMultiplayer =
             AccessTools2.GetPropertySetterDelegate<SetIsDisabledOnMultiplayerDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherNewsVM:IsDisabledOnMultiplayer") ??
