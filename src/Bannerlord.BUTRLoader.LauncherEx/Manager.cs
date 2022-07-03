@@ -36,14 +36,16 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             GraphicsContextManager.Enable(_launcherHarmony);
             GraphicsContextManager.CreateAndRegister("arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
             GraphicsContextManager.CreateAndRegister("arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
-            GraphicsContextManager.CreateAndRegister("import", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.import.png"));
             GraphicsContextManager.CreateAndRegister("export", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.export.png"));
+            GraphicsContextManager.CreateAndRegister("import", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.import.png"));
+            GraphicsContextManager.CreateAndRegister("refresh", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.refresh.png"));
 
             SpriteDataManager.Enable(_launcherHarmony);
             SpriteDataManager.CreateAndRegister("arrow_down");
             SpriteDataManager.CreateAndRegister("arrow_left");
             SpriteDataManager.CreateAndRegister("import");
             SpriteDataManager.CreateAndRegister("export");
+            SpriteDataManager.CreateAndRegister("refresh");
 
             BrushFactoryManager.Enable(_launcherHarmony);
             BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));

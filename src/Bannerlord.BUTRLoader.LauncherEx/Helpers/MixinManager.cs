@@ -4,6 +4,7 @@ using Bannerlord.BUTRLoader.Wrappers;
 using HarmonyLib.BUTR.Extensions;
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,15 +34,17 @@ namespace Bannerlord.BUTRLoader.Helpers
         public static void AddMixins(ViewModel launcherVM)
         {
             var wrapper = LauncherVMWrapper.Create(launcherVM);
+            if (wrapper.ModsData.Object is null) return;
 
-            AddMixin(wrapper.Object!, new LauncherVMMixin(launcherVM));
-            AddMixin(wrapper.ModsData.Object!, new LauncherModsVMMixin(wrapper.ModsData.Object!));
+            AddMixin(wrapper.Object, new LauncherVMMixin(launcherVM));
+            AddMixin(wrapper.ModsData.Object, new LauncherModsVMMixin(wrapper.ModsData.Object));
             foreach (var launcherModuleVM in wrapper.ModsData.Modules)
             {
+                if (launcherModuleVM.Object is null) continue;
                 AddMixin(launcherModuleVM.Object, new LauncherModuleVMMixin(launcherModuleVM.Object));
             }
 
-            if (wrapper.ModsData.Modules is IMBBindingList list)
+            if (wrapper.ModsData.ModulesRaw is IMBBindingList list)
             {
                 list.ListChanged += MixinManager_ListChanged;
             }
@@ -49,7 +52,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         private static void MixinManager_ListChanged(object sender, ListChangedEventArgs e)
         {
-            if (sender is not MBBindingList<ViewModel> list)
+            if (sender is not IList list)
                 return;
 
             if (e.ListChangedType == ListChangedType.Reset)
@@ -61,10 +64,8 @@ namespace Bannerlord.BUTRLoader.Helpers
                 }
             }
 
-            if (e.ListChangedType == ListChangedType.ItemAdded)
+            if (e.ListChangedType == ListChangedType.ItemAdded && list[e.NewIndex] is ViewModel entry)
             {
-                var entry = list[e.NewIndex];
-
                 AddMixin(entry, new LauncherModuleVMMixin(entry));
             }
         }

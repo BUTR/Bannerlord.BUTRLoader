@@ -116,7 +116,6 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     _state = TopTabs.Options;
 
                     _launcherVM.OnPropertyChangedWithValue(value, nameof(IsOptions));
-                    //_launcherVM.OnPropertyChanged(nameof(IsOptions));
                     _launcherVM.OnPropertyChanged(nameof(IsMultiplayer));
 
                     RandomImageSwitch = !RandomImageSwitch;

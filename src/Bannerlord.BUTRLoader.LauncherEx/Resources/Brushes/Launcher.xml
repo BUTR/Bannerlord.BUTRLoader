@@ -50,4 +50,18 @@
     </Styles>
   </Brush>
 
+  <Brush Name="Launcher.Refresh">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="refresh" Color="#E6C8A6FF" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Default" Sprite="refresh" Color="#FFFFFFFF" />
+      </Style>
+    </Styles>
+  </Brush>
+
 </Brushes>

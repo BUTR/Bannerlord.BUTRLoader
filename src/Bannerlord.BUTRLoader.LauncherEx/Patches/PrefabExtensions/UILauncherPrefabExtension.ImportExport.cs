@@ -25,7 +25,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     <ButtonWidget WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""40"" SuggestedHeight=""40""
                   VerticalAlignment=""Bottom""
                   MarginLeft =""3"" MarginRight=""3"" MarginTop=""3"" MarginBottom=""3""
-                  Brush=""Launcher.Import"" IsHidden=""@IsMultiplayer"" DoNotPassEventsToChildren=""true""
+                  Brush=""Launcher.Import"" IsHidden=""@IsMultiplayer""
                   Command.Click=""ExecuteImport"" Command.HoverBegin=""ExecuteBeginHintImport"" Command.HoverEnd=""ExecuteEndHint""/>
 
     <ButtonWidget WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""40"" SuggestedHeight=""40""

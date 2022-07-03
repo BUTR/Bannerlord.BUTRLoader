@@ -1,4 +1,5 @@
-﻿using HarmonyLib.BUTR.Extensions;
+﻿using HarmonyLib;
+using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections;
@@ -10,6 +11,10 @@ namespace Bannerlord.BUTRLoader.Wrappers
 {
     internal sealed class LauncherModsVMWrapper
     {
+        private static readonly AccessTools.FieldRef<object, object> GetUserDataManager =
+            AccessTools2.FieldRefAccess<object>("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:_userDataManager") ??
+            AccessTools2.FieldRefAccess<object>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:_userDataManager");
+
         private delegate IList GetModulesDelegate(object instance);
         private static readonly GetModulesDelegate? GetModules =
             AccessTools2.GetPropertyGetterDelegate<GetModulesDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:Modules") ??
@@ -27,6 +32,8 @@ namespace Bannerlord.BUTRLoader.Wrappers
 
         public static LauncherModsVMWrapper Create(object? @object) => new(@object);
 
+        public UserDataManagerWrapper? UserDataManager => Object is not null ? UserDataManagerWrapper.Create(GetUserDataManager?.Invoke(Object)) : null ;
+        
         public bool IsDisabledOnMultiplayer
         {
             get => Object is not null ? GetIsDisabledOnMultiplayer?.Invoke(Object) ?? false : false;

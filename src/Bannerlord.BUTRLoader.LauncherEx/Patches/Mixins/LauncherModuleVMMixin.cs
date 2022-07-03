@@ -112,11 +112,17 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             // Remove danger warnings
             IsDangerous2 = false;
+
+            _launcherModuleVM.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == "Refresh_Command")
+                    UpdateIssues();
+            };
         }
 
         public void UpdateIssues()
         {
-            IssuesText = LauncherModsVMPatch.Issues.TryGetValue(_moduleId, out var issues) && issues.Count > 0
+            IssuesText = IssueStorage.Issues.TryGetValue(_moduleId, out var issues) && issues.Count > 0
                 ? string.Join("\n", issues)
                 : string.Empty;
         }
