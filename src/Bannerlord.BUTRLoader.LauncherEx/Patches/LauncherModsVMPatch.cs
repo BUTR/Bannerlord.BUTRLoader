@@ -1,5 +1,4 @@
-﻿using Bannerlord.BUTR.Shared.Extensions;
-using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
 using Bannerlord.BUTRLoader.Wrappers;
 using Bannerlord.ModuleManager;
@@ -20,8 +19,6 @@ using TaleWorlds.Library;
 
 using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper2;
 
-using ApplicationVersion = Bannerlord.ModuleManager.ApplicationVersion;
-
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
@@ -34,16 +31,17 @@ namespace Bannerlord.BUTRLoader.Patches
             AccessTools2.TypeByName("TaleWorlds.Library.ModuleInfo") ??
             AccessTools2.TypeByName("TaleWorlds.ModuleManager.ModuleInfo"));
 
-        internal delegate IEnumerable CastDelegate(IEnumerable instance);
-        internal static readonly CastDelegate? CastMethod =
+        private delegate IEnumerable CastDelegate(IEnumerable instance);
+        private static readonly CastDelegate? CastMethod =
             AccessTools2.GetDelegate<CastDelegate>(CastModuleInfoMethodInfo!);
 
-        internal delegate IEnumerable ToListDelegate(IEnumerable instance);
-        internal static readonly ToListDelegate? ToListMethod =
+        private delegate IEnumerable ToListDelegate(IEnumerable instance);
+        private static readonly ToListDelegate? ToListMethod =
             AccessTools2.GetDelegate<ToListDelegate>(ToListModuleInfoMethodInfo!);
 
         private static readonly MethodInfo? GetDependentModulesOfMethodInfo =
             AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:GetDependentModulesOf") ??
+            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:GetDependentModulesOf") ??
             AccessTools2.DeclaredMethod("TaleWorlds.ModuleManager.ModuleHelper:GetDependentModulesOf");
 
         private static readonly MethodInfo? IsAllDependenciesOfModulePresentMethodInfo =
@@ -53,6 +51,11 @@ namespace Bannerlord.BUTRLoader.Patches
         private static readonly MethodInfo? ChangeIsSelectedOfMethodInfo =
             AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:ChangeIsSelectedOf") ??
             AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:ChangeIsSelectedOf");
+        
+        private static readonly MethodInfo? LoadSubModulesMethodInfo =
+            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:LoadSubModules") ??
+            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:LoadSubModules");
+        
 
         public static bool Enable(Harmony harmony)
         {
@@ -70,6 +73,11 @@ namespace Bannerlord.BUTRLoader.Patches
                 ChangeIsSelectedOfMethodInfo,
                 prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:ChangeIsSelectedOfPrefix"));
             if (!res3) return false;
+            
+            var res4 = harmony.TryPatch(
+                LoadSubModulesMethodInfo,
+                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:LoadSubModulesPrefix"));
+            if (!res4) return false;
 
             return true;
         }
@@ -87,11 +95,39 @@ namespace Bannerlord.BUTRLoader.Patches
             harmony.Unpatch(
                 ChangeIsSelectedOfMethodInfo,
                 AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:ChangeIsSelectedOfPrefix"));
+            
+            harmony.Unpatch(
+                LoadSubModulesMethodInfo,
+                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:LoadSubModulesPrefix"));
         }
+        
+        private static Func<ModuleInfoExtended?, bool> GetIsSelected(LauncherModsVMWrapper instance) => module =>
+        {
+            if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)
+                return wrapper.IsSelected;
+            return false;
+        };
+        private static Action<ModuleInfoExtended?, bool> SetIsSelected(LauncherModsVMWrapper instance) => (module, value) =>
+        {
+            if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)
+                wrapper.IsSelected = value;
+        };
+        private static Func<ModuleInfoExtended?, bool> GetIsDisabled(LauncherModsVMWrapper instance) => module =>
+        {
+            if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)
+                return wrapper.IsDisabled;
+            return false;
+        };
+        private static Action<ModuleInfoExtended?, bool> SetIsDisabled(LauncherModsVMWrapper instance) => (module, value) =>
+        {
+            if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)
+                wrapper.IsDisabled = value;
+        };
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetDependentModulesOfPrefix(IEnumerable<object> source, object module, ref IEnumerable __result)
         {
@@ -99,19 +135,20 @@ namespace Bannerlord.BUTRLoader.Patches
                 return true;
 
             var extendedModuleInfo = GetExtendedModuleInfo(module);
-            if (extendedModuleInfo is null) return true; // Exception
+            if (extendedModuleInfo is null) return true;
 
             var sourceList = source.ToList();
             var extendedSourceList = sourceList.ConvertAll(GetExtendedModuleInfo);
             // Any incorrect module will be null. Filter it out
-            while (extendedSourceList.IndexOf(null!) is var idx && idx != -1)
+            while (extendedSourceList.IndexOf(null) is var idx && idx != -1)
             {
                 sourceList.RemoveAt(idx);
                 extendedSourceList.RemoveAt(idx);
             }
 
-            var extendedDependencies = ModuleSorter.GetDependentModulesOf(extendedSourceList, extendedModuleInfo).Except(new[] { extendedModuleInfo });
-            var dependencies = extendedDependencies.Select(em => sourceList.Find(m => ModuleInfoWrapper.Create(m).Id == em.Id));
+            var validModules = ValidModules.Where(kv => kv.Value).Select(x => x.Key).ToArray();
+            var extendedDependencies = ModuleUtilities.GetDependencies(validModules, extendedModuleInfo).Except(new[] { extendedModuleInfo });
+            var dependencies = extendedDependencies.Select(em => sourceList.Find(m => ModuleInfoWrapper.Create(m).Id == em.Id)).Where(x => x is not null);
 
             var castedItems = CastMethod.Invoke(dependencies);
             __result = ToListMethod.Invoke(castedItems);
@@ -126,7 +163,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool AreAllDependenciesOfModulePresentPrefix(object __instance, object info, List<object> ____modulesCache, ref bool __result)
+        private static bool AreAllDependenciesOfModulePresentPrefix(object __instance, object info, ref bool __result)
         {
             if (!LauncherSettings.ExtendedSorting)
                 return true;
@@ -142,12 +179,13 @@ namespace Bannerlord.BUTRLoader.Patches
             // External dependencies should not disable a mod. Instead, they itself should be disabled
             __result = true;
             var visited = new HashSet<ModuleInfoExtended>();
-            foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, info2, visited, new ModuleSorterOptions { SkipOptionals = true, SkipExternalDependencies = true }))
+            var opt = new ModuleSorterOptions { SkipOptionals = true, SkipExternalDependencies = true };
+            foreach (var dependency in ModuleUtilities.GetDependencies(ExtendedModuleInfoCache.Values, info2, visited, opt))
             {
-                if (!ModuleIsCorrect(wrapped, dependency, ____modulesCache, visited))
+                if (!ModuleIsCorrect(wrapped, dependency, visited))
                 {
                     if (dependency != info2)
-                        AppendIssue(wrapped, info2, $"'{dependency.Name}' has unresolved issues!");
+                        IssueStorage.AppendIssue(wrapped, info2, $"'{dependency.Name}' has unresolved issues!");
 
                     __result = false;
                     return false;
@@ -155,386 +193,122 @@ namespace Bannerlord.BUTRLoader.Patches
             }
             return false;
         }
-        private static bool AreAllDependenciesOfModulePresent(object? launcherModsVM, object? moduleInfo, List<object> modulesCache)
+        private static bool AreAllDependenciesOfModulePresent(object launcherModsVM, object moduleInfo)
         {
             var result = false;
-            AreAllDependenciesOfModulePresentPrefix(launcherModsVM, moduleInfo, modulesCache, ref result);
+            AreAllDependenciesOfModulePresentPrefix(launcherModsVM, moduleInfo, ref result);
             return result;
         }
+
         private static bool CheckModuleCompatibility(LauncherModsVMWrapper instance, ModuleInfoExtended moduleInfoExtended)
         {
-            static bool CheckIfSubModuleCanBeLoaded(SubModuleInfoExtended subModuleInfo)
-            {
-                if (subModuleInfo.Tags.Count > 0)
-                {
-                    foreach (var (key, values) in subModuleInfo.Tags)
-                    {
-                        if (!Enum.TryParse<SubModuleTags>(key, out var tag))
-                            continue;
-
-                        foreach (var value in values)
-                        {
-                            if (!GetSubModuleTagValiditiy(tag, value))
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                    return true;
-                }
-                return true;
-            }
-            static bool GetSubModuleTagValiditiy(SubModuleTags tag, string value) => tag switch
-            {
-                SubModuleTags.RejectedPlatform => !Enum.TryParse<Platform>(value, out var platform) || ApplicationPlatform.CurrentPlatform != platform,
-                SubModuleTags.ExclusivePlatform => !Enum.TryParse<Platform>(value, out var platform) || ApplicationPlatform.CurrentPlatform == platform,
-                SubModuleTags.DependantRuntimeLibrary => !Enum.TryParse<Runtime>(value, out var runtime) || ApplicationPlatform.CurrentRuntimeLibrary == runtime,
-                SubModuleTags.IsNoRenderModeElement => value.Equals("false"),
-                SubModuleTags.DedicatedServerType => value.ToLower() switch
-                {
-                    "none" => true,
-                    _ => false
-                },
-                _ => true
-            };
-
             foreach (var subModule in moduleInfoExtended.SubModules.Where(CheckIfSubModuleCanBeLoaded))
             {
                 var asm = Path.GetFullPath(Path.Combine(BasePath.Name, "Modules", moduleInfoExtended.Id, "bin", "Win64_Shipping_Client", subModule.DLLName));
                 switch (Manager._compatibilityChecker.CheckAssembly(asm))
                 {
                     case CheckResult.TypeLoadException:
-                        AppendIssue(instance, moduleInfoExtended, "Not binary compatible with the current game version!");
+                        IssueStorage.AppendIssue(instance, moduleInfoExtended, "Not binary compatible with the current game version!");
                         return false;
                     case CheckResult.ReflectionTypeLoadException:
-                        AppendIssue(instance, moduleInfoExtended, "Not binary compatible with the current game version!");
+                        IssueStorage.AppendIssue(instance, moduleInfoExtended, "Not binary compatible with the current game version!");
                         return false;
                     case CheckResult.GenericException:
-                        AppendIssue(instance, moduleInfoExtended, "There was an error checking for binary compatibility with the current game version");
+                        IssueStorage.AppendIssue(instance, moduleInfoExtended, "There was an error checking for binary compatibility with the current game version");
                         return false;
                 }
             }
 
             return true;
         }
-        private static bool ModuleIsCorrect(LauncherModsVMWrapper instance, ModuleInfoExtended moduleInfoExtended, List<object> modules, HashSet<ModuleInfoExtended> visited)
+        private static bool ModuleIsCorrect(LauncherModsVMWrapper instance, ModuleInfoExtended moduleInfoExtended, HashSet<ModuleInfoExtended> visited)
         {
             if (!CheckModuleCompatibility(instance, moduleInfoExtended))
+            {
+                ValidModules[moduleInfoExtended] = false;
+                SetIsDisabled(instance)(moduleInfoExtended, false);
                 return false;
-
-            // Check that all dependencies are present
-            foreach (var dependency in moduleInfoExtended.DependentModules)
-            {
-                if (dependency.IsOptional) continue;
-
-                if (!ExtendedModuleInfoCache.ContainsKey(dependency.Id))
-                {
-                    AppendIssue(instance, moduleInfoExtended, $"Missing {dependency.Id} {dependency.Version}");
-                    return false;
-                }
             }
-            foreach (var metadata in moduleInfoExtended.DependentModuleMetadatas)
+            
+            var validationResult = ModuleUtilities.ValidateModule(ExtendedModuleInfoCache.Values, moduleInfoExtended, visited, GetIsSelected(instance)).ToList();
+
+            if (validationResult.Count > 0)
             {
-                // Ignore the check for Optional
-                if (metadata.IsOptional) continue;
-
-                if (metadata.IsIncompatible) continue;
-
-                if (!ExtendedModuleInfoCache.ContainsKey(metadata.Id))
+                ValidModules[moduleInfoExtended] = false;
+                SetIsDisabled(instance)(moduleInfoExtended, false);
+                foreach (var issue in validationResult)
                 {
-                    if (metadata.Version != ApplicationVersion.Empty)
-                        AppendIssue(instance, moduleInfoExtended, $"Missing {metadata.Id} {metadata.Version}");
-                    if (metadata.VersionRange != ApplicationVersionRange.Empty)
-                        AppendIssue(instance, moduleInfoExtended, $"Missing {metadata.Id} {metadata.VersionRange}");
-                    return false;
+                    IssueStorage.AppendIssue(instance, issue.Target, issue.Reason);
                 }
+                return false;
             }
-
-            // Check that the dependencies themselves have all dependencies present
-            foreach (var dependency in ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, moduleInfoExtended, visited, new ModuleSorterOptions { SkipOptionals = true, SkipExternalDependencies = true }).ToArray())
+            else
             {
-                var metadata = moduleInfoExtended.DependentModuleMetadatas.FirstOrDefault(dmm => dmm.Id == dependency.Id);
-
-                // Not found
-                if (metadata is null) continue;
-
-                // Handle only direct dependencies
-                if (metadata.LoadType != LoadType.LoadBeforeThis) continue;
-
-                // Ignore the check for Optional
-                if (metadata.IsOptional) continue;
-
-                // Ignore the check for Incompatible
-                if (metadata.IsIncompatible) continue;
-
-                var module = modules.Find(m => ModuleInfoWrapper.Create(m).Id == dependency.Id);
-                var moduleIsCorrect = ModuleIsCorrect(instance, GetExtendedModuleInfo(module), modules, visited);
-                //if (!moduleIsCorrect)
-                //    return false;
-                // Handle only direct dependencies
-                if (metadata.LoadType != LoadType.LoadAfterThis && !moduleIsCorrect)
-                {
-                    AppendIssue(instance, moduleInfoExtended, $"'{dependency.Name}' has unresolved issues!");
-                    return false;
-                }
+                ValidModules[moduleInfoExtended] = true;
+                IssueStorage.ClearIssues(instance, moduleInfoExtended);
+                return true;
             }
-
-            // Check that the dependencies have the minimum required version set by DependedModuleMetadatas
-            var comparer = new ApplicationVersionComparer();
-            foreach (var metadata in moduleInfoExtended.DependentModuleMetadatas.Where(m => /*!m.IsOptional &&*/ !m.IsIncompatible))
-            {
-                // Handle only direct dependencies
-                if (metadata.LoadType != LoadType.LoadBeforeThis) continue;
-
-                // Ignore the check for non-provided versions
-                if (metadata.Version == ApplicationVersion.Empty && metadata.VersionRange == ApplicationVersionRange.Empty) continue;
-
-                if (!ExtendedModuleInfoCache.TryGetValue(metadata.Id, out var dependedModule) && metadata.IsOptional) continue;
-
-                if (metadata.Version != ApplicationVersion.Empty)
-                {
-                    // dependedModuleMetadata.Version > dependedModule.Version
-                    if (!metadata.IsOptional && (comparer.Compare(metadata.Version, dependedModule?.Version) > 0))
-                    {
-                        AppendIssue(instance, moduleInfoExtended, $"'{dependedModule?.Name}' wrong version <= {metadata.Version}");
-                        return false;
-                    }
-                }
-
-                if (metadata.VersionRange != ApplicationVersionRange.Empty)
-                {
-                    // dependedModuleMetadata.Version > dependedModule.VersionRange.Min
-                    // dependedModuleMetadata.Version < dependedModule.VersionRange.Max
-                    if (!metadata.IsOptional)
-                    {
-                        if (comparer.Compare(metadata.VersionRange.Min, dependedModule?.Version) > 0)
-                        {
-                            AppendIssue(instance, moduleInfoExtended, $"'{dependedModule?.Name}' wrong version < [{metadata.VersionRange}]");
-                            return false;
-                        }
-                        if (comparer.Compare(metadata.VersionRange.Max, dependedModule?.Version) < 0)
-                        {
-                            AppendIssue(instance, moduleInfoExtended, $"'{dependedModule?.Name}' wrong version > [{metadata.VersionRange}]");
-                            return false;
-                        }
-                    }
-                }
-            }
-
-            // Do not load this mod if an incompatible mod is selected
-            foreach (var dependency in moduleInfoExtended.IncompatibleModules)
-            {
-                var moduleVM2 = instance.Modules.FirstOrDefault(m => m.Info?.Id == dependency.Id);
-
-                // If the incompatible mod is selected, this mod is disabled
-                if (moduleVM2?.IsSelected == true)
-                {
-                    AppendIssue(instance, moduleInfoExtended, $"'{moduleVM2.Name}' is incompatible with this");
-                    return false;
-                }
-            }
-            foreach (var metadata in moduleInfoExtended.DependentModuleMetadatas.Where(m => m.IsIncompatible))
-            {
-                var moduleVM2 = instance.Modules.FirstOrDefault(m => m.Info?.Id == metadata.Id);
-
-                // If the incompatible mod is selected, this mod is disabled
-                if (moduleVM2?.IsSelected == true)
-                {
-                    AppendIssue(instance, moduleInfoExtended, $"'{moduleVM2.Name}' is incompatible with this");
-                    return false;
-                }
-            }
-
-            // If another mod declared incompatibility and is selected, disable this
-            foreach (var (key, moduleInfo) in ExtendedModuleInfoCache)
-            {
-                if (key == moduleInfoExtended.Id) continue;
-
-                //if (!moduleInfo.IsSelected) continue;
-
-                foreach (var metadata in moduleInfo.DependentModuleMetadatas.Where(m => m.IsIncompatible && m.Id == moduleInfoExtended.Id))
-                {
-                    var moduleVM2 = instance.Modules.FirstOrDefault(m => m.Info?.Id == key);
-
-                    // If the incompatible mod is selected, this mod is disabled
-                    if (moduleVM2?.IsSelected == true)
-                    {
-                        AppendIssue(instance, moduleInfoExtended, $"'{moduleVM2.Name}' is incompatible with this");
-                        return false;
-                    }
-                }
-            }
-
-            ClearIssues(instance, moduleInfoExtended);
-            return true;
         }
 
         [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool ChangeIsSelectedOfPrefix(object __instance, object targetModule, List<object> ____modulesCache)
+        private static bool ChangeIsSelectedOfPrefix(object __instance, object targetModule)
         {
             if (!LauncherSettings.ExtendedSorting)
                 return true;
 
-            var wrapped = LauncherModsVMWrapper.Create(__instance);
             var targetModuleWrapped = LauncherModuleVMWrapper.Create(targetModule);
-
-            if (!AreAllDependenciesOfModulePresent(wrapped.Object, targetModuleWrapped.Info?.Object, ____modulesCache))
+            if (LauncherModuleVMWrapper.Create(targetModule) is not { Info.Object: { } obj } || !AreAllDependenciesOfModulePresent(__instance, obj))
             {
                 // Direct and current External Dependencies are not valid, do nothing
                 return false;
             }
 
-            var visited = new HashSet<ModuleInfoExtended>();
-            ChangeIsSelectedOf(wrapped, targetModuleWrapped, ____modulesCache, visited);
+            var wrapped = LauncherModsVMWrapper.Create(__instance);
+            ChangeIsSelectedOf(wrapped, targetModuleWrapped);
 
             return false;
         }
-        private static void ChangeIsSelectedOf(LauncherModsVMWrapper instance, LauncherModuleVMWrapper targetModule, List<object> modules, HashSet<ModuleInfoExtended> visited)
+        
+        private static void ChangeIsSelectedOf(LauncherModsVMWrapper instance, LauncherModuleVMWrapper targetModule)
         {
-            var opt = new ModuleSorterOptions { SkipOptionals = true, SkipExternalDependencies = true };
-
-            var targetModuleInfoExtended = GetExtendedModuleInfo(targetModule?.Info);
-            var dependencies = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, targetModuleInfoExtended, visited, opt).ToArray();
-
-            targetModule.IsSelected = !targetModule.IsSelected;
-
-            if (targetModule.IsSelected)
+            if (targetModule.Info is not { } info || GetExtendedModuleInfo(info) is not { } targetModuleInfoExtended) return;
+            
+            var validModules = ValidModules.Where(kv => kv.Value).Select(x => x.Key).ToArray();
+            var result = ToggleModuleSelection(validModules, targetModuleInfoExtended, GetIsSelected(instance), SetIsSelected(instance), GetIsDisabled(instance), SetIsDisabled(instance)).ToList();
+            foreach (var issue in result)
             {
-                // Vanilla check
-                // Select all dependencies if they are not selected
-                foreach (var module in instance.Modules)
-                {
-                    var moduleId = module.Info?.Id ?? string.Empty;
-                    if (!module.IsSelected && dependencies.Any(d => d.Id == moduleId))
-                        ChangeIsSelectedOf(instance, module, modules, visited);
-                    //module.IsSelected |= allDependencies.Any(id => id == module.Info.Id);
-                }
-
-                // Deselect and disable any mod that is incompatible with this one
-                foreach (var dmm in targetModuleInfoExtended.DependentModuleMetadatas.Where(dmm => dmm.IsIncompatible))
-                {
-                    var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => m.Info?.Id == dmm.Id);
-                    if (incompatibleModuleVM is not null)
-                    {
-                        if (incompatibleModuleVM.IsSelected)
-                            ChangeIsSelectedOf(instance, incompatibleModuleVM, modules, visited);
-
-                        incompatibleModuleVM.IsDisabled = true;
-                        AppendIssue(incompatibleModuleVM, $"'{targetModuleInfoExtended.Name}' is incompatible with this");
-                    }
-                }
-
-                // Disable any mod that declares this mod as incompatible
-                foreach (var (key, moduleInfo) in ExtendedModuleInfoCache)
-                {
-                    foreach (var dmm in moduleInfo.DependentModuleMetadatas.Where(dmm => dmm.IsIncompatible && dmm.Id == targetModuleInfoExtended.Id))
-                    {
-                        var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => m.Info?.Id == key);
-                        if (incompatibleModuleVM is not null)
-                        {
-                            if (incompatibleModuleVM.IsSelected)
-                                ChangeIsSelectedOf(instance, incompatibleModuleVM, modules, visited);
-
-                            // We need to re-check that everything is alright with the external dependency
-                            incompatibleModuleVM.IsDisabled |= !AreAllDependenciesOfModulePresent(instance, incompatibleModuleVM.Info?.Object, modules);
-                        }
-                    }
-                }
+                IssueStorage.AppendIssue(instance, issue.Target, issue.Reason);
+            }
+        }
+        private static IEnumerable<ModuleIssue> ToggleModuleSelection(IReadOnlyCollection<ModuleInfoExtended> modules, ModuleInfoExtended targetModule, Func<ModuleInfoExtended, bool> getSelected, Action<ModuleInfoExtended, bool> setSelected, Func<ModuleInfoExtended, bool> getDisabled, Action<ModuleInfoExtended, bool> setDisabled)
+        {
+            if (getSelected(targetModule))
+            {
+                foreach (var issue in ModuleUtilities.DisableModule(modules, targetModule, getSelected, setSelected, getDisabled, setDisabled))
+                    yield return issue;
             }
             else
             {
-                // Vanilla check
-                // Deselect all modules that depend on this module if they are selected
-                foreach (var module in instance.Modules/*.Where(m => !m.IsOfficial)*/)
-                {
-                    var moduleInfoExtended = GetExtendedModuleInfo(module?.Info);
-                    var dependencies2 = ModuleSorter.GetDependentModulesOf(ExtendedModuleInfoCache.Values, moduleInfoExtended, opt);
-                    if (module.IsSelected && dependencies2.Any(d => d.Id == targetModuleInfoExtended.Id))
-                        ChangeIsSelectedOf(instance, module, modules, visited);
-                }
-
-                // Enable for selection any mod that is incompatible with this one
-                foreach (var dmm in targetModuleInfoExtended.DependentModuleMetadatas.Where(dmm => dmm.IsIncompatible))
-                {
-                    var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => m.Info?.Id == dmm.Id);
-                    if (incompatibleModuleVM is not null)
-                    {
-                        incompatibleModuleVM.IsDisabled = false;
-                        ClearIssues(incompatibleModuleVM);
-                    }
-                }
-
-                // Check if any mod that declares this mod as incompatible can be Enabled
-                foreach (var (key, moduleInfo) in ExtendedModuleInfoCache)
-                {
-                    foreach (var dmm in moduleInfo.DependentModuleMetadatas.Where(dmm => dmm.IsIncompatible && dmm.Id == targetModuleInfoExtended.Id))
-                    {
-                        var incompatibleModuleVM = instance.Modules.FirstOrDefault(m => m.Info?.Id == key);
-                        if (incompatibleModuleVM is not null)
-                        {
-                            // We need to re-check that everything is alright with the external dependency
-                            incompatibleModuleVM.IsDisabled &= !AreAllDependenciesOfModulePresent(instance, incompatibleModuleVM.Info?.Object, modules);
-                        }
-                    }
-                }
+                foreach (var issue in ModuleUtilities.EnableModule(modules, targetModule, getSelected, setSelected, getDisabled, setDisabled))
+                    yield return issue;
             }
-
-            //targetModule.IsDisabled = !AreAllDependenciesOfModulePresent(instance, targetModule.Info, modules);
         }
 
-
-        public static void AppendIssue(LauncherModsVMWrapper viewModelWrapper, ModuleInfoExtended ModuleInfoExtended, string issue)
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
+        [SuppressMessage("ReSharper", "RedundantAssignment")]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void LoadSubModulesPrefix(object __instance)
         {
-            //viewModelWrapper.ExecuteCommand("SetIssue", new object[] { ModuleInfoExtended.Id,  new string[] { issue } });
-            SetIssue(ModuleInfoExtended.Id, new[] { issue });
-
-            var moduleVM = viewModelWrapper.Modules.FirstOrDefault(m => m.Info?.Id == ModuleInfoExtended.Id);
-            moduleVM?.ExecuteCommand("UpdateIssues", Array.Empty<object>());
-        }
-        public static void AppendIssue(LauncherModuleVMWrapper viewModelWrapper, string issue)
-        {
-            var id = viewModelWrapper.Info?.Id ?? string.Empty;
-            SetIssue(id, new[] { issue });
-
-            viewModelWrapper.ExecuteCommand("UpdateIssues", Array.Empty<object>());
-        }
-        public static void ClearIssues(LauncherModsVMWrapper viewModelWrapper, ModuleInfoExtended ModuleInfoExtended)
-        {
-            //Issues.Remove(ModuleInfoExtended.Id);
-            if (Issues.TryGetValue(ModuleInfoExtended.Id, out var list))
-                list.Clear();
-
-            var moduleVM = viewModelWrapper.Modules.FirstOrDefault(m => m.Info?.Id == ModuleInfoExtended.Id);
-            moduleVM?.ExecuteCommand("UpdateIssues", Array.Empty<object>());
-        }
-        public static void ClearIssues(LauncherModuleVMWrapper viewModelWrapper)
-        {
-            var id = viewModelWrapper.Info?.Id ?? string.Empty;
-
-            //Issues.Remove(ModuleInfoExtended.Id);
-            if (Issues.TryGetValue(id, out var list))
-                list.Clear();
-
-            viewModelWrapper.ExecuteCommand("UpdateIssues", Array.Empty<object>());
-        }
-
-        public static Dictionary<string, HashSet<string>> Issues = new();
-        private static void SetIssue(string moduleId, string[] issues)
-        {
-            if (Issues.TryGetValue(moduleId, out var list))
+            var wrapped = LauncherModsVMWrapper.Create(__instance);
+            foreach (var module in wrapped.Modules.Select(x => x.Object).OfType<ViewModel>())
             {
-                foreach (var issue in issues)
-                {
-                    if (!list.Contains(issue))
-                        list.Add(issue);
-                }
-            }
-            else
-            {
-                Issues.Add(moduleId, new HashSet<string>(issues));
+                module.OnPropertyChanged("Refresh_Command");
             }
         }
     }
