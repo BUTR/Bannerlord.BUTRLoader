@@ -25,7 +25,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 Issues.Add(moduleId, new HashSet<string>(issues));
             }
         }
-        
+
         public static void AppendIssue(LauncherModsVMWrapper viewModelWrapper, ModuleInfoExtended ModuleInfoExtended, string issue)
         {
             //viewModelWrapper.ExecuteCommand("SetIssue", new object[] { ModuleInfoExtended.Id,  new string[] { issue } });

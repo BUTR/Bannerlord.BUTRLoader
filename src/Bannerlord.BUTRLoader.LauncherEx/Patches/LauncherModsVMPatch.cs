@@ -51,11 +51,11 @@ namespace Bannerlord.BUTRLoader.Patches
         private static readonly MethodInfo? ChangeIsSelectedOfMethodInfo =
             AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:ChangeIsSelectedOf") ??
             AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:ChangeIsSelectedOf");
-        
+
         private static readonly MethodInfo? LoadSubModulesMethodInfo =
             AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:LoadSubModules") ??
             AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:LoadSubModules");
-        
+
 
         public static bool Enable(Harmony harmony)
         {
@@ -73,7 +73,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 ChangeIsSelectedOfMethodInfo,
                 prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:ChangeIsSelectedOfPrefix"));
             if (!res3) return false;
-            
+
             var res4 = harmony.TryPatch(
                 LoadSubModulesMethodInfo,
                 prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:LoadSubModulesPrefix"));
@@ -95,12 +95,12 @@ namespace Bannerlord.BUTRLoader.Patches
             harmony.Unpatch(
                 ChangeIsSelectedOfMethodInfo,
                 AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:ChangeIsSelectedOfPrefix"));
-            
+
             harmony.Unpatch(
                 LoadSubModulesMethodInfo,
                 AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:LoadSubModulesPrefix"));
         }
-        
+
         private static Func<ModuleInfoExtended?, bool> GetIsSelected(LauncherModsVMWrapper instance) => module =>
         {
             if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)
@@ -229,7 +229,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 SetIsDisabled(instance)(moduleInfoExtended, false);
                 return false;
             }
-            
+
             var validationResult = ModuleUtilities.ValidateModule(ExtendedModuleInfoCache.Values, moduleInfoExtended, visited, GetIsSelected(instance)).ToList();
 
             if (validationResult.Count > 0)
@@ -272,11 +272,11 @@ namespace Bannerlord.BUTRLoader.Patches
 
             return false;
         }
-        
+
         private static void ChangeIsSelectedOf(LauncherModsVMWrapper instance, LauncherModuleVMWrapper targetModule)
         {
             if (targetModule.Info is not { } info || GetExtendedModuleInfo(info) is not { } targetModuleInfoExtended) return;
-            
+
             var validModules = ValidModules.Where(kv => kv.Value).Select(x => x.Key).ToArray();
             var result = ToggleModuleSelection(validModules, targetModuleInfoExtended, GetIsSelected(instance), SetIsSelected(instance), GetIsDisabled(instance), SetIsDisabled(instance)).ToList();
             foreach (var issue in result)
