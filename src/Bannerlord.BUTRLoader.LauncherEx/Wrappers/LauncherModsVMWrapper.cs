@@ -32,8 +32,8 @@ namespace Bannerlord.BUTRLoader.Wrappers
 
         public static LauncherModsVMWrapper Create(object? @object) => new(@object);
 
-        public UserDataManagerWrapper? UserDataManager => Object is not null ? UserDataManagerWrapper.Create(GetUserDataManager?.Invoke(Object)) : null ;
-        
+        public UserDataManagerWrapper? UserDataManager => Object is not null ? UserDataManagerWrapper.Create(GetUserDataManager?.Invoke(Object)) : null;
+
         public bool IsDisabledOnMultiplayer
         {
             get => Object is not null ? GetIsDisabledOnMultiplayer?.Invoke(Object) ?? false : false;
