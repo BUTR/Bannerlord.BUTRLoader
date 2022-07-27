@@ -16,7 +16,11 @@ namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class ModuleInfoHelper2
     {
-        internal static readonly Dictionary<string, ModuleInfoExtended> ExtendedModuleInfoCache = new();
+        internal static readonly Dictionary<string, ModuleInfoExtended> ExtendedModuleInfoCache = new()
+        {
+            // Not a real module, we declare this way our launcher capabilities
+            { "BUTRLoader.BUTRLoadingInterceptor", new ModuleInfoExtended { Id = "BUTRLoader.BUTRLoadingInterceptor" } }
+        };
         internal static readonly Dictionary<ModuleInfoExtended, bool> ValidModules = new();
 
         public static ModuleInfoExtended? GetExtendedModuleInfo(object moduleInfo) => GetExtendedModuleInfo(ModuleInfoWrapper.Create(moduleInfo));

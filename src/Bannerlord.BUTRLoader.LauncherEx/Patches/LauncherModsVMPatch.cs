@@ -24,8 +24,8 @@ namespace Bannerlord.BUTRLoader.Patches
     internal static class LauncherModsVMPatch
     {
         private static readonly MethodInfo? CastModuleInfoMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(
-                AccessTools2.TypeByName("TaleWorlds.Library.ModuleInfo") ??
-                AccessTools2.TypeByName("TaleWorlds.ModuleManager.ModuleInfo"));
+            AccessTools2.TypeByName("TaleWorlds.Library.ModuleInfo") ??
+            AccessTools2.TypeByName("TaleWorlds.ModuleManager.ModuleInfo"));
 
         private static readonly MethodInfo? ToListModuleInfoMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(
             AccessTools2.TypeByName("TaleWorlds.Library.ModuleInfo") ??
@@ -103,6 +103,9 @@ namespace Bannerlord.BUTRLoader.Patches
         
         private static Func<ModuleInfoExtended?, bool> GetIsSelected(LauncherModsVMWrapper instance) => module =>
         {
+            if (module is not null && module.Id.Equals("BUTRLoader.BUTRLoadingInterceptor", StringComparison.Ordinal)) 
+                return false;
+            
             if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)
                 return wrapper.IsSelected;
             return false;
@@ -114,6 +117,9 @@ namespace Bannerlord.BUTRLoader.Patches
         };
         private static Func<ModuleInfoExtended?, bool> GetIsDisabled(LauncherModsVMWrapper instance) => module =>
         {
+            if (module is not null && module.Id.Equals("BUTRLoader.BUTRLoadingInterceptor", StringComparison.Ordinal)) 
+                return false;
+
             if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)
                 return wrapper.IsDisabled;
             return false;
