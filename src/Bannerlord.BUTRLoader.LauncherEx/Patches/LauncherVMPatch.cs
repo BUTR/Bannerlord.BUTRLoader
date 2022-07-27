@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
+using TaleWorlds.Library;
+
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherVMPatch
@@ -26,6 +28,12 @@ namespace Bannerlord.BUTRLoader.Patches
                 AccessTools2.Method("Bannerlord.BUTRLoader.Patches.LauncherVMPatch:UpdateAndSaveUserModsData"));
             if (res2 is null) return false;
             res2.Patch();
+            
+            var res3 = harmony.TryPatch(
+                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.LauncherVM:GetApplicationVersionOfModule") ??
+                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM:GetApplicationVersionOfModule"),
+                prefix: AccessTools2.Method("Bannerlord.BUTRLoader.Patches.LauncherVMPatch:GetApplicationVersionOfModulePrefix"));
+            if (!res3) return false;
 
             // Preventing inlining ExecuteConfirmUnverifiedDLLStart
             harmony.TryPatch(
@@ -42,6 +50,18 @@ namespace Bannerlord.BUTRLoader.Patches
         {
             // its a stub so it has no initial content
             throw new NotImplementedException("It's a stub");
+        }
+        
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public static bool GetApplicationVersionOfModulePrefix(string id, ref ApplicationVersion __result)
+        {
+            if (id.Equals("BUTRLoader.BUTRLoadingInterceptor", StringComparison.Ordinal))
+            {
+                __result = ApplicationVersion.Empty;
+                return false;
+            }
+
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
