@@ -14,12 +14,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private static readonly ExecuteSelectDelegate? ExecuteSelect =
             AccessTools2.GetDelegate<ExecuteSelectDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:ExecuteSelect") ??
             AccessTools2.GetDelegate<ExecuteSelectDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:ExecuteSelect");
-        
+
         private delegate void ExecuteLoadSubModulesDelegate(object instance, bool isMultiplayer);
         private static readonly ExecuteLoadSubModulesDelegate? LoadSubModules =
             AccessTools2.GetDelegate<ExecuteLoadSubModulesDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:LoadSubModules") ??
             AccessTools2.GetDelegate<ExecuteLoadSubModulesDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:LoadSubModules");
-        
+
         private delegate void SaveUserDataDelegate(object instance);
         private static readonly SaveUserDataDelegate? SaveUserData =
             AccessTools2.GetDelegate<SaveUserDataDelegate>("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserDataManager:SaveUserData") ??
@@ -56,7 +56,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             SetVMProperty(nameof(GlobalCheckboxState));
             SetVMProperty(nameof(IsSingleplayer));
-            
+
             _launcherModsVM.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == "IsDisabledOnMultiplayer")
@@ -88,7 +88,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 }
             }
         }
-        
+
         public void ExecuteRefresh()
         {
             var wrapper = LauncherModsVMWrapper.Create(_launcherModsVM);

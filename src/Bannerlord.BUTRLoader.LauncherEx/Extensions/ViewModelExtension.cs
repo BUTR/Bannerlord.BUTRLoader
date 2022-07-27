@@ -18,7 +18,7 @@ namespace Bannerlord.BUTRLoader.Extensions
         private delegate object CtorDelegate(Dictionary<string, PropertyInfo> properties, Dictionary<string, MethodInfo> methods);
         private static readonly CtorDelegate? Ctor =
             AccessTools2.GetDeclaredConstructorDelegate<CtorDelegate>("TaleWorlds.Library.ViewModel+DataSourceTypeBindingPropertiesCollection", new[] { typeof(Dictionary<string, PropertyInfo>), typeof(Dictionary<string, MethodInfo>) });
-        
+
         private static readonly AccessTools.FieldRef<object, object>? PropertiesAndMethods =
             AccessTools2.FieldRefAccess<object>("TaleWorlds.Library.ViewModel:_propertiesAndMethods");
 

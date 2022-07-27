@@ -60,7 +60,7 @@ namespace Bannerlord.BUTRLoader.Patches
             PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension13.Movie, LauncherModsPrefabExtension13.XPath, new LauncherModsPrefabExtension13());
 
             PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension14.Movie, LauncherModsPrefabExtension14.XPath, new LauncherModsPrefabExtension14());
-            
+
             var res1 = harmony.TryPatch(
                 AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab:LoadFrom"),
                 transpiler: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.WidgetPrefabPatch:WidgetPrefab_LoadFrom_Transpiler"));

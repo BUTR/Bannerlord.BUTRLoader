@@ -137,11 +137,11 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             return sb.ToString();
         }
-        
+
         public static bool CheckIfSubModuleCanBeLoaded(SubModuleInfoExtended subModuleInfo)
         {
             if (subModuleInfo.Tags.Count <= 0) return true;
-            
+
             foreach (var (key, values) in subModuleInfo.Tags)
             {
                 if (!Enum.TryParse<SubModuleTags>(key, out var tag))
