@@ -28,7 +28,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 AccessTools2.Method("Bannerlord.BUTRLoader.Patches.LauncherVMPatch:UpdateAndSaveUserModsData"));
             if (res2 is null) return false;
             res2.Patch();
-            
+
             var res3 = harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.LauncherVM:GetApplicationVersionOfModule") ??
                 AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM:GetApplicationVersionOfModule"),
@@ -51,7 +51,7 @@ namespace Bannerlord.BUTRLoader.Patches
             // its a stub so it has no initial content
             throw new NotImplementedException("It's a stub");
         }
-        
+
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static bool GetApplicationVersionOfModulePrefix(string id, ref ApplicationVersion __result)
         {
