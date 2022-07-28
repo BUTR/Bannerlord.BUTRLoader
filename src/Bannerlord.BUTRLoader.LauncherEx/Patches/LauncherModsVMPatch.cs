@@ -1,5 +1,6 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
+using Bannerlord.BUTRLoader.Shared;
 using Bannerlord.BUTRLoader.Wrappers;
 using Bannerlord.ModuleManager;
 
@@ -103,9 +104,9 @@ namespace Bannerlord.BUTRLoader.Patches
 
         private static Func<ModuleInfoExtended?, bool> GetIsSelected(LauncherModsVMWrapper instance) => module =>
         {
-            if (module is not null && module.Id.Equals("BUTRLoader.BUTRLoadingInterceptor", StringComparison.Ordinal)) 
+            if (module is not null && FeatureIds.Features.Contains(module.Id))
                 return false;
-            
+
             if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)
                 return wrapper.IsSelected;
             return false;
@@ -117,7 +118,7 @@ namespace Bannerlord.BUTRLoader.Patches
         };
         private static Func<ModuleInfoExtended?, bool> GetIsDisabled(LauncherModsVMWrapper instance) => module =>
         {
-            if (module is not null && module.Id.Equals("BUTRLoader.BUTRLoadingInterceptor", StringComparison.Ordinal)) 
+            if (module is not null && FeatureIds.Features.Contains(module.Id))
                 return false;
 
             if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)

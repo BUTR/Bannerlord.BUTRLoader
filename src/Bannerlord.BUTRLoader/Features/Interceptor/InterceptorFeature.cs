@@ -1,4 +1,6 @@
-﻿using Bannerlord.BUTRLoader.Features.Interceptor.Patches;
+﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.BUTRLoader.Features.Interceptor.Patches;
+using Bannerlord.BUTRLoader.Shared;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -8,10 +10,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using TaleWorlds.Engine;
+using TaleWorlds.Library;
+
 namespace Bannerlord.BUTRLoader.Features.Interceptor
 {
     internal static class InterceptorFeature
     {
+        public static string Id = FeatureIds.InterceptorId;
+
         private delegate void OnInitializeSubModulesPrefixDelegate();
         private delegate void OnLoadSubModulesPostfixDelegate();
 
@@ -20,7 +27,8 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
             static bool CheckType(Type type) => type.GetCustomAttributes()
                 .Any(att => string.Equals(att.GetType().FullName, typeof(BUTRLoaderInterceptorAttribute).FullName, StringComparison.Ordinal));
 
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(asm => !asm.IsDynamic && asm.CodeBase.Contains("Modules")))
+            var dlls = GetLoadedModulePaths().ToHashSet();
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && dlls.Contains(x.CodeBase)))
             {
                 IEnumerable<Type> enumerable;
                 try
@@ -38,6 +46,23 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
                 foreach (var type in enumerable)
                 {
                     yield return type;
+                }
+            }
+        }
+
+        private static IEnumerable<string> GetLoadedModulePaths()
+        {
+            var basePath = Utilities.GetBasePath();
+            var configName = Common.ConfigName;
+
+            foreach (var moduleInfo in ModuleInfoHelper.GetLoadedModules())
+            {
+                foreach (var subModule in moduleInfo.SubModules)
+                {
+                    if (ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(subModule))
+                    {
+                        yield return System.IO.Path.Combine(basePath, moduleInfo.Id, "bin", configName, subModule.DLLName);
+                    }
                 }
             }
         }

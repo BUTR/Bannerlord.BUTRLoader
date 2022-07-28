@@ -16,12 +16,12 @@ namespace Bannerlord.BUTRLoader.LauncherEx
         private static readonly Harmony _launcherHarmony = new("bannerlord.butrloader.launcherex");
         internal static readonly AssemblyCompatibilityChecker _compatibilityChecker = new();
 
-        public static void Enable()
+        public static void Initialize()
         {
-            Initialize();
+            AssemblyLoaderPatch.Enable(_launcherHarmony);
         }
 
-        private static void Initialize()
+        public static void Enable()
         {
             ProgramPatch.Enable(_launcherHarmony);
             UserDataManagerPatch.Enable(_launcherHarmony);
@@ -53,6 +53,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             WidgetFactoryManager.Enable(_launcherHarmony);
             WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
         }
+
         private static XmlDocument Load(string embedPath)
         {
             using var stream = typeof(Manager).Assembly.GetManifestResourceStream(embedPath);

@@ -1,5 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Features.Interceptor;
-using Bannerlord.BUTRLoader.Features.Interceptor.Patches;
+﻿using Bannerlord.BUTRLoader.Features.AssemblyResolver;
+using Bannerlord.BUTRLoader.Features.Interceptor;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -23,12 +23,13 @@ namespace Bannerlord.BUTRLoader
         {
             base.InitializeNewDomain(appDomainInfo);
 
-            Initialize();
-
             if (appDomainInfo.ApplicationName == "TaleWorlds.MountAndBlade.Launcher.exe")
             {
                 Assembly.LoadFrom("Bannerlord.BUTRLoader.LauncherEx.dll");
             }
+
+            Initialize();
+
             AppDomain.CurrentDomain.AssemblyLoad += (sender, args) =>
             {
                 // Pre e1.7.2
@@ -54,8 +55,11 @@ namespace Bannerlord.BUTRLoader
 
         private static bool Initialize()
         {
+            var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Initialize");
+            init?.Invoke(null, Array.Empty<object>());
+
             InterceptorFeature.Enable(_featureHarmony);
-            AssemblyLoaderPatch.Enable(_featureHarmony);
+            AssemblyResolverFeature.Enable(_featureHarmony);
 
             return true;
         }

@@ -14,7 +14,7 @@ namespace Bannerlord.BUTRLoader.Patches
         public static readonly ConditionalWeakTable<object, Delegate> AreAllDepenenciesPresentReferences = new();
 
         private static readonly Type? LauncherModuleVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM") ??
-                                                            AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM");
+                                                             AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM");
 
         public static bool Enable(Harmony harmony)
         {
