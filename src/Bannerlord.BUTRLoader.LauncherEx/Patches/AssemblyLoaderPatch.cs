@@ -34,52 +34,61 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool LoadFromPrefix(ref Assembly? __result, string assemblyFile)
         {
-            if (assemblyFile.Contains("Modules"))
+            try
             {
-                var module = ModuleInfoHelper.GetModuleByType(new TypeWrapper(Path.GetFullPath(assemblyFile)));
-                if (module is not null)
+                if (assemblyFile.Contains("Modules"))
                 {
-                    var filename = Path.GetFileName(assemblyFile);
-                    var subModule = module.SubModules.FirstOrDefault(sm => sm.DLLName == filename);
-                    if (subModule is not null)
+                    var module = ModuleInfoHelper.GetModuleByType(new TypeWrapper(Path.GetFullPath(assemblyFile)));
+                    if (module is not null)
                     {
-                        if (subModule.Tags.TryGetValue("LoadReferencesOnLoad", out var list) && string.Equals(list.FirstOrDefault(), "false", StringComparison.OrdinalIgnoreCase))
+                        var filename = Path.GetFileName(assemblyFile);
+                        var subModule = module.SubModules.FirstOrDefault(sm => sm.DLLName == filename);
+                        if (subModule is not null)
                         {
-                            try
+                            if (subModule.Tags.TryGetValue("LoadReferencesOnLoad", out var list) && string.Equals(list.FirstOrDefault(), "false", StringComparison.OrdinalIgnoreCase))
                             {
-                                __result = Assembly.LoadFrom(assemblyFile);
+                                try
+                                {
+                                    __result = Assembly.LoadFrom(assemblyFile);
+                                }
+                                catch (Exception)
+                                {
+                                    __result = null;
+                                }
+                                return false;
                             }
-                            catch (Exception)
-                            {
-                                __result = null;
-                            }
-                            return false;
                         }
-                    }
 
+                    }
                 }
             }
+            catch (Exception) { }
+
             return true;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool OnAssemblyResolvePrefix(ref Assembly? __result, object sender, ResolveEventArgs args)
         {
-            if (sender is AppDomain { FriendlyName: "Compatibility Checker" } domain)
+            try
             {
-                foreach (var assembly in domain.GetAssemblies())
+                if (sender is AppDomain { FriendlyName: "Compatibility Checker" } domain)
                 {
-                    if (assembly.FullName == args.Name)
+                    foreach (var assembly in domain.GetAssemblies())
                     {
-                        __result = assembly;
-                        return false;
+                        if (assembly.FullName == args.Name)
+                        {
+                            __result = assembly;
+                            return false;
+                        }
                     }
-                }
 
-                var name = args.Name.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                __result = Assembly.LoadFrom(name[0]);
-                return false;
+                    var name = args.Name.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    __result = Assembly.LoadFrom(name[0]);
+                    return false;
+                }
             }
+            catch (Exception) { }
 
             return true;
         }
