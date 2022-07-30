@@ -28,7 +28,7 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
                 .Any(att => string.Equals(att.GetType().FullName, typeof(BUTRLoaderInterceptorAttribute).FullName, StringComparison.Ordinal));
 
             var dlls = GetLoadedModulePaths().ToHashSet();
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && dlls.Contains(x.CodeBase)))
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && dlls.Contains(x.Location)))
             {
                 IEnumerable<Type> enumerable;
                 try
@@ -61,7 +61,7 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
                 {
                     if (ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(subModule))
                     {
-                        yield return System.IO.Path.Combine(basePath, moduleInfo.Id, "bin", configName, subModule.DLLName);
+                        yield return System.IO.Path.GetFullPath(System.IO.Path.Combine(basePath, "Modules", moduleInfo.Id, "bin", configName, subModule.DLLName));
                     }
                 }
             }
