@@ -1,6 +1,13 @@
-﻿using System;
+﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.ModuleManager;
+
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
+
+using TaleWorlds.Library;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
@@ -16,9 +23,34 @@ namespace Bannerlord.BUTRLoader.Helpers
     {
         public CheckResult CheckAssembly(string assemblyPath)
         {
+            Assembly? CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
+            {
+                var name = args.Name.Contains(',') ? $"{args.Name.Split(',')[0]}.dll" : args.Name;
+
+                foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    var asmName = $"{asm.GetName().Name}.dll";
+                    if (asmName == name)
+                    {
+                        return asm;
+                    }
+                }
+
+                var assemblies = Directory.GetFiles(Path.GetDirectoryName(assemblyPath), "*.dll");
+
+                var assembly = assemblies.FirstOrDefault(x => x.Contains(name));
+
+                return assembly is not null ? Assembly.LoadFrom(assembly) : null;
+            }
+
+            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomainOnAssemblyResolve;
             try
             {
-                var asm = Assembly.Load(assemblyPath);
+                var asm = Assembly.LoadFrom(assemblyPath);
+                foreach (var referencedAssembly in asm.GetReferencedAssemblies())
+                {
+                    Assembly.Load(referencedAssembly);
+                }
                 var types = asm.GetTypes();
                 return CheckResult.Success;
             }
@@ -34,6 +66,10 @@ namespace Bannerlord.BUTRLoader.Helpers
             {
                 return CheckResult.GenericException;
             }
+            finally
+            {
+                AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomainOnAssemblyResolve;
+            }
         }
     }
 
@@ -41,6 +77,7 @@ namespace Bannerlord.BUTRLoader.Helpers
     {
         private AppDomain? _domain;
         private Proxy? _proxy;
+        private bool _initialized;
 
         private readonly Dictionary<string, CheckResult> _checkResult = new();
 
@@ -49,8 +86,31 @@ namespace Bannerlord.BUTRLoader.Helpers
             if (LauncherSettings.DisableBinaryCheck)
                 return CheckResult.Success;
 
-            _domain ??= AppDomain.CreateDomain("Compatibility Checker", AppDomain.CurrentDomain.Evidence, AppDomain.CurrentDomain.SetupInformation, AppDomain.CurrentDomain.PermissionSet);
-            _proxy ??= (Proxy) _domain.CreateInstanceAndUnwrap(typeof(Proxy).Assembly.FullName, typeof(Proxy).FullName);
+            if (!_initialized)
+            {
+                _initialized = true;
+
+                _domain = AppDomain.CreateDomain("Compatibility Checker", AppDomain.CurrentDomain.Evidence, AppDomain.CurrentDomain.SetupInformation, AppDomain.CurrentDomain.PermissionSet);
+                _proxy = (Proxy) _domain.CreateInstanceAndUnwrap(typeof(Proxy).Assembly.FullName, typeof(Proxy).FullName);
+
+                // Load official modules before cheking the mods
+                var basePath = Path.Combine(Path.GetDirectoryName(typeof(TaleWorlds.Library.Common).Assembly.Location), "../", "../");
+                var modulesPath = Path.Combine(basePath, "Modules");
+                var modules = Directory.GetDirectories(modulesPath).Select(x => new DirectoryInfo(x).Name);
+                var officialModules = modules.Select(ModuleInfoHelper.LoadFromId).Where(x => x is not null && x.IsOfficial).ToList();
+                var sortedModules = ModuleSorter.Sort(officialModules);
+                foreach (var module in sortedModules)
+                {
+                    var path = Path.Combine(modulesPath, module.Id, "bin", Common.ConfigName);
+                    if (!Directory.Exists(path)) continue;
+
+                    var assemblies = Directory.GetFiles(path, "*.dll");
+                    foreach (var assembly in assemblies)
+                    {
+                        _checkResult[assembly] = _proxy.CheckAssembly(assembly);
+                    }
+                }
+            }
 
             if (!_checkResult.TryGetValue(assemblyPath, out var result))
             {
