@@ -21,6 +21,25 @@ namespace Bannerlord.BUTRLoader.Helpers
 
     public class Proxy : MarshalByRefObject
     {
+        private static void RecursiveLoad(Assembly asm, string assemblyPath)
+        {
+            foreach (var referencedAssembly in asm.GetReferencedAssemblies())
+            {
+                var name = referencedAssembly.Name;
+
+                if (AppDomain.CurrentDomain.GetAssemblies().Any(x => x.GetName().Name == name))
+                    continue;
+
+                var assemblies = Directory.GetFiles(Path.GetDirectoryName(assemblyPath), "*.dll");
+                var assembly = assemblies.FirstOrDefault(x => Path.GetFileNameWithoutExtension(x).Equals(name));
+                if (assembly is null)
+                    continue;
+
+                var refAsm = Assembly.LoadFrom(assembly);
+                RecursiveLoad(refAsm, assemblyPath);
+            }
+        }
+
         public CheckResult CheckAssembly(string assemblyPath)
         {
             Assembly? CurrentDomainOnAssemblyResolve(object sender, ResolveEventArgs args)
@@ -37,7 +56,6 @@ namespace Bannerlord.BUTRLoader.Helpers
                 }
 
                 var assemblies = Directory.GetFiles(Path.GetDirectoryName(assemblyPath), "*.dll");
-
                 var assembly = assemblies.FirstOrDefault(x => x.Contains(name));
 
                 return assembly is not null ? Assembly.LoadFrom(assembly) : null;
@@ -47,10 +65,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             try
             {
                 var asm = Assembly.LoadFrom(assemblyPath);
-                foreach (var referencedAssembly in asm.GetReferencedAssemblies())
-                {
-                    Assembly.Load(referencedAssembly);
-                }
+                RecursiveLoad(asm, assemblyPath);
                 var types = asm.GetTypes();
                 return CheckResult.Success;
             }
