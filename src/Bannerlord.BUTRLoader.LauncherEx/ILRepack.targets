@@ -17,6 +17,6 @@
       InputAssemblies="@(InputAssemblies)"
       TargetKind="SameAsPrimaryAssembly"
       OutputFile="$(OutputPath)\$(AssemblyName).dll"
-      LibraryPath="$(OutputPath);$(GameFolder)\bin\Win64_Shipping_Client" />
+      LibraryPath="$(OutputPath);$(PkgBannerlord_ReferenceAssemblies_Core_EarlyAccess)\ref\net472;$(GameFolder)\bin\Win64_Shipping_Client;" />
   </Target>
 </Project>
