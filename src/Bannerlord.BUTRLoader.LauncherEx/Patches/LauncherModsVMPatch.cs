@@ -1,6 +1,6 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
-using Bannerlord.BUTRLoader.Shared;
 using Bannerlord.BUTRLoader.Wrappers;
 using Bannerlord.ModuleManager;
 
@@ -17,6 +17,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using TaleWorlds.Library;
+using TaleWorlds.MountAndBlade;
 
 using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper2;
 
@@ -209,7 +210,8 @@ namespace Bannerlord.BUTRLoader.Patches
 
         private static bool CheckModuleCompatibility(LauncherModsVMWrapper instance, ModuleInfoExtended moduleInfoExtended)
         {
-            foreach (var subModule in moduleInfoExtended.SubModules.Where(CheckIfSubModuleCanBeLoaded))
+            foreach (var subModule in moduleInfoExtended.SubModules.Where(x =>
+                         ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(x, ApplicationPlatform.CurrentPlatform, ApplicationPlatform.CurrentRuntimeLibrary, DedicatedServerType.None)))
             {
                 var asm = Path.GetFullPath(Path.Combine(BasePath.Name, "Modules", moduleInfoExtended.Id, "bin", "Win64_Shipping_Client", subModule.DLLName));
                 switch (Manager._compatibilityChecker.CheckAssembly(asm))

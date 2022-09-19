@@ -2,21 +2,22 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Target Name="ILRepacker" AfterTargets="Build">
     <ItemGroup>
-      <InputAssemblies Include="$(OutputPath)\$(AssemblyName).dll" />
+      <InputAssemblies Include="$(OutputPath)\$(AssemblyName).exe" />
 
       <InputAssemblies Include="$(OutputPath)\0Harmony.dll" />
 
-      <InputAssemblies Include="$(OutputPath)\Microsoft.Bcl.HashCode.dll" />
+      <InputAssemblies Include="$(OutputPath)\Bannerlord.BUTRLoader.dll" />
+      <InputAssemblies Include="$(OutputPath)\Bannerlord.BUTRLoader.LauncherEx.dll" />
     </ItemGroup>
 
     <!-- ReSharper disable once UnknownTask -->
     <ILRepack
       Parallel="true"
       DebugInfo="$(Configuration.Contains('Debug'))"
-      Internalize="true"
+      Internalize="false"
       InputAssemblies="@(InputAssemblies)"
       TargetKind="SameAsPrimaryAssembly"
-      OutputFile="$(OutputPath)\$(AssemblyName).dll"
-      LibraryPath="$(OutputPath);$(PkgBannerlord_ReferenceAssemblies_Core_EarlyAccess)\ref\net472;$(GameFolder)\bin\Win64_Shipping_Client;" />
+      OutputFile="$(OutputPath)\$(AssemblyName).exe"
+      LibraryPath="$(OutputPath);$(PkgBannerlord_ReferenceAssemblies_Core_EarlyAccess)\ref\net472;" />
   </Target>
 </Project>

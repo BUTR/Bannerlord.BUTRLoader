@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+
+    <Configurations>Stable_Debug;Stable_Release;Beta_Debug;Beta_Release</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bannerlord.ReferenceAssemblies.Core.EarlyAccess" Version="$(GameVersion).*" PrivateAssets="All" GeneratePathProperty="true" />
+    <PackageReference Include="ILRepack" Version="2.1.0-beta1" PrivateAssets="All" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" PrivateAssets="All" />
+    <PackageReference Include="Lib.Harmony" Version="$(HarmonyVersion)" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Bannerlord.BUTRLoader.LauncherEx\Bannerlord.BUTRLoader.LauncherEx.csproj" />
+    <ProjectReference Include="..\Bannerlord.BUTRLoader\Bannerlord.BUTRLoader.csproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="ILRepacker" Condition="Exists($(GameFolder)) AND $(OS) == 'Windows_NT'">
+    <Exec Command="xcopy /Y /S &quot;$(MSBuildProjectDirectory)\_GameRoot&quot; &quot;$(GameFolder)&quot;" />
+    <Exec Command="xcopy /Y &quot;$(MSBuildProjectDirectory)\$(OutputPath)\Bannerlord.BUTRLoader.dll&quot; &quot;$(GameFolder)\bin\Win64_Shipping_Client&quot;" />
+    <Exec Command="xcopy /Y &quot;$(MSBuildProjectDirectory)\$(OutputPath)\Bannerlord.BUTRLoader.pdb&quot; &quot;$(GameFolder)\bin\Win64_Shipping_Client&quot;" />
+  </Target>
+  
+</Project>

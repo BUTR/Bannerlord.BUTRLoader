@@ -1,17 +1,17 @@
 ﻿using Bannerlord.BUTRLoader.Features.AssemblyResolver;
 using Bannerlord.BUTRLoader.Features.Interceptor;
+using Bannerlord.BUTRLoader.LauncherEx;
 
 using HarmonyLib;
-using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Bannerlord.BUTRLoader.Tests")]
 
-namespace Bannerlord.BUTRLoader
+namespace Bannerlord.BUTRLoader.AssemblyManager
 {
     [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
@@ -23,9 +23,21 @@ namespace Bannerlord.BUTRLoader
         {
             base.InitializeNewDomain(appDomainInfo);
 
-            if (appDomainInfo.ApplicationName == "TaleWorlds.MountAndBlade.Launcher.exe")
+            // delete old files
+            var files = new[]
             {
-                Assembly.LoadFrom("Bannerlord.BUTRLoader.LauncherEx.dll");
+                "Bannerlord.BUTRLoader.LauncherEx.dll",
+                "Bannerlord.BUTRLoader.LauncherEx.pdb",
+                "Bannerlord.BUTRLoader.Shared.dll",
+                "Bannerlord.BUTRLoader.Shared.pdb",
+            };
+            foreach (var file in files)
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                catch (Exception) { }
             }
 
             Initialize();
@@ -38,16 +50,14 @@ namespace Bannerlord.BUTRLoader
                 {
                     if (args.LoadedAssembly.GetType("TaleWorlds.MountAndBlade.Launcher.LauncherVM") is null) return;
 
-                    var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Enable");
-                    init?.Invoke(null, Array.Empty<object>());
+                    Manager.Enable();
                 }
 
                 // Post e1.7.2
                 // Wait for the Launcher assembly to load
                 if (args.LoadedAssembly.GetName().Name == "TaleWorlds.MountAndBlade.Launcher.Library")
                 {
-                    var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Enable");
-                    init?.Invoke(null, Array.Empty<object>());
+                    Manager.Enable();
                 }
             };
         }
@@ -55,8 +65,7 @@ namespace Bannerlord.BUTRLoader
 
         private static bool Initialize()
         {
-            var init = AccessTools2.Method("Bannerlord.BUTRLoader.LauncherEx.Manager:Initialize");
-            init?.Invoke(null, Array.Empty<object>());
+            Manager.Initialize();
 
             InterceptorFeature.Enable(_featureHarmony);
             AssemblyResolverFeature.Enable(_featureHarmony);

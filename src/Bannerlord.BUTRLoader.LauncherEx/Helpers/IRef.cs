@@ -65,7 +65,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             return Equals((PropertyRef) obj);
         }
         /// <inheritdoc/>
-        public override int GetHashCode() => HashCode.Combine(PropertyInfo, Instance);
+        public override int GetHashCode() => PropertyInfo.GetHashCode() ^ Instance.GetHashCode();
         public static bool operator ==(PropertyRef? left, PropertyRef? right) => Equals(left, right);
         public static bool operator !=(PropertyRef? left, PropertyRef? right) => !Equals(left, right);
     }

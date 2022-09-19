@@ -34,8 +34,8 @@ jobs:
       run: >-
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
-          dotnet restore src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj;
-          msbuild src/Bannerlord.BUTRLoader/Bannerlord.BUTRLoader.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
+          dotnet restore src/Bannerlord.BUTRLoader.AssemblyManager/Bannerlord.BUTRLoader.AssemblyManager.csproj;
+          msbuild src/Bannerlord.BUTRLoader.AssemblyManager/Bannerlord.BUTRLoader.AssemblyManager.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
     - name: Cleanup
@@ -44,7 +44,7 @@ jobs:
           Get-ChildItem -Exclude bin | Remove-Item -Recurse -Force;
           cd bin;
           cd Win64_Shipping_Client;
-          Get-ChildItem -Exclude Bannerlord.BUTRLoader.dll,Bannerlord.BUTRLoader.pdb,Bannerlord.BUTRLoader.Shared.dll,Bannerlord.BUTRLoader.Shared.pdb,Bannerlord.BUTRLoader.LauncherEx.dll,Bannerlord.BUTRLoader.LauncherEx.pdb,TaleWorlds.MountAndBlade.Launcher.exe.config | Remove-Item -Recurse -Force;
+          Get-ChildItem -Exclude Bannerlord.BUTRLoader.dll,Bannerlord.BUTRLoader.pdb,TaleWorlds.MountAndBlade.Launcher.exe.config | Remove-Item -Recurse -Force;
       shell: pwsh
 
     - name: Upload Bannerlord folder

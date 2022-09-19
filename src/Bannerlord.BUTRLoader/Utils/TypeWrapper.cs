@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Reflection;
 
-namespace Bannerlord.BUTRLoader.Shared.Utils
+namespace Bannerlord.BUTRLoader.Utils
 {
     public class TypeWrapper : Type
     {

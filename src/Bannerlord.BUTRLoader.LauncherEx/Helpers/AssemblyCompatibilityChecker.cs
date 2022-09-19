@@ -112,7 +112,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 var basePath = Path.Combine(Path.GetDirectoryName(typeof(TaleWorlds.Library.Common).Assembly.Location), "../", "../");
                 var modulesPath = Path.Combine(basePath, "Modules");
                 var modules = Directory.GetDirectories(modulesPath).Select(x => new DirectoryInfo(x).Name);
-                var officialModules = modules.Select(ModuleInfoHelper.LoadFromId).Where(x => x is not null && x.IsOfficial).ToList();
+                var officialModules = modules.Select(ModuleInfoHelper.LoadFromId).Where(x => x is not null && x.IsOfficial).OfType<ModuleInfoExtended>().ToList();
                 var sortedModules = ModuleSorter.Sort(officialModules);
                 foreach (var module in sortedModules)
                 {

@@ -1,15 +1,10 @@
-﻿using Bannerlord.BUTR.Shared.Extensions;
-using Bannerlord.BUTR.Shared.Helpers;
-using Bannerlord.BUTRLoader.Shared;
+﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Wrappers;
 using Bannerlord.ModuleManager;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using TaleWorlds.Library;
 
 using ApplicationVersion = Bannerlord.ModuleManager.ApplicationVersion;
 
@@ -137,33 +132,5 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             return sb.ToString();
         }
-
-        public static bool CheckIfSubModuleCanBeLoaded(SubModuleInfoExtended subModuleInfo)
-        {
-            if (subModuleInfo.Tags.Count <= 0) return true;
-
-            foreach (var (key, values) in subModuleInfo.Tags)
-            {
-                if (!Enum.TryParse<SubModuleTags>(key, out var tag))
-                    continue;
-
-                if (values.Any(value => !GetSubModuleTagValiditiy(tag, value)))
-                    return false;
-            }
-            return true;
-        }
-        public static bool GetSubModuleTagValiditiy(SubModuleTags tag, string value) => tag switch
-        {
-            SubModuleTags.RejectedPlatform => !Enum.TryParse<Platform>(value, out var platform) || ApplicationPlatform.CurrentPlatform != platform,
-            SubModuleTags.ExclusivePlatform => !Enum.TryParse<Platform>(value, out var platform) || ApplicationPlatform.CurrentPlatform == platform,
-            SubModuleTags.DependantRuntimeLibrary => !Enum.TryParse<Runtime>(value, out var runtime) || ApplicationPlatform.CurrentRuntimeLibrary == runtime,
-            SubModuleTags.IsNoRenderModeElement => value.Equals("false"),
-            SubModuleTags.DedicatedServerType => value.ToLower() switch
-            {
-                "none" => true,
-                _ => false
-            },
-            _ => true
-        };
     }
 }

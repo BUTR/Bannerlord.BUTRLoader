@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Bannerlord.BUTRLoader.Shared.Utils
+namespace Bannerlord.BUTRLoader.Utils
 {
     public class AssemblyWrapper : Assembly
     {

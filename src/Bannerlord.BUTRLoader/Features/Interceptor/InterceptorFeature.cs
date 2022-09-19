@@ -1,6 +1,5 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Features.Interceptor.Patches;
-using Bannerlord.BUTRLoader.Shared;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -12,10 +11,11 @@ using System.Reflection;
 
 using TaleWorlds.Engine;
 using TaleWorlds.Library;
+using TaleWorlds.MountAndBlade;
 
 namespace Bannerlord.BUTRLoader.Features.Interceptor
 {
-    internal static class InterceptorFeature
+    public static class InterceptorFeature
     {
         public static string Id = FeatureIds.InterceptorId;
 
@@ -27,7 +27,7 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
             static bool CheckType(Type type) => type.GetCustomAttributes()
                 .Any(att => string.Equals(att.GetType().FullName, typeof(BUTRLoaderInterceptorAttribute).FullName, StringComparison.Ordinal));
 
-            var dlls = GetLoadedModulePaths().ToHashSet();
+            var dlls = new HashSet<string>(GetLoadedModulePaths());
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.IsDynamic && dlls.Contains(x.Location)))
             {
                 IEnumerable<Type> enumerable;
@@ -59,7 +59,7 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
             {
                 foreach (var subModule in moduleInfo.SubModules)
                 {
-                    if (ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(subModule))
+                    if (ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(subModule, ApplicationPlatform.CurrentPlatform, ApplicationPlatform.CurrentRuntimeLibrary, DedicatedServerType.None))
                     {
                         yield return System.IO.Path.GetFullPath(System.IO.Path.Combine(basePath, "Modules", moduleInfo.Id, "bin", configName, subModule.DLLName));
                     }

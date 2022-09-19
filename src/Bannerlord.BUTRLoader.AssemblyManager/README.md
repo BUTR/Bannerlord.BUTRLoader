@@ -1,0 +1,1 @@
+.NET Framework library that injects BUTRLoader features when launching TaleWorlds.MountAndBlade.Launcher.exe

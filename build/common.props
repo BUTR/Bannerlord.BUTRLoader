@@ -1,12 +1,16 @@
 <!--EXTERNAL_PROPERTIES: TargetFramework;BANNERLORD_GAME_DIR;BANNERLORD_STABLE_DIR;BANNERLORD_BETA_DIR;GITHUB_ACTIONS-->
 <Project>
 
+  <PropertyGroup>
+    <GameVersion>1.5.0</GameVersion>
+  </PropertyGroup>
+
   <!--Development Variables-->
   <PropertyGroup>
     <Version>1.8.8</Version>
-    <HarmonyVersion>2.0.4</HarmonyVersion>
-    <BUTRSharedVersion>2.0.0.86</BUTRSharedVersion>
-    <BUTRModuleManagerVersion>4.0.121</BUTRModuleManagerVersion>
+    <HarmonyVersion>2.2.2</HarmonyVersion>
+    <BUTRSharedVersion>2.0.0.101</BUTRSharedVersion>
+    <BUTRModuleManagerVersion>4.0.123</BUTRModuleManagerVersion>
     <HarmonyExtensionsVersion>3.1.0.61</HarmonyExtensionsVersion>
     <HarmonyAnalyzerVersion>1.0.1.44</HarmonyAnalyzerVersion>
     <DebugType>full</DebugType>
@@ -23,10 +27,6 @@
     <IsStable Condition="$(Configuration.Contains('Stable'))">true</IsStable>
     <IsBeta>false</IsBeta>
     <IsBeta Condition="$(Configuration.Contains('Beta'))">true</IsBeta>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <GameVersion>1.5.0</GameVersion>
   </PropertyGroup>
 
   <PropertyGroup>

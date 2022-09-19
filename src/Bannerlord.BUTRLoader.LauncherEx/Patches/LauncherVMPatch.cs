@@ -1,6 +1,4 @@
-﻿using Bannerlord.BUTRLoader.Shared;
-
-using HarmonyLib;
+﻿using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using System;
