@@ -210,6 +210,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
         private static bool CheckModuleCompatibility(LauncherModsVMWrapper instance, ModuleInfoExtended moduleInfoExtended)
         {
+            /*
             foreach (var subModule in moduleInfoExtended.SubModules.Where(x =>
                          ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(x, ApplicationPlatform.CurrentPlatform, ApplicationPlatform.CurrentRuntimeLibrary, DedicatedServerType.None)))
             {
@@ -227,6 +228,7 @@ namespace Bannerlord.BUTRLoader.Patches
                         return false;
                 }
             }
+            */
 
             return true;
         }

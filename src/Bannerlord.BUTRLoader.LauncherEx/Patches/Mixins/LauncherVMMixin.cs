@@ -279,15 +279,13 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public void ExecuteBeginHintImport()
         {
-            if (AddHintInformation is not null)
-                AddHintInformation("Import Mod List");
+            AddHintInformation?.Invoke("Import Mod List");
         }
 
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public void ExecuteBeginHintExport()
         {
-            if (AddHintInformation is not null)
-                AddHintInformation("Export Current Mod List");
+            AddHintInformation?.Invoke("Export Current Mod List");
         }
 
         [MethodImpl(MethodImplOptions.NoOptimization)]
@@ -295,8 +293,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             if (_currentModuleListHandler is null)
             {
-                if (HideHintInformation is not null)
-                    HideHintInformation();
+                HideHintInformation?.Invoke();
             }
             else
             {

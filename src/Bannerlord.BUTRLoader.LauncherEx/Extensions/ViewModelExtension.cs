@@ -35,16 +35,14 @@ namespace Bannerlord.BUTRLoader.Extensions
 
         public static void AddProperty(this ViewModel viewModel, string name, PropertyInfo propertyInfo)
         {
-            if (PropertyInfosField is not null && PropertyInfosField(viewModel) is { } dict)
+            if (PropertyInfosField?.Invoke(viewModel) is { } dict)
             {
                 dict[name] = propertyInfo;
             }
 
-            if (PropertiesAndMethods is not null && PropertiesAndMethods(viewModel) is { } storage)
+            if (PropertiesAndMethods?.Invoke(viewModel) is { } storage)
             {
-                if (Ctor is not null && CachedViewModelProperties is not null &&
-                    GetProperties is not null && GetProperties(storage) is { } propDict &&
-                    GetMethods is not null && GetMethods(storage) is { } methodDict)
+                if (Ctor is not null && CachedViewModelProperties is not null && GetProperties?.Invoke(storage) is { } propDict && GetMethods?.Invoke(storage) is { } methodDict)
                 {
                     // TW caches the properties, since we modify each VM individually, we need to copy them
                     var type = viewModel.GetType();
@@ -58,11 +56,9 @@ namespace Bannerlord.BUTRLoader.Extensions
 
         public static void AddMethod(this ViewModel viewModel, string name, MethodInfo methodInfo)
         {
-            if (PropertiesAndMethods is not null && PropertiesAndMethods(viewModel) is { } storage)
+            if (PropertiesAndMethods?.Invoke(viewModel) is { } storage)
             {
-                if (Ctor is not null && CachedViewModelProperties is not null &&
-                    GetProperties is not null && GetProperties(storage) is { } propDict &&
-                    GetMethods is not null && GetMethods(storage) is { } methodDict)
+                if (Ctor is not null && CachedViewModelProperties is not null && GetProperties?.Invoke(storage) is { } propDict && GetMethods?.Invoke(storage) is { } methodDict)
                 {
                     // TW caches the properties, since we modify each VM individually, we need to copy them
                     var type = viewModel.GetType();

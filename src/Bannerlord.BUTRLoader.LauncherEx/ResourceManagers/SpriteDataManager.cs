@@ -61,7 +61,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
             protected override DrawObject2D GetArrays(SpriteDrawData spriteDrawData)
             {
-                if (CachedDrawObject != null && CachedDrawData == spriteDrawData)
+                if (CachedDrawObject is not null && CachedDrawData == spriteDrawData)
                     return CachedDrawObject;
 
                 if (FieldMapX is null || FieldMapY is null || FieldWidth is null || FieldHeight is null || FieldHorizontalFlip is null || FieldVerticalFlip is null)
