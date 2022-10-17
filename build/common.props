@@ -9,7 +9,7 @@
   <PropertyGroup>
     <Version>1.9.0</Version>
     <HarmonyVersion>2.2.2</HarmonyVersion>
-    <BUTRSharedVersion>2.0.0.101</BUTRSharedVersion>
+    <BUTRSharedVersion>2.0.0.103</BUTRSharedVersion>
     <BUTRModuleManagerVersion>4.0.146</BUTRModuleManagerVersion>
     <HarmonyExtensionsVersion>3.1.0.61</HarmonyExtensionsVersion>
     <HarmonyAnalyzerVersion>1.0.1.44</HarmonyAnalyzerVersion>
