@@ -32,6 +32,7 @@ jobs:
 
     - name: Build
       run: >-
+          mkdir bannerlord;
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
           dotnet restore src/Bannerlord.BUTRLoader.AssemblyManager/Bannerlord.BUTRLoader.AssemblyManager.csproj;
