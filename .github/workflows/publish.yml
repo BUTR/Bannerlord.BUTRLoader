@@ -62,6 +62,7 @@ jobs:
         desc="${desc//$'\n'/'%0A'}"
         desc="${desc//$'\r'/'%0D'}"
         echo "::set-output name=mod_description::$desc"
+      shell: bash
 
     - name: Upload Bannerlord folder
       uses: actions/upload-artifact@v3
