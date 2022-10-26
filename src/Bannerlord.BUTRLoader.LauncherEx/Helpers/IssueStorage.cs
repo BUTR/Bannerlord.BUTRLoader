@@ -1,9 +1,10 @@
-﻿using Bannerlord.BUTRLoader.Wrappers;
-using Bannerlord.ModuleManager;
+﻿using Bannerlord.ModuleManager;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using TaleWorlds.MountAndBlade.Launcher.Library;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
@@ -26,7 +27,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             }
         }
 
-        public static void AppendIssue(LauncherModsVMWrapper viewModelWrapper, ModuleInfoExtended ModuleInfoExtended, string issue)
+        public static void AppendIssue(LauncherModsVM viewModelWrapper, ModuleInfoExtended ModuleInfoExtended, string issue)
         {
             //viewModelWrapper.ExecuteCommand("SetIssue", new object[] { ModuleInfoExtended.Id,  new string[] { issue } });
             SetIssue(ModuleInfoExtended.Id, new[] { issue });
@@ -34,14 +35,14 @@ namespace Bannerlord.BUTRLoader.Helpers
             var moduleVM = viewModelWrapper.Modules.FirstOrDefault(m => m.Info?.Id == ModuleInfoExtended.Id);
             moduleVM?.ExecuteCommand("UpdateIssues", Array.Empty<object>());
         }
-        public static void AppendIssue(LauncherModuleVMWrapper viewModelWrapper, string issue)
+        public static void AppendIssue(LauncherModuleVM viewModelWrapper, string issue)
         {
             var id = viewModelWrapper.Info?.Id ?? string.Empty;
             SetIssue(id, new[] { issue });
 
             viewModelWrapper.ExecuteCommand("UpdateIssues", Array.Empty<object>());
         }
-        public static void ClearIssues(LauncherModsVMWrapper viewModelWrapper, ModuleInfoExtended ModuleInfoExtended)
+        public static void ClearIssues(LauncherModsVM viewModelWrapper, ModuleInfoExtended ModuleInfoExtended)
         {
             //Issues.Remove(ModuleInfoExtended.Id);
             if (Issues.TryGetValue(ModuleInfoExtended.Id, out var list))
@@ -50,7 +51,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             var moduleVM = viewModelWrapper.Modules.FirstOrDefault(m => m.Info?.Id == ModuleInfoExtended.Id);
             moduleVM?.ExecuteCommand("UpdateIssues", Array.Empty<object>());
         }
-        public static void ClearIssues(LauncherModuleVMWrapper viewModelWrapper)
+        public static void ClearIssues(LauncherModuleVM viewModelWrapper)
         {
             var id = viewModelWrapper.Info?.Id ?? string.Empty;
 

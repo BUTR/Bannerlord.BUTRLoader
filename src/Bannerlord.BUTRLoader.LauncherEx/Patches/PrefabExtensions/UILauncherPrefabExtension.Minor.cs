@@ -1,5 +1,4 @@
-﻿using Bannerlord.BUTR.Shared.Helpers;
-using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 
 using System.Xml;
 
@@ -18,11 +17,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 
         public UILauncherPrefabExtension1()
         {
-            var verticalOffset = 25;
-            if (ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 })
-            {
-                verticalOffset = 90;
-            }
+            var verticalOffset = 90;
 
             XmlDocument.LoadXml(@$"
 <TextWidget WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""CoverChildren"" VerticalAlignment=""Bottom"" Brush=""Launcher.Version.Text"" MarginLeft=""7"" MarginBottom=""{verticalOffset}"" IsHidden=""@IsMultiplayer"" Text=""@VersionTextSingleplayer""/>

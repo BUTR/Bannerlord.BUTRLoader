@@ -14,9 +14,8 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.LauncherVM:ExecuteStartGame") ??
                 AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM:ExecuteStartGame"),
-                prefix: AccessTools2.Method("Bannerlord.BUTRLoader.Patches.ProgramPatch:StartGamePrefix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(ProgramPatch), nameof(StartGamePrefix)));
             if (!res1) return false;
 
             return true;

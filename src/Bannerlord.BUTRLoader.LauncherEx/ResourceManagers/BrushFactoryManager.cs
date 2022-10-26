@@ -56,37 +56,37 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
             harmony.Patch(
                 AccessTools2.PropertyGetter("TaleWorlds.GauntletUI.BrushFactory:Brushes"),
-                postfix: new HarmonyMethod(AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:GetBrushesPostfix")));
+                postfix: new HarmonyMethod(AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(GetBrushesPostfix))));
 
             harmony.Patch(
                 AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.BrushFactory:GetBrush"),
-                new HarmonyMethod(AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:GetBrushPrefix")));
+                new HarmonyMethod(AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(GetBrushPrefix))));
 
             var res3 = harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushes"),
-                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:LoadBrushesPostfix"));
+                AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
             if (!res3) return false;
 
             // Preventing inlining Initialize
             harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:Initialize"),
-                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:BlankTranspiler"));
+                transpiler: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             // Preventing inlining GetBrush
             harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.ConstantDefinition:GetValue"),
-                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:BlankTranspiler"));
+                transpiler: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:SetWidgetAttributeFromString"),
-                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:BlankTranspiler"));
+                transpiler: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.UIContext:GetBrush"),
-                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:BlankTranspiler"));
+                transpiler: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:ConvertObject"),
-                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:BlankTranspiler"));
-            //harmony.Patch(
+                transpiler: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
+            //harmony.TryPatch(
             //    AccessTools2.Method(typeof(BoolBrushChanger), "OnBooleanUpdated"),
-            //    transpiler: new HarmonyMethod(AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler))));
+            //    transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
             // Preventing inlining GetBrush
 
             return true;
@@ -127,7 +127,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
             _harmony?.Unpatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushes"),
-                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.BrushFactoryManager:LoadBrushesPostfix"));
+                AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

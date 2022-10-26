@@ -1,10 +1,11 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
-using Bannerlord.BUTRLoader.Wrappers;
 using Bannerlord.ModuleManager;
 
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+
+using TaleWorlds.ModuleManager;
 
 using ApplicationVersion = Bannerlord.ModuleManager.ApplicationVersion;
 
@@ -18,13 +19,12 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         internal static readonly Dictionary<ModuleInfoExtended, bool> ValidModules = new();
 
-        public static ModuleInfoExtended? GetExtendedModuleInfo(object moduleInfo) => GetExtendedModuleInfo(ModuleInfoWrapper.Create(moduleInfo));
-        public static ModuleInfoExtended? GetExtendedModuleInfo(ModuleInfoWrapper moduleInfoWrapper)
+        public static ModuleInfoExtended? GetExtendedModuleInfo(ModuleInfo moduleInfoWrapper)
         {
             if (ExtendedModuleInfoCache.ContainsKey(moduleInfoWrapper.Id))
                 return ExtendedModuleInfoCache[moduleInfoWrapper.Id];
 
-            var extendedModuleInfo = ModuleInfoHelper.LoadFromId(string.IsNullOrEmpty(moduleInfoWrapper.Alias) ? moduleInfoWrapper.Id : moduleInfoWrapper.Alias);
+            var extendedModuleInfo = ModuleInfoHelper.LoadFromId(moduleInfoWrapper.Id);
             if (extendedModuleInfo is null) return null; // Special case
             ExtendedModuleInfoCache[moduleInfoWrapper.Id] = extendedModuleInfo;
             var validModules = ValidModules.Where(x => x.Value).Select(x => x.Key).ToList();

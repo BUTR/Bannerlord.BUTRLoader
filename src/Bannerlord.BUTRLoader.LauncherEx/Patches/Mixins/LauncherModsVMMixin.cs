@@ -1,10 +1,11 @@
 ﻿using Bannerlord.BUTR.Shared.Utils;
 using Bannerlord.BUTRLoader.Extensions;
-using Bannerlord.BUTRLoader.Wrappers;
 
+using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
-using TaleWorlds.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
@@ -12,18 +13,18 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
     {
         private delegate void ExecuteSelectDelegate(object instance);
         private static readonly ExecuteSelectDelegate? ExecuteSelect =
-            AccessTools2.GetDelegate<ExecuteSelectDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModuleVM:ExecuteSelect") ??
             AccessTools2.GetDelegate<ExecuteSelectDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:ExecuteSelect");
 
         private delegate void ExecuteLoadSubModulesDelegate(object instance, bool isMultiplayer);
         private static readonly ExecuteLoadSubModulesDelegate? LoadSubModules =
-            AccessTools2.GetDelegate<ExecuteLoadSubModulesDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:LoadSubModules") ??
             AccessTools2.GetDelegate<ExecuteLoadSubModulesDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:LoadSubModules");
 
         private delegate void SaveUserDataDelegate(object instance);
         private static readonly SaveUserDataDelegate? SaveUserData =
-            AccessTools2.GetDelegate<SaveUserDataDelegate>("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserDataManager:SaveUserData") ??
             AccessTools2.GetDelegate<SaveUserDataDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager:SaveUserData");
+
+        private AccessTools.FieldRef<LauncherModsVM, UserDataManager>? UserDataManager =
+            AccessTools2.FieldRefAccess<LauncherModsVM, UserDataManager>("_userDataManager");
 
         public bool GlobalCheckboxState
         {
@@ -41,9 +42,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         public bool IsSingleplayer => !((bool) _launcherModsVM.GetPropertyValue("IsDisabledOnMultiplayer"));
 
-        private readonly ViewModel _launcherModsVM;
+        private readonly LauncherModsVM _launcherModsVM;
 
-        public LauncherModsVMMixin(ViewModel launcherModsVM)
+        public LauncherModsVMMixin(LauncherModsVM launcherModsVM)
         {
             _launcherModsVM = launcherModsVM;
 
@@ -73,14 +74,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             GlobalCheckboxState = !GlobalCheckboxState;
 
-            var wrapper = LauncherModsVMWrapper.Create(_launcherModsVM);
-
-            foreach (var launcherModuleVM in wrapper.Modules)
+            foreach (var launcherModuleVM in _launcherModsVM.Modules)
             {
                 if (GlobalCheckboxState)
                 {
-                    if (ExecuteSelect is not null && launcherModuleVM.Object is not null && !launcherModuleVM.IsSelected)
-                        ExecuteSelect(launcherModuleVM.Object);
+                    if (ExecuteSelect is not null && !launcherModuleVM.IsSelected)
+                        ExecuteSelect(launcherModuleVM);
                 }
                 else
                 {
@@ -91,8 +90,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         public void ExecuteRefresh()
         {
-            var wrapper = LauncherModsVMWrapper.Create(_launcherModsVM);
-            if (SaveUserData is null || LoadSubModules is null || wrapper.UserDataManager?.Object is not { } mng) return;
+            if (SaveUserData is null || LoadSubModules is null || UserDataManager?.Invoke(_launcherModsVM) is not { } mng) return;
 
             SaveUserData(mng);
             LoadSubModules(_launcherModsVM, false);

@@ -1,5 +1,4 @@
 ﻿using Bannerlord.BUTRLoader.Patches;
-using Bannerlord.BUTRLoader.Wrappers;
 
 using System;
 using System.Collections.Generic;
@@ -10,6 +9,8 @@ using System.Threading;
 using System.Windows.Forms;
 
 using TaleWorlds.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
@@ -54,10 +55,10 @@ namespace Bannerlord.BUTRLoader.Helpers
             }
         }
 
-        private readonly ViewModel _launcherVM;
-        private readonly UserDataManagerWrapper _userDataManager;
+        private readonly LauncherVM _launcherVM;
+        private readonly UserDataManager _userDataManager;
 
-        public ModuleListHandler(ViewModel launcherVM, UserDataManagerWrapper userDataManager)
+        public ModuleListHandler(LauncherVM launcherVM, UserDataManager userDataManager)
         {
             _launcherVM = launcherVM;
             _userDataManager = userDataManager;
@@ -90,15 +91,13 @@ namespace Bannerlord.BUTRLoader.Helpers
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    var wrapper = LauncherVMWrapper.Create(_launcherVM);
-
                     try
                     {
                         using var fs = dialog.OpenFile();
                         using var reader = new StreamReader(fs);
                         var modules = Deserialize(ReadAllLines(reader)).ToArray();
                         var moduleIds = modules.Select(x => x.Id).ToHashSet();
-                        var wrappedModules = wrapper.ModsData.Modules
+                        var wrappedModules = _launcherVM.ModsData.Modules
                             .Where(x => moduleIds.Contains(x.Info.Id))
                             .ToArray();
                         var wrappedModuleIds = wrappedModules.Select(x => x.Info?.Id).ToHashSet();
@@ -112,21 +111,21 @@ Missing modules:
                             return;
                         }
 
-                        foreach (var launcherModuleVM in wrapper.ModsData.Modules)
+                        foreach (var launcherModuleVM in _launcherVM.ModsData.Modules)
                         {
                             launcherModuleVM.IsSelected = false;
                         }
                         var mismatchedVersions = new List<ModuleMismatch>();
                         foreach (var (id, version) in modules)
                         {
-                            var wrappedModule = wrapper.ModsData.Modules
+                            var module = _launcherVM.ModsData.Modules
                                 .FirstOrDefault(x => x.Info.Id == id);
-                            if (wrappedModule?.Object is not null)
+                            if (module is not null)
                             {
-                                var launcherModuleVersion = ToString(wrappedModule.Info?.Version ?? ApplicationVersion.Empty);
+                                var launcherModuleVersion = ToString(module.Info.Version);
                                 if (launcherModuleVersion == version)
                                 {
-                                    wrappedModule.IsSelected = true;
+                                    module.IsSelected = true;
                                     continue;
                                 }
                                 else
@@ -175,17 +174,14 @@ Mismatched module versions:
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    var wrapper = LauncherVMWrapper.Create(_launcherVM);
-
                     try
                     {
                         var moduleIds = _userDataManager.UserData?.SingleplayerData?.ModDatas
                             .Where(x => x.IsSelected)
                             .Select(x => x.Id)
                             .ToHashSet();
-                        var modules = wrapper.ModsData.Modules
+                        var modules = _launcherVM.ModsData.Modules
                             .Select(x => x.Info)
-                            .Where(x => x is not null)
                             .Where(x => moduleIds.Contains(x.Id))
                             .Select(x => new ModuleListEntry(x!.Id, ToString(x.Version)))
                             .ToArray();

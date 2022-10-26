@@ -10,30 +10,15 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.LauncherConfirmStartVM:EnableWith") ??
                 AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherConfirmStartVM:EnableWith"),
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherConfirmStartVMPatch:EnableWithPrefix"));
-            if (!res1)
-            {
-                var res2 = harmony.TryPatch(
-                    AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.LauncherConfirmStartVM:EnableWith") ??
-                    AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherConfirmStartVM:EnableWith"),
-                    prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherConfirmStartVMPatch:EnableWithPrefix2"));
-                if (!res2)
-                    return false;
-            }
+                prefix: AccessTools2.DeclaredMethod(typeof(LauncherConfirmStartVMPatch), nameof(EnableWithPrefix)));
 
-            return true;
+            return res1;
         }
 
         public static bool EnableWithPrefix(Action? ___onConfirm)
         {
             ___onConfirm?.Invoke();
-            return false;
-        }
-        public static bool EnableWithPrefix2(Action? ____onConfirm)
-        {
-            ____onConfirm?.Invoke();
             return false;
         }
     }

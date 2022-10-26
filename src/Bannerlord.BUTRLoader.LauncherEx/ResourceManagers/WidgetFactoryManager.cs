@@ -23,7 +23,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
     {
         private delegate void ReloadDelegate();
         private static readonly ReloadDelegate? Reload =
-            AccessTools2.GetDeclaredDelegate<ReloadDelegate>("TaleWorlds.GauntletUI.WidgetInfo:ReLoad") ??
             AccessTools2.GetDeclaredDelegate<ReloadDelegate>("TaleWorlds.GauntletUI.WidgetInfo:Reload");
 
         private static readonly AccessTools.FieldRef<object, IDictionary>? _liveCustomTypes =
@@ -68,32 +67,32 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
             var res1 = harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:GetCustomType"),
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.WidgetFactoryManager:GetCustomTypePrefix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetCustomTypePrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:GetWidgetTypes"),
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.WidgetFactoryManager:GetWidgetTypesPostfix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetWidgetTypesPostfix)));
             if (!res2) return false;
 
             var res3 = harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:IsCustomType"),
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.WidgetFactoryManager:IsCustomTypePrefix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(IsCustomTypePrefix)));
             if (!res3) return false;
 
             var res4 = harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:OnUnload"),
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.WidgetFactoryManager:OnUnloadPrefix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(OnUnloadPrefix)));
             //if (!res4) return false;
 
             var res5 = harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:Initialize"),
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.WidgetFactoryManager:InitializePostfix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
             if (!res5) return false;
 
             var res6 = harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:CreateBuiltinWidget"),
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.WidgetFactoryManager:CreateBuiltinWidgetPrefix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(CreateBuiltinWidgetPrefix)));
             if (!res6) return false;
 
             // GetCustomType is too complex to be inlined
@@ -102,10 +101,10 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             // Preventing inlining IsCustomType
             harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetTemplate:CreateWidgets"),
-                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.WidgetFactoryManager:BlankTranspiler"));
+                transpiler: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetTemplate:OnRelease"),
-                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.ResourceManagers.WidgetFactoryManager:BlankTranspiler"));
+                transpiler: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(BlankTranspiler)));
             // Preventing inlining GetCustomType
             //harmony.Patch(
             //    AccessTools2.Method(typeof(GauntletMovie), "LoadMovie"),

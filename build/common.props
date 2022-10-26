@@ -2,15 +2,15 @@
 <Project>
 
   <PropertyGroup>
-    <GameVersion>1.5.0</GameVersion>
+    <GameVersion>1.0.0</GameVersion>
   </PropertyGroup>
 
   <!--Development Variables-->
   <PropertyGroup>
-    <Version>1.9.0</Version>
+    <Version>1.10.0</Version>
     <HarmonyVersion>2.2.2</HarmonyVersion>
-    <BUTRSharedVersion>2.0.0.114</BUTRSharedVersion>
-    <BUTRModuleManagerVersion>4.0.147</BUTRModuleManagerVersion>
+    <BUTRSharedVersion>3.0.0.116</BUTRSharedVersion>
+    <BUTRModuleManagerVersion>4.0.149</BUTRModuleManagerVersion>
     <HarmonyExtensionsVersion>3.1.0.67</HarmonyExtensionsVersion>
     <HarmonyAnalyzerVersion>1.0.1.44</HarmonyAnalyzerVersion>
     <DebugType>full</DebugType>
@@ -18,7 +18,6 @@
 
   <PropertyGroup>
     <Authors>BUTR Team</Authors>
-    <Company></Company>
     <Product>BUTR Loader for Bannerlord Launcher</Product>
   </PropertyGroup>
 

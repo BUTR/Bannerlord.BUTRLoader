@@ -2,11 +2,10 @@
 using Bannerlord.BUTR.Shared.Utils;
 using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.Wrappers;
 
 using HarmonyLib.BUTR.Extensions;
 
-using TaleWorlds.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
@@ -58,7 +57,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
         private bool _isNoUpdateAvailable;
 
-        public object? DependencyHint2 { get; }
+        public LauncherHintVM DependencyHint2 { get; }
         public bool AnyDependencyAvailable2 { get; }
 
         public bool IsDangerous2 { get; }
@@ -66,14 +65,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public bool IsDisabled2 { get; }
 
 
-        private readonly ViewModel _launcherModuleVM;
+        private readonly LauncherModuleVM _launcherModuleVM;
         private readonly string _moduleId;
 
-        public LauncherModuleVMMixin(ViewModel launcherModuleVM)
+        public LauncherModuleVMMixin(LauncherModuleVM launcherModuleVM)
         {
             _launcherModuleVM = launcherModuleVM;
-
-            var moduleInfoWrapper = LauncherModuleVMWrapper.Create(launcherModuleVM);
 
             void SetVMProperty(string property)
             {
@@ -90,22 +87,19 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(IsDisabled2));
             SetVMProperty(nameof(IsDangerous2));
 
-            if (ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 })
+            var id = _launcherModuleVM.Info.Id ?? string.Empty;
+            if (ModuleInfoHelper.LoadFromId(id) is { } moduleInfo && ModuleInfoHelper2.GetDependencyHint(moduleInfo) is { } str)
             {
-                var id = moduleInfoWrapper.Info?.Id ?? string.Empty;
-                if (ModuleInfoHelper.LoadFromId(id) is { } moduleInfo && ModuleInfoHelper2.GetDependencyHint(moduleInfo) is { } str && LauncherHintVMWrapper.Create(str) is { } hint)
-                {
-                    DependencyHint2 = hint.Object;
-                    AnyDependencyAvailable2 = !string.IsNullOrEmpty(str);
-                    SetVMProperty(nameof(DependencyHint2));
-                    SetVMProperty(nameof(AnyDependencyAvailable2));
-                }
+                DependencyHint2 = new LauncherHintVM(str);
+                AnyDependencyAvailable2 = !string.IsNullOrEmpty(str);
+                SetVMProperty(nameof(DependencyHint2));
+                SetVMProperty(nameof(AnyDependencyAvailable2));
             }
 
-            _moduleId = moduleInfoWrapper.Info?.Id ?? string.Empty;
+            _moduleId = _launcherModuleVM.Info.Id ?? string.Empty;
 
             IsDisabled2 = LauncherModuleVMPatch.AreAllDepenenciesPresentReferences.TryGetValue(launcherModuleVM, out var del)
-                ? !(bool) del.DynamicInvoke(moduleInfoWrapper.Info?.Object)
+                ? !(bool) del.DynamicInvoke(_launcherModuleVM.Info)
                 : true;
 
             UpdateIssues();

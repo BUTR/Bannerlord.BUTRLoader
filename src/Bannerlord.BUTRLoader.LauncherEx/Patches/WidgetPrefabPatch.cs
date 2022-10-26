@@ -63,12 +63,12 @@ namespace Bannerlord.BUTRLoader.Patches
 
             var res1 = harmony.TryPatch(
                 AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab:LoadFrom"),
-                transpiler: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.WidgetPrefabPatch:WidgetPrefab_LoadFrom_Transpiler"));
+                transpiler: AccessTools2.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(WidgetPrefab_LoadFrom_Transpiler)));
             if (!res1) return false;
 
             var res2 = harmony.TryCreateReversePatcher(
                 AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab:LoadFrom"),
-                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.WidgetPrefabPatch:LoadFromDocument"));
+                AccessTools2.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(LoadFromDocument)));
             if (res2 is null) return false;
             res2.Patch();
 

@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 
 using TaleWorlds.GauntletUI.Data;
 using TaleWorlds.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library;
 
 namespace Bannerlord.BUTRLoader.Patches
 {
@@ -17,16 +18,14 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherUI:Initialize") ??
                 AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:Initialize"),
-                postfix: AccessTools2.Method("Bannerlord.BUTRLoader.Patches.LauncherUIPatch:InitializePostfix"));
+                postfix: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch) , nameof(InitializePostfix)));
             if (!res1) return false;
 
             // Preventing inlining Initialize
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.LauncherUI:Update") ??
                 AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:Update"),
-                transpiler: AccessTools2.Method("Bannerlord.BUTRLoader.Patches.LauncherUIPatch:BlankTranspiler"));
+                transpiler: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch), nameof(BlankTranspiler)));
             // Preventing inlining Initialize
 
             return true;
@@ -37,7 +36,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void InitializePostfix(GauntletMovie ____movie, ViewModel ____viewModel)
+        private static void InitializePostfix(GauntletMovie ____movie, LauncherVM ____viewModel)
         {
             // Add to the existing VM our own properties
             MixinManager.AddMixins(____viewModel);

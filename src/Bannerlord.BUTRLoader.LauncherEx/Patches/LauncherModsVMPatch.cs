@@ -1,7 +1,4 @@
-﻿using Bannerlord.BUTR.Shared.Helpers;
-using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.LauncherEx;
-using Bannerlord.BUTRLoader.Wrappers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.ModuleManager;
 
 using HarmonyLib;
@@ -11,13 +8,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-using TaleWorlds.Library;
-using TaleWorlds.MountAndBlade;
+using TaleWorlds.ModuleManager;
+using TaleWorlds.MountAndBlade.Launcher.Library;
 
 using static Bannerlord.BUTRLoader.Helpers.ModuleInfoHelper2;
 
@@ -26,11 +22,9 @@ namespace Bannerlord.BUTRLoader.Patches
     internal static class LauncherModsVMPatch
     {
         private static readonly MethodInfo? CastModuleInfoMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(
-            AccessTools2.TypeByName("TaleWorlds.Library.ModuleInfo") ??
             AccessTools2.TypeByName("TaleWorlds.ModuleManager.ModuleInfo"));
 
         private static readonly MethodInfo? ToListModuleInfoMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(
-            AccessTools2.TypeByName("TaleWorlds.Library.ModuleInfo") ??
             AccessTools2.TypeByName("TaleWorlds.ModuleManager.ModuleInfo"));
 
         private delegate IEnumerable CastDelegate(IEnumerable instance);
@@ -42,20 +36,15 @@ namespace Bannerlord.BUTRLoader.Patches
             AccessTools2.GetDelegate<ToListDelegate>(ToListModuleInfoMethodInfo!);
 
         private static readonly MethodInfo? GetDependentModulesOfMethodInfo =
-            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:GetDependentModulesOf") ??
-            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:GetDependentModulesOf") ??
             AccessTools2.DeclaredMethod("TaleWorlds.ModuleManager.ModuleHelper:GetDependentModulesOf");
 
         private static readonly MethodInfo? IsAllDependenciesOfModulePresentMethodInfo =
-            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:IsAllDependenciesOfModulePresent") ??
             AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:IsAllDependenciesOfModulePresent");
 
         private static readonly MethodInfo? ChangeIsSelectedOfMethodInfo =
-            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:ChangeIsSelectedOf") ??
             AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:ChangeIsSelectedOf");
 
         private static readonly MethodInfo? LoadSubModulesMethodInfo =
-            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.LauncherModsVM:LoadSubModules") ??
             AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:LoadSubModules");
 
 
@@ -63,47 +52,28 @@ namespace Bannerlord.BUTRLoader.Patches
         {
             var res1 = harmony.TryPatch(
                 GetDependentModulesOfMethodInfo,
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:GetDependentModulesOfPrefix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(LauncherModsVMPatch), nameof(GetDependentModulesOfPrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
                 IsAllDependenciesOfModulePresentMethodInfo,
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:AreAllDependenciesOfModulePresentPrefix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(LauncherModsVMPatch), nameof(AreAllDependenciesOfModulePresentPrefix)));
             if (!res2) return false;
 
             var res3 = harmony.TryPatch(
                 ChangeIsSelectedOfMethodInfo,
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:ChangeIsSelectedOfPrefix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(LauncherModsVMPatch), nameof(ChangeIsSelectedOfPrefix)));
             if (!res3) return false;
 
             var res4 = harmony.TryPatch(
                 LoadSubModulesMethodInfo,
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:LoadSubModulesPrefix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(LauncherModsVMPatch), nameof(LoadSubModulesPrefix)));
             if (!res4) return false;
 
             return true;
         }
 
-        public static void Disable(Harmony harmony)
-        {
-            harmony.Unpatch(
-                GetDependentModulesOfMethodInfo,
-                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:GetDependentModulesOfPrefix"));
-
-            harmony.Unpatch(
-                IsAllDependenciesOfModulePresentMethodInfo,
-                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:AreAllDependenciesOfModulePresentPrefix"));
-
-            harmony.Unpatch(
-                ChangeIsSelectedOfMethodInfo,
-                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:ChangeIsSelectedOfPrefix"));
-
-            harmony.Unpatch(
-                LoadSubModulesMethodInfo,
-                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.LauncherModsVMPatch:LoadSubModulesPrefix"));
-        }
-
-        private static Func<ModuleInfoExtended?, bool> GetIsSelected(LauncherModsVMWrapper instance) => module =>
+        private static Func<ModuleInfoExtended?, bool> GetIsSelected(LauncherModsVM instance) => module =>
         {
             if (module is not null && FeatureIds.Features.Contains(module.Id))
                 return false;
@@ -112,12 +82,12 @@ namespace Bannerlord.BUTRLoader.Patches
                 return wrapper.IsSelected;
             return false;
         };
-        private static Action<ModuleInfoExtended?, bool> SetIsSelected(LauncherModsVMWrapper instance) => (module, value) =>
+        private static Action<ModuleInfoExtended?, bool> SetIsSelected(LauncherModsVM instance) => (module, value) =>
         {
             if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)
                 wrapper.IsSelected = value;
         };
-        private static Func<ModuleInfoExtended?, bool> GetIsDisabled(LauncherModsVMWrapper instance) => module =>
+        private static Func<ModuleInfoExtended?, bool> GetIsDisabled(LauncherModsVM instance) => module =>
         {
             if (module is not null && FeatureIds.Features.Contains(module.Id))
                 return false;
@@ -126,7 +96,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 return wrapper.IsDisabled;
             return false;
         };
-        private static Action<ModuleInfoExtended?, bool> SetIsDisabled(LauncherModsVMWrapper instance) => (module, value) =>
+        private static Action<ModuleInfoExtended?, bool> SetIsDisabled(LauncherModsVM instance) => (module, value) =>
         {
             if (instance.Modules.FirstOrDefault(m => m.Info?.Id == module?.Id) is { } wrapper)
                 wrapper.IsDisabled = value;
@@ -137,7 +107,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool GetDependentModulesOfPrefix(IEnumerable<object> source, object module, ref IEnumerable __result)
+        private static bool GetDependentModulesOfPrefix(IEnumerable<ModuleInfo> source, ModuleInfo module, ref IEnumerable __result)
         {
             if (!LauncherSettings.ExtendedSorting || CastMethod is null || ToListMethod is null)
                 return true;
@@ -156,7 +126,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
             var validModules = ValidModules.Where(kv => kv.Value).Select(x => x.Key).ToArray();
             var extendedDependencies = ModuleUtilities.GetDependencies(validModules, extendedModuleInfo).Except(new[] { extendedModuleInfo });
-            var dependencies = extendedDependencies.Select(em => sourceList.Find(m => ModuleInfoWrapper.Create(m).Id == em.Id)).Where(x => x is not null);
+            var dependencies = extendedDependencies.Select(em => sourceList.Find(m => m.Id == em.Id)).Where(x => x is not null);
 
             var castedItems = CastMethod.Invoke(dependencies);
             __result = ToListMethod.Invoke(castedItems);
@@ -171,12 +141,11 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool AreAllDependenciesOfModulePresentPrefix(object __instance, object info, ref bool __result)
+        private static bool AreAllDependenciesOfModulePresentPrefix(LauncherModsVM __instance, ModuleInfo info, ref bool __result)
         {
             if (!LauncherSettings.ExtendedSorting)
                 return true;
 
-            var wrapped = LauncherModsVMWrapper.Create(__instance);
             var info2 = GetExtendedModuleInfo(info);
             if (info2 is null) // Any incorrect module will be null. Filter it out
             {
@@ -190,10 +159,10 @@ namespace Bannerlord.BUTRLoader.Patches
             var opt = new ModuleSorterOptions { SkipOptionals = true, SkipExternalDependencies = true };
             foreach (var dependency in ModuleUtilities.GetDependencies(ExtendedModuleInfoCache.Values, info2, visited, opt))
             {
-                if (!ModuleIsCorrect(wrapped, dependency, visited))
+                if (!ModuleIsCorrect(__instance, dependency, visited))
                 {
                     if (dependency != info2)
-                        IssueStorage.AppendIssue(wrapped, info2, $"'{dependency.Name}' has unresolved issues!");
+                        IssueStorage.AppendIssue(__instance, info2, $"'{dependency.Name}' has unresolved issues!");
 
                     __result = false;
                     return false;
@@ -201,14 +170,14 @@ namespace Bannerlord.BUTRLoader.Patches
             }
             return false;
         }
-        private static bool AreAllDependenciesOfModulePresent(object launcherModsVM, object moduleInfo)
+        private static bool AreAllDependenciesOfModulePresent(LauncherModsVM launcherModsVM, ModuleInfo moduleInfo)
         {
             var result = false;
             AreAllDependenciesOfModulePresentPrefix(launcherModsVM, moduleInfo, ref result);
             return result;
         }
 
-        private static bool CheckModuleCompatibility(LauncherModsVMWrapper instance, ModuleInfoExtended moduleInfoExtended)
+        private static bool CheckModuleCompatibility(LauncherModsVM instance, ModuleInfoExtended moduleInfoExtended)
         {
             /*
             foreach (var subModule in moduleInfoExtended.SubModules.Where(x =>
@@ -232,7 +201,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
             return true;
         }
-        private static bool ModuleIsCorrect(LauncherModsVMWrapper instance, ModuleInfoExtended moduleInfoExtended, HashSet<ModuleInfoExtended> visited)
+        private static bool ModuleIsCorrect(LauncherModsVM instance, ModuleInfoExtended moduleInfoExtended, HashSet<ModuleInfoExtended> visited)
         {
             if (!CheckModuleCompatibility(instance, moduleInfoExtended))
             {
@@ -266,25 +235,23 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool ChangeIsSelectedOfPrefix(object __instance, object targetModule)
+        private static bool ChangeIsSelectedOfPrefix(LauncherModsVM __instance, LauncherModuleVM targetModule)
         {
             if (!LauncherSettings.ExtendedSorting)
                 return true;
 
-            var targetModuleWrapped = LauncherModuleVMWrapper.Create(targetModule);
-            if (LauncherModuleVMWrapper.Create(targetModule) is not { Info.Object: { } obj } || !AreAllDependenciesOfModulePresent(__instance, obj))
+            if (!AreAllDependenciesOfModulePresent(__instance, targetModule.Info))
             {
                 // Direct and current External Dependencies are not valid, do nothing
                 return false;
             }
 
-            var wrapped = LauncherModsVMWrapper.Create(__instance);
-            ChangeIsSelectedOf(wrapped, targetModuleWrapped);
+            ChangeIsSelectedOf(__instance, targetModule);
 
             return false;
         }
 
-        private static void ChangeIsSelectedOf(LauncherModsVMWrapper instance, LauncherModuleVMWrapper targetModule)
+        private static void ChangeIsSelectedOf(LauncherModsVM instance, LauncherModuleVM targetModule)
         {
             if (targetModule.Info is not { } info || GetExtendedModuleInfo(info) is not { } targetModuleInfoExtended) return;
 
@@ -314,10 +281,9 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "UnusedMember.Local")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void LoadSubModulesPrefix(object __instance)
+        private static void LoadSubModulesPrefix(LauncherModsVM __instance)
         {
-            var wrapped = LauncherModsVMWrapper.Create(__instance);
-            foreach (var module in wrapped.Modules.Select(x => x.Object).OfType<ViewModel>())
+            foreach (var module in __instance.Modules)
             {
                 module.OnPropertyChanged("Refresh_Command");
             }

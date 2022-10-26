@@ -4,7 +4,6 @@ using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
 using Bannerlord.BUTRLoader.Options;
 using Bannerlord.BUTRLoader.Patches.ViewModels;
-using Bannerlord.BUTRLoader.Wrappers;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -12,7 +11,8 @@ using HarmonyLib.BUTR.Extensions;
 using System.Runtime.CompilerServices;
 
 using TaleWorlds.GauntletUI;
-using TaleWorlds.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
@@ -20,21 +20,18 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
     {
         private delegate void AddHintInformationDelegate(string message);
         private static readonly AddHintInformationDelegate? AddHintInformation =
-            AccessTools2.GetDelegate<AddHintInformationDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherUI:AddHintInformation") ??
             AccessTools2.GetDelegate<AddHintInformationDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:AddHintInformation");
 
         private delegate void HideHintInformationDelegate();
         private static readonly HideHintInformationDelegate? HideHintInformation =
-            AccessTools2.GetDelegate<HideHintInformationDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherUI:HideHintInformation") ??
             AccessTools2.GetDelegate<HideHintInformationDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:HideHintInformation");
 
         private delegate void ExecuteConfirmUnverifiedDLLStartDelegate(object instance);
         private static readonly ExecuteConfirmUnverifiedDLLStartDelegate? ExecuteConfirmUnverifiedDLLStartOriginal =
-            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>("TaleWorlds.MountAndBlade.Launcher.LauncherVM:ExecuteConfirmUnverifiedDLLStart") ??
             AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM:ExecuteConfirmUnverifiedDLLStart");
 
-        private static readonly AccessTools.FieldRef<object, object>? UserDataManagerFieldRef =
-            AccessTools2.FieldRefAccess<object>(LauncherVMWrapper.LauncherVMType!, "_userDataManager");
+        private static readonly AccessTools.FieldRef<LauncherVM, UserDataManager>? UserDataManagerFieldRef =
+            AccessTools2.FieldRefAccess<LauncherVM, UserDataManager>("_userDataManager");
 
         private enum TopTabs { NONE, Singleplayer, Multiplayer, Options }
         private TopTabs _state;
@@ -53,7 +50,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     _state = TopTabs.Singleplayer;
 
-                    _wrapper.IsSingleplayer = true;
+                    _launcherVM.IsSingleplayer = true;
                     _launcherVM.OnPropertyChanged(nameof(IsSingleplayer));
                     _launcherVM.OnPropertyChanged(nameof(IsOptions));
 
@@ -65,8 +62,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     RandomImageSwitch = !RandomImageSwitch;
 
-                    _wrapper.ModsData.IsDisabledOnMultiplayer = false;
-                    _wrapper.News.IsDisabledOnMultiplayer = false;
+                    _launcherVM.ModsData.IsDisabledOnMultiplayer = false;
+                    _launcherVM.News.IsDisabledOnMultiplayer = false;
                     OptionsData.IsDisabled = true;
                 }
             }
@@ -87,7 +84,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     _state = TopTabs.Multiplayer;
 
-                    _wrapper.IsMultiplayer = true;
+                    _launcherVM.IsMultiplayer = true;
                     _launcherVM.OnPropertyChanged(nameof(IsMultiplayer));
                     _launcherVM.OnPropertyChanged(nameof(IsOptions));
 
@@ -99,8 +96,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     RandomImageSwitch = !RandomImageSwitch;
 
-                    _wrapper.ModsData.IsDisabledOnMultiplayer = true;
-                    _wrapper.News.IsDisabledOnMultiplayer = false;
+                    _launcherVM.ModsData.IsDisabledOnMultiplayer = true;
+                    _launcherVM.News.IsDisabledOnMultiplayer = false;
                     OptionsData.IsDisabled = true;
                 }
             }
@@ -126,8 +123,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     _launcherVM.OnPropertyChanged(nameof(SkipNews));
                     _launcherVM.OnPropertyChanged(nameof(SkipMods));
 
-                    _wrapper.News.IsDisabledOnMultiplayer = true;
-                    _wrapper.ModsData.IsDisabledOnMultiplayer = true;
+                    _launcherVM.News.IsDisabledOnMultiplayer = true;
+                    _launcherVM.ModsData.IsDisabledOnMultiplayer = true;
                     OptionsData.Refresh(false);
                 }
             }
@@ -210,18 +207,16 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private LauncherOptionsVM _optionsData = new();
 
 
-        private readonly ViewModel _launcherVM;
-        private readonly LauncherVMWrapper _wrapper;
-        private readonly UserDataManagerWrapper _userDataManager;
+        private readonly LauncherVM _launcherVM;
+        private readonly UserDataManager _userDataManager;
         private readonly LauncherExData _launcherExData;
 
         private ModuleListHandler? _currentModuleListHandler;
 
-        public LauncherVMMixin(ViewModel launcherVM)
+        public LauncherVMMixin(LauncherVM launcherVM)
         {
             _launcherVM = launcherVM;
-            _wrapper = LauncherVMWrapper.Create(_launcherVM);
-            _userDataManager = UserDataManagerFieldRef is not null ? UserDataManagerWrapper.Create(UserDataManagerFieldRef(launcherVM)) : default!;
+            _userDataManager = UserDataManagerFieldRef is not null ? UserDataManagerFieldRef(launcherVM) : default!;
             _launcherExData = new LauncherExData(
                 LauncherSettings.ExtendedSorting,
                 LauncherSettings.AutomaticallyCheckForUpdates,
@@ -254,7 +249,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(VersionTextSingleplayer));
             SetVMProperty(nameof(OptionsData));
 
-            if (_wrapper.IsMultiplayer)
+            if (_launcherVM.IsMultiplayer)
                 IsMultiplayer = true;
             else
                 IsSingleplayer = true;

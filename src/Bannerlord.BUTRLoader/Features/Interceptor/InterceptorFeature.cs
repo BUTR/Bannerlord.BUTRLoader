@@ -59,7 +59,7 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
             {
                 foreach (var subModule in moduleInfo.SubModules)
                 {
-                    if (ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(subModule, ApplicationPlatform.CurrentPlatform, ApplicationPlatform.CurrentRuntimeLibrary, DedicatedServerType.None))
+                    if (ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(subModule, ApplicationPlatform.CurrentPlatform, ApplicationPlatform.CurrentRuntimeLibrary, DedicatedServerType.None, false))
                     {
                         yield return System.IO.Path.GetFullPath(System.IO.Path.Combine(basePath, "Modules", moduleInfo.Id, "bin", configName, subModule.DLLName));
                     }

@@ -10,9 +10,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     /// </summary>
     internal sealed class LauncherModsPrefabExtension1 : PrefabExtensionInsertAsSiblingPatch
     {
-        public static string Movie { get; } = ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 }
-            ? "Launcher.Mods.ModuleTuple"
-            : "Launcher.Mods";
+        public static string Movie { get; } = "Launcher.Mods.ModuleTuple";
         public static string XPath { get; } = "descendant::TextWidget[@Text='@VersionText']";
 
         public override InsertType Type => InsertType.Prepend;
@@ -43,12 +41,8 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     /// </summary>
     internal sealed class LauncherModsPrefabExtension2 : PrefabExtensionCustomPatch<XmlNode>
     {
-        public static string Movie { get; } = ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 }
-            ? "Launcher.Mods.ModuleTuple"
-            : "Launcher.Mods";
-        public static string XPath { get; } = ApplicationVersionHelper.GameVersion() is { Major: 1, Minor: >= 7 }
-            ? "/Prefab/Window/ListPanel"
-            : "descendant::ListPanel[@Id='InnerPanel']/ItemTemplate/ListPanel";
+        public static string Movie { get; } = "Launcher.Mods.ModuleTuple";
+        public static string XPath { get; } = "/Prefab/Window/ListPanel";
 
         private XmlDocument XmlDocument { get; } = new();
 

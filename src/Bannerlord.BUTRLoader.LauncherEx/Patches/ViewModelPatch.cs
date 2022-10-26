@@ -19,14 +19,14 @@ namespace Bannerlord.BUTRLoader.Patches
     {
         public static void Enable(Harmony harmony)
         {
-            harmony.Patch(
+            harmony.TryPatch(
                 AccessTools2.DeclaredMethod("TaleWorlds.Library.ViewModel:ExecuteCommand"),
-                transpiler: new HarmonyMethod(typeof(ViewModelPatch), nameof(ViewModel_ExecuteCommand_Transpiler)));
+                transpiler: AccessTools2.DeclaredMethod(typeof(ViewModelPatch), nameof(ViewModel_ExecuteCommand_Transpiler)));
 
             // Preventing inlining ExecuteCommand
             harmony.TryPatch(
                 AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.Data.GauntletView:OnCommand"),
-                transpiler: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.ViewModelPatch:BlankTranspiler"));
+                transpiler: AccessTools2.DeclaredMethod(typeof(ViewModelPatch), nameof(BlankTranspiler)));
             // Preventing inlining ExecuteCommand
         }
 

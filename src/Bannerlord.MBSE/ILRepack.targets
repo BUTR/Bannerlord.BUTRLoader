@@ -17,6 +17,6 @@
       InputAssemblies="@(InputAssemblies)"
       TargetKind="SameAsPrimaryAssembly"
       OutputFile="$(OutputPath)\$(AssemblyName).exe"
-      LibraryPath="$(OutputPath);$(PkgBannerlord_ReferenceAssemblies_Core_EarlyAccess)\ref\net472;" />
+      LibraryPath="$(OutputPath);$(PkgBannerlord_ReferenceAssemblies_Core)\ref\net472;" />
   </Target>
 </Project>

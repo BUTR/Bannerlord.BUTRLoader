@@ -1,5 +1,4 @@
 ﻿using Bannerlord.BUTRLoader.Options;
-using Bannerlord.BUTRLoader.Wrappers;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -12,6 +11,8 @@ using System.Runtime.CompilerServices;
 using System.Xml;
 using System.Xml.Serialization;
 
+using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
+
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class UserDataManagerPatch
@@ -19,15 +20,13 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserDataManager:LoadUserData") ??
                 AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager:LoadUserData"),
-                prefix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.UserDataManagerPatch:LoadUserDataPrefix"));
+                prefix: AccessTools2.DeclaredMethod(typeof(UserDataManagerPatch), nameof(LoadUserDataPrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.UserDatas.UserDataManager:SaveUserData") ??
                 AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager:SaveUserData"),
-                postfix: AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.UserDataManagerPatch:SaveUserDataPostfix"));
+                postfix: AccessTools2.DeclaredMethod(typeof(UserDataManagerPatch), nameof(SaveUserDataPostfix)));
             if (!res2) return false;
 
             return true;
@@ -38,7 +37,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool LoadUserDataPrefix(object __instance, string ____filePath)
+        private static bool LoadUserDataPrefix(UserDataManager __instance, string ____filePath)
         {
             if (!File.Exists(____filePath))
             {
@@ -59,8 +58,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 LauncherSettings.DisableBinaryCheck = userDataOptions.DisableBinaryCheck;
                 if (LauncherSettings.ResetModuleList)
                 {
-                    var wrapper = UserDataManagerWrapper.Create(__instance);
-                    wrapper.UserData?.SingleplayerData?.ModDatasRaw.Clear();
+                    __instance.UserData?.SingleplayerData?.ModDatas.Clear();
                     LauncherSettings.ResetModuleList = false;
                 }
             }
@@ -77,7 +75,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void SaveUserDataPostfix(object __instance, string ____filePath)
+        private static void SaveUserDataPostfix(UserDataManager __instance, string ____filePath)
         {
             var xDoc = new XmlDocument();
             xDoc.Load(____filePath);
