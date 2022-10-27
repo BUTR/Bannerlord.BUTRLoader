@@ -19,7 +19,7 @@ namespace Bannerlord.BUTRLoader.Patches
         {
             var res1 = harmony.TryPatch(
                 AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:Initialize"),
-                postfix: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch) , nameof(InitializePostfix)));
+                postfix: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch), nameof(InitializePostfix)));
             if (!res1) return false;
 
             // Preventing inlining Initialize
