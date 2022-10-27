@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.10.2
+Game Versions: v1.0.0
+* Removed EA legacy code, adapted to v1.0.0
+* Fixed warning screen appearing
+---------------------------------------------------------------------------------------------------
 Version: 1.10.1
 Game Versions: v1.0.0
 * Removed EA legacy code, adapted to v1.0.0

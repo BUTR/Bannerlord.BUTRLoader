@@ -16,9 +16,9 @@ namespace Bannerlord.BUTRLoader.Patches
             return res1;
         }
 
-        public static bool EnableWithPrefix(Action? ___onConfirm)
+        public static bool EnableWithPrefix(Action? ____onConfirm)
         {
-            ___onConfirm?.Invoke();
+            ____onConfirm?.Invoke();
             return false;
         }
     }
