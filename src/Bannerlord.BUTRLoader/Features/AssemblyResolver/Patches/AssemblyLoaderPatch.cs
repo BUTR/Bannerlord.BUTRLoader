@@ -15,6 +15,14 @@ namespace Bannerlord.BUTRLoader.Features.AssemblyResolver.Patches
 {
     internal static class AssemblyLoaderPatch
     {
+        private static readonly Type? EngineApplicationInterfaceType =
+            AccessTools2.TypeByName("TaleWorlds.Engine.EngineApplicationInterface");
+
+        private static readonly AccessTools.FieldRef<object>? IUtil =
+            AccessTools2.StaticFieldRefAccess<object>(EngineApplicationInterfaceType, "IUtil");
+
+        private delegate string GetModulesCodeDelegate(object instance);
+
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
@@ -30,10 +38,16 @@ namespace Bannerlord.BUTRLoader.Features.AssemblyResolver.Patches
         {
             try
             {
+                var iUtil = IUtil?.Invoke();
+                var getModulesCode = AccessTools2.GetDelegate<GetModulesCodeDelegate>(iUtil, "GetModulesCode");
+                var isInGame = getModulesCode is not null;
+
                 var name = args.Name.Contains(',') ? $"{args.Name.Split(',')[0]}.dll" : args.Name;
 
-                var assemblies = ModuleInfoHelper.GetLoadedModules().OfType<ModuleInfoExtendedWithMetadata>()
-                    .Select(x => Directory.GetFiles(x.Path, "*.dll")).ToArray();
+                var assemblies = (isInGame
+                        ? ModuleInfoHelper.GetLoadedModules().OfType<ModuleInfoExtendedWithMetadata>()
+                        : ModuleInfoHelper.GetModules().OfType<ModuleInfoExtendedWithMetadata>())
+                    .Select(x => Directory.GetFiles(Path.Combine(x.Path, "bin", Common.ConfigName), "*.dll")).ToArray();
 
                 var assembly = assemblies
                     .SelectMany(x => x)
