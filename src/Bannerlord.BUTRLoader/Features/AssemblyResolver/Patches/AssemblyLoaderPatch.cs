@@ -9,10 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-using TaleWorlds.Engine;
 using TaleWorlds.Library;
-
-using Path = System.IO.Path;
 
 namespace Bannerlord.BUTRLoader.Features.AssemblyResolver.Patches
 {
@@ -33,16 +30,10 @@ namespace Bannerlord.BUTRLoader.Features.AssemblyResolver.Patches
         {
             try
             {
-                var basePath = Utilities.GetBasePath();
-                var configName = Common.ConfigName;
-                var modulePath = Path.GetFullPath(Path.Combine(basePath, "Modules"));
-
                 var name = args.Name.Contains(',') ? $"{args.Name.Split(',')[0]}.dll" : args.Name;
 
-                var assemblies = ModuleInfoHelper.GetLoadedModules()
-                    .Select(x => Path.Combine(modulePath, x.Id, "bin", configName))
-                    .Where(Directory.Exists)
-                    .Select(x => Directory.GetFiles(x, "*.dll")).ToArray();
+                var assemblies = ModuleInfoHelper.GetLoadedModules().OfType<ModuleInfoExtendedWithMetadata>()
+                    .Select(x => Directory.GetFiles(x.Path, "*.dll")).ToArray();
 
                 var assembly = assemblies
                     .SelectMany(x => x)
