@@ -3,12 +3,15 @@ using Bannerlord.BUTRLoader.Features.Interceptor;
 
 using HarmonyLib;
 
+using System;
+
 namespace Bannerlord.MBSE
 {
     public static class Program
     {
         private static readonly Harmony _featureHarmony = new("bannerlord.butrloader.features");
 
+        [STAThread]
         public static void Main(string[] args)
         {
             InterceptorFeature.Enable(_featureHarmony);
