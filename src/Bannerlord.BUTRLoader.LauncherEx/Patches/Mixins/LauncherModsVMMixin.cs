@@ -13,17 +13,17 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
     {
         private delegate void ExecuteSelectDelegate(object instance);
         private static readonly ExecuteSelectDelegate? ExecuteSelect =
-            AccessTools2.GetDelegate<ExecuteSelectDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM:ExecuteSelect");
+            AccessTools2.GetDelegate<ExecuteSelectDelegate>(typeof(LauncherModuleVM), "ExecuteSelect");
 
         private delegate void ExecuteLoadSubModulesDelegate(object instance, bool isMultiplayer);
         private static readonly ExecuteLoadSubModulesDelegate? LoadSubModules =
-            AccessTools2.GetDelegate<ExecuteLoadSubModulesDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:LoadSubModules");
+            AccessTools2.GetDelegate<ExecuteLoadSubModulesDelegate>(typeof(LauncherModsVM), "LoadSubModules");
 
         private delegate void SaveUserDataDelegate(object instance);
         private static readonly SaveUserDataDelegate? SaveUserData =
-            AccessTools2.GetDelegate<SaveUserDataDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager:SaveUserData");
+            AccessTools2.GetDelegate<SaveUserDataDelegate>(typeof(UserDataManager), "SaveUserData");
 
-        private AccessTools.FieldRef<LauncherModsVM, UserDataManager>? UserDataManager =
+        private static readonly AccessTools.FieldRef<LauncherModsVM, UserDataManager>? UserDataManager =
             AccessTools2.FieldRefAccess<LauncherModsVM, UserDataManager>("_userDataManager");
 
         public bool GlobalCheckboxState
@@ -50,7 +50,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             void SetVMProperty(string property)
             {
-                var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property($"Bannerlord.BUTRLoader.Patches.Mixins.LauncherModsVMMixin:{property}")!, this);
+                var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property(typeof(LauncherModsVMMixin), property)!, this);
                 _launcherModsVM.AddProperty(property, propertyInfo);
                 propertyInfo.PropertyChanged += (_, e) => _launcherModsVM.OnPropertyChanged(e.PropertyName);
             }

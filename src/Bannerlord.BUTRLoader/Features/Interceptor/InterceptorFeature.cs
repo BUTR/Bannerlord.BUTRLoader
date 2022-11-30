@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using TaleWorlds.Engine;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
 
@@ -52,16 +51,15 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor
 
         private static IEnumerable<string> GetLoadedModulePaths()
         {
-            var basePath = Utilities.GetBasePath();
             var configName = Common.ConfigName;
 
-            foreach (var moduleInfo in ModuleInfoHelper.GetLoadedModules())
+            foreach (var moduleInfo in ModuleInfoHelper.GetLoadedModules().OfType<ModuleInfoExtendedWithMetadata>())
             {
                 foreach (var subModule in moduleInfo.SubModules)
                 {
                     if (ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(subModule, ApplicationPlatform.CurrentPlatform, ApplicationPlatform.CurrentRuntimeLibrary, DedicatedServerType.None, false))
                     {
-                        yield return System.IO.Path.GetFullPath(System.IO.Path.Combine(basePath, "Modules", moduleInfo.Id, "bin", configName, subModule.DLLName));
+                        yield return System.IO.Path.GetFullPath(System.IO.Path.Combine(moduleInfo.Path, "bin", configName, subModule.DLLName));
                     }
                 }
             }

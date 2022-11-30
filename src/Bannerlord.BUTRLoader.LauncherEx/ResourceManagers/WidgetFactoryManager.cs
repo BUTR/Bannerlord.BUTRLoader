@@ -23,10 +23,10 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
     {
         private delegate void ReloadDelegate();
         private static readonly ReloadDelegate? Reload =
-            AccessTools2.GetDeclaredDelegate<ReloadDelegate>("TaleWorlds.GauntletUI.WidgetInfo:Reload");
+            AccessTools2.GetDeclaredDelegate<ReloadDelegate>(typeof(WidgetInfo), "Reload");
 
-        private static readonly AccessTools.FieldRef<object, IDictionary>? _liveCustomTypes =
-            AccessTools2.FieldRefAccess<IDictionary>("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:_liveCustomTypes");
+        private static readonly AccessTools.FieldRef<WidgetFactory, IDictionary>? _liveCustomTypes =
+            AccessTools2.FieldRefAccess<WidgetFactory, IDictionary>("_liveCustomTypes");
 
         private static readonly Dictionary<string, Func<WidgetPrefab?>> CustomTypes = new();
         private static readonly Dictionary<string, Type> BuiltinTypes = new();
@@ -66,32 +66,32 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             _harmony = harmony;
 
             var res1 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:GetCustomType"),
+                AccessTools2.Method(typeof(WidgetFactory), "GetCustomType"),
                 prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetCustomTypePrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:GetWidgetTypes"),
+                AccessTools2.Method(typeof(WidgetFactory), "GetWidgetTypes"),
                 prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(GetWidgetTypesPostfix)));
             if (!res2) return false;
 
             var res3 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:IsCustomType"),
+                AccessTools2.Method(typeof(WidgetFactory), "IsCustomType"),
                 prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(IsCustomTypePrefix)));
             if (!res3) return false;
 
             var res4 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:OnUnload"),
+                AccessTools2.Method(typeof(WidgetFactory), "OnUnload"),
                 prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(OnUnloadPrefix)));
             //if (!res4) return false;
 
             var res5 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:Initialize"),
+                AccessTools2.Method(typeof(WidgetFactory), "Initialize"),
                 prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
             if (!res5) return false;
 
             var res6 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:CreateBuiltinWidget"),
+                AccessTools2.Method(typeof(WidgetFactory), "CreateBuiltinWidget"),
                 prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(CreateBuiltinWidgetPrefix)));
             if (!res6) return false;
 
@@ -198,8 +198,8 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             SetWidgetFactory(__instance);
 
             _harmony?.Unpatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetFactory:Initialize"),
-                AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.ResourceManagers.WidgetFactoryManager:InitializePostfix"));
+                AccessTools2.Method(typeof(WidgetFactory), "Initialize"),
+                AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

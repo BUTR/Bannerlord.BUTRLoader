@@ -10,8 +10,8 @@ namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class IssueStorage
     {
-        public static Dictionary<string, HashSet<string>> Issues = new();
-        private static void SetIssue(string moduleId, string[] issues)
+        public static readonly Dictionary<string, HashSet<string>> Issues = new();
+        private static void SetIssue(string moduleId, IEnumerable<string> issues)
         {
             if (Issues.TryGetValue(moduleId, out var list))
             {

@@ -62,12 +62,12 @@ namespace Bannerlord.BUTRLoader.Patches
             PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension14.Movie, LauncherModsPrefabExtension14.XPath, new LauncherModsPrefabExtension14());
 
             var res1 = harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab:LoadFrom"),
+                AccessTools2.DeclaredMethod(typeof(WidgetPrefab), "LoadFrom"),
                 transpiler: AccessTools2.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(WidgetPrefab_LoadFrom_Transpiler)));
             if (!res1) return false;
 
             var res2 = harmony.TryCreateReversePatcher(
-                AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab:LoadFrom"),
+                AccessTools2.DeclaredMethod(typeof(WidgetPrefab), "LoadFrom"),
                 AccessTools2.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(LoadFromDocument)));
             if (res2 is null) return false;
             res2.Patch();
@@ -92,7 +92,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 return instructionsList.AsEnumerable();
             }
 
-            var constructor = AccessTools2.DeclaredConstructor("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab");
+            var constructor = AccessTools2.DeclaredConstructor(typeof(WidgetPrefab));
 
             var locals = method.GetMethodBody()?.LocalVariables;
             var typeLocal = locals?.FirstOrDefault(x => x.LocalType == typeof(WidgetPrefab));
@@ -121,7 +121,7 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 new (OpCodes.Ldarg_2),
                 new (OpCodes.Ldloc_0),
-                new (OpCodes.Call, AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.WidgetPrefabPatch:ProcessMovie"))
+                new (OpCodes.Call, AccessTools2.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(ProcessMovie)))
             });
             return instructionsList.AsEnumerable();
         }
@@ -150,7 +150,7 @@ namespace Bannerlord.BUTRLoader.Patches
                     return returnNull;
 
                 var constructorIndex = -1;
-                var constructor = AccessTools2.Constructor("TaleWorlds.GauntletUI.PrefabSystem.WidgetPrefab");
+                var constructor = AccessTools2.Constructor(typeof(WidgetPrefab));
                 for (var i = 0; i < instructionList.Count; i++)
                 {
                     if (instructionList[i].opcode == OpCodes.Newobj && Equals(instructionList[i].operand, constructor))

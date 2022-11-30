@@ -4,7 +4,7 @@ using Bannerlord.BUTRLoader.LauncherEx;
 
 using HarmonyLib;
 
-namespace Bannerlord.MBSE.Launcher
+namespace Bannerlord.BLSE.Launcher
 {
     public static class Program
     {

@@ -13,12 +13,10 @@ namespace Bannerlord.BUTRLoader.Patches
     {
         public static readonly ConditionalWeakTable<object, Delegate> AreAllDepenenciesPresentReferences = new();
 
-        private static readonly Type? LauncherModuleVMType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModuleVM");
-
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools.FirstConstructor(LauncherModuleVMType, ci => ci.GetParameters().Length > 0),
+                AccessTools.FirstConstructor(typeof(LauncherModuleVM), ci => ci.GetParameters().Length > 0),
                 postfix: AccessTools2.DeclaredMethod(typeof(LauncherModuleVMPatch), nameof(LauncherModuleVMConstructorPostfix)));
             if (!res1) return false;
 

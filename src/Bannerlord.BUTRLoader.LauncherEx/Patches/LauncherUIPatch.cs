@@ -18,13 +18,13 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:Initialize"),
+                AccessTools2.DeclaredMethod(typeof(LauncherUI), "Initialize"),
                 postfix: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch), nameof(InitializePostfix)));
             if (!res1) return false;
 
             // Preventing inlining Initialize
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:Update"),
+                AccessTools2.Method(typeof(LauncherUI), "Update"),
                 transpiler: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch), nameof(BlankTranspiler)));
             // Preventing inlining Initialize
 

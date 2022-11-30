@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.BUTRLoader.Utils;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -15,14 +16,6 @@ namespace Bannerlord.BUTRLoader.Features.AssemblyResolver.Patches
 {
     internal static class AssemblyLoaderPatch
     {
-        private static readonly Type? EngineApplicationInterfaceType =
-            AccessTools2.TypeByName("TaleWorlds.Engine.EngineApplicationInterface");
-
-        private static readonly AccessTools.FieldRef<object>? IUtil =
-            AccessTools2.StaticFieldRefAccess<object>(EngineApplicationInterfaceType, "IUtil");
-
-        private delegate string GetModulesCodeDelegate(object instance);
-
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
@@ -38,9 +31,7 @@ namespace Bannerlord.BUTRLoader.Features.AssemblyResolver.Patches
         {
             try
             {
-                var iUtil = IUtil?.Invoke();
-                var getModulesCode = AccessTools2.GetDelegate<GetModulesCodeDelegate>(iUtil, "GetModulesCode");
-                var isInGame = getModulesCode is not null;
+                var isInGame = GameUtils.GetModulesNames() is not null;
 
                 var name = args.Name.Contains(',') ? $"{args.Name.Split(',')[0]}.dll" : args.Name;
 

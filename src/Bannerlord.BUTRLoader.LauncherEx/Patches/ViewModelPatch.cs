@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
+using TaleWorlds.GauntletUI.Data;
 using TaleWorlds.Library;
 
 namespace Bannerlord.BUTRLoader.Patches
@@ -20,12 +21,12 @@ namespace Bannerlord.BUTRLoader.Patches
         public static void Enable(Harmony harmony)
         {
             harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.Library.ViewModel:ExecuteCommand"),
+                AccessTools2.DeclaredMethod(typeof(ViewModel), "ExecuteCommand"),
                 transpiler: AccessTools2.DeclaredMethod(typeof(ViewModelPatch), nameof(ViewModel_ExecuteCommand_Transpiler)));
 
             // Preventing inlining ExecuteCommand
             harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.Data.GauntletView:OnCommand"),
+                AccessTools2.DeclaredMethod(typeof(GauntletView), "OnCommand"),
                 transpiler: AccessTools2.DeclaredMethod(typeof(ViewModelPatch), nameof(BlankTranspiler)));
             // Preventing inlining ExecuteCommand
         }
@@ -45,7 +46,7 @@ namespace Bannerlord.BUTRLoader.Patches
                     new(OpCodes.Ldarg_0),
                     new(OpCodes.Ldarg_1),
                     new(OpCodes.Ldarg_2),
-                    new(OpCodes.Call, AccessTools2.DeclaredMethod("Bannerlord.BUTRLoader.Patches.ViewModelPatch:ExecuteCommand")),
+                    new(OpCodes.Call, AccessTools2.DeclaredMethod(typeof(ViewModelPatch), nameof(ExecuteCommand))),
                     new(OpCodes.Brtrue, jmpOriginalFlow),
                     new(OpCodes.Ret)
                 });

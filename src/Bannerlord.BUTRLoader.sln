@@ -30,11 +30,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bannerlord.BUTRLoader.LauncherEx", "Bannerlord.BUTRLoader.LauncherEx\Bannerlord.BUTRLoader.LauncherEx.csproj", "{9DCDD236-D7C8-4CC6-A899-306284EA62FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bannerlord.MBSE", "Bannerlord.MBSE\Bannerlord.MBSE.csproj", "{C7216B10-2F73-4D47-9971-F32A6F961613}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bannerlord.BLSE", "Bannerlord.BLSE\Bannerlord.BLSE.csproj", "{C7216B10-2F73-4D47-9971-F32A6F961613}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bannerlord.BUTRLoader.AssemblyManager", "Bannerlord.BUTRLoader.AssemblyManager\Bannerlord.BUTRLoader.AssemblyManager.csproj", "{4FB0EA62-6080-430D-AD66-FF1EECFD19E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bannerlord.MBSE.Launcher", "Bannerlord.MBSE.Launcher\Bannerlord.MBSE.Launcher.csproj", "{443F4C56-4475-4446-9896-4DCBBCB3D771}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bannerlord.BLSE.Launcher", "Bannerlord.BLSE.Launcher\Bannerlord.BLSE.Launcher.csproj", "{443F4C56-4475-4446-9896-4DCBBCB3D771}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -7,6 +7,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 
+using TaleWorlds.MountAndBlade.Launcher.Library;
+
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class ProgramPatch
@@ -14,7 +16,7 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM:ExecuteStartGame"),
+                AccessTools2.Method(typeof(LauncherVM), "ExecuteStartGame"),
                 prefix: AccessTools2.DeclaredMethod(typeof(ProgramPatch), nameof(StartGamePrefix)));
             if (!res1) return false;
 

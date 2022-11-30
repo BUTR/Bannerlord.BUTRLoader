@@ -6,6 +6,12 @@
 
       <InputAssemblies Include="$(OutputPath)\0Harmony.dll" />
 
+      <InputAssemblies Include="$(OutputPath)\System.Reflection.Metadata.dll" />
+      <InputAssemblies Include="$(OutputPath)\System.Collections.Immutable.dll" />
+      <InputAssemblies Include="$(OutputPath)\System.Memory.dll" />
+      <InputAssemblies Include="$(OutputPath)\System.Buffers.dll" />
+      <InputAssemblies Include="$(OutputPath)\System.Runtime.CompilerServices.Unsafe.dll" />
+
       <InputAssemblies Include="$(OutputPath)\Bannerlord.BUTRLoader.dll" />
       <InputAssemblies Include="$(OutputPath)\Bannerlord.BUTRLoader.LauncherEx.dll" />
     </ItemGroup>

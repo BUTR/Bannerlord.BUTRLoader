@@ -5,7 +5,7 @@ using HarmonyLib;
 
 using System;
 
-namespace Bannerlord.MBSE
+namespace Bannerlord.BLSE
 {
     public static class Program
     {

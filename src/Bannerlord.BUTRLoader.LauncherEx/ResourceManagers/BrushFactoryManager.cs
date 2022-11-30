@@ -19,7 +19,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
         private delegate Brush LoadBrushFromDelegate(BrushFactory instance, XmlNode brushNode);
         private static readonly LoadBrushFromDelegate? LoadBrushFrom =
-            AccessTools2.GetDelegate<LoadBrushFromDelegate>("TaleWorlds.GauntletUI.BrushFactory:LoadBrushFrom");
+            AccessTools2.GetDelegate<LoadBrushFromDelegate>(typeof(BrushFactory), "LoadBrushFrom");
 
         private static Harmony? _harmony;
         private static WeakReference<BrushFactory?> BrushFactoryReference { get; } = new(null);
@@ -55,15 +55,15 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             _harmony = harmony;
 
             harmony.Patch(
-                AccessTools2.PropertyGetter("TaleWorlds.GauntletUI.BrushFactory:Brushes"),
+                AccessTools2.PropertyGetter(typeof(BrushFactory), "Brushes"),
                 postfix: new HarmonyMethod(AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(GetBrushesPostfix))));
 
             harmony.Patch(
-                AccessTools2.DeclaredMethod("TaleWorlds.GauntletUI.BrushFactory:GetBrush"),
+                AccessTools2.DeclaredMethod(typeof(BrushFactory), "GetBrush"),
                 new HarmonyMethod(AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(GetBrushPrefix))));
 
             var res3 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushes"),
+                AccessTools2.Method(typeof(BrushFactory), "LoadBrushes"),
                 AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
             if (!res3) return false;
 
@@ -126,7 +126,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             SetBrushFactory(__instance);
 
             _harmony?.Unpatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushes"),
+                AccessTools2.Method(typeof(BrushFactory), "LoadBrushes"),
                 AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
         }
 

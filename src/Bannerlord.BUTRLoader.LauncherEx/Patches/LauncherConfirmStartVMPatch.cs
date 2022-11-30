@@ -3,6 +3,8 @@ using HarmonyLib.BUTR.Extensions;
 
 using System;
 
+using TaleWorlds.MountAndBlade.Launcher.Library;
+
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherConfirmStartVMPatch
@@ -10,7 +12,7 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherConfirmStartVM:EnableWith"),
+                AccessTools2.Method(typeof(LauncherConfirmStartVM), "EnableWith"),
                 prefix: AccessTools2.DeclaredMethod(typeof(LauncherConfirmStartVMPatch), nameof(EnableWithPrefix)));
 
             return res1;

@@ -21,11 +21,10 @@ namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherModsVMPatch
     {
-        private static readonly MethodInfo? CastModuleInfoMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(
-            AccessTools2.TypeByName("TaleWorlds.ModuleManager.ModuleInfo"));
-
-        private static readonly MethodInfo? ToListModuleInfoMethodInfo = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(
-            AccessTools2.TypeByName("TaleWorlds.ModuleManager.ModuleInfo"));
+        private static readonly MethodInfo? CastModuleInfoMethodInfo =
+            typeof(Enumerable).GetMethod(nameof(Enumerable.Cast))?.MakeGenericMethod(typeof(ModuleInfo));
+        private static readonly MethodInfo? ToListModuleInfoMethodInfo =
+            typeof(Enumerable).GetMethod(nameof(Enumerable.ToList))?.MakeGenericMethod(typeof(ModuleInfo));
 
         private delegate IEnumerable CastDelegate(IEnumerable instance);
         private static readonly CastDelegate? CastMethod =
@@ -36,16 +35,17 @@ namespace Bannerlord.BUTRLoader.Patches
             AccessTools2.GetDelegate<ToListDelegate>(ToListModuleInfoMethodInfo!);
 
         private static readonly MethodInfo? GetDependentModulesOfMethodInfo =
-            AccessTools2.DeclaredMethod("TaleWorlds.ModuleManager.ModuleHelper:GetDependentModulesOf");
+            AccessTools2.DeclaredMethod(typeof(ModuleHelper), "GetDependentModulesOf");
 
         private static readonly MethodInfo? IsAllDependenciesOfModulePresentMethodInfo =
-            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:IsAllDependenciesOfModulePresent");
+            AccessTools2.DeclaredMethod(typeof(LauncherModsVM), "IsAllDependenciesOfModulePresent") ??
+            AccessTools2.DeclaredMethod(typeof(LauncherModsVM), "AreAllDependenciesOfModulePresent");
 
         private static readonly MethodInfo? ChangeIsSelectedOfMethodInfo =
-            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:ChangeIsSelectedOf");
+            AccessTools2.DeclaredMethod(typeof(LauncherModsVM), "ChangeIsSelectedOf");
 
         private static readonly MethodInfo? LoadSubModulesMethodInfo =
-            AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.LauncherModsVM:LoadSubModules");
+            AccessTools2.DeclaredMethod(typeof(LauncherModsVM), "LoadSubModules");
 
 
         public static bool Enable(Harmony harmony)

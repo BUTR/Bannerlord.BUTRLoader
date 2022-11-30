@@ -20,12 +20,12 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager:LoadUserData"),
+                AccessTools2.DeclaredMethod(typeof(UserDataManager), "LoadUserData"),
                 prefix: AccessTools2.DeclaredMethod(typeof(UserDataManagerPatch), nameof(LoadUserDataPrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager:SaveUserData"),
+                AccessTools2.DeclaredMethod(typeof(UserDataManager), "SaveUserData"),
                 postfix: AccessTools2.DeclaredMethod(typeof(UserDataManagerPatch), nameof(SaveUserDataPostfix)));
             if (!res2) return false;
 

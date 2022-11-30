@@ -20,15 +20,15 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
     {
         private delegate void AddHintInformationDelegate(string message);
         private static readonly AddHintInformationDelegate? AddHintInformation =
-            AccessTools2.GetDelegate<AddHintInformationDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:AddHintInformation");
+            AccessTools2.GetDelegate<AddHintInformationDelegate>(typeof(LauncherUI), "AddHintInformation");
 
         private delegate void HideHintInformationDelegate();
         private static readonly HideHintInformationDelegate? HideHintInformation =
-            AccessTools2.GetDelegate<HideHintInformationDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherUI:HideHintInformation");
+            AccessTools2.GetDelegate<HideHintInformationDelegate>(typeof(LauncherUI), "HideHintInformation");
 
         private delegate void ExecuteConfirmUnverifiedDLLStartDelegate(object instance);
         private static readonly ExecuteConfirmUnverifiedDLLStartDelegate? ExecuteConfirmUnverifiedDLLStartOriginal =
-            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM:ExecuteConfirmUnverifiedDLLStart");
+            AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>(typeof(LauncherVM), "ExecuteConfirmUnverifiedDLLStart");
 
         private static readonly AccessTools.FieldRef<LauncherVM, UserDataManager>? UserDataManagerFieldRef =
             AccessTools2.FieldRefAccess<LauncherVM, UserDataManager>("_userDataManager");
@@ -228,7 +228,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             void SetVMProperty(string property)
             {
-                var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property($"Bannerlord.BUTRLoader.Patches.Mixins.LauncherVMMixin:{property}")!, this);
+                var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property(typeof(LauncherVMMixin), property)!, this);
                 _launcherVM.AddProperty(property, propertyInfo);
                 propertyInfo.PropertyChanged += (_, e) => _launcherVM.OnPropertyChanged(e.PropertyName);
             }

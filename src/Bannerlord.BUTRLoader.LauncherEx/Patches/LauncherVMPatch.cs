@@ -6,34 +6,34 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 using TaleWorlds.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class LauncherVMPatch
     {
-        private static readonly Type? UserDataManagerType = AccessTools2.TypeByName("TaleWorlds.MountAndBlade.Launcher.Library.UserDatas.UserDataManager");
-
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM:ExecuteConfirmUnverifiedDLLStart"),
+                AccessTools2.Method(typeof(LauncherVM), "ExecuteConfirmUnverifiedDLLStart"),
                 transpiler: AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(BlankTranspiler)));
             if (!res1) return false;
 
             var res2 = harmony.TryCreateReversePatcher(
-                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM:UpdateAndSaveUserModsData"),
+                AccessTools2.Method(typeof(LauncherVM), "UpdateAndSaveUserModsData"),
                 AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(UpdateAndSaveUserModsData)));
             if (res2 is null) return false;
             res2.Patch();
 
             var res3 = harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM:GetApplicationVersionOfModule"),
+                AccessTools2.Method(typeof(LauncherVM), "GetApplicationVersionOfModule"),
                 prefix: AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(GetApplicationVersionOfModulePrefix)));
             if (!res3) return false;
 
             // Preventing inlining ExecuteConfirmUnverifiedDLLStart
             harmony.TryPatch(
-                AccessTools2.Constructor("TaleWorlds.MountAndBlade.Launcher.Library.LauncherVM", new[] { UserDataManagerType!, typeof(Action), typeof(Action) }),
+                AccessTools2.Constructor(typeof(LauncherVM), new[] { typeof(UserDataManager), typeof(Action), typeof(Action) }),
                 transpiler: AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(BlankTranspiler)));
             // Preventing inlining ExecuteConfirmUnverifiedDLLStart
 

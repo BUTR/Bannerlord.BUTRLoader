@@ -12,50 +12,10 @@ using System.Threading.Tasks;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    internal readonly struct RequestData
-    {
-        [JsonProperty("modData")]
-        public readonly RequestModData[] ModData;
-
-        public RequestData(IEnumerable<RequestModData> modData)
-        {
-            ModData = modData.ToArray();
-        }
-    }
-    internal readonly struct RequestModData
-    {
-        [JsonProperty("id")]
-        public readonly string Id;
-        [JsonProperty("version")]
-        public readonly string Version;
-        [JsonProperty("url")]
-        public readonly string Url;
-
-        public RequestModData(string id, string version, string url)
-        {
-            Id = id;
-            Version = version;
-            Url = url;
-        }
-    }
-
-    internal readonly struct ResponseData
-    {
-        [JsonProperty("modData")]
-        public readonly ResponseModData[] ModData;
-
-        public ResponseData(ResponseModData[] modData)
-        {
-            ModData = modData;
-        }
-    }
-    internal readonly struct ResponseModData
-    {
-        [JsonProperty("id")]
-        public readonly string Id;
-        [JsonProperty("newVersion")]
-        public readonly string NewVersion;
-    }
+    internal record RequestData([property: JsonProperty("modData")] List<RequestModData> ModData);
+    internal record RequestModData([property: JsonProperty("id")] string Id, [property: JsonProperty("version")] string Version, [property: JsonProperty("url")] string Url);
+    internal record ResponseData([property: JsonProperty("modData")] List<RequestModData> ModData);
+    internal record ResponseModData([property: JsonProperty("id")] string Id, [property: JsonProperty("newVersion")] string NewVersion);
 
     internal static class UpdateChecker
     {

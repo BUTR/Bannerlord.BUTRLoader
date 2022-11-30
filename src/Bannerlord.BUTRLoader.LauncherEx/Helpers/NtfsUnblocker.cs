@@ -10,17 +10,17 @@ namespace Bannerlord.BUTRLoader.Helpers
     {
         [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool DeleteFile(string name);
+        private static extern bool DeleteFile(string name);
 
         public static void UnblockPath(string path, string wildcard = "*")
         {
-            foreach (string file in Directory.GetFiles(path, wildcard))
+            foreach (var file in Directory.GetFiles(path, wildcard))
                 UnblockFile(file);
 
-            foreach (string dir in Directory.GetDirectories(path))
+            foreach (var dir in Directory.GetDirectories(path))
                 UnblockPath(dir);
         }
 
-        public static bool UnblockFile(string fileName) => DeleteFile(fileName + ":Zone.Identifier");
+        public static bool UnblockFile(string fileName) => DeleteFile($"{fileName}:Zone.Identifier");
     }
 }

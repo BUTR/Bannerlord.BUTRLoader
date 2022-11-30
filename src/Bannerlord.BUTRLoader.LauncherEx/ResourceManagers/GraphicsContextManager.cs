@@ -35,12 +35,12 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         internal static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.TwoDimension.Standalone.GraphicsContext:GetTexture"),
+                AccessTools2.DeclaredMethod(typeof(GraphicsContext), "GetTexture"),
                 prefix: AccessTools2.DeclaredMethod(typeof(GraphicsContextManager), nameof(GetTexturePrefix)));
             if (!res1) return false;
 
             var res2 = harmony.TryPatch(
-                AccessTools2.DeclaredMethod("TaleWorlds.TwoDimension.Standalone.GraphicsContext:CreateContext"),
+                AccessTools2.DeclaredMethod(typeof(GraphicsContext), "CreateContext"),
                 postfix: AccessTools2.DeclaredMethod(typeof(GraphicsContextManager), nameof(CreateContextPostfix)));
             if (!res2) return false;
 
