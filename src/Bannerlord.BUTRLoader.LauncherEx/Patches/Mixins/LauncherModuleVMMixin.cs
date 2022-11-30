@@ -9,8 +9,6 @@ using HarmonyLib.BUTR.Extensions;
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
 
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
@@ -136,44 +134,34 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         private static bool CheckModuleDangerous(ModuleInfoExtended? moduleInfoExtended)
         {
+            static bool CanBeLoaded(SubModuleInfoExtended x) =>
+                ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(x, ApplicationPlatform.CurrentPlatform, ApplicationPlatform.CurrentRuntimeLibrary, DedicatedServerType.None, false);
+
             if (moduleInfoExtended is not ModuleInfoExtendedWithMetadata moduleInfoExtendedWithMetadata)
                 return false;
 
-            foreach (var subModule in moduleInfoExtended.SubModules.Where(x =>
-                         ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(x, ApplicationPlatform.CurrentPlatform, ApplicationPlatform.CurrentRuntimeLibrary, DedicatedServerType.None, false)))
+            foreach (var subModule in moduleInfoExtended.SubModules.Where(CanBeLoaded))
             {
                 var asm = Path.GetFullPath(Path.Combine(moduleInfoExtendedWithMetadata.Path, "bin", "Win64_Shipping_Client", subModule.DLLName));
+
                 try
                 {
-                    using var stream = File.OpenRead(asm);
-                    using var reader = new PEReader(stream);
-                    var metadata = reader.GetMetadataReader();
-                    var assembly = metadata.GetAssemblyDefinition();
-                    var module = metadata.GetModuleDefinition();
-                    var hasConfusedByAttributeUsed = module.GetCustomAttributes().Select(metadata.GetCustomAttribute).Any(x =>
-                    {
-                        if (x.Constructor.Kind == HandleKind.MemberReference)
-                        {
-                            var ctor = metadata.GetMemberReference((MemberReferenceHandle)x.Constructor);
-                            var attrType = metadata.GetTypeReference((TypeReferenceHandle) ctor.Parent);
-                            var name = metadata.GetString(attrType.Name);
-                            return name == "ConfusedByAttribute";
-                        }
+                    using var moduleDefinition = Mono.Cecil.ModuleDefinition.ReadModule(asm);
 
-                        return false;
-                    });
-                    var hasConfusedByAttributeDeclared = metadata.TypeDefinitions.Select(metadata.GetTypeDefinition).Any(x =>
+                    var hasObfuscationAttributeUsed = moduleDefinition.GetCustomAttributes().Any(x => x.Constructor.DeclaringType.Name switch
                     {
-                        var name = metadata.GetString(x.Name);
-                        return name == "ConfusedByAttribute";
+                        "ConfusedByAttribute" => true,
+                        _ => false
+                    });
+                    var hasObfuscationAttributeDeclared = moduleDefinition.Types.Any(x => x.Name switch
+                    {
+                        "ConfusedByAttribute" => true,
+                        _ => false
                     });
 
-                    return hasConfusedByAttributeUsed || hasConfusedByAttributeDeclared;
+                    return hasObfuscationAttributeUsed || hasObfuscationAttributeDeclared;
                 }
-                catch (Exception)
-                {
-                    return true;
-                }
+                catch (Exception) { return true; }
             }
 
             return false;
