@@ -6,6 +6,9 @@ using Bannerlord.ModuleManager;
 
 using HarmonyLib.BUTR.Extensions;
 
+using Mono.Cecil;
+using Mono.Cecil.Rocks;
+
 using System;
 using System.IO;
 using System.Linq;
@@ -146,7 +149,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                 try
                 {
-                    using var moduleDefinition = Mono.Cecil.ModuleDefinition.ReadModule(asm);
+                    using var moduleDefinition = ModuleDefinition.ReadModule(asm);
 
                     var hasObfuscationAttributeUsed = moduleDefinition.GetCustomAttributes().Any(x => x.Constructor.DeclaringType.Name switch
                     {
@@ -158,9 +161,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                         "ConfusedByAttribute" => true,
                         _ => false
                     });
+                    // Every module should have a module initializer. If it's missing, someone is hiding it
+                    var hasModuleInitializer = moduleDefinition.GetAllTypes().Any(x => x.Name == "<Module>");
 
-                    return hasObfuscationAttributeUsed || hasObfuscationAttributeDeclared;
+                    return hasObfuscationAttributeUsed || hasObfuscationAttributeDeclared || !hasModuleInitializer;
                 }
+                // Failing to read the metadata is a direct sign of metadata manipulation
                 catch (Exception) { return true; }
             }
 
