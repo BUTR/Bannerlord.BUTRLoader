@@ -1,4 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.11.0
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Added warning when module is installed in /Modules and subscribed on Workshop at the same time
+---------------------------------------------------------------------------------------------------
+Version: 1.10.4
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Improved the obfuscation check
+---------------------------------------------------------------------------------------------------
 Version: 1.10.3
 Game Versions: v1.0.0
 * Added detection of obfuscated mods

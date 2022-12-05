@@ -109,14 +109,13 @@ namespace Bannerlord.BUTRLoader.Helpers
                 _proxy = (Proxy) _domain.CreateInstanceAndUnwrap(typeof(Proxy).Assembly.FullName, typeof(Proxy).FullName);
 
                 // Load official modules before cheking the mods
-                var basePath = Path.Combine(Path.GetDirectoryName(typeof(Common).Assembly.Location), "../", "../");
-                var modulesPath = Path.Combine(basePath, "Modules");
-                var modules = Directory.GetDirectories(modulesPath).Select(x => new DirectoryInfo(x).Name);
-                var officialModules = modules.Select(ModuleInfoHelper.LoadFromId).Where(x => x is not null && x.IsOfficial).OfType<ModuleInfoExtended>().ToList();
-                var sortedModules = ModuleSorter.Sort(officialModules);
+                var baseOfficialPath = Path.Combine(Path.GetDirectoryName(typeof(Common).Assembly.Location), "../", "../");
+                var officialModulesDirectories = Directory.GetDirectories(Path.Combine(baseOfficialPath, "Modules")).Select(x => new DirectoryInfo(x).Name);
+                var officialModules = officialModulesDirectories.Select(ModuleInfoHelper.LoadFromId).OfType<ModuleInfoExtendedWithMetadata>().Where(x => x.IsOfficial).ToList();
+                var sortedModules = ModuleSorter.Sort(officialModules).OfType<ModuleInfoExtendedWithMetadata>();
                 foreach (var module in sortedModules)
                 {
-                    var path = Path.Combine(modulesPath, module.Id, "bin", Common.ConfigName);
+                    var path = Path.Combine(module.Path, "bin", Common.ConfigName);
                     if (!Directory.Exists(path)) continue;
 
                     var assemblies = Directory.GetFiles(path, "*.dll");

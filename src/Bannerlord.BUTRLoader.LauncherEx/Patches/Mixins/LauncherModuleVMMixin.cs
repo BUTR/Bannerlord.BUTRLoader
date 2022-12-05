@@ -2,18 +2,9 @@
 using Bannerlord.BUTR.Shared.Utils;
 using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.ModuleManager;
 
 using HarmonyLib.BUTR.Extensions;
 
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
-
-using TaleWorlds.Library;
-using TaleWorlds.MountAndBlade;
 using TaleWorlds.MountAndBlade.Launcher.Library;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
@@ -66,16 +57,16 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
         private bool _isNoUpdateAvailable;
 
-        public LauncherHintVM DependencyHint2 { get; }
+        public LauncherHintVM? DependencyHint2 { get; }
         public bool AnyDependencyAvailable2 { get; }
 
         public bool IsDangerous2 { get; }
+
 
         public bool IsDisabled2 { get; }
 
 
         private readonly LauncherModuleVM _launcherModuleVM;
-        private readonly string _moduleId;
 
         public LauncherModuleVMMixin(LauncherModuleVM launcherModuleVM)
         {
@@ -96,87 +87,46 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(IsDisabled2));
             SetVMProperty(nameof(IsDangerous2));
 
-            var id = _launcherModuleVM.Info.Id ?? string.Empty;
-            var moduleInfoExtended = ModuleInfoHelper.LoadFromId(id);
-            if (moduleInfoExtended is not null && ModuleInfoHelper2.GetDependencyHint(moduleInfoExtended) is { } str)
+            if (ModuleInfoHelper.LoadFromId(_launcherModuleVM.Info.Id) is { } moduleInfoExtended)
             {
-                DependencyHint2 = new LauncherHintVM(str);
-                AnyDependencyAvailable2 = !string.IsNullOrEmpty(str);
-                SetVMProperty(nameof(DependencyHint2));
-                SetVMProperty(nameof(AnyDependencyAvailable2));
-            }
+                if (ModuleInfoHelper2.GetDependencyHint(moduleInfoExtended) is { } str)
+                {
+                    DependencyHint2 = new LauncherHintVM(str);
+                    AnyDependencyAvailable2 = !string.IsNullOrEmpty(str);
+                    SetVMProperty(nameof(DependencyHint2));
+                    SetVMProperty(nameof(AnyDependencyAvailable2));
+                }
 
-            _moduleId = _launcherModuleVM.Info.Id ?? string.Empty;
+                var dangerous = string.Empty;
+                if (ModuleChecker.IsInstalledInMainAndExternalModuleDirectory(moduleInfoExtended))
+                    dangerous += "The Module is installed in the game's /Modules folder and on Steam Workshop!\nThe /Modules version will be used!\n";
+                if (ModuleChecker.IsObfuscated(moduleInfoExtended))
+                    dangerous += "The DLL is obfuscated!\nThere is no guarantee that the code is safe!\nThe BUTR Team warns of consequences arising from running obfuscated code!\n";
+                if (!string.IsNullOrEmpty(dangerous))
+                {
+                    IsDangerous2 = true;
+                    _launcherModuleVM.DangerousHint = new LauncherHintVM(dangerous);
+                }
+            }
 
             IsDisabled2 = LauncherModuleVMPatch.AreAllDepenenciesPresentReferences.TryGetValue(launcherModuleVM, out var del)
                 ? !(bool) del.DynamicInvoke(_launcherModuleVM.Info)
                 : true;
 
-            UpdateIssues();
+            UpdateIssues(_launcherModuleVM.Info.Id);
 
-            if (CheckModuleDangerous(moduleInfoExtended))
-            {
-                IsDangerous2 = true;
-                _launcherModuleVM.DangerousHint = new LauncherHintVM(
-                    "The DLL is obfuscated!\nThere is no guarantee that the code is safe!\nThe BUTR Team warns of consequences arising from running obfuscated code!");
-            }
             _launcherModuleVM.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == "Refresh_Command")
-                    UpdateIssues();
+                    UpdateIssues(_launcherModuleVM.Info.Id);
             };
         }
 
-        public void UpdateIssues()
+        private void UpdateIssues(string id)
         {
-            IssuesText = IssueStorage.Issues.TryGetValue(_moduleId, out var issues) && issues.Count > 0
+            IssuesText = IssueStorage.Issues.TryGetValue(id, out var issues) && issues.Count > 0
                 ? string.Join("\n", issues)
                 : string.Empty;
-        }
-
-        private static bool CheckModuleDangerous(ModuleInfoExtended? moduleInfoExtended)
-        {
-            if (moduleInfoExtended is not ModuleInfoExtendedWithMetadata moduleInfoExtendedWithMetadata)
-                return false;
-
-            foreach (var subModule in moduleInfoExtended.SubModules.Where(x =>
-                         ModuleInfoHelper.CheckIfSubModuleCanBeLoaded(x, ApplicationPlatform.CurrentPlatform, ApplicationPlatform.CurrentRuntimeLibrary, DedicatedServerType.None, false)))
-            {
-                var asm = Path.GetFullPath(Path.Combine(moduleInfoExtendedWithMetadata.Path, "bin", "Win64_Shipping_Client", subModule.DLLName));
-                try
-                {
-                    using var stream = File.OpenRead(asm);
-                    using var reader = new PEReader(stream);
-                    var metadata = reader.GetMetadataReader();
-                    var assembly = metadata.GetAssemblyDefinition();
-                    var module = metadata.GetModuleDefinition();
-                    var hasConfusedByAttributeUsed = module.GetCustomAttributes().Select(metadata.GetCustomAttribute).Any(x =>
-                    {
-                        if (x.Constructor.Kind == HandleKind.MemberReference)
-                        {
-                            var ctor = metadata.GetMemberReference((MemberReferenceHandle)x.Constructor);
-                            var attrType = metadata.GetTypeReference((TypeReferenceHandle) ctor.Parent);
-                            var name = metadata.GetString(attrType.Name);
-                            return name == "ConfusedByAttribute";
-                        }
-
-                        return false;
-                    });
-                    var hasConfusedByAttributeDeclared = metadata.TypeDefinitions.Select(metadata.GetTypeDefinition).Any(x =>
-                    {
-                        var name = metadata.GetString(x.Name);
-                        return name == "ConfusedByAttribute";
-                    });
-
-                    return hasConfusedByAttributeUsed || hasConfusedByAttributeDeclared;
-                }
-                catch (Exception)
-                {
-                    return true;
-                }
-            }
-
-            return false;
         }
     }
 }
