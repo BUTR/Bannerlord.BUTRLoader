@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.11.2
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Fast fix of the update
+---------------------------------------------------------------------------------------------------
 Version: 1.11.1
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Stealth Game update fix. We hope the devs will announce further updates!

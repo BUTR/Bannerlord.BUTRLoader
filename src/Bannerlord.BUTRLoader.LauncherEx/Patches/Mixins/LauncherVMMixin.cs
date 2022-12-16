@@ -1,4 +1,4 @@
-﻿using Bannerlord.BUTR.Shared.Utils;
+using Bannerlord.BUTR.Shared.Utils;
 using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
@@ -35,13 +35,13 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         private delegate void SetModsIsDisabledOnMultiplayerDelegate(LauncherModsVM instance, bool value);
         private static readonly SetModsIsDisabledOnMultiplayerDelegate? SetModsIsDisabledOnMultiplayer =
-            AccessTools2.GetPropertyGetterDelegate<SetModsIsDisabledOnMultiplayerDelegate>(typeof(LauncherModsVM), "IsDisabledOnMultiplayer") ??
-            AccessTools2.GetPropertyGetterDelegate<SetModsIsDisabledOnMultiplayerDelegate>(typeof(LauncherModsVM), "IsDisabled");
+            AccessTools2.GetPropertySetterDelegate<SetModsIsDisabledOnMultiplayerDelegate>(typeof(LauncherModsVM), "IsDisabledOnMultiplayer") ??
+            AccessTools2.GetPropertySetterDelegate<SetModsIsDisabledOnMultiplayerDelegate>(typeof(LauncherModsVM), "IsDisabled");
 
         private delegate void SetNewsIsDisabledOnMultiplayerDelegate(LauncherNewsVM instance, bool value);
         private static readonly SetNewsIsDisabledOnMultiplayerDelegate? SetNewsIsDisabledOnMultiplayer =
-            AccessTools2.GetPropertyGetterDelegate<SetNewsIsDisabledOnMultiplayerDelegate>(typeof(LauncherNewsVM), "IsDisabledOnMultiplayer") ??
-            AccessTools2.GetPropertyGetterDelegate<SetNewsIsDisabledOnMultiplayerDelegate>(typeof(LauncherNewsVM), "IsDisabled");
+            AccessTools2.GetPropertySetterDelegate<SetNewsIsDisabledOnMultiplayerDelegate>(typeof(LauncherNewsVM), "IsDisabledOnMultiplayer") ??
+            AccessTools2.GetPropertySetterDelegate<SetNewsIsDisabledOnMultiplayerDelegate>(typeof(LauncherNewsVM), "IsDisabled");
 
         private enum TopTabs { NONE, Singleplayer, Multiplayer, Options }
         private TopTabs _state;

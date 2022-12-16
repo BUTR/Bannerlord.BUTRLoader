@@ -189,34 +189,34 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
             // Preventing inlining GetSprite
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushAnimationFrom"),
+                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushAnimationFrom", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushLayerInto"),
+                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushLayerInto", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.CanvasImage:LoadFrom"),
+                AccessTools2.Method("TaleWorlds.GauntletUI.CanvasImage:LoadFrom", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.CanvasLineImage:LoadFrom"),
+                AccessTools2.Method("TaleWorlds.GauntletUI.CanvasLineImage:LoadFrom", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.EditableTextWidget:OnRender"),
+                AccessTools2.Method("TaleWorlds.GauntletUI.EditableTextWidget:OnRender", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.ConstantDefinition:GetValue"),
+                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.ConstantDefinition:GetValue", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:ConvertObject"),
+                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:ConvertObject", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:SetWidgetAttributeFromString"),
+                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:SetWidgetAttributeFromString", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Constructor("TaleWorlds.TwoDimension.Font", new[] { typeof(string), typeof(string), typeof(SpriteData) }),
+                AccessTools2.Constructor("TaleWorlds.TwoDimension.Font", new[] { typeof(string), typeof(string), typeof(SpriteData) }, logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.TwoDimension.RichText:FillPartsWithTokens"),
+                AccessTools2.Method("TaleWorlds.TwoDimension.RichText:FillPartsWithTokens", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             // Preventing inlining GetSprite
             // Preventing inlining Load

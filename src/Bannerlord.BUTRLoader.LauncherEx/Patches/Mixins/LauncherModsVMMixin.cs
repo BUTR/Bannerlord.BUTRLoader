@@ -40,7 +40,19 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
         private bool _isDisabled;
 
-        public bool IsSingleplayer => !((bool) _launcherModsVM.GetPropertyValue("IsDisabledOnMultiplayer"));
+        public bool IsSingleplayer
+        {
+            get
+            {
+                if (_launcherModsVM.GetPropertyValue("IsDisabledOnMultiplayer") is bool val1)
+                    return !val1;
+
+                if (_launcherModsVM.GetPropertyValue("IsDisabled") is bool val2)
+                    return !val2;
+
+                return false;
+            }
+        }
 
         private readonly LauncherModsVM _launcherModsVM;
 
