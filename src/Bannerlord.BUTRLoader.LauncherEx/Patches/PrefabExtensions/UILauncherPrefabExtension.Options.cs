@@ -78,7 +78,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
             XmlDocument.LoadXml(@"
 <TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" IsSelected=""@IsOptions"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsPage"" UpdateChildrenStates=""true"" IsHidden=""@IsNotOptions"">
   <Children>
-    <TextWidget Text=""@GeneralText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" Brush=""Launcher.SubMenuButton.SingleplayerText"" />
+    <TextWidget Id=""SubMenuText"" Text=""@GeneralText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" Brush=""Launcher.SubMenuButton.SingleplayerText"" />
   </Children>
 </TabToggleWidget>
 ");
@@ -109,27 +109,27 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     }
 
     /// <summary>
-    /// ModsPage - uses 'SkipMods' instead of 'IsMultiplayer'
+    /// ModsPage - uses 'HasNoNews' instead of 'IsMultiplayer'
     /// </summary>
     internal sealed class UILauncherPrefabExtension8 : PrefabExtensionSetAttributePatch
-    {
-        public static string Movie { get; } = "UILauncher";
-        public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[2]";
-
-        public override string Attribute => "IsHidden";
-        public override string Value => "@SkipMods";
-    }
-
-    /// <summary>
-    /// ModsPage - uses 'SkipNews' instead of 'IsMultiplayer'
-    /// </summary>
-    internal sealed class UILauncherPrefabExtension9 : PrefabExtensionSetAttributePatch
     {
         public static string Movie { get; } = "UILauncher";
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[1]";
 
         public override string Attribute => "IsHidden";
-        public override string Value => "@SkipNews";
+        public override string Value => "@HasNoNews";
+    }
+
+    /// <summary>
+    /// ModsPage - uses 'HasNoMods' instead of 'IsMultiplayer'
+    /// </summary>
+    internal sealed class UILauncherPrefabExtension9 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie { get; } = "UILauncher";
+        public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[2]";
+
+        public override string Attribute => "IsHidden";
+        public override string Value => "@HasNoMods";
     }
 
     /// <summary>
@@ -145,15 +145,15 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     }
 
     /// <summary>
-    /// Hides PLAY button when in Options
+    /// Mods tab can be disabled
     /// </summary>
     internal sealed class UILauncherPrefabExtension11 : PrefabExtensionSetAttributePatch
     {
         public static string Movie { get; } = "UILauncher";
-        public static string XPath { get; } = "descendant::ButtonWidget[@Id='PlayButton']";
+        public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/TabControl/Children/Launcher.Mods";
 
-        public override string Attribute => "IsHidden";
-        public override string Value => "@IsOptions";
+        public override string Attribute => "IsDisabled";
+        public override string Value => "@IsDisabled2";
     }
 
     /// <summary>
@@ -165,6 +165,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public static string XPath { get; } = "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/TabControl/Children/Launcher.News";
 
         public override string Attribute => "IsDisabled";
-        public override string Value => "@IsDisabledOnMultiplayer";
+        public override string Value => "@IsDisabled2";
     }
 }

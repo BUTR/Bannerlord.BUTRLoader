@@ -1,58 +1,73 @@
 ﻿using Bannerlord.BUTR.Shared.Utils;
 using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.LauncherEx;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using TaleWorlds.MountAndBlade.Launcher.Library;
-using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherModsVMMixin
     {
-        private delegate void ExecuteSelectDelegate(object instance);
+        private delegate void LoadSubModulesDelegate(LauncherModsVM instance, bool isMultiplayer);
+        private static readonly LoadSubModulesDelegate? LoadSubModules =
+            AccessTools2.GetDelegate<LoadSubModulesDelegate>(typeof(LauncherModsVM), "LoadSubModules");
+
+        private delegate void ExecuteSelectDelegate(LauncherModuleVM instance);
         private static readonly ExecuteSelectDelegate? ExecuteSelect =
             AccessTools2.GetDelegate<ExecuteSelectDelegate>(typeof(LauncherModuleVM), "ExecuteSelect");
 
-        private delegate void ExecuteLoadSubModulesDelegate(object instance, bool isMultiplayer);
-        private static readonly ExecuteLoadSubModulesDelegate? LoadSubModules =
-            AccessTools2.GetDelegate<ExecuteLoadSubModulesDelegate>(typeof(LauncherModsVM), "LoadSubModules");
-
-        private delegate void SaveUserDataDelegate(object instance);
-        private static readonly SaveUserDataDelegate? SaveUserData =
-            AccessTools2.GetDelegate<SaveUserDataDelegate>(typeof(UserDataManager), "SaveUserData");
-
-        private static readonly AccessTools.FieldRef<LauncherModsVM, UserDataManager>? UserDataManager =
-            AccessTools2.FieldRefAccess<LauncherModsVM, UserDataManager>("_userDataManager");
+        static LauncherModsVMMixin()
+        {
+            Manager._launcherHarmony.Patch(
+                AccessTools2.Method(typeof(LauncherModsVM), "LoadSubModules"),
+                postfix: new HarmonyMethod(typeof(LauncherModsVMMixin), nameof(LoadSubModulesPostfix)));
+        }
 
         public bool GlobalCheckboxState
         {
-            get => _isDisabled;
+            get => _checkboxState;
             set
             {
-                if (value != _isDisabled)
+                if (value != _checkboxState)
                 {
-                    _isDisabled = value;
-                    _launcherModsVM.OnPropertyChangedWithValue(value, nameof(GlobalCheckboxState));
+                    _checkboxState = value;
+                    _launcherModsVM.OnPropertyChanged(nameof(GlobalCheckboxState));
                 }
             }
         }
-        private bool _isDisabled;
+        private bool _checkboxState;
 
         public bool IsSingleplayer
         {
-            get
+            get => _isSingleplayer;
+            set
             {
-                if (_launcherModsVM.GetPropertyValue("IsDisabledOnMultiplayer") is bool val1)
-                    return !val1;
-
-                if (_launcherModsVM.GetPropertyValue("IsDisabled") is bool val2)
-                    return !val2;
-
-                return false;
+                if (value != _isSingleplayer)
+                {
+                    _isSingleplayer = value;
+                    _launcherModsVM.OnPropertyChanged(nameof(IsSingleplayer));
+                }
             }
         }
+        private bool _isSingleplayer;
+
+        public bool IsDisabled2
+        {
+            get => _isDisabled2;
+            set
+            {
+                if (value != _isDisabled2)
+                {
+                    _isDisabled2 = value;
+                    _launcherModsVM.OnPropertyChanged(nameof(IsDisabled2));
+                }
+            }
+        }
+        private bool _isDisabled2;
+
 
         private readonly LauncherModsVM _launcherModsVM;
 
@@ -62,24 +77,14 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             void SetVMProperty(string property)
             {
-                var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property(typeof(LauncherModsVMMixin), property)!, this);
+                var propertyInfo = new WrappedPropertyInfo(AccessTools2.DeclaredProperty(typeof(LauncherModsVMMixin), property)!, this);
                 _launcherModsVM.AddProperty(property, propertyInfo);
                 propertyInfo.PropertyChanged += (_, e) => _launcherModsVM.OnPropertyChanged(e.PropertyName);
             }
 
             SetVMProperty(nameof(GlobalCheckboxState));
             SetVMProperty(nameof(IsSingleplayer));
-
-            _launcherModsVM.PropertyChanged += (_, e) =>
-            {
-                if (e.PropertyName == "IsDisabledOnMultiplayer")
-                    _launcherModsVM.OnPropertyChanged(nameof(IsSingleplayer));
-            };
-            _launcherModsVM.PropertyChangedWithValue += (_, e) =>
-            {
-                if (e.PropertyName == "IsDisabledOnMultiplayer")
-                    _launcherModsVM.OnPropertyChanged(nameof(IsSingleplayer));
-            };
+            SetVMProperty(nameof(IsDisabled2));
         }
 
         public void ExecuteGlobalCheckbox()
@@ -102,10 +107,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         public void ExecuteRefresh()
         {
-            if (SaveUserData is null || LoadSubModules is null || UserDataManager?.Invoke(_launcherModsVM) is not { } mng) return;
-
-            SaveUserData(mng);
-            LoadSubModules(_launcherModsVM, false);
+            LoadSubModules(_launcherModsVM, !IsSingleplayer);
+        }
+        
+        public static void LoadSubModulesPostfix(LauncherModsVM __instance, bool isMultiplayer)
+        {
+            __instance.SetPropertyValue(nameof(IsSingleplayer), !isMultiplayer);
         }
     }
 }

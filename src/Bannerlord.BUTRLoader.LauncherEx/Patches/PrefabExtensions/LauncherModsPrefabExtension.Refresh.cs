@@ -21,7 +21,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
               SuggestedWidth=""!ModToggle.Width"" SuggestedHeight=""!ModToggle.Height"" MarginLeft=""40""
               VerticalAlignment=""Center""
               Brush=""Launcher.Refresh""
-              Command.Click=""ExecuteRefresh"" IsVisible=""@IsSingleplayer"" />
+              Command.Click=""ExecuteRefresh"" />
 ");
         }
 

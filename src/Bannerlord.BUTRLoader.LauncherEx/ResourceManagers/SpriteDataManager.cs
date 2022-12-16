@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
+using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.TwoDimension;
 
 namespace Bannerlord.BUTRLoader.ResourceManagers
@@ -221,7 +222,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             // Preventing inlining GetSprite
             // Preventing inlining Load
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.Engine.GauntletUI.UIResourceManager:Initialize"),
+                AccessTools2.Method(typeof(UIResourceManager), "Initialize"),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.UIContext:Initialize"),

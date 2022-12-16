@@ -32,6 +32,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         public static void AddMixins(LauncherVM launcherVM)
         {
             AddMixin(launcherVM, new LauncherVMMixin(launcherVM));
+            AddMixin(launcherVM.News, new LauncherNewsVMMixin(launcherVM.News));
             AddMixin(launcherVM.ModsData, new LauncherModsVMMixin(launcherVM.ModsData));
             foreach (var launcherModuleVM in launcherVM.ModsData.Modules)
             {
