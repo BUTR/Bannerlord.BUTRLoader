@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.11.1
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Stealth Game update fix. We hope the devs will announce further updates!
+---------------------------------------------------------------------------------------------------
 Version: 1.11.0
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Added warning when module is installed in /Modules and subscribed on Workshop at the same time

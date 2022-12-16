@@ -33,6 +33,16 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private static readonly AccessTools.FieldRef<LauncherVM, UserDataManager>? UserDataManagerFieldRef =
             AccessTools2.FieldRefAccess<LauncherVM, UserDataManager>("_userDataManager");
 
+        private delegate void SetModsIsDisabledOnMultiplayerDelegate(LauncherModsVM instance, bool value);
+        private static readonly SetModsIsDisabledOnMultiplayerDelegate? SetModsIsDisabledOnMultiplayer =
+            AccessTools2.GetPropertyGetterDelegate<SetModsIsDisabledOnMultiplayerDelegate>(typeof(LauncherModsVM), "IsDisabledOnMultiplayer") ??
+            AccessTools2.GetPropertyGetterDelegate<SetModsIsDisabledOnMultiplayerDelegate>(typeof(LauncherModsVM), "IsDisabled");
+
+        private delegate void SetNewsIsDisabledOnMultiplayerDelegate(LauncherNewsVM instance, bool value);
+        private static readonly SetNewsIsDisabledOnMultiplayerDelegate? SetNewsIsDisabledOnMultiplayer =
+            AccessTools2.GetPropertyGetterDelegate<SetNewsIsDisabledOnMultiplayerDelegate>(typeof(LauncherNewsVM), "IsDisabledOnMultiplayer") ??
+            AccessTools2.GetPropertyGetterDelegate<SetNewsIsDisabledOnMultiplayerDelegate>(typeof(LauncherNewsVM), "IsDisabled");
+
         private enum TopTabs { NONE, Singleplayer, Multiplayer, Options }
         private TopTabs _state;
 
@@ -62,8 +72,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     RandomImageSwitch = !RandomImageSwitch;
 
-                    _launcherVM.ModsData.IsDisabledOnMultiplayer = false;
-                    _launcherVM.News.IsDisabledOnMultiplayer = false;
+                    SetModsIsDisabledOnMultiplayer(_launcherVM.ModsData, false);
+                    SetNewsIsDisabledOnMultiplayer(_launcherVM.News, false);
                     OptionsData.IsDisabled = true;
                 }
             }
@@ -96,8 +106,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     RandomImageSwitch = !RandomImageSwitch;
 
-                    _launcherVM.ModsData.IsDisabledOnMultiplayer = true;
-                    _launcherVM.News.IsDisabledOnMultiplayer = false;
+                    SetModsIsDisabledOnMultiplayer(_launcherVM.ModsData, true);
+                    SetNewsIsDisabledOnMultiplayer(_launcherVM.News, false);
                     OptionsData.IsDisabled = true;
                 }
             }
@@ -123,8 +133,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     _launcherVM.OnPropertyChanged(nameof(SkipNews));
                     _launcherVM.OnPropertyChanged(nameof(SkipMods));
 
-                    _launcherVM.News.IsDisabledOnMultiplayer = true;
-                    _launcherVM.ModsData.IsDisabledOnMultiplayer = true;
+                    SetModsIsDisabledOnMultiplayer(_launcherVM.ModsData, true);
+                    SetNewsIsDisabledOnMultiplayer(_launcherVM.News, true);
                     OptionsData.Refresh(false);
                 }
             }
