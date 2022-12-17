@@ -2,18 +2,43 @@
 using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
+using Bannerlord.ModuleManager;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
+using System.Collections.Generic;
 using System.Linq;
 
+using TaleWorlds.LinQuick;
 using TaleWorlds.MountAndBlade.Launcher.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherModsVMMixin : ViewModelMixin<LauncherModsVM>
     {
+        private class LauncherModuleVMComparer : IComparer<LauncherModuleVM>
+        {
+            private readonly IList<ModuleInfoExtended> _sorted;
+
+            public LauncherModuleVMComparer(IList<ModuleInfoExtended> sorted)
+            {
+                _sorted = sorted;
+            }
+
+            public int Compare(LauncherModuleVM x, LauncherModuleVM y)
+            {
+                var xIdx = _sorted.FindIndexQ(z => z.Id == x.Info.Id);
+                var yIdx = _sorted.FindIndexQ(z => z.Id == y.Info.Id);
+                if (xIdx == yIdx) return 0;
+                if (xIdx > yIdx) return 1;
+                if (xIdx < yIdx) return -1;
+
+                return 0;
+            }
+        }
+
         private delegate void LoadSubModulesDelegate(LauncherModsVM instance, bool isMultiplayer);
         private static readonly LoadSubModulesDelegate? LoadSubModules =
             AccessTools2.GetDelegate<LoadSubModulesDelegate>(typeof(LauncherModsVM), "LoadSubModules");
@@ -21,6 +46,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private delegate void ExecuteSelectDelegate(LauncherModuleVM instance);
         private static readonly ExecuteSelectDelegate? ExecuteSelect =
             AccessTools2.GetDelegate<ExecuteSelectDelegate>(typeof(LauncherModuleVM), "ExecuteSelect");
+
+        private static readonly AccessTools.FieldRef<LauncherModsVM, UserData>? _userData =
+            AccessTools2.FieldRefAccess<LauncherModsVM, UserData>("_userData");
 
         static LauncherModsVMMixin()
         {
@@ -73,7 +101,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         public void ExecuteRefresh()
         {
-            LoadSubModules(ViewModel, !IsSingleplayer);
+            var modules = ViewModel.Modules.Select(x => x.Info).Select(ModuleInfoHelper2.GetExtendedModuleInfo).ToArray();
+            var sorted = ModuleSorter.Sort(modules);
+            ViewModel.Modules.Sort(new LauncherModuleVMComparer(sorted));
         }
         
         public static void LoadSubModulesPostfix(LauncherModsVM __instance, bool isMultiplayer)
