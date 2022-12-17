@@ -14,7 +14,7 @@ namespace Bannerlord.BUTRLoader
         public static bool UnblockFiles { get; set; }
         public static bool FixCommonIssues { get; set; }
         public static bool CompactModuleList { get; set; }
-        public static bool ResetModuleList { get; set; }
         public static bool DisableBinaryCheck { get; set; }
+        public static bool HideRandomImage { get; set; }
     }
 }

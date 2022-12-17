@@ -54,13 +54,8 @@ namespace Bannerlord.BUTRLoader.Patches
                 LauncherSettings.UnblockFiles = userDataOptions.UnblockFiles;
                 LauncherSettings.FixCommonIssues = userDataOptions.FixCommonIssues;
                 LauncherSettings.CompactModuleList = userDataOptions.CompactModuleList;
-                LauncherSettings.ResetModuleList = userDataOptions.ResetModuleList;
+                LauncherSettings.HideRandomImage = userDataOptions.HideRandomImage;
                 LauncherSettings.DisableBinaryCheck = userDataOptions.DisableBinaryCheck;
-                if (LauncherSettings.ResetModuleList)
-                {
-                    __instance.UserData?.SingleplayerData?.ModDatas.Clear();
-                    LauncherSettings.ResetModuleList = false;
-                }
             }
             catch (Exception value)
             {
@@ -92,7 +87,7 @@ namespace Bannerlord.BUTRLoader.Patches
                     LauncherSettings.UnblockFiles,
                     LauncherSettings.FixCommonIssues,
                     LauncherSettings.CompactModuleList,
-                    LauncherSettings.ResetModuleList,
+                    LauncherSettings.HideRandomImage,
                     LauncherSettings.DisableBinaryCheck));
             }
             catch (Exception value)

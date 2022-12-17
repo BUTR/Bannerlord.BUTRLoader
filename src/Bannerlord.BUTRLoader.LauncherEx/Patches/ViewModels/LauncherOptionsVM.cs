@@ -7,33 +7,11 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
     internal sealed class LauncherOptionsVM : ViewModel
     {
         [DataSourceProperty]
-        public bool IsDisabled
-        {
-            get => _isDisabled;
-            set
-            {
-                if (value != _isDisabled)
-                {
-                    _isDisabled = value;
-                    OnPropertyChangedWithValue(value, nameof(IsDisabled));
-                }
-            }
-        }
+        public bool IsDisabled { get => _isDisabled; set => SetField(ref _isDisabled, value, nameof(IsDisabled)); }
         private bool _isDisabled;
 
         [DataSourceProperty]
-        public MBBindingList<SettingsPropertyVM> SettingProperties
-        {
-            get => _settingProperties;
-            set
-            {
-                if (value != _settingProperties)
-                {
-                    _settingProperties = value;
-                    OnPropertyChangedWithValue(value, nameof(SettingProperties));
-                }
-            }
-        }
+        public MBBindingList<SettingsPropertyVM> SettingProperties { get => _settingProperties; set => SetField(ref _settingProperties, value, nameof(SettingProperties)); }
         private MBBindingList<SettingsPropertyVM> _settingProperties = new();
 
         public void Refresh(bool disable)
@@ -67,15 +45,15 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Reset Module List (Requires restart)",
-                SettingType = SettingType.Bool,
-                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.ResetModuleList))!, this)
-            }));
-            SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
-            {
                 DisplayName = "Disable Binary Compatibility Check (Requires restart) (DISABLED)",
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.DisableBinaryCheck))!, this)
+            }));
+            SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
+            {
+                DisplayName = "Hide Random Image",
+                SettingType = SettingType.Bool,
+                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.HideRandomImage))!, this)
             }));
             /*
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition

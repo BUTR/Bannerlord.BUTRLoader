@@ -9,20 +9,9 @@ using TaleWorlds.MountAndBlade.Launcher.Library;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
-    internal sealed class LauncherModuleVMMixin
+    internal sealed class LauncherModuleVMMixin : ViewModelMixin<LauncherModuleVM>
     {
-        public bool IsExpanded
-        {
-            get => _isExpanded;
-            set
-            {
-                if (value != _isExpanded)
-                {
-                    _isExpanded = value;
-                    _launcherModuleVM.OnPropertyChangedWithValue(value, nameof(IsExpanded));
-                }
-            }
-        }
+        public bool IsExpanded { get => _isExpanded; set => SetField(ref _isExpanded, value, nameof(IsExpanded)); }
         private bool _isExpanded;
 
         public string IssuesText
@@ -33,8 +22,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 if (value != _issuesText)
                 {
                     _issuesText = value;
-                    _launcherModuleVM.OnPropertyChangedWithValue(value, nameof(IssuesText));
-                    _launcherModuleVM.OnPropertyChanged(nameof(HasNoIssues));
+                    OnPropertyChangedWithValue(value, nameof(IssuesText));
+                    OnPropertyChanged(nameof(HasNoIssues));
                 }
             }
         }
@@ -43,18 +32,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public bool HasIssues => !string.IsNullOrWhiteSpace(IssuesText);
         public bool HasNoIssues => !HasIssues;
 
-        public bool IsNoUpdateAvailable
-        {
-            get => _isNoUpdateAvailable;
-            set
-            {
-                if (value != _isNoUpdateAvailable)
-                {
-                    _isNoUpdateAvailable = value;
-                    _launcherModuleVM.OnPropertyChangedWithValue(value, nameof(IsNoUpdateAvailable));
-                }
-            }
-        }
+        public bool IsNoUpdateAvailable { get => _isNoUpdateAvailable; set => SetField(ref _isNoUpdateAvailable, value, nameof(IsNoUpdateAvailable)); }
         private bool _isNoUpdateAvailable;
 
         public LauncherHintVM? DependencyHint2 { get; }
@@ -66,17 +44,13 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public bool IsDisabled2 { get; }
 
 
-        private readonly LauncherModuleVM _launcherModuleVM;
-
-        public LauncherModuleVMMixin(LauncherModuleVM launcherModuleVM)
+        public LauncherModuleVMMixin(LauncherModuleVM launcherModuleVM) : base(launcherModuleVM)
         {
-            _launcherModuleVM = launcherModuleVM;
-
             void SetVMProperty(string property)
             {
                 var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property(typeof(LauncherModuleVMMixin), property)!, this);
-                _launcherModuleVM.AddProperty(property, propertyInfo);
-                propertyInfo.PropertyChanged += (_, e) => _launcherModuleVM.OnPropertyChanged(e.PropertyName);
+                launcherModuleVM.AddProperty(property, propertyInfo);
+                propertyInfo.PropertyChanged += (_, e) => launcherModuleVM.OnPropertyChanged(e.PropertyName);
             }
 
             SetVMProperty(nameof(IsExpanded));
@@ -87,7 +61,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(IsDisabled2));
             SetVMProperty(nameof(IsDangerous2));
 
-            if (ModuleInfoHelper.LoadFromId(_launcherModuleVM.Info.Id) is { } moduleInfoExtended)
+            if (ModuleInfoHelper.LoadFromId(launcherModuleVM.Info.Id) is { } moduleInfoExtended)
             {
                 if (ModuleInfoHelper2.GetDependencyHint(moduleInfoExtended) is { } str)
                 {
@@ -105,20 +79,20 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 if (!string.IsNullOrEmpty(dangerous))
                 {
                     IsDangerous2 = true;
-                    _launcherModuleVM.DangerousHint = new LauncherHintVM(dangerous);
+                    launcherModuleVM.DangerousHint = new LauncherHintVM(dangerous);
                 }
             }
 
             IsDisabled2 = LauncherModuleVMPatch.AreAllDepenenciesPresentReferences.TryGetValue(launcherModuleVM, out var del)
-                ? !(bool) del.DynamicInvoke(_launcherModuleVM.Info)
+                ? !(bool) del.DynamicInvoke(launcherModuleVM.Info)
                 : true;
 
-            UpdateIssues(_launcherModuleVM.Info.Id);
+            UpdateIssues(launcherModuleVM.Info.Id);
 
-            _launcherModuleVM.PropertyChanged += (_, e) =>
+            launcherModuleVM.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == "Refresh_Command")
-                    UpdateIssues(_launcherModuleVM.Info.Id);
+                    UpdateIssues(launcherModuleVM.Info.Id);
             };
         }
 

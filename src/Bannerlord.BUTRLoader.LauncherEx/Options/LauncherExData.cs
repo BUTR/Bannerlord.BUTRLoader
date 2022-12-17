@@ -7,22 +7,22 @@
         public bool UnblockFiles { get; set; } = true;
         public bool FixCommonIssues { get; set; }
         public bool CompactModuleList { get; set; }
-        public bool ResetModuleList { get; set; }
         public bool DisableBinaryCheck { get; set; }
+        public bool HideRandomImage { get; set; }
 
         public LauncherExData() { }
         public LauncherExData(
             bool extendedSorting, bool automaticallyCheckForUpdates,
             bool unblockFiles, bool fixCommonIssues, bool compactModuleList,
-            bool resetModuleList, bool disableBinaryCheck)
+            bool hideRandomImage, bool disableBinaryCheck)
         {
             ExtendedSorting = extendedSorting;
             AutomaticallyCheckForUpdates = automaticallyCheckForUpdates;
             UnblockFiles = unblockFiles;
             FixCommonIssues = fixCommonIssues;
             CompactModuleList = compactModuleList;
-            ResetModuleList = resetModuleList;
             DisableBinaryCheck = disableBinaryCheck;
+            HideRandomImage = hideRandomImage;
         }
     }
 }

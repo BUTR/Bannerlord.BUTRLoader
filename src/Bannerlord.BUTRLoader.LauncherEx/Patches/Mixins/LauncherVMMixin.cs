@@ -16,7 +16,7 @@ using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
-    internal sealed class LauncherVMMixin
+    internal sealed class LauncherVMMixin : ViewModelMixin<LauncherVM>
     {
         private delegate void AddHintInformationDelegate(string message);
         private static readonly AddHintInformationDelegate? AddHintInformation =
@@ -59,7 +59,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             get => _state == TopTabs.Singleplayer;
             set
             {
-                if (value && _state != TopTabs.Singleplayer)
+                if (value && _state != TopTabs.Singleplayer && ViewModel is not null)
                 {
                     if (_state == TopTabs.Options)
                     {
@@ -68,23 +68,24 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     _state = TopTabs.Singleplayer;
 
-                    _launcherVM.IsSingleplayer = true;
-                    _launcherVM.IsMultiplayer = false;
-                    SetIsDigitalCompanion?.Invoke(_launcherVM, false);
+                    ViewModel.IsSingleplayer = true;
+                    ViewModel.IsMultiplayer = false;
+                    SetIsDigitalCompanion?.Invoke(ViewModel, false);
 
-                    _launcherVM.OnPropertyChanged(nameof(IsOptions));
-                    _launcherVM.OnPropertyChanged(nameof(IsNotOptions));
-                    _launcherVM.OnPropertyChanged(nameof(IsNotSingleplayer));
-                    _launcherVM.OnPropertyChanged(nameof(PlayButtonAlignment));
-                    _launcherVM.OnPropertyChanged(nameof(HasNoMods));
-                    _launcherVM.OnPropertyChanged(nameof(HasNoNews));
+                    OnPropertyChanged(nameof(IsOptions));
+                    OnPropertyChanged(nameof(IsNotOptions));
+                    OnPropertyChanged(nameof(IsNotSingleplayer));
+                    OnPropertyChanged(nameof(HideBUTRLoaderVersionText));
+                    OnPropertyChanged(nameof(PlayButtonAlignment));
+                    OnPropertyChanged(nameof(HasNoMods));
+                    OnPropertyChanged(nameof(HasNoNews));
 
                     RandomImageSwitch = !RandomImageSwitch;
                     
-                    _launcherVM.News.SetPropertyValue("IsDisabled2", false);
-                    _launcherVM.ModsData.SetPropertyValue("IsDisabled2", false);
+                    ViewModel.News.SetPropertyValue("IsDisabled2", false);
+                    ViewModel.ModsData.SetPropertyValue("IsDisabled2", false);
                     OptionsData.IsDisabled = true;
-                    Refresh?.Invoke(_launcherVM);
+                    Refresh?.Invoke(ViewModel);
                 }
             }
         }
@@ -95,7 +96,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             get => _state == TopTabs.Multiplayer;
             set
             {
-                if (value && _state != TopTabs.Multiplayer)
+                if (value && _state != TopTabs.Multiplayer && ViewModel is not null)
                 {
                     if (_state == TopTabs.Options)
                     {
@@ -104,23 +105,24 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     _state = TopTabs.Multiplayer;
 
-                    _launcherVM.IsMultiplayer = true;
-                    _launcherVM.IsSingleplayer = false;
-                    SetIsDigitalCompanion?.Invoke(_launcherVM, false);
+                    ViewModel.IsMultiplayer = true;
+                    ViewModel.IsSingleplayer = false;
+                    SetIsDigitalCompanion?.Invoke(ViewModel, false);
 
-                    _launcherVM.OnPropertyChanged(nameof(IsOptions));
-                    _launcherVM.OnPropertyChanged(nameof(IsNotOptions));
-                    _launcherVM.OnPropertyChanged(nameof(IsNotSingleplayer));
-                    _launcherVM.OnPropertyChanged(nameof(PlayButtonAlignment));
-                    _launcherVM.OnPropertyChanged(nameof(HasNoMods));
-                    _launcherVM.OnPropertyChanged(nameof(HasNoNews));
+                    OnPropertyChanged(nameof(IsOptions));
+                    OnPropertyChanged(nameof(IsNotOptions));
+                    OnPropertyChanged(nameof(IsNotSingleplayer));
+                    OnPropertyChanged(nameof(HideBUTRLoaderVersionText));
+                    OnPropertyChanged(nameof(PlayButtonAlignment));
+                    OnPropertyChanged(nameof(HasNoMods));
+                    OnPropertyChanged(nameof(HasNoNews));
 
                     RandomImageSwitch = !RandomImageSwitch;
                     
-                    _launcherVM.News.SetPropertyValue("IsDisabled2", false);
-                    _launcherVM.ModsData.SetPropertyValue("IsDisabled2", false);
+                    ViewModel.News.SetPropertyValue("IsDisabled2", false);
+                    ViewModel.ModsData.SetPropertyValue("IsDisabled2", false);
                     OptionsData.IsDisabled = true;
-                    Refresh?.Invoke(_launcherVM);
+                    Refresh?.Invoke(ViewModel);
                 }
             }
         }
@@ -130,38 +132,41 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             get => _state == TopTabs.Options;
             set
             {
-                if (value && _state != TopTabs.Options)
+                if (value && _state != TopTabs.Options && ViewModel is not null)
                 {
                     _state = TopTabs.Options;
 
-                    _launcherVM.IsSingleplayer = false;
-                    _launcherVM.IsMultiplayer = false;
-                    SetIsDigitalCompanion?.Invoke(_launcherVM, false);
+                    ViewModel.IsSingleplayer = false;
+                    ViewModel.IsMultiplayer = false;
+                    SetIsDigitalCompanion?.Invoke(ViewModel, false);
 
-                    _launcherVM.OnPropertyChanged(nameof(IsOptions));
-                    _launcherVM.OnPropertyChanged(nameof(IsNotOptions));
-                    _launcherVM.OnPropertyChanged(nameof(IsNotSingleplayer));
-                    _launcherVM.OnPropertyChanged(nameof(PlayButtonAlignment));
-                    _launcherVM.OnPropertyChanged(nameof(HasNoMods));
-                    _launcherVM.OnPropertyChanged(nameof(HasNoNews));
+                    OnPropertyChanged(nameof(IsOptions));
+                    OnPropertyChanged(nameof(IsNotOptions));
+                    OnPropertyChanged(nameof(IsNotSingleplayer));
+                    OnPropertyChanged(nameof(HideBUTRLoaderVersionText));
+                    OnPropertyChanged(nameof(PlayButtonAlignment));
+                    OnPropertyChanged(nameof(HasNoMods));
+                    OnPropertyChanged(nameof(HasNoNews));
 
                     RandomImageSwitch = !RandomImageSwitch;
                     
-                    _launcherVM.News.SetPropertyValue("IsDisabled2", true);
-                    _launcherVM.ModsData.SetPropertyValue("IsDisabled2", true);
-                    Refresh?.Invoke(_launcherVM);
+                    ViewModel.News.SetPropertyValue("IsDisabled2", true);
+                    ViewModel.ModsData.SetPropertyValue("IsDisabled2", true);
+                    Refresh?.Invoke(ViewModel);
                     OptionsData.Refresh(false);
                 }
             }
         }
         public bool IsNotOptions => !IsOptions;
 
+        public bool HideBUTRLoaderVersionText => !IsSingleplayer && !IsOptions;
+
         public bool IsDigitalCompanion
         {
             get => _state == TopTabs.DigitalCompanion;
             set
             {
-                if (value && _state != TopTabs.DigitalCompanion)
+                if (value && _state != TopTabs.DigitalCompanion && ViewModel is not null)
                 {
                     if (_state == TopTabs.Options)
                     {
@@ -170,23 +175,24 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
                     _state = TopTabs.DigitalCompanion;
 
-                    SetIsDigitalCompanion?.Invoke(_launcherVM, true);
-                    _launcherVM.IsSingleplayer = false;
-                    _launcherVM.IsMultiplayer = false;
+                    SetIsDigitalCompanion?.Invoke(ViewModel, true);
+                    ViewModel.IsSingleplayer = false;
+                    ViewModel.IsMultiplayer = false;
 
-                    _launcherVM.OnPropertyChanged(nameof(IsOptions));
-                    _launcherVM.OnPropertyChanged(nameof(IsNotOptions));
-                    _launcherVM.OnPropertyChanged(nameof(IsNotSingleplayer));
-                    _launcherVM.OnPropertyChanged(nameof(PlayButtonAlignment));
-                    _launcherVM.OnPropertyChanged(nameof(HasNoMods));
-                    _launcherVM.OnPropertyChanged(nameof(HasNoNews));
+                    OnPropertyChanged(nameof(IsOptions));
+                    OnPropertyChanged(nameof(IsNotOptions));
+                    OnPropertyChanged(nameof(IsNotSingleplayer));
+                    OnPropertyChanged(nameof(HideBUTRLoaderVersionText));
+                    OnPropertyChanged(nameof(PlayButtonAlignment));
+                    OnPropertyChanged(nameof(HasNoMods));
+                    OnPropertyChanged(nameof(HasNoNews));
 
                     RandomImageSwitch = !RandomImageSwitch;
 
-                    _launcherVM.News.SetPropertyValue("IsDisabled2", false);
-                    _launcherVM.ModsData.SetPropertyValue("IsDisabled2", true);
+                    ViewModel.News.SetPropertyValue("IsDisabled2", false);
+                    ViewModel.ModsData.SetPropertyValue("IsDisabled2", true);
                     OptionsData.IsDisabled = true;
-                    Refresh?.Invoke(_launcherVM);
+                    Refresh?.Invoke(ViewModel);
                 }
             }
         }
@@ -196,86 +202,32 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public bool HasNoMods => !IsSingleplayer && !IsMultiplayer;
         public bool HasNoNews => !IsSingleplayer && !IsMultiplayer && !IsDigitalCompanion;
 
-        public bool RandomImageSwitch
-        {
-            get => _randomImageSwitch;
-            set
-            {
-                if (value != _randomImageSwitch)
-                {
-                    _randomImageSwitch = value;
-                    _launcherVM.OnPropertyChangedWithValue(value, nameof(RandomImageSwitch));
-                }
-            }
-        }
+        public bool RandomImageSwitch { get => _randomImageSwitch; set => SetField(ref _randomImageSwitch, value, nameof(RandomImageSwitch)); }
         private bool _randomImageSwitch;
 
-        public string OptionsText
-        {
-            get => _optionsText;
-            set
-            {
-                if (value != _optionsText)
-                {
-                    _optionsText = value;
-                    _launcherVM.OnPropertyChangedWithValue(value, nameof(OptionsText));
-                }
-            }
-        }
+        public string OptionsText { get => _optionsText; set => SetField(ref _optionsText, value, nameof(OptionsText)); }
         private string _optionsText = "Options";
 
-        public string GeneralText
-        {
-            get => _generalText;
-            set
-            {
-                if (value != _generalText)
-                {
-                    _generalText = value;
-                    _launcherVM.OnPropertyChangedWithValue(value, nameof(GeneralText));
-                }
-            }
-        }
+        public string GeneralText { get => _generalText; set => SetField(ref _generalText, value, nameof(GeneralText)); }
         private string _generalText = "General";
 
-        public string BUTRLoaderVersionText
-        {
-            get => _butrLoaderVersionText;
-            set
-            {
-                if (value != _butrLoaderVersionText)
-                {
-                    _butrLoaderVersionText = value;
-                    _launcherVM.OnPropertyChangedWithValue(value, nameof(BUTRLoaderVersionText));
-                }
-            }
-        }
+        public string BUTRLoaderVersionText { get => _butrLoaderVersionText; set => SetField(ref _butrLoaderVersionText, value, nameof(BUTRLoaderVersionText)); }
         private string _butrLoaderVersionText = $"BUTRLoader v{typeof(LauncherVMMixin).Assembly.GetName().Version.ToString(3)}";
 
-        public LauncherOptionsVM OptionsData
-        {
-            get => _optionsData;
-            set
-            {
-                if (value != _optionsData)
-                {
-                    _optionsData = value;
-                    _launcherVM.OnPropertyChangedWithValue(value, nameof(OptionsData));
-                }
-            }
-        }
+        public LauncherOptionsVM OptionsData { get => _optionsData; set => SetField(ref _optionsData, value, nameof(OptionsData)); }
         private LauncherOptionsVM _optionsData = new();
 
+        public bool HideRandomImage { get => _hideRandomImage; set => SetField(ref _hideRandomImage, value, nameof(HideRandomImage)); }
+        private bool _hideRandomImage;
 
-        private readonly LauncherVM _launcherVM;
+
         private readonly UserDataManager _userDataManager;
         private readonly LauncherExData _launcherExData;
 
         private ModuleListHandler? _currentModuleListHandler;
 
-        public LauncherVMMixin(LauncherVM launcherVM)
+        public LauncherVMMixin(LauncherVM launcherVM) : base(launcherVM)
         {
-            _launcherVM = launcherVM;
             _userDataManager = UserDataManagerFieldRef is not null ? UserDataManagerFieldRef(launcherVM) : default!;
             _launcherExData = new LauncherExData(
                 LauncherSettings.ExtendedSorting,
@@ -283,14 +235,15 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 LauncherSettings.UnblockFiles,
                 LauncherSettings.FixCommonIssues,
                 LauncherSettings.CompactModuleList,
-                LauncherSettings.ResetModuleList,
+                LauncherSettings.HideRandomImage,
                 LauncherSettings.DisableBinaryCheck);
+
 
             void SetVMProperty(string property)
             {
                 var propertyInfo = new WrappedPropertyInfo(AccessTools2.Property(typeof(LauncherVMMixin), property)!, this);
-                _launcherVM.AddProperty(property, propertyInfo);
-                propertyInfo.PropertyChanged += (_, e) => _launcherVM.OnPropertyChanged(e.PropertyName);
+                launcherVM.AddProperty(property, propertyInfo);
+                propertyInfo.PropertyChanged += (_, e) => launcherVM.OnPropertyChanged(e.PropertyName);
             }
 
             SetVMProperty(nameof(IsSingleplayer));
@@ -298,6 +251,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(IsMultiplayer));
             SetVMProperty(nameof(IsOptions));
             SetVMProperty(nameof(IsNotOptions));
+            SetVMProperty(nameof(HideBUTRLoaderVersionText));
             SetVMProperty(nameof(IsDigitalCompanion));
             SetVMProperty(nameof(PlayButtonAlignment));
             SetVMProperty(nameof(HasNoMods));
@@ -308,9 +262,14 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetVMProperty(nameof(GeneralText));
 
             SetVMProperty(nameof(BUTRLoaderVersionText));
+
             SetVMProperty(nameof(OptionsData));
 
-            if (_launcherVM.IsMultiplayer)
+            SetVMProperty(nameof(HideRandomImage));
+
+            HideRandomImage = LauncherSettings.HideRandomImage;
+
+            if (launcherVM.IsMultiplayer)
                 IsMultiplayer = true;
             else
                 IsSingleplayer = true;
@@ -319,7 +278,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         [MethodImpl(MethodImplOptions.NoOptimization)]
         private void Save()
         {
-            LauncherVMPatch.UpdateAndSaveUserModsData(_launcherVM, IsMultiplayer);
+            LauncherVMPatch.UpdateAndSaveUserModsData(ViewModel, IsMultiplayer);
         }
 
         // Ensure save is triggered when launching the game
@@ -328,7 +287,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             Save();
             Manager.Disable();
-            ExecuteConfirmUnverifiedDLLStartOriginal?.Invoke(_launcherVM);
+            ExecuteConfirmUnverifiedDLLStartOriginal?.Invoke(ViewModel);
         }
 
 
@@ -360,19 +319,21 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public void ExecuteImport()
         {
-            _currentModuleListHandler = new ModuleListHandler(_launcherVM, _userDataManager);
+            _currentModuleListHandler = new ModuleListHandler(ViewModel, _userDataManager);
             _currentModuleListHandler.Import();
         }
 
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public void ExecuteExport()
         {
-            _currentModuleListHandler = new ModuleListHandler(_launcherVM, _userDataManager);
+            _currentModuleListHandler = new ModuleListHandler(ViewModel, _userDataManager);
             _currentModuleListHandler.Export();
         }
 
         private void SaveOptions()
         {
+            HideRandomImage = LauncherSettings.HideRandomImage;
+
             if (_launcherExData.ExtendedSorting != LauncherSettings.ExtendedSorting)
             {
                 Save();
@@ -403,7 +364,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 return;
             }
 
-            if (_launcherExData.ResetModuleList != LauncherSettings.ResetModuleList)
+            if (_launcherExData.HideRandomImage != LauncherSettings.HideRandomImage)
             {
                 Save();
                 return;

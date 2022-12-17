@@ -5,12 +5,46 @@ using HarmonyLib.BUTR.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
+    internal abstract class ViewModelMixin<TViewModel> where TViewModel : ViewModel
+    {
+        private readonly WeakReference<TViewModel> _vm;
+
+        protected TViewModel? ViewModel => _vm.TryGetTarget(out var vm) ? vm : null;
+
+        protected ViewModelMixin(TViewModel vm)
+        {
+            _vm = new WeakReference<TViewModel>(vm);
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            ViewModel?.OnPropertyChanged(propertyName);
+        }
+
+        protected void OnPropertyChangedWithValue(object value, [CallerMemberName] string? propertyName = null)
+        {
+            ViewModel?.OnPropertyChangedWithValue(value, propertyName);
+        }
+
+        protected bool SetField<T>(ref T field, T value, string propertyName)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+
     internal static class MixinManager
     {
         public static readonly Dictionary<ViewModel, List<object>> Mixins = new();
