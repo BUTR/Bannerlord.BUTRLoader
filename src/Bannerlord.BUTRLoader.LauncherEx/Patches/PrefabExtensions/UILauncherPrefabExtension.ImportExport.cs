@@ -6,10 +6,10 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 {
     internal sealed class UILauncherPrefabExtension14 : PrefabExtensionInsertAsSiblingPatch
     {
-        public static string Movie { get; } = "UILauncher";
-        public static string XPath { get; } = "descendant::TextWidget[@Text='@VersionText']";
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::TextWidget[@Text='@VersionText']";
 
-        public override InsertType Type { get; } = InsertType.Append;
+        public override InsertType Type => InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();
 
         public UILauncherPrefabExtension14()

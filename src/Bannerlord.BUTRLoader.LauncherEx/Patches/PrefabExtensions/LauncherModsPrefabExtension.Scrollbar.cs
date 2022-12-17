@@ -9,8 +9,8 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     /// </summary>
     internal sealed class LauncherModsPrefabExtension3 : PrefabExtensionReplacePatch
     {
-        public static string Movie { get; } = "Launcher.Mods";
-        public static string XPath { get; } = "descendant::ScrollbarWidget[@Id='Scrollbar']";
+        public static string Movie => "Launcher.Mods";
+        public static string XPath => "descendant::ScrollbarWidget[@Id='Scrollbar']";
 
         private XmlDocument XmlDocument { get; } = new();
 

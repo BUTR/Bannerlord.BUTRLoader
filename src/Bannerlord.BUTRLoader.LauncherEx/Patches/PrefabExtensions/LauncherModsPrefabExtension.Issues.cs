@@ -1,5 +1,4 @@
-﻿using Bannerlord.BUTR.Shared.Helpers;
-using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 
 using System.Xml;
 
@@ -10,8 +9,8 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     /// </summary>
     internal sealed class LauncherModsPrefabExtension1 : PrefabExtensionInsertAsSiblingPatch
     {
-        public static string Movie { get; } = "Launcher.Mods.ModuleTuple";
-        public static string XPath { get; } = "descendant::TextWidget[@Text='@VersionText']";
+        public static string Movie => "Launcher.Mods.ModuleTuple";
+        public static string XPath => "descendant::TextWidget[@Text='@VersionText']";
 
         public override InsertType Type => InsertType.Prepend;
         private XmlDocument XmlDocument { get; } = new();
@@ -41,8 +40,8 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     /// </summary>
     internal sealed class LauncherModsPrefabExtension2 : PrefabExtensionCustomPatch<XmlNode>
     {
-        public static string Movie { get; } = "Launcher.Mods.ModuleTuple";
-        public static string XPath { get; } = "/Prefab/Window/ListPanel";
+        public static string Movie => "Launcher.Mods.ModuleTuple";
+        public static string XPath => "/Prefab/Window/ListPanel";
 
         private XmlDocument XmlDocument { get; } = new();
 
