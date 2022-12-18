@@ -105,7 +105,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             var sorted = ModuleSorter.Sort(modules);
             ViewModel.Modules.Sort(new LauncherModuleVMComparer(sorted));
         }
-        
+
         public static void LoadSubModulesPostfix(LauncherModsVM __instance, bool isMultiplayer)
         {
             __instance.SetPropertyValue(nameof(IsSingleplayer), !isMultiplayer);

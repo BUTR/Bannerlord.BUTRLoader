@@ -81,7 +81,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     OnPropertyChanged(nameof(HasNoNews));
 
                     RandomImageSwitch = !RandomImageSwitch;
-                    
+
                     ViewModel.News.SetPropertyValue("IsDisabled2", false);
                     ViewModel.ModsData.SetPropertyValue("IsDisabled2", false);
                     OptionsData.IsDisabled = true;
@@ -118,7 +118,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     OnPropertyChanged(nameof(HasNoNews));
 
                     RandomImageSwitch = !RandomImageSwitch;
-                    
+
                     ViewModel.News.SetPropertyValue("IsDisabled2", false);
                     ViewModel.ModsData.SetPropertyValue("IsDisabled2", false);
                     OptionsData.IsDisabled = true;
@@ -149,7 +149,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                     OnPropertyChanged(nameof(HasNoNews));
 
                     RandomImageSwitch = !RandomImageSwitch;
-                    
+
                     ViewModel.News.SetPropertyValue("IsDisabled2", true);
                     ViewModel.ModsData.SetPropertyValue("IsDisabled2", true);
                     Refresh?.Invoke(ViewModel);
