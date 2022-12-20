@@ -56,12 +56,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             {
                 if (GlobalCheckboxState)
                 {
-                    if (!moduleVM.IsValid && !moduleVM.IsSelected)
+                    if (moduleVM.IsValid && !moduleVM.IsSelected)
                         ToggleModuleSelection(moduleVM);
                 }
-                else if (!moduleVM.ModuleInfoExtended.IsNative())
+                else
                 {
-                    if (moduleVM.IsSelected)
+                    if (!moduleVM.ModuleInfoExtended.IsNative() && moduleVM.IsSelected)
                         ToggleModuleSelection(moduleVM);
                 }
             }

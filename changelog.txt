@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.13.2
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Toggle all mods was not working correctly
+* Fixed sorting edgecases with non valid modules
+---------------------------------------------------------------------------------------------------
 Version: 1.13.1
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Selected modules were not properly sent to the game

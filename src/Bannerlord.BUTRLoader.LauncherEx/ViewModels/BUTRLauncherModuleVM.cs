@@ -151,6 +151,8 @@ namespace Bannerlord.BUTRLoader.ViewModels
             _select(this);
         }
 
+        public override string ToString() => $"{ModuleInfoExtended}, IsSelected: {IsSelected}, IsValid: {IsValid}";
+
         private static string GetDependencyHint(ModuleInfoExtended moduleInfoExtended)
         {
             static string GetOptional(bool isOptional) => isOptional ? " (optional)" : string.Empty;
