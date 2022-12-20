@@ -46,7 +46,6 @@ jobs:
 
     - name: Test
       run: >-
-          mkdir bannerlord;
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
           dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Debug -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
