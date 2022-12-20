@@ -5,6 +5,7 @@
       <InputAssemblies Include="$(OutputPath)\$(AssemblyName).exe" />
 
       <InputAssemblies Include="$(OutputPath)\0Harmony.dll" />
+      <InputAssemblies Include="$(OutputPath)\Newtonsoft.Json.dll" />
 
       <InputAssemblies Include="$(OutputPath)\Bannerlord.BUTRLoader.dll" />
       <InputAssemblies Include="$(OutputPath)\Bannerlord.BUTRLoader.LauncherEx.dll" />

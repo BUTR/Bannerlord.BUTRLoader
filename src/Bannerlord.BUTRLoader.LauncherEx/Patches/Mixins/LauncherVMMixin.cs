@@ -29,7 +29,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         private static readonly AccessTools.FieldRef<LauncherVM, UserDataManager>? UserDataManagerFieldRef =
             AccessTools2.FieldRefAccess<LauncherVM, UserDataManager>("_userDataManager");
-        
+
         private delegate void SetIsDigitalCompanionDelegate(LauncherVM instance, bool value);
         private static readonly SetIsDigitalCompanionDelegate? SetIsDigitalCompanion =
             AccessTools2.GetPropertySetterDelegate<SetIsDigitalCompanionDelegate>(typeof(LauncherVM), "IsDigitalCompanion");
@@ -209,7 +209,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SetIsDigitalCompanion?.Invoke(ViewModel, IsDigitalCompanion2);
 
             RandomImageSwitch = !RandomImageSwitch;
-                    
+
             ViewModel.News.SetPropertyValue(nameof(LauncherNewsVMMixin.IsDisabled2), HasNoNews);
             ViewModel.ModsData.SetPropertyValue(nameof(LauncherModsVMMixin.IsDisabled2), HasNoMods);
             OptionsData.IsDisabled = !IsOptions;

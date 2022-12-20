@@ -3,7 +3,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace Bannerlord.BUTRLoader.Patches.ViewModels
+namespace Bannerlord.BUTRLoader.ViewModels
 {
     internal sealed class SettingsPropertyVM : BUTRViewModel
     {

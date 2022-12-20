@@ -2,7 +2,7 @@
 
 using TaleWorlds.Library;
 
-namespace Bannerlord.BUTRLoader.Patches.ViewModels
+namespace Bannerlord.BUTRLoader.ViewModels
 {
     internal sealed class BUTRLauncherOptionsVM : BUTRViewModel
     {

@@ -1,5 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.Patches;
+﻿using Bannerlord.BUTRLoader.Patches;
+using Bannerlord.BUTRLoader.Patches.Mixins;
 using Bannerlord.BUTRLoader.Tests.Patches;
 
 using HarmonyLib;
@@ -10,8 +10,8 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-using TaleWorlds.MountAndBlade.Launcher;
-using TaleWorlds.MountAndBlade.Launcher.UserDatas;
+using TaleWorlds.MountAndBlade.Launcher.Library;
+using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Tests
 {
@@ -34,26 +34,24 @@ namespace Bannerlord.BUTRLoader.Tests
         [TestCaseSource(nameof(GetModuleListTemplates))]
         public void Test_Refresh(ModuleListTemplates moduleListTemplate)
         {
-            ModuleInfoHelper2.ExtendedModuleInfoCache.Clear();
-
             var storage = new ModuleStorage(moduleListTemplate);
-            using var _ = new ModuleInfoPatch(_harmony, storage);
-            using var __ = new ModuleInfo2Patch(_harmony, storage);
-            using var ___ = new UserDataManagerPatch2(_harmony, storage);
+            using var _ = new ModuleInfoHelperPatch(_harmony, storage);
+            using var __ = new ModuleHelperPatch(_harmony, storage);
 
             var userDataManager = new UserDataManager();
             var viewModel = new LauncherModsVM(userDataManager);
+            var mixin = new LauncherModsVMMixin(viewModel);
 
-            viewModel.Refresh(false);
+            mixin.Initialize(false, userDataManager.UserData);
+            foreach (var moduleVM in mixin.Modules2)
+            {
+                if (storage.ModuleInfoModels.Find(x => x.Id == moduleVM.ModuleInfoExtended.Id).IsSelected)
+                    moduleVM.ExecuteSelect();
+            }
+            mixin.ExecuteRefresh();
 
-            var sorted = viewModel.Modules.Where(m => m.IsSelected).Select(m => m.Info.Id).ToList();
+            var sorted = mixin.Modules2.Where(m => m.IsSelected).Select(m => m.ModuleInfoExtended.Id).ToList();
             CollectionAssert.AreEqual(storage.ExpectedIdOrder, sorted);
-        }
-
-        [OneTimeTearDown]
-        public void TearDown()
-        {
-            LauncherModsVMPatch.Disable(_harmony);
         }
     }
 }

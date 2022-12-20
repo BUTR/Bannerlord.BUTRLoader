@@ -11,17 +11,17 @@ using TaleWorlds.MountAndBlade.Launcher.Library;
 
 using ApplicationVersion = Bannerlord.ModuleManager.ApplicationVersion;
 
-namespace Bannerlord.BUTRLoader.Patches.ViewModels
+namespace Bannerlord.BUTRLoader.ViewModels
 {
     internal sealed class BUTRLauncherModuleVM : BUTRViewModel
     {
         public readonly ModuleInfoExtendedWithMetadata ModuleInfoExtended;
         private readonly Action<BUTRLauncherModuleVM> _select;
         private readonly Func<BUTRLauncherModuleVM, IEnumerable<ModuleIssue>> _validate;
-        
+
         [BUTRDataSourceProperty]
         public string Name => ModuleInfoExtended.Name;
-        
+
         [BUTRDataSourceProperty]
         public string VersionText => ModuleInfoExtended.Version.ToString();
 
@@ -32,11 +32,11 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
         public bool IsDangerous { get => _isDangerous; set => SetField(ref _isDangerous, value, nameof(IsDangerous)); }
         private bool _isDangerous;
 
-		[BUTRDataSourceProperty]
+        [BUTRDataSourceProperty]
         public LauncherHintVM? DangerousHint { get => _dangerousHint; set => SetField(ref _dangerousHint, value, nameof(DangerousHint)); }
         private LauncherHintVM? _dangerousHint;
 
-		[BUTRDataSourceProperty]
+        [BUTRDataSourceProperty]
         public LauncherHintVM? DependencyHint { get => _dependencyHint; set => SetField(ref _dependencyHint, value, nameof(DependencyHint)); }
         private LauncherHintVM? _dependencyHint;
 
@@ -45,7 +45,7 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
         private bool _anyDependencyAvailable;
 
         [BUTRDataSourceProperty]
-		public bool IsSelected { get => _isSelected; set => SetField(ref _isSelected, value, nameof(IsSelected)); }
+        public bool IsSelected { get => _isSelected; set => SetField(ref _isSelected, value, nameof(IsSelected)); }
         private bool _isSelected;
 
         [BUTRDataSourceProperty]
@@ -102,7 +102,7 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
 
 
         public BUTRLauncherModuleVM(
-            ModuleInfoExtendedWithMetadata moduleInfoExtended, 
+            ModuleInfoExtendedWithMetadata moduleInfoExtended,
             Action<BUTRLauncherModuleVM> select,
             Func<BUTRLauncherModuleVM, IEnumerable<ModuleIssue>> validate)
         {

@@ -1,7 +1,7 @@
 ﻿using Bannerlord.BUTR.Shared.Extensions;
 using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.Patches.ViewModels;
+using Bannerlord.BUTRLoader.ViewModels;
 using Bannerlord.ModuleManager;
 
 using System.Collections.Generic;
@@ -160,7 +160,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             var moduleInfoExtended = moduleVM.ModuleInfoExtended;
             var modules = FeatureIds.Features.Select(x => new ModuleInfoExtended { Id = x })
                 .Concat(Modules2.Select(x => x.ModuleInfoExtended)).ToList();
-            
+
             return ModuleUtilities.ValidateModule(modules, moduleInfoExtended, GetIsSelected, GetIsValid);
         }
 
@@ -218,11 +218,20 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
 
         private static bool IsVisible(bool isSignleplayer, ModuleInfoExtended moduleInfo) =>
-            moduleInfo.IsNative() || (!isSignleplayer && moduleInfo.IsMultiplayerModule) || (isSignleplayer && moduleInfo.IsSingleplayerModule);
+            moduleInfo.IsNative() || !isSignleplayer && moduleInfo.IsMultiplayerModule || isSignleplayer && moduleInfo.IsSingleplayerModule;
 
         private static void SortBySorter(MBBindingList<BUTRLauncherModuleVM> moduleVMs, IReadOnlyCollection<ModuleInfoExtended> modules)
         {
-            var sorted = ModuleSorter.Sort(modules).Select((x, i) => new { Item = x.Id, Index = i }).ToDictionary(x => x.Item, x => x.Index);
+            static IEnumerable<ModuleInfoExtended> Sort(IEnumerable<ModuleInfoExtended> source)
+            {
+                var orderedModules = source
+                    .OrderByDescending(x => x.IsOfficial)
+                    .ThenByDescending(mim => mim.Id, new AlphanumComparatorFast())
+                    .ToArray();
+
+                return ModuleSorter.TopologySort(orderedModules, module => ModuleUtilities.GetDependencies(orderedModules, module));
+            }
+            var sorted = Sort(modules).Select((x, i) => new { Item = x.Id, Index = i }).ToDictionary(x => x.Item, x => x.Index);
             moduleVMs.Sort(new ByIndexComparer<BUTRLauncherModuleVM>(x => sorted.TryGetValue(x.ModuleInfoExtended.Id, out var idx) ? idx : -1));
         }
 
