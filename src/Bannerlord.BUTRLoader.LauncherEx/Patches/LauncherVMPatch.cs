@@ -21,12 +21,12 @@ namespace Bannerlord.BUTRLoader.Patches
                 AccessTools2.Method(typeof(LauncherVM), "ExecuteConfirmUnverifiedDLLStart"),
                 transpiler: AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(BlankTranspiler)));
             if (!res1) return false;
-            
+
             var res2 = harmony.TryPatch(
                 AccessTools2.Method(typeof(LauncherVM), "GetApplicationVersionOfModule"),
                 prefix: AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(GetApplicationVersionOfModulePrefix)));
             if (!res2) return false;
-            
+
             var res3 = harmony.TryPatch(
                 AccessTools2.Method(typeof(LauncherVM), "UpdateAndSaveUserModsData"),
                 prefix: AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(UpdateAndSaveUserModsDataPrefix)));

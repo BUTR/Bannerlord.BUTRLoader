@@ -23,7 +23,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             public override string ToString() => $"{Id} - Expected: {OriginalVersion}, Installed: {CurrentVersion}";
         }
-        
+
         private delegate void UpdateAndSaveUserModsDataDelegate(LauncherVM instance, bool isMultiplayer);
         private static readonly UpdateAndSaveUserModsDataDelegate? UpdateAndSaveUserModsDataMethod =
             AccessTools2.GetDelegate<UpdateAndSaveUserModsDataDelegate>(typeof(LauncherVM), "UpdateAndSaveUserModsData");

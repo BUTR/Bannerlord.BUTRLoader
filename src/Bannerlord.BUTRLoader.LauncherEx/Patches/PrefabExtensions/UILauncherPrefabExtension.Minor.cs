@@ -84,7 +84,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     {
         public static string Movie => "UILauncher";
         public static string XPath => "/Prefab";
-        
+
         public override void Apply(XmlNode node)
         {
             foreach (var selectNode in node.OwnerDocument?.SelectNodes("//*")?.OfType<XmlNode>() ?? Enumerable.Empty<XmlNode>())

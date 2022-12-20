@@ -36,7 +36,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 if (propertyInfo.GetCustomAttribute<BUTRDataSourceProperty>() is { } attribute)
                 {
                     if (propertyInfo.GetMethod?.IsPrivate == true || propertyInfo.SetMethod?.IsPrivate == true) throw new Exception();
-                    
+
                     var wrappedPropertyInfo = new WrappedPropertyInfo(propertyInfo, this);
                     this.AddProperty(attribute.OverrideName ?? propertyInfo.Name, wrappedPropertyInfo);
                     wrappedPropertyInfo.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
@@ -49,7 +49,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 if (methodInfo.GetCustomAttribute<BUTRDataSourceMethod>() is { } attribute)
                 {
                     if (methodInfo.IsPrivate) throw new Exception();
-                   
+
                     var wrappedMethodInfo = new WrappedMethodInfo(methodInfo, this);
                     this.AddMethod(attribute.OverrideName ?? methodInfo.Name, wrappedMethodInfo);
                 }
@@ -77,7 +77,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 if (propertyInfo.GetCustomAttribute<BUTRDataSourceProperty>() is { } attribute)
                 {
                     if (propertyInfo.GetMethod?.IsPrivate == true || propertyInfo.SetMethod?.IsPrivate == true) throw new Exception();
-                    
+
                     var wrappedPropertyInfo = new WrappedPropertyInfo(propertyInfo, this);
                     vm.AddProperty(attribute.OverrideName ?? propertyInfo.Name, wrappedPropertyInfo);
                     wrappedPropertyInfo.PropertyChanged += (_, e) => ViewModel?.OnPropertyChanged(e.PropertyName);
