@@ -1,7 +1,7 @@
 # Bannerlord.BUTRLoader
 <p align="center">
   <a href="https://github.com/BUTR/Bannerlord.BUTRLoader" alt="Lines Of Code">
-    <img src="https://tokei.rs/b1/github/BUTR/Bannerlord.BUTRLoader?category=code" />
+    <img src="https://aschey.tech/tokei/github/BUTR/Bannerlord.BUTRLoader?category=code" />
   </a>
   <a href="https://www.codefactor.io/repository/github/butr/bannerlord.butrloader">
     <img src="https://www.codefactor.io/repository/github/butr/bannerlord.butrloader/badge" alt="CodeFactor" />
@@ -11,7 +11,7 @@
   </a>
   </br>
   <a href="https://github.com/BUTR/Bannerlord.BUTRLoader/actions/workflows/test.yml?query=branch%3Amaster">
-    <img alt="GitHub Workflow Status (event)" src="https://img.shields.io/github/workflow/status/BUTR/Bannerlord.BUTRLoader/Test?branch=master&label=Game%20Stable%20and%20Beta">
+    <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/BUTR/Bannerlord.BUTRLoader/test.yml?branch=master&label=Game%20Stable%20and%20Beta">
   </a>
   </br>
   <a href="https://www.nexusmods.com/mountandblade2bannerlord/mods/2513" alt="NexusMods BUTRLoader">
