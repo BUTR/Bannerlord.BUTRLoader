@@ -1,7 +1,7 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
 using Bannerlord.BUTRLoader.Options;
-using Bannerlord.BUTRLoader.Patches.ViewModels;
+using Bannerlord.BUTRLoader.ViewModels;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
