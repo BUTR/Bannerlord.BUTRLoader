@@ -19,6 +19,10 @@ namespace Bannerlord.BUTRLoader.Patches
                 AccessTools2.Method(typeof(LauncherModsVM), "LoadSubModules"),
                 prefix: AccessTools2.DeclaredMethod(typeof(LauncherModsVMPatch), nameof(LoadSubModulesPrefix)));
 
+            var res2 = harmony.TryPatch(
+                AccessTools2.PropertyGetter(typeof(LauncherModsVM), "ModuleListCode"),
+                prefix: AccessTools2.DeclaredMethod(typeof(LauncherModsVMPatch), nameof(ModuleListCodePrefix)));
+
             return true;
         }
 
@@ -31,6 +35,16 @@ namespace Bannerlord.BUTRLoader.Patches
                 mixin.Initialize(isMultiplayer, _userData(__instance));
 
             return false;
+        }
+
+        public static bool ModuleListCodePrefix(LauncherModsVM __instance, ref string __result)
+        {
+            if (__instance.GetPropertyValue(nameof(LauncherModsVMMixin)) is LauncherModsVMMixin mixin)
+            {
+                __result = mixin.ModuleListCode;
+                return false;
+            }
+            return true;
         }
     }
 }

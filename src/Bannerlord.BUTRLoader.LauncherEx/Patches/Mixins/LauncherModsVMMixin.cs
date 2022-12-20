@@ -40,6 +40,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         [BUTRDataSourceProperty]
         public MBBindingList<BUTRLauncherModuleVM> Modules2 { get; } = new();
 
+        public string ModuleListCode => $"_MODULES_*{string.Join("*", Modules2.Where(x => x.IsSelected).Select(x => x.ModuleInfoExtended.Id))}*_MODULES_";
 
         public LauncherModsVMMixin(LauncherModsVM launcherModsVM) : base(launcherModsVM)
         {

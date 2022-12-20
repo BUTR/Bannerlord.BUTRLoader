@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.13.1
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Selected modules were not properly sent to the game
+---------------------------------------------------------------------------------------------------
 Version: 1.13.0
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Rewrote the UI part, less code, more stability
