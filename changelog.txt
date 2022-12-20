@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.13.0
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Rewrote the UI part, less code, more stability
+* Added cyclic dependencies detection
+---------------------------------------------------------------------------------------------------
 Version: 1.12.2
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Force sorting won't reset enabled/disabled mods, only re-sort them

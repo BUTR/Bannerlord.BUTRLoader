@@ -26,8 +26,8 @@ namespace Bannerlord.BUTRLoader.Extensions
         private static readonly AccessTools.FieldRef<IDictionary>? CachedViewModelProperties =
             AccessTools2.StaticFieldRefAccess<IDictionary>("TaleWorlds.Library.ViewModel:_cachedViewModelProperties");
 
-        private delegate object DataSourceTypeBindingPropertiesCollectionCtorDelegate(Dictionary<string, PropertyInfo> properties, Dictionary<string, MethodInfo> methods);
-        private static readonly DataSourceTypeBindingPropertiesCollectionCtorDelegate? DataSourceTypeBindingPropertiesCollectionCtor =
+        public delegate object DataSourceTypeBindingPropertiesCollectionCtorDelegate(Dictionary<string, PropertyInfo> properties, Dictionary<string, MethodInfo> methods);
+        public static readonly DataSourceTypeBindingPropertiesCollectionCtorDelegate? DataSourceTypeBindingPropertiesCollectionCtor =
             AccessTools2.GetDeclaredConstructorDelegate<DataSourceTypeBindingPropertiesCollectionCtorDelegate>(
                 "TaleWorlds.Library.ViewModel+DataSourceTypeBindingPropertiesCollection", new[] { typeof(Dictionary<string, PropertyInfo>), typeof(Dictionary<string, MethodInfo>) });
 
@@ -58,11 +58,14 @@ namespace Bannerlord.BUTRLoader.Extensions
             if (PropertiesAndMethods(viewModel) is not { } storage || CachedViewModelProperties() is not { } staticStorageDict)
                 return false;
 
-            var type = viewModel.GetType();
-            if (!staticStorageDict.Contains(type) || staticStorageDict[type] is not { } staticStorage)
+            if ((propDict = GetProperties(storage)) is null || (methodDict = GetMethods(storage)) is null)
                 return false;
 
-            if ((propDict = GetProperties(storage)) is null || (methodDict = GetMethods(storage)) is null)
+            var type = viewModel.GetType();
+            if (!staticStorageDict.Contains(type)) // There is not static storage to copy from, fast exit
+                return true;
+
+            if (staticStorageDict[type] is not { } staticStorage)
                 return false;
 
             // TW caches the properties, since we modify each VM individually, we need to copy them

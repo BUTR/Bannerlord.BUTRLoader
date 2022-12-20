@@ -1,5 +1,7 @@
 ﻿using Bannerlord.BUTRLoader.Patches;
 
+using HarmonyLib.BUTR.Extensions;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,6 +23,10 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             public override string ToString() => $"{Id} - Expected: {OriginalVersion}, Installed: {CurrentVersion}";
         }
+        
+        private delegate void UpdateAndSaveUserModsDataDelegate(LauncherVM instance, bool isMultiplayer);
+        private static readonly UpdateAndSaveUserModsDataDelegate? UpdateAndSaveUserModsDataMethod =
+            AccessTools2.GetDelegate<UpdateAndSaveUserModsDataDelegate>(typeof(LauncherVM), "UpdateAndSaveUserModsData");
 
         private static readonly int DefaultChangeSet = typeof(ApplicationVersion).GetField("DefaultChangeSet")?.GetValue(null) as int? ?? 0;
 
@@ -146,7 +152,7 @@ Mismatched module versions:
                             HintManager.ShowHint("Successfully imported list!");
                         }
 
-                        LauncherVMPatch.UpdateAndSaveUserModsData(_launcherVM, false);
+                        UpdateAndSaveUserModsDataMethod?.Invoke(_launcherVM, false);
                     }
                     catch (Exception) { }
                 }

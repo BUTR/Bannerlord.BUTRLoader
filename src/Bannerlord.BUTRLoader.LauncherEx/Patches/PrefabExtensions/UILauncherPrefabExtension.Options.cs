@@ -68,7 +68,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     internal sealed class UILauncherPrefabExtension6 : PrefabExtensionInsertAsSiblingPatch
     {
         public static string Movie => "UILauncher";
-        public static string XPath => "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[2]";
+        public static string XPath => "descendant::TabToggleWidget[2]";
 
         public override InsertType Type => InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();
@@ -93,7 +93,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     internal sealed class UILauncherPrefabExtension7 : PrefabExtensionInsertAsSiblingPatch
     {
         public static string Movie => "UILauncher";
-        public static string XPath => "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/TabControl/Children/Launcher.Mods";
+        public static string XPath => "descendant::Launcher.Mods";
 
         public override InsertType Type => InsertType.Append;
         private XmlDocument XmlDocument { get; } = new();
@@ -114,7 +114,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     internal sealed class UILauncherPrefabExtension8 : PrefabExtensionSetAttributePatch
     {
         public static string Movie => "UILauncher";
-        public static string XPath => "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[1]";
+        public static string XPath => "descendant::TabToggleWidget[1]";
 
         public override string Attribute => "IsHidden";
         public override string Value => "@HasNoNews";
@@ -126,7 +126,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     internal sealed class UILauncherPrefabExtension9 : PrefabExtensionSetAttributePatch
     {
         public static string Movie => "UILauncher";
-        public static string XPath => "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[2]/Children/Widget[2]/Children/ListPanel/Children/TabToggleWidget[2]";
+        public static string XPath => "descendant::TabToggleWidget[2]";
 
         public override string Attribute => "IsHidden";
         public override string Value => "@HasNoMods";
@@ -138,7 +138,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     internal sealed class UILauncherPrefabExtension10 : PrefabExtensionSetAttributePatch
     {
         public static string Movie => "UILauncher";
-        public static string XPath => "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/LauncherRandomImageWidget";
+        public static string XPath => "descendant::LauncherRandomImageWidget";
 
         public override string Attribute => "ChangeTrigger";
         public override string Value => "@RandomImageSwitch";
@@ -150,7 +150,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     internal sealed class UILauncherPrefabExtension11 : PrefabExtensionSetAttributePatch
     {
         public static string Movie => "UILauncher";
-        public static string XPath => "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/TabControl/Children/Launcher.Mods";
+        public static string XPath => "descendant::Launcher.Mods";
 
         public override string Attribute => "IsDisabled";
         public override string Value => "@IsDisabled2";
@@ -162,9 +162,29 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     internal sealed class UILauncherPrefabExtension12 : PrefabExtensionSetAttributePatch
     {
         public static string Movie => "UILauncher";
-        public static string XPath => "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/TabControl/Children/Launcher.News";
+        public static string XPath => "descendant::Launcher.News";
 
         public override string Attribute => "IsDisabled";
         public override string Value => "@IsDisabled2";
+    }
+
+    /// <summary>
+    /// Replaces Launcher.Mods with our own static implementation, since we add a lot of custom stuff anyway
+    /// </summary>
+    internal sealed class UILauncherPrefabExtension13 : PrefabExtensionReplacePatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::Launcher.Mods";
+
+        private XmlDocument XmlDocument { get; } = new();
+
+        public UILauncherPrefabExtension13()
+        {
+            XmlDocument.LoadXml(@"
+<Launcher.Mods2 Id=""ModsPage"" DataSource=""{ModsData}"" />
+");
+        }
+
+        public override XmlDocument GetPrefabExtension() => XmlDocument;
     }
 }

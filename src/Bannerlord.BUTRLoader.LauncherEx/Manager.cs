@@ -26,7 +26,6 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             ProgramPatch.Enable(_launcherHarmony);
             UserDataManagerPatch.Enable(_launcherHarmony);
             LauncherVMPatch.Enable(_launcherHarmony);
-            LauncherModuleVMPatch.Enable(_launcherHarmony);
             LauncherModsVMPatch.Enable(_launcherHarmony);
             LauncherConfirmStartVMPatch.Enable(_launcherHarmony);
             LauncherUIPatch.Enable(_launcherHarmony);
@@ -52,6 +51,8 @@ namespace Bannerlord.BUTRLoader.LauncherEx
 
             WidgetFactoryManager.Enable(_launcherHarmony);
             WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.Mods2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.Mods.ModuleTuple2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.ModuleTuple.xml"));
         }
 
         private static XmlDocument Load(string embedPath)

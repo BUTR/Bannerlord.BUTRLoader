@@ -14,12 +14,10 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 
         public UILauncherPrefabExtension14()
         {
-            var verticalOffset = 35;
-
             XmlDocument.LoadXml(@$"
 <ListPanel WidthSizePolicy=""CoverChildren"" HeightSizePolicy=""CoverChildren""
            VerticalAlignment=""Bottom""
-           MarginLeft =""5"" MarginBottom=""{verticalOffset}""
+           MarginLeft =""5"" MarginBottom=""35""
            LayoutImp.LayoutMethod=""HorizontalLeftToRight"" IsHidden=""@IsNotSingleplayer"">
   <Children>
     <ButtonWidget WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""40"" SuggestedHeight=""40""

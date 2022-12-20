@@ -40,7 +40,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             WidgetFactoryReference.SetTarget(widgetFactory);
         }
 
-        public static WidgetPrefab? Create(XmlDocument doc)
+        public static WidgetPrefab? Create(string name, XmlDocument doc)
         {
             if (!WidgetFactoryReference.TryGetTarget(out var widgetFactory) || widgetFactory is null)
                 return null;
@@ -48,7 +48,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             return WidgetPrefabPatch.LoadFromDocument(
                 widgetFactory.PrefabExtensionContext,
                 widgetFactory.WidgetAttributeContext,
-                string.Empty,
+                name,
                 doc);
         }
         public static void Register(Type widgetType)
@@ -59,7 +59,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             Reload();
         }
         public static void Register(string name, Func<WidgetPrefab?> create) => CustomTypes.Add(name, create);
-        public static void CreateAndRegister(string name, XmlDocument xmlDocument) => Register(name, () => Create(xmlDocument));
+        public static void CreateAndRegister(string name, XmlDocument xmlDocument) => Register(name, () => Create($"{name}.xml", xmlDocument));
 
         public static bool Enable(Harmony harmony)
         {

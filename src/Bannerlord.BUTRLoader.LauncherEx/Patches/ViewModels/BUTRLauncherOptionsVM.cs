@@ -4,20 +4,18 @@ using TaleWorlds.Library;
 
 namespace Bannerlord.BUTRLoader.Patches.ViewModels
 {
-    internal sealed class LauncherOptionsVM : ViewModel
+    internal sealed class BUTRLauncherOptionsVM : BUTRViewModel
     {
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public bool IsDisabled { get => _isDisabled; set => SetField(ref _isDisabled, value, nameof(IsDisabled)); }
         private bool _isDisabled;
 
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public MBBindingList<SettingsPropertyVM> SettingProperties { get => _settingProperties; set => SetField(ref _settingProperties, value, nameof(SettingProperties)); }
         private MBBindingList<SettingsPropertyVM> _settingProperties = new();
 
-        public void Refresh(bool disable)
+        public void Refresh()
         {
-            IsDisabled = disable;
-
             SettingProperties.Clear();
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {

@@ -1,4 +1,6 @@
-﻿using HarmonyLib;
+﻿using Bannerlord.BUTRLoader.Patches.Mixins;
+
+using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using System;
@@ -19,16 +21,15 @@ namespace Bannerlord.BUTRLoader.Patches
                 AccessTools2.Method(typeof(LauncherVM), "ExecuteConfirmUnverifiedDLLStart"),
                 transpiler: AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(BlankTranspiler)));
             if (!res1) return false;
-
-            var res2 = harmony.TryCreateReversePatcher(
-                AccessTools2.Method(typeof(LauncherVM), "UpdateAndSaveUserModsData"),
-                AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(UpdateAndSaveUserModsData)));
-            if (res2 is null) return false;
-            res2.Patch();
-
-            var res3 = harmony.TryPatch(
+            
+            var res2 = harmony.TryPatch(
                 AccessTools2.Method(typeof(LauncherVM), "GetApplicationVersionOfModule"),
                 prefix: AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(GetApplicationVersionOfModulePrefix)));
+            if (!res2) return false;
+            
+            var res3 = harmony.TryPatch(
+                AccessTools2.Method(typeof(LauncherVM), "UpdateAndSaveUserModsData"),
+                prefix: AccessTools2.DeclaredMethod(typeof(LauncherVMPatch), nameof(UpdateAndSaveUserModsDataPrefix)));
             if (!res3) return false;
 
             // Preventing inlining ExecuteConfirmUnverifiedDLLStart
@@ -40,11 +41,15 @@ namespace Bannerlord.BUTRLoader.Patches
             return true;
         }
 
-        [MethodImpl(MethodImplOptions.NoOptimization)]
-        public static void UpdateAndSaveUserModsData(object instance, bool isMultiplayer)
+        public static bool UpdateAndSaveUserModsDataPrefix(LauncherVM __instance, bool isMultiplayer)
         {
-            // its a stub so it has no initial content
-            throw new NotImplementedException("It's a stub");
+            if (__instance.GetPropertyValue(nameof(LauncherVMMixin)) is LauncherVMMixin mixin)
+            {
+                mixin.UpdateAndSaveUserModsData(isMultiplayer);
+                return false;
+            }
+
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.NoOptimization)]

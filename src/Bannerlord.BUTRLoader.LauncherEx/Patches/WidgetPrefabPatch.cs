@@ -21,8 +21,6 @@ namespace Bannerlord.BUTRLoader.Patches
     {
         public static bool Enable(Harmony harmony)
         {
-            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension1.Movie, UILauncherPrefabExtension1.XPath, new UILauncherPrefabExtension1());
-
             // Options
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension3.Movie, UILauncherPrefabExtension3.XPath, new UILauncherPrefabExtension3());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension4.Movie, UILauncherPrefabExtension4.XPath, new UILauncherPrefabExtension4());
@@ -34,34 +32,29 @@ namespace Bannerlord.BUTRLoader.Patches
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension10.Movie, UILauncherPrefabExtension10.XPath, new UILauncherPrefabExtension10());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension11.Movie, UILauncherPrefabExtension11.XPath, new UILauncherPrefabExtension11());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension12.Movie, UILauncherPrefabExtension12.XPath, new UILauncherPrefabExtension12());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension13.Movie, UILauncherPrefabExtension13.XPath, new UILauncherPrefabExtension13());
             // Options
 
+
+            // Import/Export
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension14.Movie, UILauncherPrefabExtension14.XPath, new UILauncherPrefabExtension14());
-            
+            // Import/Export
+
+            // Minor
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension1.Movie, UILauncherPrefabExtension1.XPath, new UILauncherPrefabExtension1());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension15.Movie, UILauncherPrefabExtension15.XPath, new UILauncherPrefabExtension15());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension16.Movie, UILauncherPrefabExtension16.XPath, new UILauncherPrefabExtension16());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension17.Movie, UILauncherPrefabExtension17.XPath, new UILauncherPrefabExtension17());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension18.Movie, UILauncherPrefabExtension18.XPath, new UILauncherPrefabExtension18());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension19.Movie, UILauncherPrefabExtension19.XPath, new UILauncherPrefabExtension19());
+            // Minor
 
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension1.Movie, LauncherModsPrefabExtension1.XPath, new LauncherModsPrefabExtension1());
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension2.Movie, LauncherModsPrefabExtension2.XPath, new LauncherModsPrefabExtension2());
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension3.Movie, LauncherModsPrefabExtension3.XPath, new LauncherModsPrefabExtension3());
-
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension4.Movie, LauncherModsPrefabExtension4.XPath, new LauncherModsPrefabExtension4());
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension5.Movie, LauncherModsPrefabExtension5.XPath, new LauncherModsPrefabExtension5());
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension6.Movie, LauncherModsPrefabExtension6.XPath, new LauncherModsPrefabExtension6());
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension7.Movie, LauncherModsPrefabExtension7.XPath, new LauncherModsPrefabExtension7());
-
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension8.Movie, LauncherModsPrefabExtension8.XPath, new LauncherModsPrefabExtension8());
-
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension9.Movie, LauncherModsPrefabExtension9.XPath, new LauncherModsPrefabExtension9());
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension10.Movie, LauncherModsPrefabExtension10.XPath, new LauncherModsPrefabExtension10());
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension11.Movie, LauncherModsPrefabExtension11.XPath, new LauncherModsPrefabExtension11());
-
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension12.Movie, LauncherModsPrefabExtension12.XPath, new LauncherModsPrefabExtension12());
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension13.Movie, LauncherModsPrefabExtension13.XPath, new LauncherModsPrefabExtension13());
-
-            PrefabExtensionManager.RegisterPatch(LauncherModsPrefabExtension14.Movie, LauncherModsPrefabExtension14.XPath, new LauncherModsPrefabExtension14());
-
+            // Compact
+            PrefabExtensionManager.RegisterPatch(ModuleTuplePrefabExtension4.Movie, ModuleTuplePrefabExtension4.XPath, new ModuleTuplePrefabExtension4());
+            PrefabExtensionManager.RegisterPatch(ModuleTuplePrefabExtension5.Movie, ModuleTuplePrefabExtension5.XPath, new ModuleTuplePrefabExtension5());
+            PrefabExtensionManager.RegisterPatch(ModuleTuplePrefabExtension6.Movie, ModuleTuplePrefabExtension6.XPath, new ModuleTuplePrefabExtension6());
+            PrefabExtensionManager.RegisterPatch(ModuleTuplePrefabExtension7.Movie, ModuleTuplePrefabExtension7.XPath, new ModuleTuplePrefabExtension7());
+            // Compact
 
             var res1 = harmony.TryPatch(
                 AccessTools2.DeclaredMethod(typeof(WidgetPrefab), "LoadFrom"),
@@ -84,6 +77,31 @@ namespace Bannerlord.BUTRLoader.Patches
             PrefabExtensionManager.ProcessMovieIfNeeded(movieName, document);
         }
 
+        private static int GetWidgetPrefabConstructorIndex(IList<CodeInstruction> instructions, MethodBase originalMethod)
+        {
+            var constructor = AccessTools2.DeclaredConstructor(typeof(WidgetPrefab));
+
+            var locals = originalMethod.GetMethodBody()?.LocalVariables;
+            var widgetPrefabLocal = locals?.FirstOrDefault(x => x.LocalType == typeof(WidgetPrefab));
+
+            if (widgetPrefabLocal is null)
+                return -1;
+
+            var constructorIndex = -1;
+            for (var i = 0; i < instructions.Count - 2; i++)
+            {
+                if (instructions[i + 0].opcode != OpCodes.Newobj || !Equals(instructions[i + 0].operand, constructor))
+                    continue;
+
+                if (!instructions[i + 1].IsStloc())
+                    continue;
+
+                constructorIndex = i;
+                break;
+            }
+            return constructorIndex;
+        }
+
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static IEnumerable<CodeInstruction> WidgetPrefab_LoadFrom_Transpiler(IEnumerable<CodeInstruction> instructions, MethodBase method)
         {
@@ -94,32 +112,12 @@ namespace Bannerlord.BUTRLoader.Patches
                 return instructionsList.AsEnumerable();
             }
 
-            var constructor = AccessTools2.DeclaredConstructor(typeof(WidgetPrefab));
-
-            var locals = method.GetMethodBody()?.LocalVariables;
-            var typeLocal = locals?.FirstOrDefault(x => x.LocalType == typeof(WidgetPrefab));
-
-            if (typeLocal is null)
-                return ReturnDefault("Local not found");
-
-            var startIndex = -1;
-            for (var i = 0; i < instructionsList.Count - 2; i++)
-            {
-                if (instructionsList[i + 0].opcode != OpCodes.Newobj || !Equals(instructionsList[i + 0].operand, constructor))
-                    continue;
-
-                if (!instructionsList[i + 1].IsStloc())
-                    continue;
-
-                startIndex = i;
-                break;
-            }
-
-            if (startIndex == -1)
+            var widgetPrefabConstructorIndex = GetWidgetPrefabConstructorIndex(instructionsList, method);
+            if (widgetPrefabConstructorIndex == -1)
                 return ReturnDefault("Pattern not found");
 
             // ProcessMovie(path, xmlDocument);
-            instructionsList.InsertRange(startIndex + 1, new List<CodeInstruction>
+            instructionsList.InsertRange(widgetPrefabConstructorIndex + 1, new List<CodeInstruction>
             {
                 new (OpCodes.Ldarg_2),
                 new (OpCodes.Ldloc_0),
@@ -143,34 +141,36 @@ namespace Bannerlord.BUTRLoader.Patches
                     new (OpCodes.Ret)
                 }.AsEnumerable();
 
-                var instructionList = instructions.ToList();
+                var instructionsList = instructions.ToList();
 
                 var locals = method.GetMethodBody()?.LocalVariables;
-                var typeLocal = locals?.FirstOrDefault(x => x.LocalType == typeof(XmlDocument));
+                var xmlDocumentLocal = locals?.FirstOrDefault(x => x.LocalType == typeof(XmlDocument));
 
-                if (typeLocal is null)
+                if (xmlDocumentLocal is null)
                     return returnNull;
 
-                var constructorIndex = -1;
-                var constructor = AccessTools2.Constructor(typeof(WidgetPrefab));
-                for (var i = 0; i < instructionList.Count; i++)
-                {
-                    if (instructionList[i].opcode == OpCodes.Newobj && Equals(instructionList[i].operand, constructor))
-                        constructorIndex = i;
-                }
-
-                if (constructorIndex == -1)
+                var widgetPrefabConstructorIndex = GetWidgetPrefabConstructorIndex(instructionsList, method);
+                if (widgetPrefabConstructorIndex == -1)
                     return returnNull;
 
-                for (var i = 0; i < constructorIndex; i++)
+                for (var i = 0; i < widgetPrefabConstructorIndex; i++)
                 {
-                    instructionList[i] = new CodeInstruction(OpCodes.Nop);
+                    instructionsList[i] = new CodeInstruction(OpCodes.Nop);
                 }
 
-                instructionList[constructorIndex - 2] = new CodeInstruction(OpCodes.Ldarg_S, 3);
-                instructionList[constructorIndex - 1] = new CodeInstruction(OpCodes.Stloc_S, typeLocal.LocalIndex);
+                instructionsList[widgetPrefabConstructorIndex - 2] = new CodeInstruction(OpCodes.Ldarg_S, 3);
+                instructionsList[widgetPrefabConstructorIndex - 1] = new CodeInstruction(OpCodes.Stloc_S, xmlDocumentLocal.LocalIndex);
 
-                return instructionList.AsEnumerable();
+                // ProcessMovie(path, xmlDocument);
+                instructionsList.InsertRange(widgetPrefabConstructorIndex + 1, new List<CodeInstruction>
+                {
+                    new (OpCodes.Ldarg_S, 2),
+                    new (OpCodes.Ldloc_S, xmlDocumentLocal.LocalIndex),
+                    new (OpCodes.Call, AccessTools2.DeclaredMethod(typeof(WidgetPrefabPatch), nameof(ProcessMovie)))
+                });
+
+
+                return instructionsList.AsEnumerable();
             }
 
             // make compiler happy

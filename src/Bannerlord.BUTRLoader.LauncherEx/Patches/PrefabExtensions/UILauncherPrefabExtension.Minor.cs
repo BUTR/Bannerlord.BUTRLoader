@@ -1,6 +1,10 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Patches.Mixins;
 
+using System.Linq;
 using System.Xml;
+
+using TaleWorlds.MountAndBlade.Launcher.Library;
 
 namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 {
@@ -17,10 +21,8 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 
         public UILauncherPrefabExtension1()
         {
-            var verticalOffset = 90;
-
             XmlDocument.LoadXml(@$"
-<TextWidget WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""CoverChildren"" VerticalAlignment=""Bottom"" Brush=""Launcher.Version.Text"" MarginLeft=""7"" MarginBottom=""{verticalOffset}"" IsHidden=""@HideBUTRLoaderVersionText"" Text=""@BUTRLoaderVersionText""/>
+<TextWidget WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""CoverChildren"" VerticalAlignment=""Bottom"" Brush=""Launcher.Version.Text"" MarginLeft=""7"" MarginBottom=""90"" IsHidden=""@HideBUTRLoaderVersionText"" Text=""@BUTRLoaderVersionText""/>
 ");
         }
 
@@ -61,5 +63,43 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 
         public override string Attribute => "IsHidden";
         public override string Value => "@HideRandomImage";
+    }
+
+    /// <summary>
+    /// Set our dynamic margin for random image
+    /// </summary>
+    internal sealed class UILauncherPrefabExtension18 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::TabControl[@Id='ContentPanel']";
+
+        public override string Attribute => "MarginRight";
+        public override string Value => "@ContentTabControlMargin";
+    }
+
+    /// <summary>
+    /// Replaces the standard values with our overrides
+    /// </summary>
+    internal sealed class UILauncherPrefabExtension19 : PrefabExtensionCustomPatch<XmlNode>
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "/Prefab";
+        
+        public override void Apply(XmlNode node)
+        {
+            foreach (var selectNode in node.OwnerDocument?.SelectNodes("//*")?.OfType<XmlNode>() ?? Enumerable.Empty<XmlNode>())
+            {
+                foreach (var attribute in selectNode.Attributes?.OfType<XmlAttribute>() ?? Enumerable.Empty<XmlAttribute>())
+                {
+                    attribute.Value = attribute.Value switch
+                    {
+                        $"@{nameof(LauncherVM.IsSingleplayer)}" => $"@{nameof(LauncherVMMixin.IsSingleplayer2)}",
+                        $"@{nameof(LauncherVM.IsMultiplayer)}" => $"@{nameof(LauncherVMMixin.IsMultiplayer2)}",
+                        $"@{"IsDigitalCompanion"}" => $"@{nameof(LauncherVMMixin.IsDigitalCompanion2)}",
+                        _ => attribute.Value
+                    };
+                }
+            }
+        }
     }
 }

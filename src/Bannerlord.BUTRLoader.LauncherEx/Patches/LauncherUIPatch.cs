@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 using TaleWorlds.GauntletUI.Data;
-using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library;
 
 namespace Bannerlord.BUTRLoader.Patches

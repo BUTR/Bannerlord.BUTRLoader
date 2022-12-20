@@ -3,29 +3,27 @@
 using System.ComponentModel;
 using System.Globalization;
 
-using TaleWorlds.Library;
-
 namespace Bannerlord.BUTRLoader.Patches.ViewModels
 {
-    internal sealed class SettingsPropertyVM : ViewModel
+    internal sealed class SettingsPropertyVM : BUTRViewModel
     {
         private ISettingsPropertyDefinition SettingPropertyDefinition { get; }
         private IRef PropertyReference => SettingPropertyDefinition.PropertyReference;
         private SettingType SettingType => SettingPropertyDefinition.SettingType;
 
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public string Name => SettingPropertyDefinition.DisplayName;
 
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public bool IsIntVisible { get; }
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public bool IsFloatVisible { get; }
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public bool IsBoolVisible { get; }
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public bool IsStringVisible { get; }
 
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public float FloatValue
         {
             get => IsFloatVisible ? PropertyReference.Value is float val ? val : float.MinValue : 0f;
@@ -39,7 +37,7 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
                 }
             }
         }
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public int IntValue
         {
             get => IsIntVisible ? PropertyReference.Value is int val ? val : int.MinValue : 0;
@@ -53,7 +51,7 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
                 }
             }
         }
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public bool BoolValue
         {
             get => IsBoolVisible && PropertyReference.Value is bool val ? val : false;
@@ -66,7 +64,7 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
                 }
             }
         }
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public string StringValue
         {
             get => IsStringVisible ? PropertyReference.Value is string val ? val : "ERROR" : string.Empty;
@@ -80,11 +78,11 @@ namespace Bannerlord.BUTRLoader.Patches.ViewModels
             }
         }
 
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public float MaxValue => (float) SettingPropertyDefinition.MaxValue;
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public float MinValue => (float) SettingPropertyDefinition.MinValue;
-        [DataSourceProperty]
+        [BUTRDataSourceProperty]
         public string TextBoxValue => SettingType switch
         {
             SettingType.Int when PropertyReference.Value is int val => val.ToString(),
