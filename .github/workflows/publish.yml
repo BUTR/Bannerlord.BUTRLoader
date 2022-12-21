@@ -169,21 +169,26 @@ jobs:
       uses: butr/actions-common-setup@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Download Module artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: bannerlord-blse
-        path: ./artifact
 
-    - name: Download Module artifact
+    - name: Download Launcher Extension artifact
       uses: actions/download-artifact@v3
       with:
         name: bannerlord-launcher-extension
-        path: ./artifact
+        path: ./launcher-extension
 
-    - name: 7z Module
-      run: 7z a -t7z Bannerlord.BUTRLoader.7z ./artifact/* -mx9
+    - name: Download BLSE artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: bannerlord-blse
+        path: ./blse
+
+    - name: 7z Launcher Extension
+      run: 7z a -t7z Bannerlord.BUTRLoader.7z ./launcher-extension/* -mx9
+      #shell: pwsh
+      # pwsh casues it to include the root folder
+      
+    - name: 7z BLSE
+      run: 7z a -t7z BLSE.7z ./blse/* -mx9
       #shell: pwsh
       # pwsh casues it to include the root folder
 
@@ -212,14 +217,25 @@ jobs:
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload Release Asset
+        
+    - name: Upload Release Asset Launcher Extension
       id: upload_release_asset
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Bannerlord.BUTRLoader.7z
         asset_name: Bannerlord.BUTRLoader.7z
+        asset_content_type: application/x-7z-compressed
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Release Asset BLSE
+      id: upload_release_asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./BLSE.7z
+        asset_name: BLSE.7z
         asset_content_type: application/x-7z-compressed
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
