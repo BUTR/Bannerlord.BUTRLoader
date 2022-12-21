@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
 using Bannerlord.BUTRLoader.Options;
 using Bannerlord.BUTRLoader.ViewModels;
@@ -7,7 +8,6 @@ using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using TaleWorlds.GauntletUI;
-using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
@@ -260,14 +260,14 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         [BUTRDataSourceMethod]
         public void ExecuteImport()
         {
-            _currentModuleListHandler = new ModuleListHandler(ViewModel, _userDataManager);
+            _currentModuleListHandler = new ModuleListHandler(ViewModel);
             _currentModuleListHandler.Import();
         }
 
         [BUTRDataSourceMethod]
         public void ExecuteExport()
         {
-            _currentModuleListHandler = new ModuleListHandler(ViewModel, _userDataManager);
+            _currentModuleListHandler = new ModuleListHandler(ViewModel);
             _currentModuleListHandler.Export();
         }
 
@@ -321,7 +321,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         public void UpdateAndSaveUserModsData(bool isMultiplayer)
         {
-            if (ViewModel?.ModsData.GetPropertyValue(nameof(LauncherModsVMMixin.Modules2)) is not MBBindingList<BUTRLauncherModuleVM> modules)
+            if (ViewModel?.ModsData.GetModules() is not { } modules)
                 return;
 
             if (_userDataManager.UserData.GameType == GameType.Singleplayer && isMultiplayer)

@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Patches.Mixins;
+﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Patches.Mixins;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -31,7 +32,7 @@ namespace Bannerlord.BUTRLoader.Patches
             if (_userData is null)
                 return true;
 
-            if (__instance.GetPropertyValue(nameof(LauncherModsVMMixin)) is LauncherModsVMMixin mixin)
+            if (__instance.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is { } mixin)
                 mixin.Initialize(isMultiplayer, _userData(__instance));
 
             return false;
@@ -39,7 +40,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
         public static bool ModuleListCodePrefix(LauncherModsVM __instance, ref string __result)
         {
-            if (__instance.GetPropertyValue(nameof(LauncherModsVMMixin)) is LauncherModsVMMixin mixin)
+            if (__instance.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is { } mixin)
             {
                 __result = mixin.ModuleListCode;
                 return false;

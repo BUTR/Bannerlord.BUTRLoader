@@ -1,4 +1,6 @@
-﻿using HarmonyLib;
+﻿using Bannerlord.BUTRLoader.Helpers;
+
+using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using System.Collections;
@@ -71,8 +73,12 @@ namespace Bannerlord.BUTRLoader.Extensions
             // TW caches the properties, since we modify each VM individually, we need to copy them
             if (ReferenceEquals(storage, staticStorage))
                 PropertiesAndMethods(viewModel) = DataSourceTypeBindingPropertiesCollectionCtor(propDict = new(propDict), methodDict = new(methodDict));
-
             return true;
         }
+
+        public static TViewModelMixin? GetMixin<TViewModelMixin, TViewModel>(this TViewModel viewModel)
+            where TViewModelMixin : ViewModelMixin<TViewModelMixin, TViewModel>
+            where TViewModel : ViewModel
+            => viewModel.GetPropertyValue(typeof(TViewModelMixin).Name) as TViewModelMixin;
     }
 }

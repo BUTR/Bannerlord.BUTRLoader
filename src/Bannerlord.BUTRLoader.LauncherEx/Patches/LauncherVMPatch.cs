@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Patches.Mixins;
+﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Patches.Mixins;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -43,7 +44,7 @@ namespace Bannerlord.BUTRLoader.Patches
 
         public static bool UpdateAndSaveUserModsDataPrefix(LauncherVM __instance, bool isMultiplayer)
         {
-            if (__instance.GetPropertyValue(nameof(LauncherVMMixin)) is LauncherVMMixin mixin)
+            if (__instance.GetMixin<LauncherVMMixin, LauncherVM>() is { } mixin)
             {
                 mixin.UpdateAndSaveUserModsData(isMultiplayer);
                 return false;

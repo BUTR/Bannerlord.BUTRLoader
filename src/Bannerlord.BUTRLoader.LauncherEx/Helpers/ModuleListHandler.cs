@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Patches;
+﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.ModuleManager;
 
 using HarmonyLib.BUTR.Extensions;
 
@@ -10,7 +11,6 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
@@ -28,7 +28,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         private static readonly UpdateAndSaveUserModsDataDelegate? UpdateAndSaveUserModsDataMethod =
             AccessTools2.GetDelegate<UpdateAndSaveUserModsDataDelegate>(typeof(LauncherVM), "UpdateAndSaveUserModsData");
 
-        private static readonly int DefaultChangeSet = typeof(ApplicationVersion).GetField("DefaultChangeSet")?.GetValue(null) as int? ?? 0;
+        private static readonly int DefaultChangeSet = typeof(TaleWorlds.Library.ApplicationVersion).GetField("DefaultChangeSet")?.GetValue(null) as int? ?? 0;
 
         private static string ToString(ApplicationVersion version)
         {
@@ -62,12 +62,10 @@ namespace Bannerlord.BUTRLoader.Helpers
         }
 
         private readonly LauncherVM _launcherVM;
-        private readonly UserDataManager _userDataManager;
 
-        public ModuleListHandler(LauncherVM launcherVM, UserDataManager userDataManager)
+        public ModuleListHandler(LauncherVM launcherVM)
         {
             _launcherVM = launcherVM;
-            _userDataManager = userDataManager;
         }
 
         public void Import()
@@ -82,6 +80,14 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             var thread = new Thread(() =>
             {
+                if (_launcherVM.ModsData.GetModules() is not { } moduleVMs)
+                {
+                    HintManager.ShowHint(@$"Cancelled Import!
+
+Internal BUTRLoader error: GetModules() null");
+                    return;
+                }
+
                 var dialog = new OpenFileDialog
                 {
                     FileName = "MyList.bmlist",
@@ -103,10 +109,8 @@ namespace Bannerlord.BUTRLoader.Helpers
                         using var reader = new StreamReader(fs);
                         var modules = Deserialize(ReadAllLines(reader)).ToArray();
                         var moduleIds = modules.Select(x => x.Id).ToHashSet();
-                        var wrappedModules = _launcherVM.ModsData.Modules
-                            .Where(x => moduleIds.Contains(x.Info.Id))
-                            .ToArray();
-                        var wrappedModuleIds = wrappedModules.Select(x => x.Info?.Id).ToHashSet();
+                        var wrappedModules = moduleVMs.Where(x => moduleIds.Contains(x.ModuleInfoExtended.Id)).ToArray();
+                        var wrappedModuleIds = wrappedModules.Select(x => x.ModuleInfoExtended.Id).ToHashSet();
                         if (modules.Length != wrappedModules.Length)
                         {
                             var missingModules = moduleIds.Except(wrappedModuleIds);
@@ -117,21 +121,22 @@ Missing modules:
                             return;
                         }
 
-                        foreach (var launcherModuleVM in _launcherVM.ModsData.Modules)
+                        foreach (var moduleVM in moduleVMs)
                         {
-                            launcherModuleVM.IsSelected = false;
+                            if (moduleVM.IsSelected)
+                                moduleVM.ExecuteSelect();
                         }
+
                         var mismatchedVersions = new List<ModuleMismatch>();
                         foreach (var (id, version) in modules)
                         {
-                            var module = _launcherVM.ModsData.Modules
-                                .FirstOrDefault(x => x.Info.Id == id);
-                            if (module is not null)
+                            if (moduleVMs.FirstOrDefault(x => x.ModuleInfoExtended.Id == id) is { } module)
                             {
-                                var launcherModuleVersion = ToString(module.Info.Version);
+                                var launcherModuleVersion = ToString(module.ModuleInfoExtended.Version);
                                 if (launcherModuleVersion == version)
                                 {
-                                    module.IsSelected = true;
+                                    if (!module.IsSelected)
+                                        module.ExecuteSelect();
                                     continue;
                                 }
                                 else
@@ -166,6 +171,14 @@ Mismatched module versions:
         {
             var thread = new Thread(() =>
             {
+                if (_launcherVM.ModsData.GetModules() is not { } moduleVMs)
+                {
+                    HintManager.ShowHint(@$"Cancelled Export!
+
+Internal BUTRLoader error: GetModules() null");
+                    return;
+                }
+
                 var dialog = new SaveFileDialog
                 {
                     FileName = "MyList.bmlist",
@@ -182,14 +195,10 @@ Mismatched module versions:
                 {
                     try
                     {
-                        var moduleIds = _userDataManager.UserData?.SingleplayerData?.ModDatas
+                        var modules = moduleVMs
                             .Where(x => x.IsSelected)
-                            .Select(x => x.Id)
-                            .ToHashSet();
-                        var modules = _launcherVM.ModsData.Modules
-                            .Select(x => x.Info)
-                            .Where(x => moduleIds.Contains(x.Id))
-                            .Select(x => new ModuleListEntry(x!.Id, ToString(x.Version)))
+                            .Select(x => x.ModuleInfoExtended)
+                            .Select(x => new ModuleListEntry(x.Id, ToString(x.Version)))
                             .ToArray();
 
                         using var fs = dialog.OpenFile();
