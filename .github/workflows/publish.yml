@@ -120,6 +120,7 @@ jobs:
 ###########################
   publish-on-nexusmods-launcher-extension:
     needs: ["build-launcher-extension"]
+    name: Publish Launcher Extension on NexusMods
     uses: BUTR/workflows/.github/workflows/release-nexusmods.yml@master
     with:
       nexusmods_game_id: mountandblade2bannerlord
@@ -137,6 +138,7 @@ jobs:
 ###########################
   publish-on-nexusmods-blse:
     needs: ["build-blse"]
+    name: Publish BLSE on NexusMods
     uses: BUTR/workflows/.github/workflows/release-nexusmods.yml@master
     with:
       nexusmods_game_id: mountandblade2bannerlord
