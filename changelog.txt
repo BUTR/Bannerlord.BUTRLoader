@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.13.4
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Added hints that will explain why the load order was reordered at launch
+* Added hints that will explain why a mod can't be reordered in an illegal position when dragging
+---------------------------------------------------------------------------------------------------
 Version: 1.13.3
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Fixed Import/Export

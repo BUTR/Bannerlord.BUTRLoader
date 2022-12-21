@@ -4,8 +4,12 @@ using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.ViewModels;
 using Bannerlord.ModuleManager;
 
+using HarmonyLib.BUTR.Extensions;
+
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library;
@@ -15,13 +19,20 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherModsVMMixin : ViewModelMixin<LauncherModsVMMixin, LauncherModsVM>
     {
+        private delegate void AddHintInformationDelegate(string message);
+        private static readonly AddHintInformationDelegate? AddHintInformation =
+            AccessTools2.GetDelegate<AddHintInformationDelegate>(typeof(LauncherUI), "AddHintInformation");
+
+        private delegate void HideHintInformationDelegate();
+        private static readonly HideHintInformationDelegate? HideHintInformation =
+            AccessTools2.GetDelegate<HideHintInformationDelegate>(typeof(LauncherUI), "HideHintInformation");
+
+
         // All installed Modules
         private readonly Dictionary<string, ModuleInfoExtended> _extendedModuleInfoCache =
             // Not real modules, we declare this way our launcher capabilities
             new(FeatureIds.Features.ToDictionary(x => x, x => new ModuleInfoExtended { Id = x, IsSingleplayerModule = true }));
-
-        // All available for loading modules
-        private readonly Dictionary<string, ModuleInfoExtended> _availableModules = new();
+        
         // Fast lookup for the ViewModels
         private readonly Dictionary<string, BUTRLauncherModuleVM> _modulesLookup = new();
 
@@ -39,6 +50,28 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         [BUTRDataSourceProperty]
         public MBBindingList<BUTRLauncherModuleVM> Modules2 { get; } = new();
+
+        
+        [BUTRDataSourceProperty]
+        public bool IsForceSorted
+        {
+            get => _isForceSorted;
+            set
+            {
+                if (SetField(ref _isForceSorted, value, nameof(IsForceSorted)))
+                {
+                    OnPropertyChanged(nameof(IsNotForceSorted));
+                }
+            }
+        }
+        private bool _isForceSorted;
+        
+        [BUTRDataSourceProperty]
+        public bool IsNotForceSorted => !IsForceSorted;
+
+        [BUTRDataSourceProperty]
+        public LauncherHintVM? ForceSortedHint { get => _forceSortedHint; set => SetField(ref _forceSortedHint, value, nameof(ForceSortedHint)); }
+        private LauncherHintVM? _forceSortedHint;
 
         public string ModuleListCode => $"_MODULES_*{string.Join("*", Modules2.Where(x => x.IsSelected).Select(x => x.ModuleInfoExtended.Id))}*_MODULES_";
 
@@ -70,7 +103,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         [BUTRDataSourceMethod]
         public void ExecuteRefresh()
         {
-            SortBySorter(Modules2, _availableModules.Values.ToList());
+            SortBySorter(Modules2);
         }
 
 
@@ -114,17 +147,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             IsSingleplayer = !isMultiplayer;
 
             // Clear previous data
-            _availableModules.Clear();
             _modulesLookup.Clear();
             Modules2.Clear();
 
-            // Get available modules based on Singleplayer/Multiplayer
-            _availableModules.AddRange(_extendedModuleInfoCache.Values
-                .Where(x => IsVisible(IsSingleplayer, x))
-                .ToDictionary(x => x.Id, x => x));
-
             // Initialize ViewModels
-            foreach (var moduleInfoExtended in _availableModules.Values.OfType<ModuleInfoExtendedWithMetadata>())
+            foreach (var moduleInfoExtended in _extendedModuleInfoCache.Values.Where(x => IsVisible(IsSingleplayer, x)).OfType<ModuleInfoExtendedWithMetadata>())
             {
                 var viewModel = new BUTRLauncherModuleVM(moduleInfoExtended, ToggleModuleSelection, ValidateModule);
                 _modulesLookup[moduleInfoExtended.Id] = viewModel;
@@ -136,9 +163,8 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             // Apply saved IsSelected
             foreach (var userModData in userGameTypeData.ModDatas.Where(x => x.IsSelected))
             {
-                if (!_availableModules.TryGetValue(userModData.Id, out var moduleInfo)) continue;
+                if (!_modulesLookup.TryGetValue(userModData.Id, out var moduleVM)) continue;
 
-                var moduleVM = _modulesLookup[moduleInfo.Id];
                 if (moduleVM.IsValid)
                     ToggleModuleSelection(moduleVM);
             }
@@ -147,8 +173,18 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SortByUserGameData(Modules2, userGameTypeData);
 
             // Force reorder if the current order is not valid
-            if (!IsLoadOrderCorrect(Modules2.Where(x => x.IsSelected && x.IsValid).Select(x => x.ModuleInfoExtended).ToList()))
-                SortBySorter(Modules2, _availableModules.Values.ToList());
+            var loadOrderValidationIssues = IsLoadOrderCorrect(Modules2.Where(x => x.IsValid).Select(x => x.ModuleInfoExtended).ToList()).ToList();
+            if (loadOrderValidationIssues.Count != 0)
+            {
+                IsForceSorted = true;
+                SortBySorter(Modules2);
+                ForceSortedHint = new LauncherHintVM(@$"The Load Order was re-sorted! Reasons:
+{string.Join("\n", loadOrderValidationIssues.Select(x => x.Reason))}");
+            }
+            else
+            {
+                IsForceSorted = false;
+            }
 
             // Validate all VM's after they were selected and ordered
             foreach (var modules in Modules2)
@@ -168,7 +204,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private void ToggleModuleSelection(BUTRLauncherModuleVM moduleVM)
         {
             var moduleInfoExtended = moduleVM.ModuleInfoExtended;
-            var modules = _availableModules.Values;
+            var modules = Modules2.Select(x => x.ModuleInfoExtended).ToList();
 
             if (moduleVM.IsSelected)
                 ModuleUtilities.DisableModule(modules, moduleInfoExtended, GetIsSelected, SetIsSelected, GetIsDisabled, SetIsDisabled);
@@ -185,15 +221,29 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             var currentModuleIndex = Modules2.IndexOf(targetModuleVM);
 
             var modules = Modules2.Select(x => x.ModuleInfoExtended).ToList();
+            var hintDisplayed = false;
             while (insertIndex != currentModuleIndex)
             {
                 modules.RemoveAt(currentModuleIndex);
                 modules.Insert(insertIndex, targetModuleVM.ModuleInfoExtended);
-                if (IsLoadOrderCorrect(modules.Where(x => _modulesLookup[x.Id] is { IsSelected: true, IsValid: true }).ToList()))
+                var loadOrderValidationIssues = IsLoadOrderCorrect(modules.Where(x => _modulesLookup[x.Id] is { IsValid: true }).ToList()).ToList();
+                if (loadOrderValidationIssues.Count == 0)
                 {
                     Modules2.RemoveAt(currentModuleIndex);
                     Modules2.Insert(insertIndex, targetModuleVM);
                     break;
+                }
+
+                if (!hintDisplayed)
+                {
+                    hintDisplayed = true;
+                    AddHintInformation?.Invoke(@$"Failed to place the module to the desired position! Placing to the nearest available! Reason:
+{string.Join("\n", loadOrderValidationIssues.Select(x => x.Reason))}");
+                    Task.Factory.StartNew(async () =>
+                    {
+                        await Task.Delay(5000);
+                        HideHintInformation?.Invoke();
+                    }, CancellationToken.None, TaskCreationOptions.AttachedToParent, TaskScheduler.Current);
                 }
 
                 // Do it until we find the nearest acceptable index or stop if we failes
@@ -206,32 +256,33 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
 
         // Working
-        private bool IsLoadOrderCorrect(IReadOnlyList<ModuleInfoExtended> modules)
+        private IEnumerable<ModuleIssue> IsLoadOrderCorrect(IReadOnlyList<ModuleInfoExtended> modules)
         {
             var loadOrder = FeatureIds.Features.Select(x => new ModuleInfoExtended { Id = x }).Concat(modules).ToList();
             foreach (var module in modules)
             {
-                if (ModuleUtilities.ValidateLoadOrder(loadOrder, module).Any())
-                    return false;
+                var issues = ModuleUtilities.ValidateLoadOrder(loadOrder, module).ToList();
+                if (issues.Any())
+                    return issues;
             }
-            return true;
+            return Enumerable.Empty<ModuleIssue>();
         }
 
         private static bool IsVisible(bool isSignleplayer, ModuleInfoExtended moduleInfo) =>
             moduleInfo.IsNative() || !isSignleplayer && moduleInfo.IsMultiplayerModule || isSignleplayer && moduleInfo.IsSingleplayerModule;
 
-        private static void SortBySorter(MBBindingList<BUTRLauncherModuleVM> moduleVMs, IReadOnlyCollection<ModuleInfoExtended> modules)
+        private static void SortBySorter(MBBindingList<BUTRLauncherModuleVM> moduleVMs)
         {
             static IEnumerable<ModuleInfoExtended> Sort(IEnumerable<ModuleInfoExtended> source)
             {
                 var orderedModules = source
                     .OrderByDescending(x => x.IsOfficial)
-                    .ThenByDescending(mim => mim.Id, new AlphanumComparatorFast())
+                    .ThenByDescending(x => x.Id, new AlphanumComparatorFast())
                     .ToArray();
 
                 return ModuleSorter.TopologySort(orderedModules, module => ModuleUtilities.GetDependencies(orderedModules, module));
             }
-            var sorted = Sort(modules).Select((x, i) => new { Item = x.Id, Index = i }).ToDictionary(x => x.Item, x => x.Index);
+            var sorted = Sort(moduleVMs.Select(x => x.ModuleInfoExtended)).Select((x, i) => new { Item = x.Id, Index = i }).ToDictionary(x => x.Item, x => x.Index);
             moduleVMs.Sort(new ByIndexComparer<BUTRLauncherModuleVM>(x => sorted.TryGetValue(x.ModuleInfoExtended.Id, out var idx) ? idx : -1));
         }
 
