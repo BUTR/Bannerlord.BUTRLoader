@@ -183,7 +183,7 @@ jobs:
         path: ./artifact
 
     - name: 7z Module
-      run: 7z a -t7z ${{ inputs.mod_id }}.7z ./artifact/* -mx9
+      run: 7z a -t7z Bannerlord.BUTRLoader.7z ./artifact/* -mx9
       #shell: pwsh
       # pwsh casues it to include the root folder
 
@@ -218,8 +218,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./${{ inputs.mod_id }}.7z
-        asset_name: ${{ inputs.mod_id }}.7z
+        asset_path: ./Bannerlord.BUTRLoader.7z
+        asset_name: Bannerlord.BUTRLoader.7z
         asset_content_type: application/x-7z-compressed
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
