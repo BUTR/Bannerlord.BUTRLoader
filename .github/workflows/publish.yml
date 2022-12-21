@@ -81,9 +81,11 @@ jobs:
       with:
         msbuild-architecture: x64
 
+    - name: Create bannerlord folder
+      run: mkdir bannerlord;
+
     - name: Build Bannerlord.BLSE
       run: >-
-          mkdir bannerlord;
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
           dotnet restore src/Bannerlord.BLSE/Bannerlord.BLSE.csproj;
@@ -92,7 +94,6 @@ jobs:
 
     - name: Build Bannerlord.BLSE.Launcher
       run: >-
-          mkdir bannerlord;
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
           dotnet restore src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj;
