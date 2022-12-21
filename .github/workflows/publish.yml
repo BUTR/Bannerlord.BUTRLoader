@@ -157,7 +157,7 @@ jobs:
 ###########################
   publish-on-github:
     needs: ["build-launcher-extension", "build-blse"]
-    name: Publish Module on GitHub
+    name: Publish Launcher Extension and BLSE on GitHub
     runs-on: ubuntu-latest
     environment:
       name: GitHub Release
