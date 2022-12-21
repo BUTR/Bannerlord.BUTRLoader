@@ -45,7 +45,7 @@ namespace Bannerlord.BUTRLoader.Tests
             mixin.Initialize(false, userDataManager.UserData);
             foreach (var moduleVM in mixin.Modules2)
             {
-                if (storage.ModuleInfoModels.Find(x => x.Id == moduleVM.ModuleInfoExtended.Id).IsSelected)
+                if (storage.ModuleInfoModels.Find(x => x.Id == moduleVM.ModuleInfoExtended.Id).IsSelected != moduleVM.IsSelected)
                     moduleVM.ExecuteSelect();
             }
             mixin.ExecuteRefresh();
