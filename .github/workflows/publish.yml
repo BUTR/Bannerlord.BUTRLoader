@@ -21,12 +21,12 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Setup
-      uses: butr/actions-common-setup@v2.1
+      uses: butr/actions-common-setup@v2
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.3
+      uses: microsoft/setup-msbuild@v1
       with:
         msbuild-architecture: x64
 
@@ -72,12 +72,12 @@ jobs:
     runs-on: windows-latest
     steps:
     - name: Setup
-      uses: butr/actions-common-setup@v2.1
+      uses: butr/actions-common-setup@v2
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
 
     - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.3
+      uses: microsoft/setup-msbuild@v1
       with:
         msbuild-architecture: x64
 
@@ -162,7 +162,7 @@ jobs:
     steps:
     
     - name: Setup
-      uses: butr/actions-common-setup@v2.1
+      uses: butr/actions-common-setup@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
     
