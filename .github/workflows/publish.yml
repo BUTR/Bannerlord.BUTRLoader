@@ -1,4 +1,4 @@
-name: Publish Module
+name: Publish BLSE and Launcher Extension
 
 on:
   push:
@@ -13,12 +13,12 @@ env:
   # Disable sending .NET CLI telemetry to Microsoft.
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   #
-  MIN_VERSION: 'e1.5.0'
+  MIN_VERSION: 'v1.0.0'
 
 jobs:
-  build-module:
-    name: Build Module
-    runs-on: windows-2022
+  build-launcher-extension:
+    name: Build Launcher Extension
+    runs-on: windows-latest
     steps:
     - name: Setup
       uses: butr/actions-common-setup@v2.1
@@ -30,7 +30,7 @@ jobs:
       with:
         msbuild-architecture: x64
 
-    - name: Build Module
+    - name: Build Launcher Extension
       run: >-
           mkdir bannerlord;
           $game_version=$env:MIN_VERSION;
@@ -64,34 +64,158 @@ jobs:
     - name: Upload Bannerlord folder
       uses: actions/upload-artifact@v3
       with:
-        name: bannerlord
+        name: bannerlord-launcher-extension
         path: ./bannerlord/
+
+  build-blse:
+    name: Build BLSE
+    runs-on: windows-latest
+    steps:
+    - name: Setup
+      uses: butr/actions-common-setup@v2.1
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.3
+      with:
+        msbuild-architecture: x64
+
+    - name: Build Bannerlord.BLSE
+      run: >-
+          mkdir bannerlord;
+          $game_version=$env:MIN_VERSION;
+          $game_version=$game_version.substring(1);
+          dotnet restore src/Bannerlord.BLSE/Bannerlord.BLSE.csproj;
+          msbuild src/Bannerlord.BLSE/Bannerlord.BLSE.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
+      shell: pwsh
+
+    - name: Build Bannerlord.BLSE.Launcher
+      run: >-
+          mkdir bannerlord;
+          $game_version=$env:MIN_VERSION;
+          $game_version=$game_version.substring(1);
+          dotnet restore src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj;
+          msbuild src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
+      shell: pwsh
+
+    - name: Cleanup
+      run: >-
+          cd $PWD/bannerlord;
+          Get-ChildItem -Exclude bin | Remove-Item -Recurse -Force;
+          cd bin;
+          cd Win64_Shipping_Client;
+          Get-ChildItem -Exclude Bannerlord.BLSE.exe,Bannerlord.BLSE.Launcher.exe | Remove-Item -Recurse -Force;
+      shell: pwsh
+
+    - name: Upload Bannerlord folder
+      uses: actions/upload-artifact@v3
+      with:
+        name: bannerlord-blse
+        path: ./bannerlord/
+
 
 ###########################
 #        NEXUSMODS        #
 ###########################
-  publish-on-nexusmods:
-    needs: ["build-module"]
+  publish-on-nexusmods-launcher-extension:
+    needs: ["build-launcher-extension"]
     uses: BUTR/workflows/.github/workflows/release-nexusmods.yml@master
     with:
       nexusmods_game_id: mountandblade2bannerlord
       nexusmods_mod_id: 2513
       mod_filename: BUTRLoader
-      mod_version: ${{ needs.build-module.outputs.mod_version }}
-      mod_description: ${{ needs.build-module.outputs.mod_description }}
-      artifact_name: bannerlord
+      mod_version: ${{ needs.build-launcher-extension.outputs.mod_version }}
+      mod_description: ${{ needs.build-launcher-extension.outputs.mod_description }}
+      artifact_name: bannerlord-launcher-extension
     secrets:
       NEXUSMODS_APIKEY: ${{ secrets.NEXUSMODS_APIKEY }}
       NEXUSMODS_COOKIES: ${{ secrets.NEXUSMODS_COOKIES }}
 
 ###########################
+#        NEXUSMODS        #
+###########################
+  publish-on-nexusmods-blse:
+    needs: ["build-blse"]
+    uses: BUTR/workflows/.github/workflows/release-nexusmods.yml@master
+    with:
+      nexusmods_game_id: mountandblade2bannerlord
+      nexusmods_mod_id: 1
+      mod_filename: BUTRLoader
+      mod_version: ${{ needs.build-blse.outputs.mod_version }}
+      mod_description: ${{ needs.build-blse.outputs.mod_description }}
+      artifact_name: bannerlord-blse
+    secrets:
+      NEXUSMODS_APIKEY: ${{ secrets.NEXUSMODS_APIKEY }}
+      NEXUSMODS_COOKIES: ${{ secrets.NEXUSMODS_COOKIES }}
+
+
+###########################
 #         GITHUB          #
 ###########################
   publish-on-github:
-    needs: ["build-module"]
-    uses: BUTR/workflows/.github/workflows/release-github.yml@master
-    with:
-      mod_id: Bannerlord.BUTRLoader
-      mod_version: ${{ needs.build-module.outputs.mod_version }}
-      mod_description: ${{ needs.build-module.outputs.mod_description }}
-      artifact_name: bannerlord
+    name: Publish Module on GitHub
+    runs-on: ubuntu-latest
+    environment:
+      name: GitHub Release
+      url: ${{ steps.upload_release_asset.outputs.browser_download_url }}
+    steps:
+    
+    - name: Setup
+      uses: butr/actions-common-setup@v2.1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Download Module artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: bannerlord-blse
+        path: ./artifact
+
+    - name: Download Module artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: bannerlord-launcher-extension
+        path: ./artifact
+
+    - name: 7z Module
+      run: 7z a -t7z ${{ inputs.mod_id }}.7z ./artifact/* -mx9
+      #shell: pwsh
+      # pwsh casues it to include the root folder
+
+    - name: Set Version
+      id: set_version
+      run: |
+        echo "::set-output name=mod_version::${{ needs.launcher-extension.outputs.mod_version }}"
+    - name: Set Description
+      id: set_description
+      run: |
+        desc="${{ needs.launcher-extension.outputs.mod_description }}"
+        desc="${desc//'%'/'%25'}"
+        desc="${desc//$'"'/'%22'}"
+        desc="${desc//$'\n'/'%0A'}"
+        desc="${desc//$'\r'/'%0D'}"
+        echo "::set-output name=mod_description::$desc"
+
+    - name: Create Release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        tag_name: v${{ steps.set_version.outputs.mod_version }}
+        release_name: Release ${{ steps.set_version.outputs.mod_version }}
+        body: ${{ steps.set_description.outputs.mod_description }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload Release Asset
+      id: upload_release_asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./${{ inputs.mod_id }}.7z
+        asset_name: ${{ inputs.mod_id }}.7z
+        asset_content_type: application/x-7z-compressed
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

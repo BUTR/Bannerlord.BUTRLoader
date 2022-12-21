@@ -12,7 +12,6 @@ using System.Threading;
 using System.Windows.Forms;
 
 using TaleWorlds.MountAndBlade.Launcher.Library;
-using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
