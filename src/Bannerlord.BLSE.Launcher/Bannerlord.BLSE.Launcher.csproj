@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="ILRepacker" Condition="Exists($(GameFolder)) AND $(OS) == 'Windows_NT'">
-    <Exec Command="xcopy /Y &quot;$(MSBuildProjectDirectory)\$(OutputPath)\$(AssemblyName).exe&quot; &quot;$(GameFolder)\bin\Win64_Shipping_Client&quot;" />
+    <Exec Command="xcopy /Y &quot;$(MSBuildProjectDirectory)\$(OutputPath)\$(AssemblyName).exe&quot; &quot;$(GameFolder)\bin\Win64_Shipping_Client\&quot;" />
   </Target>
 
 </Project>
