@@ -32,7 +32,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private readonly Dictionary<string, ModuleInfoExtended> _extendedModuleInfoCache =
             // Not real modules, we declare this way our launcher capabilities
             new(FeatureIds.Features.ToDictionary(x => x, x => new ModuleInfoExtended { Id = x, IsSingleplayerModule = true }));
-        
+
         // Fast lookup for the ViewModels
         private readonly Dictionary<string, BUTRLauncherModuleVM> _modulesLookup = new();
 
@@ -51,7 +51,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         [BUTRDataSourceProperty]
         public MBBindingList<BUTRLauncherModuleVM> Modules2 { get; } = new();
 
-        
+
         [BUTRDataSourceProperty]
         public bool IsForceSorted
         {
@@ -65,7 +65,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             }
         }
         private bool _isForceSorted;
-        
+
         [BUTRDataSourceProperty]
         public bool IsNotForceSorted => !IsForceSorted;
 
