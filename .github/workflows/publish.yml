@@ -18,25 +18,19 @@ env:
 jobs:
   build-launcher-extension:
     name: Build Launcher Extension
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Setup
       uses: butr/actions-common-setup@v2
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
 
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1
-      with:
-        msbuild-architecture: x64
-
     - name: Build Launcher Extension
       run: >-
           mkdir bannerlord;
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
-          dotnet restore src/Bannerlord.BUTRLoader.AssemblyManager/Bannerlord.BUTRLoader.AssemblyManager.csproj;
-          msbuild src/Bannerlord.BUTRLoader.AssemblyManager/Bannerlord.BUTRLoader.AssemblyManager.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
+          dotnet build src/Bannerlord.BUTRLoader.AssemblyManager/Bannerlord.BUTRLoader.AssemblyManager.csproj -p:configuration=Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
     - name: Cleanup
@@ -69,17 +63,12 @@ jobs:
 
   build-blse:
     name: Build BLSE
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - name: Setup
       uses: butr/actions-common-setup@v2
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
-
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1
-      with:
-        msbuild-architecture: x64
 
     - name: Create bannerlord folder
       run: mkdir bannerlord;
@@ -88,16 +77,14 @@ jobs:
       run: >-
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
-          dotnet restore src/Bannerlord.BLSE/Bannerlord.BLSE.csproj;
-          msbuild src/Bannerlord.BLSE/Bannerlord.BLSE.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
+          dotnet build src/Bannerlord.BLSE/Bannerlord.BLSE.csproj -p:configuration=Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
     - name: Build Bannerlord.BLSE.Launcher
       run: >-
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
-          dotnet restore src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj;
-          msbuild src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj /p:configuration=Release -p:GameVersion=$game_version /p:GameFolder="$PWD/bannerlord";
+          dotnet build src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj -p:configuration=Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
     - name: Cleanup
