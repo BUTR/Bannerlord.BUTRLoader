@@ -139,6 +139,7 @@ jobs:
 ###########################
   publish-on-nexusmods-blse:
     needs: ["build-blse"]
+    if: false
     name: Publish BLSE on NexusMods
     uses: BUTR/workflows/.github/workflows/release-nexusmods.yml@master
     with:
