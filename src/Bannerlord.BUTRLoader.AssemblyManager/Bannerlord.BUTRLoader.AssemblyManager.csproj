@@ -7,7 +7,7 @@
     <PlatformTarget>x64</PlatformTarget>
 
     <Configurations>Stable_Debug;Stable_Release;Beta_Debug;Beta_Release</Configurations>
-    <ILRepackTargetConfigurations>$(Configurations)</ILRepackTargetConfigurations>
+    <ILRepackTargetConfigurations>$(Configurations);Debug;Release;</ILRepackTargetConfigurations>
     <ILRepackMergeDebugSymbols>true</ILRepackMergeDebugSymbols>
     <ILRepackPerformInternalize>false</ILRepackPerformInternalize>
     <AssemblyName>Bannerlord.BUTRLoader</AssemblyName>

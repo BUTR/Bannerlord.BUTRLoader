@@ -19,6 +19,9 @@ jobs:
   build-launcher-extension:
     name: Build Launcher Extension
     runs-on: ubuntu-latest
+    outputs:
+      mod_version: ${{ steps.changelog.outputs.mod_version.test }}
+      mod_description: ${{ steps.changelog.outputs.mod_description.test }}
     steps:
     - name: Setup
       uses: butr/actions-common-setup@v2
@@ -133,8 +136,8 @@ jobs:
       nexusmods_game_id: mountandblade2bannerlord
       nexusmods_mod_id: 1
       mod_filename: BUTRLoader
-      mod_version: ${{ needs.build-blse.outputs.mod_version }}
-      mod_description: ${{ needs.build-blse.outputs.mod_description }}
+      mod_version: ${{ needs.build-launcher-extension.outputs.mod_version }}
+      mod_description: ${{ needs.build-launcher-extension.outputs.mod_description }}
       artifact_name: bannerlord-blse
     secrets:
       NEXUSMODS_APIKEY: ${{ secrets.NEXUSMODS_APIKEY }}
