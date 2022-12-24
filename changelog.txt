@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.14.7
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Fixed crash when module id was not present
+---------------------------------------------------------------------------------------------------
 Version: 1.14.6
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Added export of the Load Order to a Novus Preset

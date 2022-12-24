@@ -197,9 +197,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
 
         // Tries to order the modules list with the relations described in the ordered list
-        public IEnumerable<string> OrderBy(IReadOnlyList<string> ordered)
+        public IEnumerable<string> OrderBy(IReadOnlyList<string> orderedIds)
         {
-            var loadOrderValidationIssues = IsLoadOrderCorrect(ordered.Select(x => Modules2Lookup[x].ModuleInfoExtended).ToList()).ToList();
+            // Ignore missing modules
+            var currentOrderedIds = orderedIds.Intersect(Modules2.Select(x => x.ModuleInfoExtended.Id).ToHashSet()).ToList();
+
+            var loadOrderValidationIssues = IsLoadOrderCorrect(currentOrderedIds.Select(x => Modules2Lookup[x].ModuleInfoExtended).ToList()).ToList();
             if (loadOrderValidationIssues.Count != 0)
                 return loadOrderValidationIssues.Select(x => x.Reason);
 
@@ -208,15 +211,15 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             // ChangeModulePosition should move any nested dependencies higher?
             var hasInvalid = true;
             var retryCount = 0;
-            var retryCountMax = ordered.Count + 1;
+            var retryCountMax = currentOrderedIds.Count + 1;
             while (hasInvalid && retryCount < retryCountMax)
             {
                 hasInvalid = false;
                 retryCount++;
-                for (var i = 0; i < ordered.Count - 1; i++)
+                for (var i = 0; i < currentOrderedIds.Count - 1; i++)
                 {
-                    var xId = ordered[i];
-                    var yId = ordered[i + 1];
+                    var xId = currentOrderedIds[i];
+                    var yId = currentOrderedIds[i + 1];
 
                     var xIdx = Modules2.IndexOf(z => z.ModuleInfoExtended.Id == xId);
                     var yIdx = Modules2.IndexOf(z => z.ModuleInfoExtended.Id == yId);
