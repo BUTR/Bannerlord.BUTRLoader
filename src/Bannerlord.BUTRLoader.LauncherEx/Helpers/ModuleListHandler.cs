@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Xml;
 
 using TaleWorlds.MountAndBlade.Launcher.Library;
 
@@ -201,7 +202,63 @@ Mismatched module versions:
 
             return importedModules.Select(x => mixin.Modules2.First(y => y.Name == x.Id)).Select(x => x.ModuleInfoExtended).ToArray();
         }
+        private static ModuleInfoExtendedWithMetadata[] ReadNovusPreset(Stream stream, LauncherModsVMMixin mixin)
+        {
+            var document = new XmlDocument();
+            document.Load(stream);
 
+            var importedModules = new List<ModuleListEntry>();
+            foreach (var xmlNode in document.DocumentElement?.SelectNodes("PresetModule")?.OfType<XmlNode>() ?? Enumerable.Empty<XmlNode>())
+            {
+                if (xmlNode.NodeType == XmlNodeType.Comment)
+                    continue;
+
+                if (xmlNode.Attributes is null)
+                    continue;
+
+                if (xmlNode.Attributes["Id"] == null)
+                    continue;
+
+                var id = xmlNode.Attributes["Id"].InnerText;
+                var version = xmlNode.Attributes["RequiredVersion"].InnerText;
+                if (!string.IsNullOrEmpty(version) && char.IsNumber(version[0]))
+                    version = $"v{version}";
+                importedModules.Add(new ModuleListEntry(id, ApplicationVersion.TryParse(version, out var versionVar) ? versionVar : ApplicationVersion.Empty));
+
+            }
+
+            var importedModuleIds = importedModules.Select(x => x.Id).ToHashSet();
+            var currentModuleIds = mixin.Modules2.Select(x => x.ModuleInfoExtended.Id).ToHashSet();
+            var mismatchedModuleIds = importedModuleIds.Except(currentModuleIds).ToList();
+            if (mismatchedModuleIds.Count > 0)
+            {
+                HintManager.ShowHint(@$"Cancelled Import!
+
+Missing modules:
+{string.Join(Environment.NewLine, mismatchedModuleIds)}");
+                return Array.Empty<ModuleInfoExtendedWithMetadata>();
+            }
+
+            var mismatchedVersions = new List<ModuleMismatch>();
+            foreach (var (id, version) in importedModules)
+            {
+                if (!mixin.Modules2Lookup.TryGetValue(id, out var moduleVM)) continue;
+
+                var launcherModuleVersion = moduleVM.ModuleInfoExtended.Version;
+                if (launcherModuleVersion != version)
+                    mismatchedVersions.Add(new ModuleMismatch(id, version, launcherModuleVersion));
+            }
+            if (mismatchedVersions.Count > 0)
+            {
+                HintManager.ShowHint(@$"Cancelled Import!
+
+Mismatched module versions:
+{string.Join(Environment.NewLine, mismatchedVersions)}");
+                return Array.Empty<ModuleInfoExtendedWithMetadata>();
+            }
+
+            return importedModules.Select(x => mixin.Modules2Lookup[x.Id]).Select(x => x.ModuleInfoExtended).ToArray();
+        }
         public void Import()
         {
             var thread = new Thread(() =>
@@ -223,9 +280,8 @@ Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
 
                 var dialog = new OpenFileDialog
                 {
-                    FileName = "MyList.bmlist",
-                    Filter = "Bannerlord Module List (*.bmlist)|*.bmlist|Bannerlord Save File (*.sav)|*.sav",
-                    Title = "Open a Bannerlord Module List File",
+                    Filter = "Bannerlord Module List (*.bmlist)|*.bmlist|Bannerlord Save File (*.sav)|*.sav|Novus Preset (*.xml)|*.xml|All files (*.*)|*.*",
+                    Title = "Open a File with a Load Order",
 
                     CheckFileExists = true,
                     CheckPathExists = true,
@@ -243,6 +299,7 @@ Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
                         {
                             ".bmlist" => ReadImportList(fs, mixin),
                             ".sav" => ReadSaveFile(fs, mixin),
+                            ".xml" => ReadNovusPreset(fs, mixin),
                             _ => Array.Empty<ModuleInfoExtendedWithMetadata>()
                         };
                         if (modules.Length == 0)

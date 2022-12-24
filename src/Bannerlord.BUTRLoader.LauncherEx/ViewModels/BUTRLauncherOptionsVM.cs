@@ -19,12 +19,6 @@ namespace Bannerlord.BUTRLoader.ViewModels
             SettingProperties.Clear();
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Enable Extended Mod Sorting",
-                SettingType = SettingType.Bool,
-                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.ExtendedSorting))!, this)
-            }));
-            SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
-            {
                 DisplayName = "Enable File Unblocking",
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.UnblockFiles))!, this)

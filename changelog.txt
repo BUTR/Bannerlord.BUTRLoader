@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.14.4
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Added support for loading Novus Presets
+* Removed Enable Extended Mod Sorting option
+* Renamed to Import\Export of a Load Order
+---------------------------------------------------------------------------------------------------
 Version: 1.14.3
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Build fix

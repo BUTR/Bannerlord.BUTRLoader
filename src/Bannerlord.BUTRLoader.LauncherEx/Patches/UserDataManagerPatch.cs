@@ -49,7 +49,6 @@ namespace Bannerlord.BUTRLoader.Patches
             {
                 using var xmlReader = XmlReader.Create(____filePath);
                 var userDataOptions = (LauncherExData) xmlSerializer.Deserialize(xmlReader);
-                LauncherSettings.ExtendedSorting = userDataOptions.ExtendedSorting;
                 LauncherSettings.AutomaticallyCheckForUpdates = userDataOptions.AutomaticallyCheckForUpdates;
                 LauncherSettings.UnblockFiles = userDataOptions.UnblockFiles;
                 LauncherSettings.FixCommonIssues = userDataOptions.FixCommonIssues;
@@ -82,7 +81,6 @@ namespace Bannerlord.BUTRLoader.Patches
             try
             {
                 xmlSerializer.Serialize(writer, new LauncherExData(
-                    LauncherSettings.ExtendedSorting,
                     LauncherSettings.AutomaticallyCheckForUpdates,
                     LauncherSettings.UnblockFiles,
                     LauncherSettings.FixCommonIssues,

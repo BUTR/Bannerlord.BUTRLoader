@@ -165,7 +165,6 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             _userDataManager = UserDataManagerFieldRef is not null ? UserDataManagerFieldRef(launcherVM) : default!;
             _launcherExData = new LauncherExData(
-                LauncherSettings.ExtendedSorting,
                 LauncherSettings.AutomaticallyCheckForUpdates,
                 LauncherSettings.UnblockFiles,
                 LauncherSettings.FixCommonIssues,
@@ -227,13 +226,13 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         [BUTRDataSourceMethod]
         public void ExecuteBeginHintImport()
         {
-            HintManager.ShowHint("Import Mod List");
+            HintManager.ShowHint("Import Load Order");
         }
 
         [BUTRDataSourceMethod]
         public void ExecuteBeginHintExport()
         {
-            HintManager.ShowHint("Export Current Mod List");
+            HintManager.ShowHint("Export Current Load Order");
         }
 
         [BUTRDataSourceMethod]
@@ -267,12 +266,6 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             HideRandomImage = LauncherSettings.HideRandomImage;
             ContentTabControlMargin = LauncherSettings.HideRandomImage ? 5 : 114;
-
-            if (_launcherExData.ExtendedSorting != LauncherSettings.ExtendedSorting)
-            {
-                Save();
-                return;
-            }
 
             if (_launcherExData.AutomaticallyCheckForUpdates != LauncherSettings.AutomaticallyCheckForUpdates)
             {

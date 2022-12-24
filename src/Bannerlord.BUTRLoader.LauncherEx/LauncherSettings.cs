@@ -9,7 +9,6 @@ namespace Bannerlord.BUTRLoader
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal sealed class LauncherSettings
     {
-        public static bool ExtendedSorting { get; set; } = true;
         public static bool AutomaticallyCheckForUpdates { get; set; }
         public static bool UnblockFiles { get; set; }
         public static bool FixCommonIssues { get; set; }
