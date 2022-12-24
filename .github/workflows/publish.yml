@@ -195,11 +195,11 @@ jobs:
     - name: Set Version
       id: set_version
       run: |
-        echo "::set-output name=mod_version::${{ needs.launcher-extension.outputs.mod_version }}"
+        echo "::set-output name=mod_version::${{ needs.build-launcher-extension.outputs.mod_version }}"
     - name: Set Description
       id: set_description
       run: |
-        desc="${{ needs.launcher-extension.outputs.mod_description }}"
+        desc="${{ needs.build-launcher-extension.outputs.mod_description }}"
         desc="${desc//'%'/'%25'}"
         desc="${desc//$'"'/'%22'}"
         desc="${desc//$'\n'/'%0A'}"
