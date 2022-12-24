@@ -15,14 +15,6 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 {
     internal sealed class LauncherVMMixin : ViewModelMixin<LauncherVMMixin, LauncherVM>
     {
-        private delegate void AddHintInformationDelegate(string message);
-        private static readonly AddHintInformationDelegate? AddHintInformation =
-            AccessTools2.GetDelegate<AddHintInformationDelegate>(typeof(LauncherUI), "AddHintInformation");
-
-        private delegate void HideHintInformationDelegate();
-        private static readonly HideHintInformationDelegate? HideHintInformation =
-            AccessTools2.GetDelegate<HideHintInformationDelegate>(typeof(LauncherUI), "HideHintInformation");
-
         private delegate void ExecuteConfirmUnverifiedDLLStartDelegate(object instance);
         private static readonly ExecuteConfirmUnverifiedDLLStartDelegate? ExecuteConfirmUnverifiedDLLStartOriginal =
             AccessTools2.GetDelegate<ExecuteConfirmUnverifiedDLLStartDelegate>(typeof(LauncherVM), "ExecuteConfirmUnverifiedDLLStart");
@@ -235,13 +227,13 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         [BUTRDataSourceMethod]
         public void ExecuteBeginHintImport()
         {
-            AddHintInformation?.Invoke("Import Mod List");
+            HintManager.ShowHint("Import Mod List");
         }
 
         [BUTRDataSourceMethod]
         public void ExecuteBeginHintExport()
         {
-            AddHintInformation?.Invoke("Export Current Mod List");
+            HintManager.ShowHint("Export Current Mod List");
         }
 
         [BUTRDataSourceMethod]
@@ -249,7 +241,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             if (_currentModuleListHandler is null)
             {
-                HideHintInformation?.Invoke();
+                HintManager.HideHint();
             }
             else
             {

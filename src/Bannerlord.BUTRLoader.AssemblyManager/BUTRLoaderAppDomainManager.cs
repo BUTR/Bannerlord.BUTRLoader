@@ -63,14 +63,12 @@ namespace Bannerlord.BUTRLoader.AssemblyManager
         }
 
 
-        private static bool Initialize()
+        private static void Initialize()
         {
             Manager.Initialize();
 
             InterceptorFeature.Enable(_featureHarmony);
             AssemblyResolverFeature.Enable(_featureHarmony);
-
-            return true;
         }
     }
 }

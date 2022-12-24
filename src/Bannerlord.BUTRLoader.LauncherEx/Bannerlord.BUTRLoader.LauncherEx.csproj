@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bannerlord.BUTRLoader\Bannerlord.BUTRLoader.csproj" />
+    <ProjectReference Include="..\Bannerlord.BUTRLoader.Core\Bannerlord.BUTRLoader.Core.csproj" />
   </ItemGroup>
 
   <Target Name="SetBUTRBaseUrl" BeforeTargets="BeforeCompile">

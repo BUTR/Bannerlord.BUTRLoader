@@ -33,7 +33,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 return true;
 
             if (__instance.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is { } mixin)
-                mixin.Initialize(isMultiplayer, _userData(__instance));
+                mixin.Initialize(isMultiplayer);
 
             return false;
         }

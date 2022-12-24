@@ -12,7 +12,7 @@ using TaleWorlds.Library;
 
 namespace Bannerlord.BUTRLoader.Extensions
 {
-    internal static class ViewModelExtension
+    internal static class ViewModelExtensions
     {
         private static readonly AccessTools.FieldRef<object, object>? PropertiesAndMethods =
             AccessTools2.FieldRefAccess<object>("TaleWorlds.Library.ViewModel:_propertiesAndMethods");

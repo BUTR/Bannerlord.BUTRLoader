@@ -16,12 +16,12 @@ using TaleWorlds.MountAndBlade.Launcher.Library;
 namespace Bannerlord.BUTRLoader.Helpers
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    internal class BUTRDataSourceProperty : Attribute
+    internal class BUTRDataSourcePropertyAttribute : Attribute
     {
         public string? OverrideName { get; set; }
     }
-    [AttributeUsage(AttributeTargets.Method)]
-    internal class BUTRDataSourceMethod : Attribute
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+    internal class BUTRDataSourceMethodAttribute : Attribute
     {
         public string? OverrideName { get; set; }
     }
@@ -33,25 +33,22 @@ namespace Bannerlord.BUTRLoader.Helpers
             var properties = GetType().GetProperties(AccessTools.all);
             foreach (var propertyInfo in properties)
             {
-                if (propertyInfo.GetCustomAttribute<BUTRDataSourceProperty>() is { } attribute)
+                if (propertyInfo.GetCustomAttribute<BUTRDataSourcePropertyAttribute>() is { } attribute)
                 {
                     if (propertyInfo.GetMethod?.IsPrivate == true || propertyInfo.SetMethod?.IsPrivate == true) throw new Exception();
 
-                    var wrappedPropertyInfo = new WrappedPropertyInfo(propertyInfo, this);
-                    this.AddProperty(attribute.OverrideName ?? propertyInfo.Name, wrappedPropertyInfo);
-                    wrappedPropertyInfo.PropertyChanged += (_, e) => OnPropertyChanged(e.PropertyName);
+                    this.AddProperty(attribute.OverrideName ?? propertyInfo.Name, propertyInfo);
                 }
             }
 
             var methods = GetType().GetMethods(AccessTools.all);
             foreach (var methodInfo in methods)
             {
-                if (methodInfo.GetCustomAttribute<BUTRDataSourceMethod>() is { } attribute)
+                if (methodInfo.GetCustomAttribute<BUTRDataSourceMethodAttribute>() is { } attribute)
                 {
                     if (methodInfo.IsPrivate) throw new Exception();
 
-                    var wrappedMethodInfo = new WrappedMethodInfo(methodInfo, this);
-                    this.AddMethod(attribute.OverrideName ?? methodInfo.Name, wrappedMethodInfo);
+                    this.AddMethod(attribute.OverrideName ?? methodInfo.Name, methodInfo);
                 }
             }
         }
@@ -74,7 +71,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             SetVMProperty(nameof(Mixin), GetType().Name);
             foreach (var propertyInfo in GetType().GetProperties(AccessTools.all))
             {
-                if (propertyInfo.GetCustomAttribute<BUTRDataSourceProperty>() is { } attribute)
+                if (propertyInfo.GetCustomAttribute<BUTRDataSourcePropertyAttribute>() is { } attribute)
                 {
                     if (propertyInfo.GetMethod?.IsPrivate == true || propertyInfo.SetMethod?.IsPrivate == true) throw new Exception();
 
@@ -85,7 +82,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             }
             foreach (var methodInfo in GetType().GetMethods(AccessTools.all))
             {
-                if (methodInfo.GetCustomAttribute<BUTRDataSourceMethod>() is { } attribute)
+                if (methodInfo.GetCustomAttribute<BUTRDataSourceMethodAttribute>() is { } attribute)
                 {
                     if (methodInfo.IsPrivate) throw new Exception();
 

@@ -5,6 +5,7 @@ using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.Xml;
 
 using TaleWorlds.GauntletUI;
+using TaleWorlds.GauntletUI.BaseTypes;
 using TaleWorlds.GauntletUI.PrefabSystem;
 
 namespace Bannerlord.BUTRLoader.ResourceManagers
@@ -27,7 +29,9 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
         private static readonly AccessTools.FieldRef<WidgetFactory, IDictionary>? _liveCustomTypes =
             AccessTools2.FieldRefAccess<WidgetFactory, IDictionary>("_liveCustomTypes");
-
+        
+        private delegate Widget WidgetConstructor(UIContext uiContext);
+        private static readonly ConcurrentDictionary<Type, WidgetConstructor?> WidgetConstructors = new();
         private static readonly Dictionary<string, Func<WidgetPrefab?>> CustomTypes = new();
         private static readonly Dictionary<string, Type> BuiltinTypes = new();
         private static readonly Dictionary<string, WidgetPrefab> LiveCustomTypes = new();
@@ -129,7 +133,11 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             if (!BuiltinTypes.TryGetValue(typeName, out var type))
                 return true;
 
-            __result = type.GetConstructor(AccessTools.all, null, new[] { typeof(UIContext) }, null)?.Invoke(new object[] { context });
+            var ctor = WidgetConstructors.GetOrAdd(type, static x => AccessTools2.GetDeclaredConstructorDelegate<WidgetConstructor>(x, new[] { typeof(UIContext) }));
+            if (ctor is null)
+                return true;
+
+            __result = ctor(context);
             return false;
         }
 

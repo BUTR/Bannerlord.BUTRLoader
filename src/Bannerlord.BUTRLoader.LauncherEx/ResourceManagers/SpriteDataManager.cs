@@ -9,6 +9,10 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using TaleWorlds.Engine.GauntletUI;
+using TaleWorlds.GauntletUI;
+using TaleWorlds.GauntletUI.BaseTypes;
+using TaleWorlds.GauntletUI.Canvas;
+using TaleWorlds.GauntletUI.PrefabSystem;
 using TaleWorlds.TwoDimension;
 
 namespace Bannerlord.BUTRLoader.ResourceManagers
@@ -190,10 +194,10 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
             // Preventing inlining GetSprite
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushAnimationFrom", logErrorInTrace: false),
+                AccessTools2.Method(typeof(BrushFactory), "LoadBrushAnimationFrom", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:LoadBrushLayerInto", logErrorInTrace: false),
+                AccessTools2.Method(typeof(BrushFactory), "LoadBrushLayerInto", logErrorInTrace: false),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
                 AccessTools2.Method("TaleWorlds.GauntletUI.CanvasImage:LoadFrom", logErrorInTrace: false),
@@ -225,7 +229,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 AccessTools2.Method(typeof(UIResourceManager), "Initialize"),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.UIContext:Initialize"),
+                AccessTools2.Method(typeof(UIContext), "Initialize"),
                 transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
             // Preventing inlining Load
 

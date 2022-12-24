@@ -11,7 +11,7 @@ namespace Bannerlord.BUTRLoader.Utils
             new(() => AccessTools2.TypeByName("TaleWorlds.Engine.EngineApplicationInterface"));
 
         private static readonly Lazy<AccessTools.FieldRef<object>?> IUtilField =
-            new(() => AccessTools2.StaticFieldRefAccess<object>(EngineApplicationInterfaceType.Value, "IUtil"));
+            new(() => AccessTools2.StaticFieldRefAccess<object>(EngineApplicationInterfaceType.Value!, "IUtil"));
 
         private delegate string GetModulesCodeDelegate(object instance);
 
