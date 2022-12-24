@@ -190,13 +190,43 @@ jobs:
       #shell: pwsh
       # pwsh casues it to include the root folder
 
+    - name: Set Version
+      id: set_version
+      run: |
+        if ${{ inputs.mod_version == '' }}
+        then
+          vers="$(bannerlord_changelog_parser latestversion -f "$PWD/changelog.txt")"
+          echo "::set-output name=mod_version::$vers"
+        else
+          echo "::set-output name=mod_version::${{ inputs.mod_version }}"
+        fi
+    - name: Set Description
+      id: set_description
+      run: |
+        if ${{ inputs.mod_description == '' }}
+        then
+          desc="$(bannerlord_changelog_parser fulldescription -f "$PWD/changelog.txt")"
+          desc="${desc//'%'/'%25'}"
+          desc="${desc//$'"'/'%22'}"
+          desc="${desc//$'\n'/'%0A'}"
+          desc="${desc//$'\r'/'%0D'}"
+          echo "::set-output name=mod_description::$desc"
+        else
+          desc="${{ inputs.mod_description }}"
+          desc="${desc//'%'/'%25'}"
+          desc="${desc//$'"'/'%22'}"
+          desc="${desc//$'\n'/'%0A'}"
+          desc="${desc//$'\r'/'%0D'}"
+          echo "::set-output name=mod_description::$desc"
+        fi
+
     - name: Create Release
       uses: actions/create-release@v1
       id: create_release
       with:
-        tag_name: v${{ needs.changelog.outputs.mod_version }}
-        release_name: Release ${{ needs.changelog.outputs.mod_version }}
-        body: ${{ needs.changelog.outputs.mod_description }}
+        tag_name: v${{ steps.set_version.outputs.mod_version }}
+        release_name: Release ${{ steps.set_version.outputs.mod_version }}
+        body: ${{ steps.set_description.outputs.mod_description }}
         draft: false
         prerelease: false
       env:
