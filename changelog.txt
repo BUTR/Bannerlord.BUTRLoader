@@ -1,9 +1,12 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.14.1
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* .config file was not present in the output
+---------------------------------------------------------------------------------------------------
 Version: 1.14.0
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Added the ability to import load order from a save file
 * Should have fixed the load order sorting and persistence
-
 ---------------------------------------------------------------------------------------------------
 Version: 1.13.4
 Game Versions: v1.0.0,v1.0.1,v1.0.2

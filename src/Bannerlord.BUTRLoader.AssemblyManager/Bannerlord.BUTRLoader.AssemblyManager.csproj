@@ -28,10 +28,13 @@
     <ItemGroup>
       <Files Include="$(MSBuildProjectDirectory)\$(OutputPath)\$(AssemblyName).dll" />
       <Files Include="$(MSBuildProjectDirectory)\$(OutputPath)\$(AssemblyName).pdb" />
-      <Files2 Include="$(MSBuildProjectDirectory)\_GameRoot\**\*.*" />
+      <Files2 Include="_GameRoot\**\*"/>
+      <Files3 Include="@(Files2)">
+        <SubDir>%(Files2.RecursiveDir)</SubDir>
+      </Files3>
     </ItemGroup>
     <Copy SourceFiles="@(Files)" DestinationFolder="$(GameFolder)\bin\Win64_Shipping_Client" />
-    <Copy SourceFiles="@(Files2)" DestinationFolder="$(GameFolder)" />
+    <Copy SourceFiles="@(Files3)" DestinationFolder="$(GameFolder)\%(SubDir)" />
   </Target>
   
 </Project>
