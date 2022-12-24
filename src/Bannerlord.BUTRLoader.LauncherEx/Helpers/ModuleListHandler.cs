@@ -352,6 +352,55 @@ Load Order is not correct! Reason:
             thread.Join();
         }
 
+        private void SaveBMList(Stream stream, IReadOnlyList<ModuleInfoExtendedWithMetadata> modules)
+        {
+            using var writer = new StreamWriter(stream);
+            var content = Serialize(modules.Select(x => new ModuleListEntry(x.Id, x.Version)).ToArray());
+            writer.Write(content);
+        }
+        private void SaveNovusPreset(Stream stream, IReadOnlyList<ModuleInfoExtendedWithMetadata> modules)
+        {
+            var document = new XmlDocument();
+
+            var root = document.CreateElement("Preset");
+            var nameAttribute = document.CreateAttribute("Name");
+            nameAttribute.Value = "BUTRLoader Exported Load Order";
+            var createdByAttribute = document.CreateAttribute("CreatedBy");
+            createdByAttribute.Value = "BUTRLoader";
+            var lastUpdatedAttribute = document.CreateAttribute("LastUpdated");
+            lastUpdatedAttribute.Value = DateTime.Now.ToString("dd/MM/yyyy");
+            root.Attributes.Append(nameAttribute);
+            root.Attributes.Append(createdByAttribute);
+            root.Attributes.Append(lastUpdatedAttribute);
+            foreach (var module in modules)
+            {
+                var entryNode = document.CreateElement("PresetModule");
+
+                var idAttribute = document.CreateAttribute("Id");
+                idAttribute.Value = module.Id;
+                var versionAttribute = document.CreateAttribute("RequiredVersion");
+                versionAttribute.Value = module.Version.ToString();
+                var urlAttribute = document.CreateAttribute("URL");
+                urlAttribute.Value = module.Url;
+
+                entryNode.Attributes.Append(idAttribute);
+                entryNode.Attributes.Append(versionAttribute);
+                entryNode.Attributes.Append(urlAttribute);
+
+                root.AppendChild(entryNode);
+            }
+            document.AppendChild(root);
+
+            using var writer = XmlWriter.Create(stream, new XmlWriterSettings
+            {
+                Indent = true,
+                IndentChars = "  ",
+                NewLineChars = "\r\n",
+                NewLineHandling = NewLineHandling.Replace
+            });
+            document.Save(writer);
+        }
+
         public void Export()
         {
             var thread = new Thread(() =>
@@ -367,7 +416,7 @@ Internal BUTRLoader error: GetMixin() null");
                 var dialog = new SaveFileDialog
                 {
                     FileName = "MyList.bmlist",
-                    Filter = "Bannerlord Module List (*.bmlist)|*.bmlist",
+                    Filter = "Bannerlord Module List (*.bmlist)|*.bmlist|Novus Preset (*.xml)|*.xml",
                     Title = "Save a Bannerlord Module List File",
 
                     CheckFileExists = false,
@@ -383,13 +432,18 @@ Internal BUTRLoader error: GetMixin() null");
                         var modules = mixin.Modules2
                             .Where(x => x.IsSelected)
                             .Select(x => x.ModuleInfoExtended)
-                            .Select(x => new ModuleListEntry(x.Id, x.Version))
                             .ToArray();
 
                         using var fs = dialog.OpenFile();
-                        using var writer = new StreamWriter(fs);
-                        var content = Serialize(modules);
-                        writer.Write(content);
+                        switch (Path.GetExtension(dialog.FileName))
+                        {
+                            case ".bmlist":
+                                SaveBMList(fs, modules);
+                                break;
+                            case ".xml":
+                                SaveNovusPreset(fs, modules);
+                                break;
+                        }
                     }
                     catch (Exception) { }
                 }
