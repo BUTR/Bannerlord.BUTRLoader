@@ -29,7 +29,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
         private static readonly AccessTools.FieldRef<WidgetFactory, IDictionary>? _liveCustomTypes =
             AccessTools2.FieldRefAccess<WidgetFactory, IDictionary>("_liveCustomTypes");
-        
+
         private delegate Widget WidgetConstructor(UIContext uiContext);
         private static readonly ConcurrentDictionary<Type, WidgetConstructor?> WidgetConstructors = new();
         private static readonly Dictionary<string, Func<WidgetPrefab?>> CustomTypes = new();

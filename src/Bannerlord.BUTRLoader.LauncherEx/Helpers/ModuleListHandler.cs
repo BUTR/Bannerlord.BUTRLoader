@@ -247,7 +247,7 @@ Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
                         };
                         if (modules.Length == 0)
                             return;
-                        
+
                         var loadOrderValidationIssues = LauncherModsVMMixin.IsLoadOrderCorrect(modules).ToList();
                         if (loadOrderValidationIssues.Count != 0)
                         {
@@ -264,7 +264,7 @@ Load Order is not correct! Reason:
                             if (moduleVM.IsSelected)
                                 moduleVM.ExecuteSelect();
                         }
-                        
+
                         // Select all from load order
                         foreach (var module in modules)
                         {
