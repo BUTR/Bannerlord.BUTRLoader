@@ -16,6 +16,8 @@ namespace Bannerlord.BUTRLoader.LauncherEx
         internal static readonly Harmony _launcherHarmony = new("bannerlord.butrloader.launcherex");
         internal static readonly AssemblyCompatibilityChecker _compatibilityChecker = new();
 
+        public static event Action OnDisable;
+
         public static void Initialize()
         {
             AssemblyLoaderPatch.Enable(_launcherHarmony);
@@ -85,6 +87,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
 
         public static void Disable()
         {
+            OnDisable?.Invoke();
             _compatibilityChecker.Dispose();
             _launcherHarmony.UnpatchAll(_launcherHarmony.Id);
         }

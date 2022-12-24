@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 [assembly: InternalsVisibleTo("Bannerlord.BUTRLoader.Tests")]
 
@@ -22,6 +23,8 @@ namespace Bannerlord.BUTRLoader.AssemblyManager
         public override void InitializeNewDomain(AppDomainSetup appDomainInfo)
         {
             base.InitializeNewDomain(appDomainInfo);
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
 
             // delete old files
             var files = new[]
@@ -62,9 +65,29 @@ namespace Bannerlord.BUTRLoader.AssemblyManager
             };
         }
 
+        private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            static string GetRecursiveException(Exception ex) => new StringBuilder()
+                .AppendLine()
+                .AppendLine($"Type: {ex.GetType().FullName}")
+                .AppendLine(!string.IsNullOrWhiteSpace(ex.Message) ? $"Message: {ex.Message}" : string.Empty)
+                .AppendLine(!string.IsNullOrWhiteSpace(ex.Source) ? $"Source: {ex.Source}" : string.Empty)
+                .AppendLine(!string.IsNullOrWhiteSpace(ex.StackTrace) ? $@"CallStack:{Environment.NewLine}{string.Join(Environment.NewLine, ex.StackTrace.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))}" : string.Empty)
+                .AppendLine(ex.InnerException != null ? $@"{Environment.NewLine}{Environment.NewLine}Inner {GetRecursiveException(ex.InnerException)}" : string.Empty)
+                .ToString();
+
+            using var fs = File.Open("BUTRLoader_lasterror.log", FileMode.OpenOrCreate, FileAccess.Write);
+            fs.SetLength(0);
+            using var writer = new StreamWriter(fs);
+            writer.Write($@"BUTRLoader Exception:
+Version: {typeof(BUTRLoaderAppDomainManager).Assembly.GetName().Version}
+{(e.ExceptionObject is Exception ex ? GetRecursiveException(ex) : e.ToString())}");
+        }
+
 
         private static void Initialize()
         {
+            Manager.OnDisable += () => AppDomain.CurrentDomain.UnhandledException -= CurrentDomainOnUnhandledException;
             Manager.Initialize();
 
             InterceptorFeature.Enable(_featureHarmony);

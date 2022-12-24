@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.14.5
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Added 'BUTRLoader_lasterror.log' file that will contain the error when the launcher is crashing
+---------------------------------------------------------------------------------------------------
 Version: 1.14.4
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Added support for loading Novus Presets
