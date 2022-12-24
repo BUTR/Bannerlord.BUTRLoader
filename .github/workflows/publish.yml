@@ -23,6 +23,8 @@ jobs:
       mod_version: ${{ steps.changelog.outputs.mod_version.test }}
       mod_description: ${{ steps.changelog.outputs.mod_description.test }}
     steps:
+      - uses: actions/checkout@v2
+
       - name: Install and Run ChangelogParser
         id: changelog
         run: |
