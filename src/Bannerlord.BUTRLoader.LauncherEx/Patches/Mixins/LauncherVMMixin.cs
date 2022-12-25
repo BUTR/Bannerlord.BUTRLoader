@@ -137,16 +137,32 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private string _optionsText = "Options";
 
         [BUTRDataSourceProperty]
-        public string GeneralText { get => _generalText; set => SetField(ref _generalText, value, nameof(GeneralText)); }
-        private string _generalText = "General";
+        public string LauncherText { get => _launcherText; set => SetField(ref _launcherText, value, nameof(LauncherText)); }
+        private string _launcherText = "Launcher";
+
+        [BUTRDataSourceProperty]
+        public string GameText { get => _gameText; set => SetField(ref _gameText, value, nameof(GameText)); }
+        private string _gameText = "Game";
+
+        [BUTRDataSourceProperty]
+        public string EngineText { get => _engineText; set => SetField(ref _engineText, value, nameof(EngineText)); }
+        private string _engineText = "Engine";
 
         [BUTRDataSourceProperty]
         public string BUTRLoaderVersionText { get => _butrLoaderVersionText; set => SetField(ref _butrLoaderVersionText, value, nameof(BUTRLoaderVersionText)); }
         private string _butrLoaderVersionText = $"BUTRLoader v{typeof(LauncherVMMixin).Assembly.GetName().Version.ToString(3)}";
 
         [BUTRDataSourceProperty]
-        public BUTRLauncherOptionsVM OptionsData { get => _optionsData; set => SetField(ref _optionsData, value, nameof(OptionsData)); }
-        private BUTRLauncherOptionsVM _optionsData = new();
+        public BUTRLauncherOptionsVM OptionsLauncherData { get => _optionsLauncherData; set => SetField(ref _optionsLauncherData, value, nameof(OptionsLauncherData)); }
+        private BUTRLauncherOptionsVM _optionsLauncherData = new(OptionsType.Launcher);
+
+        [BUTRDataSourceProperty]
+        public BUTRLauncherOptionsVM OptionsGameData { get => _optionsGameData; set => SetField(ref _optionsGameData, value, nameof(OptionsGameData)); }
+        private BUTRLauncherOptionsVM _optionsGameData = new(OptionsType.Game);
+
+        [BUTRDataSourceProperty]
+        public BUTRLauncherOptionsVM OptionsEngineData { get => _optionsEngineData; set => SetField(ref _optionsEngineData, value, nameof(OptionsEngineData)); }
+        private BUTRLauncherOptionsVM _optionsEngineData = new(OptionsType.Engine);
 
         [BUTRDataSourceProperty]
         public bool HideRandomImage { get => _hideRandomImage; set => SetField(ref _hideRandomImage, value, nameof(HideRandomImage)); }
@@ -156,15 +172,16 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public float ContentTabControlMargin { get => _contentTabControlMargin; set => SetField(ref _contentTabControlMargin, value, nameof(ContentTabControlMargin)); }
         private float _contentTabControlMargin;
 
+        public LauncherExData LauncherExData { get; }
+
         private readonly UserDataManager _userDataManager;
-        private readonly LauncherExData _launcherExData;
 
         private ModuleListHandler? _currentModuleListHandler;
 
         public LauncherVMMixin(LauncherVM launcherVM) : base(launcherVM)
         {
             _userDataManager = UserDataManagerFieldRef is not null ? UserDataManagerFieldRef(launcherVM) : default!;
-            _launcherExData = new LauncherExData(
+            LauncherExData = new LauncherExData(
                 LauncherSettings.AutomaticallyCheckForUpdates,
                 LauncherSettings.UnblockFiles,
                 LauncherSettings.FixCommonIssues,
@@ -203,21 +220,32 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
             ViewModel.News.SetPropertyValue(nameof(LauncherNewsVMMixin.IsDisabled2), HasNoNews);
             ViewModel.ModsData.SetPropertyValue(nameof(LauncherModsVMMixin.IsDisabled2), HasNoMods);
-            OptionsData.IsDisabled = !IsOptions;
+            OptionsLauncherData.IsDisabled = !IsOptions;
             if (IsOptions)
-                OptionsData.Refresh();
+            {
+                OptionsLauncherData.Refresh();
+                OptionsGameData.Refresh();
+                OptionsEngineData.Refresh();
+            }
         }
 
-        private void Save()
+        public void SaveUserData()
         {
             UpdateAndSaveUserModsDataMethod?.Invoke(ViewModel, IsMultiplayer2);
+        }
+
+        public void SaveOptions()
+        {
+            OptionsLauncherData.Save(this);
+            OptionsGameData.Save(this);
+            OptionsEngineData.Save(this);
         }
 
         // Ensure save is triggered when launching the game
         [BUTRDataSourceMethod]
         public void ExecuteConfirmUnverifiedDLLStart()
         {
-            Save();
+            SaveUserData();
             Manager.Disable();
             ExecuteConfirmUnverifiedDLLStartOriginal?.Invoke(ViewModel);
         }
@@ -260,48 +288,6 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             _currentModuleListHandler = new ModuleListHandler(ViewModel);
             _currentModuleListHandler.Export();
-        }
-
-        private void SaveOptions()
-        {
-            HideRandomImage = LauncherSettings.HideRandomImage;
-            ContentTabControlMargin = LauncherSettings.HideRandomImage ? 5 : 114;
-
-            if (_launcherExData.AutomaticallyCheckForUpdates != LauncherSettings.AutomaticallyCheckForUpdates)
-            {
-                Save();
-                return;
-            }
-
-            if (_launcherExData.UnblockFiles != LauncherSettings.UnblockFiles)
-            {
-                Save();
-                return;
-            }
-
-            if (_launcherExData.FixCommonIssues != LauncherSettings.FixCommonIssues)
-            {
-                Save();
-                return;
-            }
-
-            if (_launcherExData.CompactModuleList != LauncherSettings.CompactModuleList)
-            {
-                Save();
-                return;
-            }
-
-            if (_launcherExData.HideRandomImage != LauncherSettings.HideRandomImage)
-            {
-                Save();
-                return;
-            }
-
-            if (_launcherExData.DisableBinaryCheck != LauncherSettings.DisableBinaryCheck)
-            {
-                Save();
-                return;
-            }
         }
 
         public void UpdateAndSaveUserModsData(bool isMultiplayer)

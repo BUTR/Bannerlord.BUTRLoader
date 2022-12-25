@@ -40,6 +40,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             GraphicsContextManager.CreateAndRegister("export", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.export.png"));
             GraphicsContextManager.CreateAndRegister("import", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.import.png"));
             GraphicsContextManager.CreateAndRegister("refresh", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.refresh.png"));
+            GraphicsContextManager.CreateAndRegister("warm_overlay", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.warm_overlay.png"));
 
             SpriteDataManager.Enable(_launcherHarmony);
             SpriteDataManager.CreateAndRegister("arrow_down");
@@ -47,11 +48,17 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             SpriteDataManager.CreateAndRegister("import");
             SpriteDataManager.CreateAndRegister("export");
             SpriteDataManager.CreateAndRegister("refresh");
+            SpriteDataManager.CreateAndRegister("warm_overlay");
 
             BrushFactoryManager.Enable(_launcherHarmony);
             BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
 
             WidgetFactoryManager.Enable(_launcherHarmony);
+            WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyBoolView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyBoolView.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyButtonView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyButtonView.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyFloatView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyFloatView.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyIntView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyIntView.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyStringView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyStringView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Mods2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Mods.ModuleTuple2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.ModuleTuple.xml"));

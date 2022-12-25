@@ -3,16 +3,21 @@
 using System.ComponentModel;
 using System.Globalization;
 
+using TaleWorlds.MountAndBlade.GauntletUI.Widgets;
+
 namespace Bannerlord.BUTRLoader.ViewModels
 {
     internal sealed class SettingsPropertyVM : BUTRViewModel
     {
-        private ISettingsPropertyDefinition SettingPropertyDefinition { get; }
+        public ISettingsPropertyDefinition SettingPropertyDefinition { get; }
         private IRef PropertyReference => SettingPropertyDefinition.PropertyReference;
         private SettingType SettingType => SettingPropertyDefinition.SettingType;
 
         [BUTRDataSourceProperty]
         public string Name => SettingPropertyDefinition.DisplayName;
+
+        [BUTRDataSourceProperty]
+        public string HintText => SettingPropertyDefinition.HintText.Length > 0 ? $"{Name}: {SettingPropertyDefinition.HintText}" : string.Empty;
 
         [BUTRDataSourceProperty]
         public bool IsIntVisible { get; }
@@ -86,7 +91,9 @@ namespace Bannerlord.BUTRLoader.ViewModels
         public string TextBoxValue => SettingType switch
         {
             SettingType.Int when PropertyReference.Value is int val => val.ToString(),
-            SettingType.Float when PropertyReference.Value is float val => val.ToString(CultureInfo.InvariantCulture),
+            SettingType.Float when PropertyReference.Value is float val => val.ToString("0.0000", CultureInfo.InvariantCulture),
+            SettingType.String when PropertyReference.Value is string val => val,
+            SettingType.Bool when PropertyReference.Value is bool val => val ? "True" : "False",
             _ => string.Empty
         };
 
@@ -139,5 +146,18 @@ namespace Bannerlord.BUTRLoader.ViewModels
         }
 
         public override string ToString() => Name;
+
+        [BUTRDataSourceMethod]
+        public void OnHover()
+        {
+            if (!string.IsNullOrEmpty(HintText))
+                HintManager.ShowHint(HintText);
+        }
+
+        [BUTRDataSourceMethod]
+        public void OnHoverEnd()
+        {
+            HintManager.HideHint();
+        }
     }
 }

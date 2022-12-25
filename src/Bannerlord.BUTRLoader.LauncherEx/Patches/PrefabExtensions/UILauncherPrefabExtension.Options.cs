@@ -63,7 +63,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     }
 
     /// <summary>
-    /// Adds General Tab on lower tab screen
+    /// Adds Launcher Tab on lower tab screen
     /// </summary>
     internal sealed class UILauncherPrefabExtension6 : PrefabExtensionInsertAsSiblingPatch
     {
@@ -76,9 +76,51 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public UILauncherPrefabExtension6()
         {
             XmlDocument.LoadXml(@"
-<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" IsSelected=""@IsOptions"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsPage"" UpdateChildrenStates=""true"" IsHidden=""@IsNotOptions"">
+<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" IsSelected=""@IsOptions"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsLauncherPage"" UpdateChildrenStates=""true"" IsHidden=""@IsNotOptions"">
   <Children>
-    <TextWidget Id=""SubMenuText"" Text=""@GeneralText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" Brush=""Launcher.SubMenuButton.SingleplayerText"" />
+    <TextWidget Id=""SubMenuText"" Text=""@LauncherText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" Brush=""Launcher.SubMenuButton.SingleplayerText"" />
+  </Children>
+</TabToggleWidget>
+");
+        }
+
+        public override XmlDocument GetPrefabExtension() => XmlDocument;
+    }
+    internal sealed class UILauncherPrefabExtension20 : PrefabExtensionInsertAsSiblingPatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::TabToggleWidget[3]";
+
+        public override InsertType Type => InsertType.Append;
+        private XmlDocument XmlDocument { get; } = new();
+
+        public UILauncherPrefabExtension20()
+        {
+            XmlDocument.LoadXml(@"
+<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsGamePage"" UpdateChildrenStates=""true"" IsHidden=""@IsNotOptions"">
+  <Children>
+    <TextWidget Id=""SubMenuText"" Text=""@GameText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" Brush=""Launcher.SubMenuButton.SingleplayerText"" />
+  </Children>
+</TabToggleWidget>
+");
+        }
+
+        public override XmlDocument GetPrefabExtension() => XmlDocument;
+    }
+    internal sealed class UILauncherPrefabExtension21 : PrefabExtensionInsertAsSiblingPatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::TabToggleWidget[4]";
+
+        public override InsertType Type => InsertType.Append;
+        private XmlDocument XmlDocument { get; } = new();
+
+        public UILauncherPrefabExtension21()
+        {
+            XmlDocument.LoadXml(@"
+<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsEnginePage"" UpdateChildrenStates=""true"" IsHidden=""@IsNotOptions"">
+  <Children>
+    <TextWidget Id=""SubMenuText"" Text=""@EngineText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" Brush=""Launcher.SubMenuButton.SingleplayerText"" />
   </Children>
 </TabToggleWidget>
 ");
@@ -101,7 +143,41 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public UILauncherPrefabExtension7()
         {
             XmlDocument.LoadXml(@"
-<Launcher.Options Id=""OptionsPage"" DataSource=""{OptionsData}"" IsDisabled=""@IsDisabled"" />
+<Launcher.Options Id=""OptionsLauncherPage"" DataSource=""{OptionsLauncherData}"" IsDisabled=""@IsDisabled"" />
+");
+        }
+
+        public override XmlDocument GetPrefabExtension() => XmlDocument;
+    }
+    internal sealed class UILauncherPrefabExtension22 : PrefabExtensionInsertAsSiblingPatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::Launcher.Options[@Id='OptionsLauncherPage']";
+
+        public override InsertType Type => InsertType.Append;
+        private XmlDocument XmlDocument { get; } = new();
+
+        public UILauncherPrefabExtension22()
+        {
+            XmlDocument.LoadXml(@"
+<Launcher.Options Id=""OptionsGamePage"" DataSource=""{OptionsGameData}"" />
+");
+        }
+
+        public override XmlDocument GetPrefabExtension() => XmlDocument;
+    }
+    internal sealed class UILauncherPrefabExtension23 : PrefabExtensionInsertAsSiblingPatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::Launcher.Options[@Id='OptionsGamePage']";
+
+        public override InsertType Type => InsertType.Append;
+        private XmlDocument XmlDocument { get; } = new();
+
+        public UILauncherPrefabExtension23()
+        {
+            XmlDocument.LoadXml(@"
+<Launcher.Options Id=""OptionsEnginePage"" DataSource=""{OptionsEngineData}"" />
 ");
         }
 

@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Prefab>
-  <Constants>
-    <Constant Name="ModToggle.Width" BrushName="Launcher.Mods.ModToggle" BrushLayer="Default" BrushValueType="Width" />
-    <Constant Name="ModToggle.Height" BrushName="Launcher.Mods.ModToggle" BrushLayer="Default" BrushValueType="Height" />
-  </Constants>
   <Window>
     <Widget HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" VerticalAlignment="Top" HorizontalAlignment="Left">
       <Children>
@@ -21,22 +17,37 @@
                         <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="26" MarginBottom="10">
                           <Children>
 
-                            <!-- Boolean switch widget -->
-                            <ButtonWidget DoNotPassEventsToChildren="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModToggle.Width" SuggestedHeight="!ModToggle.Height" VerticalAlignment="Center"
-                                          Brush="Launcher.Mods.ModToggle" ButtonType="Toggle" IsSelected="@BoolValue" ToggleIndicator="ToggleIndicator" UpdateChildrenStates="true">
-                              <Children>
-                                <ImageWidget Id="ToggleIndicator" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="Launcher.Mods.ModToggle.Checkmark" />
-                              </Children>
-                            </ButtonWidget>
-
                             <!-- Property Name Section -->
-                            <TextWidget Text="@Name" HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" VerticalAlignment="Center" MarginLeft="10" PositionYOffset="2"
-                                        Brush="Launcher.Mods.ModNameText" Brush.TextHorizontalAlignment="Left"/>
+                            <TextWidget HeightSizePolicy="CoverChildren" WidthSizePolicy="StretchToParent" VerticalAlignment="Center" HorizontalAlignment="Left" SuggestedWidth="200"
+                                        Brush="Launcher.Mods.ModNameText" Text="@Name">
+                              <Children>
+                                <HintWidget HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" Command.HoverBegin="OnHover" Command.HoverEnd="OnHoverEnd"/>
+                              </Children>
+                            </TextWidget>
+
+                            <!-- Boolean switch widget -->
+                            <Launcher.SettingsPropertyBoolView />
+
+                            <!-- Float Slider -->
+                            <Launcher.SettingsPropertyFloatView />
+
+                            <!-- Int Slider -->
+                            <Launcher.SettingsPropertyIntView />
+
+                            <!-- String TextBox -->
+                            <Launcher.SettingsPropertyStringView />
+
+                            <!-- Button -->
+                            <Launcher.SettingsPropertyButtonView />
+
+                            <!-- Value text/button -->
+                            <!-- Show the formatted values of Int/Float -->
+                            <!--
+                            <SettingsPropertyDisplayValueView />
+                            -->
 
                           </Children>
                         </ListPanel>
-
-                        <!--<Widget DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="2" MarginLeft="2" MarginRight="2" MarginBottom="10" Sprite="launcher_divider" AlphaFactor="0.5" />-->
 
                       </Children>
                     </ListPanel>
@@ -47,6 +58,13 @@
             </Widget>
           </Children>
         </ScrollablePanel>
+
+        <ScrollbarWidget Id="Scrollbar" Handle="ScrollbarHandle" AlignmentAxis="Vertical" MinValue="0" MaxValue="100" HorizontalAlignment="Right" VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="20" MarginTop="46" MarginBottom="23" MarginRight="@ScrollbarOffset" UpdateChildrenStates="true">
+          <Children>
+            <Widget HorizontalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="4" Sprite="BlankWhiteSquare_9" Color="#5A4033FF" />
+            <Widget Id="ScrollbarHandle" SuggestedWidth="12" Sprite="BlankWhiteSquare_9" Color="#E6C8A6FF" />
+          </Children>
+        </ScrollbarWidget>
 
       </Children>
     </Widget>

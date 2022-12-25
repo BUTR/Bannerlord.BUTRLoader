@@ -1,5 +1,37 @@
 <Brushes>
 
+  <Brush Name="Launcher.Input.TextBox.Text" Font="FiraSansExtraCondensed-Regular" TextVerticalAlignment="Center">
+    <Styles>
+      <Style Name="Default" FontColor="#F7C895FF" TextGlowColor="#FFFFFF00" TextOutlineColor="#FFFFFF00" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" FontSize="18" />
+      <Style Name="Hovered" FontColor="#ABA298FF" TextGlowColor="#FFFFFF00" TextOutlineColor="#FFFFFF00" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" FontSize="18" />
+      <Style Name="Pressed" FontColor="#FFB96EFF" TextGlowColor="#FFFFFF00" TextOutlineColor="#FFFFFF00" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" FontSize="18" />
+      <Style Name="Disabled" FontColor="#D5B88B00" TextGlowColor="#00000000" />
+    </Styles>
+  </Brush>
+
+  <Brush Name="Launcher.Input.TextBox.Input">
+    <Layers>
+      <BrushLayer Name="Default" Sprite="popup_frame_small_9" ExtendTop="3" ExtendBottom="3"/>
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" AlphaFactor="0.7" ColorFactor="1" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Default" AlphaFactor="0.9" ColorFactor="1.2" />
+      </Style>
+      <Style Name="Pressed">
+        <BrushLayer Name="Default" AlphaFactor="0.8" />
+      </Style>
+      <Style Name="Selected">
+        <BrushLayer Name="Default" AlphaFactor="1" />
+      </Style>
+      <Style Name="Disabled">
+        <BrushLayer Name="Default" AlphaFactor="0.5" ColorFactor="0.7" />
+      </Style>
+    </Styles>
+  </Brush>
+
   <Brush Name="Launcher.Mods.IssueText" Font="FiraSansExtraCondensed-Regular" TextHorizontalAlignment="Left" TextVerticalAlignment="Center">
     <Layers>
     </Layers>

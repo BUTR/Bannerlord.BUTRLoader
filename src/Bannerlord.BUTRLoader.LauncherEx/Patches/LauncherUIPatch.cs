@@ -5,9 +5,12 @@ using HarmonyLib.BUTR.Extensions;
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
+using TaleWorlds.GauntletUI;
 using TaleWorlds.GauntletUI.Data;
+using TaleWorlds.InputSystem;
 using TaleWorlds.MountAndBlade.Launcher.Library;
 
 namespace Bannerlord.BUTRLoader.Patches
@@ -21,11 +24,10 @@ namespace Bannerlord.BUTRLoader.Patches
                 postfix: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch), nameof(InitializePostfix)));
             if (!res1) return false;
 
-            // Preventing inlining Initialize
-            harmony.TryPatch(
-                AccessTools2.Method(typeof(LauncherUI), "Update"),
-                transpiler: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch), nameof(BlankTranspiler)));
-            // Preventing inlining Initialize
+            var res2 = harmony.TryPatch(
+                AccessTools2.DeclaredMethod(typeof(LauncherUI), "Update"),
+                postfix: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch), nameof(UpdatePostfix)));
+            if (!res2) return false;
 
             return true;
         }
@@ -40,6 +42,28 @@ namespace Bannerlord.BUTRLoader.Patches
             // Add to the existing VM our own properties
             MixinManager.AddMixins(____viewModel);
             ____movie.RefreshDataSource(____viewModel);
+        }
+
+        [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
+        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        [SuppressMessage("ReSharper", "RedundantAssignment")]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void UpdatePostfix(UIContext ____context)
+        {
+            if (Input.InputManager is BUTRInputManager butrInputManager)
+            {
+                butrInputManager.Update();
+
+                if (____context?.EventManager?.FocusedWidget is { } focusedWidget)
+                {
+                    focusedWidget.HandleInput(butrInputManager.ReleasedChars.Select(x => (int) x).ToArray());
+                }
+            }
+            else
+            {
+                Input.Initialize(new BUTRInputManager(Input.InputManager), null);
+            }
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]

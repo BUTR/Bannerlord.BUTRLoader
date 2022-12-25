@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.15.0
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Added experimental options for Game and Engine
+* Added hints for launcher options
+---------------------------------------------------------------------------------------------------
 Version: 1.14.8
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Fixed reverse alphanum ordering being applied

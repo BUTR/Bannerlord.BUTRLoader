@@ -26,7 +26,11 @@ namespace Bannerlord.BUTRLoader.Patches
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension4.Movie, UILauncherPrefabExtension4.XPath, new UILauncherPrefabExtension4());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension5.Movie, UILauncherPrefabExtension5.XPath, new UILauncherPrefabExtension5());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension6.Movie, UILauncherPrefabExtension6.XPath, new UILauncherPrefabExtension6());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension20.Movie, UILauncherPrefabExtension20.XPath, new UILauncherPrefabExtension20());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension21.Movie, UILauncherPrefabExtension21.XPath, new UILauncherPrefabExtension21());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension7.Movie, UILauncherPrefabExtension7.XPath, new UILauncherPrefabExtension7());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension22.Movie, UILauncherPrefabExtension22.XPath, new UILauncherPrefabExtension22());
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension23.Movie, UILauncherPrefabExtension23.XPath, new UILauncherPrefabExtension23());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension8.Movie, UILauncherPrefabExtension8.XPath, new UILauncherPrefabExtension8());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension9.Movie, UILauncherPrefabExtension9.XPath, new UILauncherPrefabExtension9());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension10.Movie, UILauncherPrefabExtension10.XPath, new UILauncherPrefabExtension10());

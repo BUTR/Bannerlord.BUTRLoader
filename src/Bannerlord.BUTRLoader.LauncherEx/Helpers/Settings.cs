@@ -26,6 +26,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         SettingType SettingType { get; }
 
         string DisplayName { get; }
+        string HintText { get; }
         decimal MinValue { get; }
         decimal MaxValue { get; }
     }
@@ -33,13 +34,19 @@ namespace Bannerlord.BUTRLoader.Helpers
     /// <summary>
     /// https://github.com/Aragas/Bannerlord.MBOptionScreen/blob/dev/src/MCM/Abstractions/Settings/Models/SettingsPropertyDefinition.cs
     /// </summary>
-    internal sealed class SettingsPropertyDefinition : ISettingsPropertyDefinition
+    internal class SettingsPropertyDefinition : ISettingsPropertyDefinition
     {
-        public string DisplayName { get; init; } = default!;
+        public string DisplayName { get; init; } = string.Empty;
+        public string HintText { get; init; } = string.Empty;
         public IRef PropertyReference { get; init; } = default!;
         public SettingType SettingType { get; init; } = default!;
 
         public decimal MinValue { get; init; } = default!;
         public decimal MaxValue { get; init; } = default!;
+    }
+    internal class ConfigSettingsPropertyDefinition : SettingsPropertyDefinition
+    {
+        public string ConfigKey { get; init; } = string.Empty;
+        public string OriginalValue { get; init; } = string.Empty;
     }
 }
