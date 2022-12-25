@@ -1,9 +1,9 @@
 ﻿<Prefab>
   <Window>
     <Widget HeightSizePolicy="StretchToParent" WidthSizePolicy="Fixed" SuggestedWidth="150" VerticalAlignment="Center"
-            MarginRight="30" IsVisible="@IsIntVisible">
+            MarginRight="15" IsVisible="@IsIntVisible">
       <Children>
-        <IntegerInputTextWidget HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" VerticalAlignment="Center"
+        <IntegerInputTextWidget HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" VerticalAlignment="Center" HorizontalAlignment="Center"
                                 Brush="Launcher.Input.TextBox.Text" Command.HoverEnd="OnEditBoxHoverEnd"
                                 IntText="@IntValue"
                                 ClipContents="false" UpdateChildrenStates="true" DoNotPassEventsToChildren="true">

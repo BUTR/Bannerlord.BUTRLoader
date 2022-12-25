@@ -13,7 +13,8 @@ namespace Bannerlord.BUTRLoader.Helpers
         Bool,
         Int,
         Float,
-        String
+        String,
+        Button,
     }
 
     /// <summary>
@@ -29,6 +30,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         string HintText { get; }
         decimal MinValue { get; }
         decimal MaxValue { get; }
+        string Content { get; }
     }
 
     /// <summary>
@@ -43,6 +45,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         public decimal MinValue { get; init; } = default!;
         public decimal MaxValue { get; init; } = default!;
+        public string Content { get; init; } = default!;
     }
     internal class ConfigSettingsPropertyDefinition : SettingsPropertyDefinition
     {

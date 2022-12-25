@@ -160,7 +160,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public UILauncherPrefabExtension22()
         {
             XmlDocument.LoadXml(@"
-<Launcher.Options Id=""OptionsGamePage"" DataSource=""{OptionsGameData}"" />
+<Launcher.Options Id=""OptionsGamePage"" DataSource=""{OptionsGameData}"" IsDisabled=""@IsDisabled"" />
 ");
         }
 
@@ -177,7 +177,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public UILauncherPrefabExtension23()
         {
             XmlDocument.LoadXml(@"
-<Launcher.Options Id=""OptionsEnginePage"" DataSource=""{OptionsEngineData}"" />
+<Launcher.Options Id=""OptionsEnginePage"" DataSource=""{OptionsEngineData}"" IsDisabled=""@IsDisabled"" />
 ");
         }
 
@@ -221,18 +221,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     }
 
     /// <summary>
-    /// Mods tab can be disabled
-    /// </summary>
-    internal sealed class UILauncherPrefabExtension11 : PrefabExtensionSetAttributePatch
-    {
-        public static string Movie => "UILauncher";
-        public static string XPath => "descendant::Launcher.Mods";
-
-        public override string Attribute => "IsDisabled";
-        public override string Value => "@IsDisabled2";
-    }
-
-    /// <summary>
     /// News tab can be disabled
     /// </summary>
     internal sealed class UILauncherPrefabExtension12 : PrefabExtensionSetAttributePatch
@@ -257,7 +245,7 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public UILauncherPrefabExtension13()
         {
             XmlDocument.LoadXml(@"
-<Launcher.Mods2 Id=""ModsPage"" DataSource=""{ModsData}"" />
+<Launcher.Mods2 Id=""ModsPage"" DataSource=""{ModsData}"" IsDisabled=""@IsDisabled2"" />
 ");
         }
 

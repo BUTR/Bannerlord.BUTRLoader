@@ -1,7 +1,6 @@
 ﻿using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.LauncherEx;
-using Bannerlord.BUTRLoader.Options;
 using Bannerlord.BUTRLoader.ViewModels;
 
 using HarmonyLib;
@@ -154,15 +153,15 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
 
         [BUTRDataSourceProperty]
         public BUTRLauncherOptionsVM OptionsLauncherData { get => _optionsLauncherData; set => SetField(ref _optionsLauncherData, value, nameof(OptionsLauncherData)); }
-        private BUTRLauncherOptionsVM _optionsLauncherData = new(OptionsType.Launcher);
+        private BUTRLauncherOptionsVM _optionsLauncherData;
 
         [BUTRDataSourceProperty]
         public BUTRLauncherOptionsVM OptionsGameData { get => _optionsGameData; set => SetField(ref _optionsGameData, value, nameof(OptionsGameData)); }
-        private BUTRLauncherOptionsVM _optionsGameData = new(OptionsType.Game);
+        private BUTRLauncherOptionsVM _optionsGameData;
 
         [BUTRDataSourceProperty]
         public BUTRLauncherOptionsVM OptionsEngineData { get => _optionsEngineData; set => SetField(ref _optionsEngineData, value, nameof(OptionsEngineData)); }
-        private BUTRLauncherOptionsVM _optionsEngineData = new(OptionsType.Engine);
+        private BUTRLauncherOptionsVM _optionsEngineData;
 
         [BUTRDataSourceProperty]
         public bool HideRandomImage { get => _hideRandomImage; set => SetField(ref _hideRandomImage, value, nameof(HideRandomImage)); }
@@ -172,8 +171,6 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public float ContentTabControlMargin { get => _contentTabControlMargin; set => SetField(ref _contentTabControlMargin, value, nameof(ContentTabControlMargin)); }
         private float _contentTabControlMargin;
 
-        public LauncherExData LauncherExData { get; }
-
         private readonly UserDataManager _userDataManager;
 
         private ModuleListHandler? _currentModuleListHandler;
@@ -181,13 +178,9 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public LauncherVMMixin(LauncherVM launcherVM) : base(launcherVM)
         {
             _userDataManager = UserDataManagerFieldRef is not null ? UserDataManagerFieldRef(launcherVM) : default!;
-            LauncherExData = new LauncherExData(
-                LauncherSettings.AutomaticallyCheckForUpdates,
-                LauncherSettings.UnblockFiles,
-                LauncherSettings.FixCommonIssues,
-                LauncherSettings.CompactModuleList,
-                LauncherSettings.HideRandomImage,
-                LauncherSettings.DisableBinaryCheck);
+            _optionsEngineData = new BUTRLauncherOptionsVM(OptionsType.Engine, SaveUserData, RefreshOptions);
+            _optionsGameData = new BUTRLauncherOptionsVM(OptionsType.Game, SaveUserData, RefreshOptions);
+            _optionsLauncherData = new BUTRLauncherOptionsVM(OptionsType.Launcher, SaveUserData, RefreshOptions);
 
             HideRandomImage = LauncherSettings.HideRandomImage;
             ContentTabControlMargin = LauncherSettings.HideRandomImage ? 5 : 114;
@@ -221,24 +214,33 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             ViewModel.News.SetPropertyValue(nameof(LauncherNewsVMMixin.IsDisabled2), HasNoNews);
             ViewModel.ModsData.SetPropertyValue(nameof(LauncherModsVMMixin.IsDisabled2), HasNoMods);
             OptionsLauncherData.IsDisabled = !IsOptions;
+            OptionsGameData.IsDisabled = !IsOptions;
+            OptionsEngineData.IsDisabled = !IsOptions;
             if (IsOptions)
             {
-                OptionsLauncherData.Refresh();
-                OptionsGameData.Refresh();
-                OptionsEngineData.Refresh();
+                RefreshOptions();
             }
+        }
+
+        public void RefreshOptions()
+        {
+            OptionsLauncherData.Refresh();
+            OptionsGameData.Refresh();
+            OptionsEngineData.Refresh();
         }
 
         public void SaveUserData()
         {
+            HideRandomImage = LauncherSettings.HideRandomImage;
+            ContentTabControlMargin = LauncherSettings.HideRandomImage ? 5 : 114;
             UpdateAndSaveUserModsDataMethod?.Invoke(ViewModel, IsMultiplayer2);
         }
 
         public void SaveOptions()
         {
-            OptionsLauncherData.Save(this);
-            OptionsGameData.Save(this);
-            OptionsEngineData.Save(this);
+            OptionsLauncherData.Save();
+            OptionsGameData.Save();
+            OptionsEngineData.Save();
         }
 
         // Ensure save is triggered when launching the game

@@ -13,10 +13,10 @@ namespace Bannerlord.BUTRLoader.LauncherEx
 {
     public static class Manager
     {
-        internal static readonly Harmony _launcherHarmony = new("bannerlord.butrloader.launcherex");
         internal static readonly AssemblyCompatibilityChecker _compatibilityChecker = new();
+        private static readonly Harmony _launcherHarmony = new("bannerlord.butrloader.launcherex");
 
-        public static event Action OnDisable;
+        public static event Action? OnDisable;
 
         public static void Initialize()
         {

@@ -1,11 +1,17 @@
 ﻿<Prefab>
   <Window>
-    <ButtonWidget SuggestedWidth="251" SuggestedHeight="64" VerticalAlignment="Center" HorizontalAlignment="Left"
-                  IsEnabled="@IsEnabled" IsVisible="@IsButton" DoNotPassEventsToChildren="true" Brush="MCM.Cancel.Button" Command.Click="OnValueClick">
+
+    <Widget HeightSizePolicy="StretchToParent" WidthSizePolicy="Fixed" SuggestedWidth="150" VerticalAlignment="Center"
+            MarginRight="15" IsVisible="@IsButtonVisible">
       <Children>
-        <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" VerticalAlignment="Center" HorizontalAlignment="Center"
-                    IsEnabled="@IsEnabled" IsVisible="@IsButtonVisible" Text="@ButtonContent" Brush="MCM.Button.Text" />
+        <ButtonWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" VerticalAlignment="Center" HorizontalAlignment="Left"
+                      Brush="Launcher.PlayButton.Inner.Singleplayer" Command.Click="OnValueClick" DoNotPassEventsToChildren="true">
+          <Children>
+            <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Text="@ButtonValue" Brush="Launcher.Input.TextBox.Text" />
+          </Children>
+        </ButtonWidget>
       </Children>
-    </ButtonWidget>
+    </Widget>
   </Window>
 </Prefab>

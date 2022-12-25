@@ -3,8 +3,6 @@
 using System.ComponentModel;
 using System.Globalization;
 
-using TaleWorlds.MountAndBlade.GauntletUI.Widgets;
-
 namespace Bannerlord.BUTRLoader.ViewModels
 {
     internal sealed class SettingsPropertyVM : BUTRViewModel
@@ -27,6 +25,8 @@ namespace Bannerlord.BUTRLoader.ViewModels
         public bool IsBoolVisible { get; }
         [BUTRDataSourceProperty]
         public bool IsStringVisible { get; }
+        [BUTRDataSourceProperty]
+        public bool IsButtonVisible { get; }
 
         [BUTRDataSourceProperty]
         public float FloatValue
@@ -82,6 +82,19 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 }
             }
         }
+        [BUTRDataSourceProperty]
+        public string ButtonValue
+        {
+            get => IsButtonVisible ? PropertyReference.Value is string val ? val : "ERROR" : string.Empty;
+            set
+            {
+                if (IsButtonVisible && ButtonValue != value)
+                {
+                    PropertyReference.Value = value;
+                    OnPropertyChanged(nameof(ButtonValue));
+                }
+            }
+        }
 
         [BUTRDataSourceProperty]
         public float MaxValue => (float) SettingPropertyDefinition.MaxValue;
@@ -92,8 +105,16 @@ namespace Bannerlord.BUTRLoader.ViewModels
         {
             SettingType.Int when PropertyReference.Value is int val => val.ToString(),
             SettingType.Float when PropertyReference.Value is float val => val.ToString("0.0000", CultureInfo.InvariantCulture),
+            _ => string.Empty
+        };
+
+        public string ValueAsString => SettingType switch
+        {
+            SettingType.Int when PropertyReference.Value is int val => val.ToString(),
+            SettingType.Float when PropertyReference.Value is float val => val.ToString("0.0000", CultureInfo.InvariantCulture),
             SettingType.String when PropertyReference.Value is string val => val,
             SettingType.Bool when PropertyReference.Value is bool val => val ? "True" : "False",
+            SettingType.Button when PropertyReference.Value is string val => val,
             _ => string.Empty
         };
 
@@ -106,6 +127,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
             IsFloatVisible = SettingType == SettingType.Float;
             IsBoolVisible = SettingType == SettingType.Bool;
             IsStringVisible = SettingType == SettingType.String;
+            IsButtonVisible = SettingType == SettingType.Button;
             // Moved to constructor
 
             PropertyReference.PropertyChanged += PropertyReference_OnPropertyChanged;
@@ -158,6 +180,12 @@ namespace Bannerlord.BUTRLoader.ViewModels
         public void OnHoverEnd()
         {
             HintManager.HideHint();
+        }
+
+        [BUTRDataSourceMethod]
+        public void OnValueClick()
+        {
+            PropertyReference.Value = PropertyReference.Value;
         }
     }
 }
