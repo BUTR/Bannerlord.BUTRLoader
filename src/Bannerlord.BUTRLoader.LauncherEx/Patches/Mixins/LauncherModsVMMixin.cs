@@ -244,7 +244,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             {
                 var orderedModules = source
                     .OrderByDescending(x => x.IsOfficial)
-                    .ThenByDescending(x => x.Id, new AlphanumComparatorFast())
+                    .ThenBy(x => x.Id, new AlphanumComparatorFast())
                     .ToArray();
 
                 return ModuleSorter.TopologySort(orderedModules, module => ModuleUtilities.GetDependencies(orderedModules, module));
