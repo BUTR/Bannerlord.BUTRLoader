@@ -27,7 +27,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
         private readonly OptionsType _optionsType;
         private readonly LauncherExData? _launcherExData;
         private readonly Action _saveUserData;
-        private readonly Action _refreshData;
+        private readonly Action _refreshOptions;
 
         [BUTRDataSourceProperty]
         public bool IsDisabled { get => _isDisabled; set => SetField(ref _isDisabled, value, nameof(IsDisabled)); }
@@ -38,11 +38,11 @@ namespace Bannerlord.BUTRLoader.ViewModels
         private MBBindingList<SettingsPropertyVM> _settingProperties = new();
 
 
-        public BUTRLauncherOptionsVM(OptionsType optionsType, Action saveUserData, Action refreshData)
+        public BUTRLauncherOptionsVM(OptionsType optionsType, Action saveUserData, Action refreshOptions)
         {
             _optionsType = optionsType;
             _saveUserData = saveUserData;
-            _refreshData = refreshData;
+            _refreshOptions = refreshOptions;
 
             if (_optionsType == OptionsType.Launcher)
             {
@@ -131,7 +131,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                     {
                         File.Copy(backupPath, GameConfigPath, true);
                         File.Delete(backupPath);
-                        _refreshData();
+                        _refreshOptions();
                     }
                 })
             }));
@@ -147,7 +147,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                     {
                         File.Copy(backupPath, EngineConfigPath, true);
                         File.Delete(backupPath);
-                        _refreshData();
+                        _refreshOptions();
                     }
                 })
             }));

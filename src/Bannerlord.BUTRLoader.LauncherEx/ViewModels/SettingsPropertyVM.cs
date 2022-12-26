@@ -134,12 +134,14 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
             RefreshValues();
         }
+
         public override void OnFinalize()
         {
             PropertyReference.PropertyChanged -= PropertyReference_OnPropertyChanged;
 
             base.OnFinalize();
         }
+        
         private void PropertyReference_OnPropertyChanged(object? obj, PropertyChangedEventArgs args)
         {
             RefreshValues();

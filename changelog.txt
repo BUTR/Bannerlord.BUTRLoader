@@ -1,6 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.15.0
 Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Added the ability to select a save to load from launcher
+---------------------------------------------------------------------------------------------------
+Version: 1.15.0
+Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Added experimental options for Game and Engine, plus buttons to restore the originals
 * Added hints for launcher options
 * Added button to unblock all files immediately

@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Features.AssemblyResolver;
+using Bannerlord.BUTRLoader.Features.ContinueSaveFile;
 using Bannerlord.BUTRLoader.Features.Interceptor;
 using Bannerlord.BUTRLoader.LauncherEx;
 
@@ -23,6 +24,7 @@ namespace Bannerlord.BLSE.Launcher
 
             InterceptorFeature.Enable(_featureHarmony);
             AssemblyResolverFeature.Enable(_featureHarmony);
+            ContinueSaveFileFeature.Enable(_featureHarmony);
 
             Manager.Initialize();
             Manager.Enable();

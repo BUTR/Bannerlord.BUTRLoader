@@ -33,10 +33,12 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         // All installed Modules
         private readonly Dictionary<string, ModuleInfoExtended> _extendedModuleInfoCache =
             // Not real modules, we declare this way our launcher capabilities
-            new(FeatureIds.Features.ToDictionary(x => x, x => new ModuleInfoExtended { Id = x, IsSingleplayerModule = true }));
+            new(FeatureIds.LauncherFeatures.ToDictionary(x => x, x => new ModuleInfoExtended { Id = x, IsSingleplayerModule = true }));
 
         // Fast lookup for the ViewModels
         public readonly Dictionary<string, BUTRLauncherModuleVM> Modules2Lookup = new();
+
+        private Func<BUTRLauncherSaveVM?>? _getSelectedSave;
 
         [BUTRDataSourceProperty]
         public bool GlobalCheckboxState { get => _checkboxState; set => SetField(ref _checkboxState, value, nameof(GlobalCheckboxState)); }
@@ -75,72 +77,53 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         public LauncherHintVM? ForceSortedHint { get => _forceSortedHint; set => SetField(ref _forceSortedHint, value, nameof(ForceSortedHint)); }
         private LauncherHintVM? _forceSortedHint;
 
-        public string ModuleListCode => $"_MODULES_*{string.Join("*", Modules2.Where(x => x.IsSelected).Select(x => x.ModuleInfoExtended.Id))}*_MODULES_";
+        public string ModuleListCode => _getSelectedSave?.Invoke() is { ModuleListCode: { } } saveVM
+                ? saveVM.ModuleListCode
+                : $"_MODULES_*{string.Join("*", Modules2.Where(x => x.IsSelected).Select(x => x.ModuleInfoExtended.Id))}*_MODULES_";
 
         public LauncherModsVMMixin(LauncherModsVM launcherModsVM) : base(launcherModsVM)
         {
             _extendedModuleInfoCache.AddRange(ModuleInfoHelper.GetModules().Cast<ModuleInfoExtended>().ToDictionary(x => x.Id, x => x));
         }
 
-        [BUTRDataSourceMethod]
-        public void ExecuteGlobalCheckbox()
-        {
-            GlobalCheckboxState = !GlobalCheckboxState;
-
-            foreach (var moduleVM in Modules2)
-            {
-                if (GlobalCheckboxState)
-                {
-                    if (moduleVM.IsValid && !moduleVM.IsSelected)
-                        ToggleModuleSelection(moduleVM);
-                }
-                else
-                {
-                    if (!moduleVM.ModuleInfoExtended.IsNative() && moduleVM.IsSelected)
-                        ToggleModuleSelection(moduleVM);
-                }
-            }
-        }
-
-        [BUTRDataSourceMethod]
-        public void ExecuteRefresh()
-        {
-            SortByDefault();
-        }
-
-
         private bool GetIsValid(ModuleInfoExtended module)
         {
-            if (FeatureIds.Features.Contains(module.Id))
+            if (FeatureIds.LauncherFeatures.Contains(module.Id))
                 return true;
 
             return Modules2Lookup[module.Id].IsValid;
         }
         private bool GetIsSelected(ModuleInfoExtended module)
         {
-            if (FeatureIds.Features.Contains(module.Id))
+            if (FeatureIds.LauncherFeatures.Contains(module.Id))
                 return false;
 
             return Modules2Lookup[module.Id].IsSelected;
         }
         private void SetIsSelected(ModuleInfoExtended module, bool value)
         {
-            if (FeatureIds.Features.Contains(module.Id))
+            if (FeatureIds.LauncherFeatures.Contains(module.Id))
                 return;
             Modules2Lookup[module.Id].IsSelected = value;
         }
         private bool GetIsDisabled(ModuleInfoExtended module)
         {
-            if (FeatureIds.Features.Contains(module.Id))
+            if (FeatureIds.LauncherFeatures.Contains(module.Id))
                 return false;
 
             return Modules2Lookup[module.Id].IsDisabled;
         }
         private void SetIsDisabled(ModuleInfoExtended module, bool value)
         {
-            if (FeatureIds.Features.Contains(module.Id))
+            if (FeatureIds.LauncherFeatures.Contains(module.Id))
                 return;
             Modules2Lookup[module.Id].IsDisabled = value;
+        }
+        public ModuleInfoExtended? GetModuleById(string id) => _extendedModuleInfoCache.TryGetValue(id, out var mie) ? mie : null;
+        public ModuleInfoExtended? GetModuleByName(string name) => _extendedModuleInfoCache.Values.FirstOrDefault(x => x.Name == name);
+        public void SetGetSelectedSave(Func<BUTRLauncherSaveVM?> getSelectedSave)
+        {
+            _getSelectedSave = getSelectedSave;
         }
 
         public void Initialize(bool isMultiplayer)
@@ -179,12 +162,11 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             SortByDefault();
 
             // Apply saved ordering
-            var orderIssues = OrderBy(userGameTypeData.ModDatas.Select(x => x.Id).ToList()).ToList();
+            var orderIssues = OrderBy(userGameTypeData.ModDatas.Select(x => x.Id)).ToList();
             if (orderIssues.Count != 0)
             {
                 IsForceSorted = true;
-                ForceSortedHint = new LauncherHintVM(@$"The Load Order was re-sorted! Reasons:
-{string.Join(Environment.NewLine, orderIssues)}");
+                ForceSortedHint = new LauncherHintVM($"The Load Order was re-sorted! Reasons:\n{string.Join("\n", orderIssues)}");
             }
             else
             {
@@ -197,7 +179,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
 
         // Tries to order the modules list with the relations described in the ordered list
-        public IEnumerable<string> OrderBy(IReadOnlyList<string> orderedIds)
+        public IEnumerable<string> OrderBy(IEnumerable<string> orderedIds)
         {
             // Ignore missing modules
             var currentOrderedIds = orderedIds.Intersect(Modules2.Select(x => x.ModuleInfoExtended.Id).ToHashSet()).ToList();
@@ -259,7 +241,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         private IEnumerable<ModuleIssue> ValidateModule(BUTRLauncherModuleVM moduleVM)
         {
             var moduleInfoExtended = moduleVM.ModuleInfoExtended;
-            var modules = FeatureIds.Features.Select(x => new ModuleInfoExtended { Id = x })
+            var modules = FeatureIds.LauncherFeatures.Select(x => new ModuleInfoExtended { Id = x })
                 .Concat(Modules2.Select(x => x.ModuleInfoExtended)).ToList();
 
             return ModuleUtilities.ValidateModule(modules, moduleInfoExtended, GetIsSelected, GetIsValid);
@@ -275,22 +257,6 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
                 ModuleUtilities.DisableModule(modules, moduleInfoExtended, GetIsSelected, SetIsSelected, GetIsDisabled, SetIsDisabled);
             else
                 ModuleUtilities.EnableModule(modules, moduleInfoExtended, GetIsSelected, SetIsSelected, GetIsDisabled, SetIsDisabled);
-        }
-
-        // Working
-        [BUTRDataSourceMethod(OverrideName = "ChangeLoadingOrderOf")]
-        public void ChangeModulePosition(BUTRLauncherModuleVM targetModuleVM, int insertIndex, string _)
-        {
-            ChangeModulePosition(targetModuleVM, insertIndex, (issues) =>
-            {
-                HintManager.ShowHint(@$"Failed to place the module to the desired position! Placing to the nearest available! Reason:
-{string.Join(Environment.NewLine, issues.Select(x => x.Reason))}");
-                Task.Factory.StartNew(async () =>
-                {
-                    await Task.Delay(5000);
-                    HintManager.HideHint();
-                }, CancellationToken.None, TaskCreationOptions.AttachedToParent, TaskScheduler.Current);
-            });
         }
 
         public bool ChangeModulePosition(BUTRLauncherModuleVM targetModuleVM, int insertIndex, Action<IReadOnlyCollection<ModuleIssue>>? onIssues = null)
@@ -331,9 +297,50 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         }
 
         // Working
+        [BUTRDataSourceMethod(OverrideName = "ChangeLoadingOrderOf")]
+        public void ChangeModulePosition(BUTRLauncherModuleVM targetModuleVM, int insertIndex, string _)
+        {
+            ChangeModulePosition(targetModuleVM, insertIndex, (issues) =>
+            {
+                HintManager.ShowHint(@$"Failed to place the module to the desired position! Placing to the nearest available! Reason:\n{string.Join("\n", issues.Select(x => x.Reason))}");
+                Task.Factory.StartNew(async () =>
+                {
+                    await Task.Delay(5000);
+                    HintManager.HideHint();
+                }, CancellationToken.None, TaskCreationOptions.AttachedToParent, TaskScheduler.Current);
+            });
+        }
+
+        [BUTRDataSourceMethod]
+        public void ExecuteGlobalCheckbox()
+        {
+            GlobalCheckboxState = !GlobalCheckboxState;
+
+            foreach (var moduleVM in Modules2)
+            {
+                if (GlobalCheckboxState)
+                {
+                    if (moduleVM.IsValid && !moduleVM.IsSelected)
+                        ToggleModuleSelection(moduleVM);
+                }
+                else
+                {
+                    if (!moduleVM.ModuleInfoExtended.IsNative() && moduleVM.IsSelected)
+                        ToggleModuleSelection(moduleVM);
+                }
+            }
+        }
+
+        [BUTRDataSourceMethod]
+        public void ExecuteRefresh()
+        {
+            SortByDefault();
+        }
+
+        // Working
         public static IEnumerable<ModuleIssue> IsLoadOrderCorrect(IReadOnlyList<ModuleInfoExtended> modules)
         {
-            var loadOrder = FeatureIds.Features.Select(x => new ModuleInfoExtended { Id = x }).Concat(modules).ToList();
+            var loadOrder = FeatureIds.LauncherFeatures.Select(x => new ModuleInfoExtended { Id = x }).Concat(modules).ToList();
             foreach (var module in modules)
             {
                 var issues = ModuleUtilities.ValidateLoadOrder(loadOrder, module).ToList();

@@ -18,18 +18,18 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 <ListPanel WidthSizePolicy=""CoverChildren"" HeightSizePolicy=""CoverChildren""
            VerticalAlignment=""Bottom""
            MarginLeft =""5"" MarginBottom=""35""
-           LayoutImp.LayoutMethod=""HorizontalLeftToRight"" IsHidden=""@IsNotSingleplayer"">
+           LayoutImp.LayoutMethod=""HorizontalLeftToRight"" IsHidden=""@IsModsDataNotSelected"">
   <Children>
     <ButtonWidget WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""40"" SuggestedHeight=""40""
                   VerticalAlignment=""Bottom""
                   MarginLeft =""3"" MarginRight=""3"" MarginTop=""3"" MarginBottom=""3""
-                  Brush=""Launcher.Import"" IsHidden=""@IsNotSingleplayer""
+                  Brush=""Launcher.Import""
                   Command.Click=""ExecuteImport"" Command.HoverBegin=""ExecuteBeginHintImport"" Command.HoverEnd=""ExecuteEndHint""/>
 
     <ButtonWidget WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""40"" SuggestedHeight=""40""
                   VerticalAlignment=""Bottom""
                   MarginLeft =""3"" MarginRight=""3"" MarginTop=""3"" MarginBottom=""3""
-                  Brush=""Launcher.Export"" IsHidden=""@IsNotSingleplayer""
+                  Brush=""Launcher.Export""
                   Command.Click=""ExecuteExport"" Command.HoverBegin=""ExecuteBeginHintExport"" Command.HoverEnd=""ExecuteEndHint""/>
   </Children>
 </ListPanel>

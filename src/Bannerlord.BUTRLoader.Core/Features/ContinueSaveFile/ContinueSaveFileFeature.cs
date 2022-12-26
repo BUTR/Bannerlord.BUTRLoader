@@ -1,0 +1,48 @@
+﻿using Bannerlord.BUTRLoader.Features.ContinueSaveFile.Patches;
+
+using HarmonyLib;
+
+using System;
+
+using TaleWorlds.MountAndBlade;
+
+namespace Bannerlord.BUTRLoader.Features.ContinueSaveFile
+{
+    public static class ContinueSaveFileFeature
+    {
+        public static string Id = FeatureIds.ContinueSaveFileId;
+
+        private static string? _currentSaveFile;
+        private static Harmony? _harmony;
+
+        public static void Enable(Harmony harmony)
+        {
+            _harmony = harmony;
+            ModulePatch.OnSaveGameArgParsed += (info, saveFile) => _currentSaveFile = saveFile;
+            ModulePatch.Enable(harmony);
+
+            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomainOnAssemblyLoad;
+        }
+
+        private static void CurrentDomainOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
+        {
+            if (_harmony is null) return;
+
+            if (args.LoadedAssembly.GetName().Name == "SandBox")
+            {
+                SandBoxSubModulePatch.GetSaveGameArg = GetSaveFile;
+                SandBoxSubModulePatch.Enable(_harmony);
+                InformationManagerPatch.Enable(_harmony);
+            }
+        }
+
+        public static void SetCurrentSaveFile(string? saveFile)
+        {
+            _currentSaveFile = saveFile;
+        }
+        private static string? GetSaveFile(GameStartupInfo startupInfo)
+        {
+            return _currentSaveFile;
+        }
+    }
+}

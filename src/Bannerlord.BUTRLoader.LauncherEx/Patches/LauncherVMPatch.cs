@@ -56,7 +56,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static bool GetApplicationVersionOfModulePrefix(string id, ref ApplicationVersion __result)
         {
-            if (FeatureIds.Features.Contains(id))
+            if (FeatureIds.LauncherFeatures.Contains(id))
             {
                 __result = ApplicationVersion.Empty;
                 return false;

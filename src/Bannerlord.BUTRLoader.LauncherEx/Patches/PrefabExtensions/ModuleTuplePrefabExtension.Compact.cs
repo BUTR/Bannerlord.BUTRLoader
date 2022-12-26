@@ -34,4 +34,62 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
         public override string Attribute => "Brush.FontSize";
         public override string Value => LauncherSettings.CompactModuleList ? "20" : "26";
     }
+
+
+    internal sealed class ModuleTuplePrefabExtension14 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "Launcher.Saves.SaveTuple";
+        public static string XPath => "descendant::ListPanel[@Id='EntryPanel']";
+
+        public override string Attribute => "SuggestedHeight";
+        public override string Value => LauncherSettings.CompactModuleList ? "24" : "26";
+    }
+    internal sealed class ModuleTuplePrefabExtension8 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "Launcher.Saves.SaveTuple";
+        public static string XPath => "descendant::TextWidget[@Text='@Name']";
+
+        public override string Attribute => "Brush.FontSize";
+        public override string Value => LauncherSettings.CompactModuleList ? "20" : "26";
+    }
+    internal sealed class ModuleTuplePrefabExtension9 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "Launcher.Saves.SaveTuple";
+        public static string XPath => "descendant::TextWidget[@Text='@Version']";
+
+        public override string Attribute => "Brush.FontSize";
+        public override string Value => LauncherSettings.CompactModuleList ? "20" : "26";
+    }
+    internal sealed class ModuleTuplePrefabExtension10 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "Launcher.Saves.SaveTuple";
+        public static string XPath => "descendant::TextWidget[@Text='@CharacterName']";
+
+        public override string Attribute => "Brush.FontSize";
+        public override string Value => LauncherSettings.CompactModuleList ? "20" : "26";
+    }
+    internal sealed class ModuleTuplePrefabExtension11 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "Launcher.Saves.SaveTuple";
+        public static string XPath => "descendant::TextWidget[@Text='@Level']";
+
+        public override string Attribute => "Brush.FontSize";
+        public override string Value => LauncherSettings.CompactModuleList ? "20" : "26";
+    }
+    internal sealed class ModuleTuplePrefabExtension12 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "Launcher.Saves.SaveTuple";
+        public static string XPath => "descendant::TextWidget[@Text='@Days']";
+
+        public override string Attribute => "Brush.FontSize";
+        public override string Value => LauncherSettings.CompactModuleList ? "20" : "26";
+    }
+    internal sealed class ModuleTuplePrefabExtension13 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "Launcher.Saves.SaveTuple";
+        public static string XPath => "descendant::TextWidget[@Text='@CreatedAt']";
+
+        public override string Attribute => "Brush.FontSize";
+        public override string Value => LauncherSettings.CompactModuleList ? "20" : "26";
+    }
 }

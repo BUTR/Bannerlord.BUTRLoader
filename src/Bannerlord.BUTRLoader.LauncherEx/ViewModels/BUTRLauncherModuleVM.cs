@@ -96,15 +96,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
         [BUTRDataSourceProperty]
         public bool IsNotValid => !IsValid;
 
-        //[BUTRDataSourceProperty]
-        //public bool IsNoUpdateAvailable { get => _isNoUpdateAvailable; set => SetField(ref _isNoUpdateAvailable, value, nameof(IsNoUpdateAvailable)); }
-        //private bool _isNoUpdateAvailable;
-
-
-        public BUTRLauncherModuleVM(
-            ModuleInfoExtendedWithMetadata moduleInfoExtended,
-            Action<BUTRLauncherModuleVM> select,
-            Func<BUTRLauncherModuleVM, IEnumerable<ModuleIssue>> validate)
+        public BUTRLauncherModuleVM(ModuleInfoExtendedWithMetadata moduleInfoExtended, Action<BUTRLauncherModuleVM> select, Func<BUTRLauncherModuleVM, IEnumerable<ModuleIssue>> validate)
         {
             ModuleInfoExtended = moduleInfoExtended;
             _select = select;

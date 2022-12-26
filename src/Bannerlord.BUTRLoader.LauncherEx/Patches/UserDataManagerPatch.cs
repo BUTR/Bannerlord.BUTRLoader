@@ -4,6 +4,7 @@ using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace Bannerlord.BUTRLoader.Patches
             }
             catch (Exception value)
             {
-                Console.WriteLine(value);
+                Trace.WriteLine(value);
             }
 
             return true;
@@ -90,7 +91,7 @@ namespace Bannerlord.BUTRLoader.Patches
             }
             catch (Exception value)
             {
-                Console.WriteLine(value);
+                Trace.WriteLine(value);
             }
 
             var xfrag = xDoc.CreateDocumentFragment();

@@ -62,6 +62,8 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Mods2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Mods.ModuleTuple2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.ModuleTuple.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.Saves", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Saves.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.Saves.SaveTuple", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Saves.SaveTuple.xml"));
         }
 
         private static XmlDocument Load(string embedPath)

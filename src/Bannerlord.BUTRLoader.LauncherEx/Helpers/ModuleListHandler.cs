@@ -16,9 +16,9 @@ using System.Windows.Forms;
 using System.Xml;
 
 using TaleWorlds.MountAndBlade.Launcher.Library;
+using TaleWorlds.SaveSystem;
 
 using ApplicationVersion = Bannerlord.ModuleManager.ApplicationVersion;
-using BinaryReader = System.IO.BinaryReader;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
@@ -92,10 +92,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             var mismatchedModuleIds = importedModuleIds.Except(currentModuleIds).ToList();
             if (mismatchedModuleIds.Count > 0)
             {
-                HintManager.ShowHint(@$"Cancelled Import!
-
-Missing modules:
-{string.Join(Environment.NewLine, mismatchedModuleIds)}");
+                HintManager.ShowHint($"Cancelled Import!\n\nMissing modules:\n{string.Join("\n", mismatchedModuleIds)}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -110,10 +107,7 @@ Missing modules:
             }
             if (mismatchedVersions.Count > 0)
             {
-                HintManager.ShowHint(@$"Cancelled Import!
-
-Mismatched module versions:
-{string.Join(Environment.NewLine, mismatchedVersions)}");
+                HintManager.ShowHint($"Cancelled Import!\n\nMismatched module versions:\n{string.Join("\n", mismatchedVersions)}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -121,37 +115,7 @@ Mismatched module versions:
         }
         private static ModuleInfoExtendedWithMetadata[] ReadSaveFile(Stream stream, LauncherModsVMMixin mixin)
         {
-            static string[] GetModules(SaveMetadata metadata)
-            {
-                if (!metadata.List.TryGetValue("Modules", out var text))
-                {
-                    return Array.Empty<string>();
-                }
-                return text.Split(';');
-            }
-            static ApplicationVersion GetModuleVersion(SaveMetadata metadata, string moduleName)
-            {
-                if (metadata.List.TryGetValue($"Module_{moduleName}", out var versionRaw))
-                {
-                    return ApplicationVersion.TryParse(versionRaw, out var versionVar) ? versionVar : ApplicationVersion.Empty;
-                }
-                return ApplicationVersion.Empty;
-            }
-
-            SaveMetadata? metadata;
-            try
-            {
-                using var reader = new BinaryReader(stream);
-                var utf8Length = reader.ReadInt32();
-                var utf8Bytes = reader.ReadBytes(utf8Length);
-                metadata = JsonConvert.DeserializeObject<SaveMetadata?>(Encoding.UTF8.GetString(utf8Bytes));
-            }
-            catch
-            {
-                metadata = null;
-            }
-
-            if (metadata is null)
+            if (MetaData.Deserialize(stream) is not { } metadata)
             {
                 HintManager.ShowHint(@$"Cancelled Import!
 
@@ -159,11 +123,11 @@ Failed to read the save file!");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
-            var nativeChangeset = GetModuleVersion(metadata, "Native").ChangeSet;
-            var importedModules = GetModules(metadata).Select(x =>
+            var changeset = SaveHelper.GetChangeSet(metadata);
+            var importedModules = SaveHelper.GetModules(metadata).Select(x =>
             {
-                var version = GetModuleVersion(metadata, x);
-                if (version.ChangeSet == nativeChangeset)
+                var version = SaveHelper.GetModuleVersion(metadata, x);
+                if (version.ChangeSet == changeset)
                     version = new ApplicationVersion(version.ApplicationVersionType, version.Major, version.Minor, version.Revision, 0);
                 return new ModuleListEntry(x, version);
             }).ToArray();
@@ -173,10 +137,7 @@ Failed to read the save file!");
             var mismatchedModuleNames = importedModuleNames.Except(currentModuleNames).ToList();
             if (mismatchedModuleNames.Count > 0)
             {
-                HintManager.ShowHint(@$"Cancelled Import!
-
-Missing modules:
-{string.Join(Environment.NewLine, mismatchedModuleNames)}");
+                HintManager.ShowHint($"Cancelled Import!\n\nMissing modules:\n{string.Join("\n", mismatchedModuleNames)}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -192,10 +153,7 @@ Missing modules:
             }
             if (mismatchedVersions.Count > 0)
             {
-                HintManager.ShowHint(@$"Cancelled Import!
-
-Mismatched module versions:
-{string.Join(Environment.NewLine, mismatchedVersions)}");
+                HintManager.ShowHint($"Cancelled Import!\n\nMismatched module versions:\n{string.Join("\n", mismatchedVersions)}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
             */
@@ -232,10 +190,7 @@ Mismatched module versions:
             var mismatchedModuleIds = importedModuleIds.Except(currentModuleIds).ToList();
             if (mismatchedModuleIds.Count > 0)
             {
-                HintManager.ShowHint(@$"Cancelled Import!
-
-Missing modules:
-{string.Join(Environment.NewLine, mismatchedModuleIds)}");
+                HintManager.ShowHint($"Cancelled Import!\n\nMissing modules:\n{string.Join("\n", mismatchedModuleIds)}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -250,10 +205,7 @@ Missing modules:
             }
             if (mismatchedVersions.Count > 0)
             {
-                HintManager.ShowHint(@$"Cancelled Import!
-
-Mismatched module versions:
-{string.Join(Environment.NewLine, mismatchedVersions)}");
+                HintManager.ShowHint($"Cancelled Import!\n\nMismatched module versions:\n{string.Join("\n", mismatchedVersions)}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -308,10 +260,7 @@ Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
                         var loadOrderValidationIssues = LauncherModsVMMixin.IsLoadOrderCorrect(modules).ToList();
                         if (loadOrderValidationIssues.Count != 0)
                         {
-                            HintManager.ShowHint(@$"Cancelled Import!
-
-Load Order is not correct! Reason:
-{string.Join(Environment.NewLine, loadOrderValidationIssues.Select(x => x.Reason))}");
+                            HintManager.ShowHint($"Cancelled Import!\n\nLoad Order is not correct! Reason:\n{string.Join("\n", loadOrderValidationIssues.Select(x => x.Reason))}");
                             return;
                         }
 
@@ -331,13 +280,10 @@ Load Order is not correct! Reason:
 
                         mixin.SortByDefault();
 
-                        var orderIssues = mixin.OrderBy(modules.Select(x => x.Id).ToList()).ToList();
+                        var orderIssues = mixin.OrderBy(modules.Select(x => x.Id)).ToList();
                         if (orderIssues.Count != 0)
                         {
-                            HintManager.ShowHint(@$"Cancelled Import!
-
-Load Order is not correct! Reason:
-{string.Join(Environment.NewLine, orderIssues)}");
+                            HintManager.ShowHint($"Cancelled Import!\n\nLoad Order is not correct! Reason:\n{string.Join("\n", orderIssues)}");
                             return;
                         }
 

@@ -185,30 +185,6 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
     }
 
     /// <summary>
-    /// ModsPage - uses 'HasNoNews' instead of 'IsMultiplayer'
-    /// </summary>
-    internal sealed class UILauncherPrefabExtension8 : PrefabExtensionSetAttributePatch
-    {
-        public static string Movie => "UILauncher";
-        public static string XPath => "descendant::TabToggleWidget[1]";
-
-        public override string Attribute => "IsHidden";
-        public override string Value => "@HasNoNews";
-    }
-
-    /// <summary>
-    /// ModsPage - uses 'HasNoMods' instead of 'IsMultiplayer'
-    /// </summary>
-    internal sealed class UILauncherPrefabExtension9 : PrefabExtensionSetAttributePatch
-    {
-        public static string Movie => "UILauncher";
-        public static string XPath => "descendant::TabToggleWidget[2]";
-
-        public override string Attribute => "IsHidden";
-        public override string Value => "@HasNoMods";
-    }
-
-    /// <summary>
     /// Changing to Option screen will change image
     /// </summary>
     internal sealed class UILauncherPrefabExtension10 : PrefabExtensionSetAttributePatch
@@ -218,37 +194,5 @@ namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
 
         public override string Attribute => "ChangeTrigger";
         public override string Value => "@RandomImageSwitch";
-    }
-
-    /// <summary>
-    /// News tab can be disabled
-    /// </summary>
-    internal sealed class UILauncherPrefabExtension12 : PrefabExtensionSetAttributePatch
-    {
-        public static string Movie => "UILauncher";
-        public static string XPath => "descendant::Launcher.News";
-
-        public override string Attribute => "IsDisabled";
-        public override string Value => "@IsDisabled2";
-    }
-
-    /// <summary>
-    /// Replaces Launcher.Mods with our own static implementation, since we add a lot of custom stuff anyway
-    /// </summary>
-    internal sealed class UILauncherPrefabExtension13 : PrefabExtensionReplacePatch
-    {
-        public static string Movie => "UILauncher";
-        public static string XPath => "descendant::Launcher.Mods";
-
-        private XmlDocument XmlDocument { get; } = new();
-
-        public UILauncherPrefabExtension13()
-        {
-            XmlDocument.LoadXml(@"
-<Launcher.Mods2 Id=""ModsPage"" DataSource=""{ModsData}"" IsDisabled=""@IsDisabled2"" />
-");
-        }
-
-        public override XmlDocument GetPrefabExtension() => XmlDocument;
     }
 }
