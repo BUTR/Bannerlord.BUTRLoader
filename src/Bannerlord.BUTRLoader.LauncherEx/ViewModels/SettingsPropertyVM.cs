@@ -141,7 +141,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
             base.OnFinalize();
         }
-        
+
         private void PropertyReference_OnPropertyChanged(object? obj, PropertyChangedEventArgs args)
         {
             RefreshValues();
