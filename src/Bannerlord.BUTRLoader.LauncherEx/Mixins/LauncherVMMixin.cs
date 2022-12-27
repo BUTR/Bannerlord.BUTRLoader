@@ -340,7 +340,6 @@ namespace Bannerlord.BUTRLoader.Mixins
             if (ViewModel is null) return;
 
             SaveUserData();
-            Manager.Disable();
             ExecuteConfirmUnverifiedDLLStartOriginal?.Invoke(ViewModel);
         }
 

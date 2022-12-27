@@ -10,9 +10,6 @@ using System.Runtime.CompilerServices;
 
 using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.GauntletUI;
-using TaleWorlds.GauntletUI.BaseTypes;
-using TaleWorlds.GauntletUI.Canvas;
-using TaleWorlds.GauntletUI.PrefabSystem;
 using TaleWorlds.TwoDimension;
 
 namespace Bannerlord.BUTRLoader.ResourceManagers

@@ -1,34 +1,34 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.LauncherEx;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using System.IO;
-using System.Runtime.CompilerServices;
+using System.Linq;
+using System.Reflection.Emit;
 
+using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library;
 
 namespace Bannerlord.BUTRLoader.Patches
 {
     internal static class ProgramPatch
     {
+        private static string PathPrefix() => Path.Combine(BasePath.Name, "Modules");
+
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method(typeof(LauncherVM), "ExecuteStartGame"),
-                prefix: AccessTools2.DeclaredMethod(typeof(ProgramPatch), nameof(StartGamePrefix)));
+                AccessTools2.Method(typeof(Program), "AuxFinalize"),
+                prefix: AccessTools2.DeclaredMethod(typeof(ProgramPatch), nameof(AuxFinalizePrefix)));
             if (!res1) return false;
 
             return true;
         }
 
-        [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "RedundantAssignment")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool StartGamePrefix()
+        private static void AuxFinalizePrefix()
         {
             var pathPrefix = PathPrefix();
             if (LauncherSettings.UnblockFiles)
@@ -48,9 +48,8 @@ namespace Bannerlord.BUTRLoader.Patches
                 IssuesChecker.CheckForRootHarmony();
             }
 
-            return true;
+            Manager.Disable();
         }
 
-        private static string PathPrefix() => Path.Combine(TaleWorlds.Library.BasePath.Name, "Modules");
     }
 }
