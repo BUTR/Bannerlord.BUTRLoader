@@ -4,6 +4,8 @@ using Bannerlord.ModuleManager;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -141,6 +143,13 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 return;
 
             _select(this);
+        }
+
+        [BUTRDataSourceMethod]
+        public void ExecuteOpen()
+        {
+            if (!Directory.Exists(ModuleInfoExtended.Path)) return;
+            Process.Start(ModuleInfoExtended.Path);
         }
 
         public override string ToString() => $"{ModuleInfoExtended}, IsSelected: {IsSelected}, IsValid: {IsValid}";

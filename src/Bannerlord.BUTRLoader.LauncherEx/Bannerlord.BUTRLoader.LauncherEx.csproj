@@ -30,6 +30,7 @@
     <EmbeddedResource Include="Resources\Textures\import.png" />
     <EmbeddedResource Include="Resources\Textures\refresh.png" />
     <EmbeddedResource Include="Resources\Textures\warm_overlay.png" />
+    <EmbeddedResource Include="Resources\Textures\folder.png" />
   </ItemGroup>
 
   <ItemGroup>

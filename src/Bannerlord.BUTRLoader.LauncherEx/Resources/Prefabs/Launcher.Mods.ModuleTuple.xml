@@ -12,7 +12,7 @@
    <Window>
       <ListPanel LayoutImp.LayoutMethod="VerticalBottomToTop" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren">
          <Children>
-            <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="26" MarginBottom="10" AcceptDrag="true" DragWidget="DragWidget">
+            <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="26" MarginBottom="20" AcceptDrag="true" DragWidget="DragWidget">
                <Children>
                   <ButtonWidget IsDisabled="@IsNotSelectable" IsSelected="@IsSelected" DoNotPassEventsToChildren="true" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModToggle.Width" SuggestedHeight="!ModToggle.Height" VerticalAlignment="Center" Brush="Launcher.Mods.ModToggle" Command.Click="ExecuteSelect">
                      <Children>
@@ -48,6 +48,7 @@
                         <TextWidget Text="@Name" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="Launcher.Mods.ModNameText" Brush.TextHorizontalAlignment="Left" />
                      </Children>
                   </Widget>
+                 <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModToggle.Width" SuggestedHeight="!ModToggle.Height" VerticalAlignment="Center" Brush="Launcher.Folder" Command.Click="ExecuteOpen" MarginRight="20"/>
                </Children>
             </ListPanel>
             <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginLeft="30" IsDisabled="true" IsVisible="@IsExpanded">

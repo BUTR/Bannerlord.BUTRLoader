@@ -96,4 +96,18 @@
     </Styles>
   </Brush>
 
+  <Brush Name="Launcher.Folder">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="folder" Color="#E6C8A6FF" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Default" Sprite="folder" Color="#FFFFFFFF" />
+      </Style>
+    </Styles>
+  </Brush>
+
 </Brushes>

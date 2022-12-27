@@ -25,7 +25,7 @@
             <TextWidget Text="@CharacterNameCategoryText"  WidthSizePolicy="Fixed" SuggestedWidth="!Character.Width" HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
             <TextWidget Text="@LevelCategoryText"          WidthSizePolicy="Fixed" SuggestedWidth="!Level.Width"     HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
             <TextWidget Text="@DaysCategoryText"           WidthSizePolicy="Fixed" SuggestedWidth="!Days.Width"      HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
-            <TextWidget Text="@CreatedAtCategoryText"      WidthSizePolicy="Fixed" SuggestedWidth="!CreatedAt.Width" HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" MarginRight="10" />
+            <TextWidget Text="@CreatedAtCategoryText"      WidthSizePolicy="Fixed" SuggestedWidth="!CreatedAt.Width" HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" MarginRight="45" />
           </Children>
         </ListPanel>
         <ScrollablePanel Id="ScrollablePanel" HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" InnerPanel="MyClipRect\InnerPanel" ClipRect="MyClipRect" MarginLeft="30" MarginTop="46" VerticalScrollbar="..\Scrollbar" AutoHideScrollBars="true" AcceptDrop="true" Command.Drop="ChangeLoadingOrderOf" CommandParameter.Drop="Mod">

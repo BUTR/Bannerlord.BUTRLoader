@@ -27,7 +27,7 @@
                   </Widget>
                   <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModToggle.Width" SuggestedHeight="!ModToggle.Height" MarginLeft="35" VerticalAlignment="Center" Brush="Launcher.Refresh" Command.Click="ExecuteRefresh" />
                   <TextWidget Text="@NameCategoryText" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="10" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" Brush.TextHorizontalAlignment="Left" />
-                  <TextWidget Text="@VersionCategoryText" WidthSizePolicy="Fixed" SuggestedWidth="!VersionText.Width" HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
+                  <TextWidget Text="@VersionCategoryText" WidthSizePolicy="Fixed" SuggestedWidth="!VersionText.Width" HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" MarginRight="45" />
                </Children>
             </ListPanel>
             <ScrollablePanel Id="ScrollablePanel" HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" InnerPanel="MyClipRect\InnerPanel" ClipRect="MyClipRect" MarginLeft="30" MarginTop="46" VerticalScrollbar="..\Scrollbar" AutoHideScrollBars="true" AcceptDrop="true" Command.Drop="ChangeLoadingOrderOf" CommandParameter.Drop="Mod">
