@@ -2,7 +2,7 @@
 
 using System.Xml;
 
-namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
+namespace Bannerlord.BUTRLoader.PrefabExtensions
 {
     /// <summary>
     /// Adds Options button on very top

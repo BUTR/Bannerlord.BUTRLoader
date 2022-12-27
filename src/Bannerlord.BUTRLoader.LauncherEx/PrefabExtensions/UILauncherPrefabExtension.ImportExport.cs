@@ -2,7 +2,7 @@
 
 using System.Xml;
 
-namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
+namespace Bannerlord.BUTRLoader.PrefabExtensions
 {
     internal sealed class UILauncherPrefabExtension14 : PrefabExtensionInsertAsSiblingPatch
     {

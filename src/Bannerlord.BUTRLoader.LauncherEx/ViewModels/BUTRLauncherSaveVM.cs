@@ -1,5 +1,4 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.Patches.Mixins;
 using Bannerlord.ModuleManager;
 
 using System;
@@ -104,7 +103,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
             ModuleListCode = $"_MODULES_*{string.Join("*", existingModules.Select(x => x.Id))}*_MODULES_";
 
             var missingNames = modules.Select(x => x.Name).Except(existingModulesByName.Keys).ToArray();
-            var loadOrderIssues = LauncherModsVMMixin.IsLoadOrderCorrect(existingModules).Select(x => x.Reason).ToList();
+            var loadOrderIssues = LoadOrderChecker.IsLoadOrderCorrect(existingModules).Select(x => x.Reason).ToList();
 
             //LoadOrderHint = new LauncherHintVM($"Load Order:\n{string.Join("\n", existingModules.Select(x => x.Id))}\n\nUnknown Mod Names:{string.Join("\n", missingNames)}");
             LoadOrderHint = new LauncherHintVM($"Load Order:\n{string.Join("\n", modules.Select(x => _getModuleByName(x.Name)?.Id ?? $"{x.Name} (Unknown Id)"))}");

@@ -4,14 +4,12 @@ using HarmonyLib.BUTR.Extensions;
 using System;
 
 using TaleWorlds.Core;
-using TaleWorlds.Engine;
 using TaleWorlds.MountAndBlade;
 using TaleWorlds.SaveSystem;
 using TaleWorlds.SaveSystem.Load;
 
 namespace Bannerlord.BUTRLoader.Features.ContinueSaveFile.Patches
 {
-
     internal static class SandBoxSubModulePatch
     {
         private delegate void TryLoadSaveDelegate(SaveGameFileInfo saveInfo, Action<LoadResult> onStartGame, Action? onCancel = null);

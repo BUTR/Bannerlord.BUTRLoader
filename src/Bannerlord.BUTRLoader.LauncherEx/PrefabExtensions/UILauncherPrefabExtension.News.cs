@@ -1,6 +1,6 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 
-namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
+namespace Bannerlord.BUTRLoader.PrefabExtensions
 {
     /// <summary>
     /// ModsPage - uses 'HasNoNews' instead of 'IsMultiplayer'

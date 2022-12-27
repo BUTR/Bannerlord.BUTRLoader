@@ -13,7 +13,7 @@ using TaleWorlds.GauntletUI;
 using TaleWorlds.MountAndBlade.Launcher.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library.UserDatas;
 
-namespace Bannerlord.BUTRLoader.Patches.Mixins
+namespace Bannerlord.BUTRLoader.Mixins
 {
     internal sealed class LauncherVMMixin : ViewModelMixin<LauncherVMMixin, LauncherVM>
     {
@@ -238,7 +238,7 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             _optionsGameData = new BUTRLauncherOptionsVM(OptionsType.Game, SaveUserData, RefreshOptions);
             _optionsLauncherData = new BUTRLauncherOptionsVM(OptionsType.Launcher, SaveUserData, RefreshOptions);
 
-            if (launcherVM.GetPropertyValue("ModsData") is LauncherModsVM launcherModsVM && launcherModsVM.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is { } mixin)
+            if (launcherVM.GetPropertyValue(nameof(LauncherVM.ModsData)) is LauncherModsVM lmvm && lmvm.GetMixin<BUTRLoader.Mixins.LauncherModsVMMixin, LauncherModsVM>() is { } mixin)
             {
                 _savesData = new BUTRLauncherSavesVM(mixin.GetModuleById, mixin.GetModuleByName);
                 mixin.SetGetSelectedSave(() => SavesData?.Selected);
@@ -277,16 +277,14 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
             RandomImageSwitch = !RandomImageSwitch;
 
             ViewModel.News.SetPropertyValue(nameof(LauncherNewsVMMixin.IsDisabled2), HasNoNews);
-            ViewModel.ModsData.SetPropertyValue(nameof(LauncherModsVMMixin.IsDisabled2), HasNoMods);
+            ViewModel.ModsData.SetPropertyValue(nameof(BUTRLoader.Mixins.LauncherModsVMMixin.IsDisabled2), HasNoMods);
             if (SavesData is not null)
                 SavesData.IsDisabled = !IsSingleplayer2;
             OptionsLauncherData.IsDisabled = !IsOptions;
             OptionsGameData.IsDisabled = !IsOptions;
             OptionsEngineData.IsDisabled = !IsOptions;
             if (IsOptions)
-            {
                 RefreshOptions();
-            }
         }
 
         public void RefreshOptions()
@@ -316,7 +314,6 @@ namespace Bannerlord.BUTRLoader.Patches.Mixins
         {
             if (_userDataManager is null || ViewModel?.ModsData.GetModules() is not { } modules)
                 return;
-
             if (_userDataManager.UserData.GameType == GameType.Singleplayer && isMultiplayer)
                 return;
             if (_userDataManager.UserData.GameType == GameType.Multiplayer && !isMultiplayer)

@@ -1,4 +1,4 @@
-﻿using Bannerlord.BUTRLoader.Patches.Mixins;
+﻿using Bannerlord.BUTRLoader.Mixins;
 using Bannerlord.BUTRLoader.ViewModels;
 
 using TaleWorlds.Library;

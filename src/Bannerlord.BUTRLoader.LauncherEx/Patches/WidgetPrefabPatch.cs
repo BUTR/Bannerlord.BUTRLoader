@@ -1,5 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.Patches.PrefabExtensions;
+using Bannerlord.BUTRLoader.PrefabExtensions;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;

@@ -56,6 +56,7 @@ namespace Bannerlord.BUTRLoader.Patches
                 LauncherSettings.CompactModuleList = userDataOptions.CompactModuleList;
                 LauncherSettings.HideRandomImage = userDataOptions.HideRandomImage;
                 LauncherSettings.DisableBinaryCheck = userDataOptions.DisableBinaryCheck;
+                LauncherSettings.BetaSorting = userDataOptions.BetaSorting;
             }
             catch (Exception value)
             {
@@ -87,7 +88,8 @@ namespace Bannerlord.BUTRLoader.Patches
                     LauncherSettings.FixCommonIssues,
                     LauncherSettings.CompactModuleList,
                     LauncherSettings.HideRandomImage,
-                    LauncherSettings.DisableBinaryCheck));
+                    LauncherSettings.DisableBinaryCheck,
+                    LauncherSettings.BetaSorting));
             }
             catch (Exception value)
             {

@@ -37,7 +37,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 if (IsFloatVisible && FloatValue != value)
                 {
                     PropertyReference.Value = value;
-                    OnPropertyChanged(nameof(FloatValue));
+                    OnPropertyChanged();
                     OnPropertyChanged(nameof(TextBoxValue));
                 }
             }
@@ -51,7 +51,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 if (IsIntVisible && IntValue != value)
                 {
                     PropertyReference.Value = value;
-                    OnPropertyChanged(nameof(IntValue));
+                    OnPropertyChanged();
                     OnPropertyChanged(nameof(TextBoxValue));
                 }
             }
@@ -65,7 +65,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 if (IsBoolVisible && BoolValue != value)
                 {
                     PropertyReference.Value = value;
-                    OnPropertyChanged(nameof(BoolValue));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -78,7 +78,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 if (IsStringVisible && StringValue != value)
                 {
                     PropertyReference.Value = value;
-                    OnPropertyChanged(nameof(StringValue));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -91,7 +91,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 if (IsButtonVisible && ButtonValue != value)
                 {
                     PropertyReference.Value = value;
-                    OnPropertyChanged(nameof(ButtonValue));
+                    OnPropertyChanged();
                 }
             }
         }

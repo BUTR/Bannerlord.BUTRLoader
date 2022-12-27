@@ -8,12 +8,13 @@
         public bool CompactModuleList { get; set; }
         public bool DisableBinaryCheck { get; set; }
         public bool HideRandomImage { get; set; }
+        public bool BetaSorting { get; set; }
 
         public LauncherExData() { }
         public LauncherExData(
             bool automaticallyCheckForUpdates,
             bool unblockFiles, bool fixCommonIssues, bool compactModuleList,
-            bool hideRandomImage, bool disableBinaryCheck)
+            bool hideRandomImage, bool disableBinaryCheck, bool betaSorting)
         {
             AutomaticallyCheckForUpdates = automaticallyCheckForUpdates;
             UnblockFiles = unblockFiles;
@@ -21,6 +22,7 @@
             CompactModuleList = compactModuleList;
             DisableBinaryCheck = disableBinaryCheck;
             HideRandomImage = hideRandomImage;
+            BetaSorting = betaSorting;
         }
     }
 }

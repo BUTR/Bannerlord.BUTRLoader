@@ -2,7 +2,7 @@
 
 using TaleWorlds.MountAndBlade.Launcher.Library;
 
-namespace Bannerlord.BUTRLoader.Patches.Mixins
+namespace Bannerlord.BUTRLoader.Mixins
 {
     internal sealed class LauncherNewsVMMixin : ViewModelMixin<LauncherNewsVMMixin, LauncherNewsVM>
     {

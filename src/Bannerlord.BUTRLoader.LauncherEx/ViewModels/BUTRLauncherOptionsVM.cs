@@ -52,7 +52,8 @@ namespace Bannerlord.BUTRLoader.ViewModels
                     LauncherSettings.FixCommonIssues,
                     LauncherSettings.CompactModuleList,
                     LauncherSettings.HideRandomImage,
-                    LauncherSettings.DisableBinaryCheck);
+                    LauncherSettings.DisableBinaryCheck,
+                    LauncherSettings.BetaSorting);
             }
         }
 
@@ -118,6 +119,13 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 {
                     NtfsUnblocker.UnblockPath(Path.Combine(BasePath.Name, ModuleInfoHelper.ModulesFolder));
                 })
+            }));
+            SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
+            {
+                DisplayName = "Beta Sorting",
+                HintText = "Uses the new sorting algorithm after v1.12.x. Disable to use the old algorithm",
+                SettingType = SettingType.Bool,
+                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.BetaSorting))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
@@ -286,6 +294,12 @@ namespace Bannerlord.BUTRLoader.ViewModels
             }
 
             if (_launcherExData.DisableBinaryCheck != LauncherSettings.DisableBinaryCheck)
+            {
+                _saveUserData();
+                return;
+            }
+
+            if (_launcherExData.BetaSorting != LauncherSettings.BetaSorting)
             {
                 _saveUserData();
                 return;

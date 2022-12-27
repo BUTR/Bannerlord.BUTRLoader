@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.17.0
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Restored v1.12.x sorting algorithm, disable Beta Sorting in the Launcher Options for it to work
+* Added dialog that asks whether the load order should be imported if there's a version difference
+---------------------------------------------------------------------------------------------------
 Version: 1.16.0
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Added the ability to select a save to load from launcher

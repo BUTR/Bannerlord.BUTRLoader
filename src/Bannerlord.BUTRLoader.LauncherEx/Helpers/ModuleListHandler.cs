@@ -1,10 +1,12 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Extensions;
-using Bannerlord.BUTRLoader.Patches.Mixins;
+using Bannerlord.BUTRLoader.Mixins;
 
 using HarmonyLib.BUTR.Extensions;
 
 using Newtonsoft.Json;
+
+using Ookii.Dialogs.WinForms;
 
 using System;
 using System.Collections.Generic;
@@ -54,6 +56,22 @@ namespace Bannerlord.BUTRLoader.Helpers
             _launcherVM = launcherVM;
         }
 
+        private static bool ShowVersionWarning(IEnumerable<string> mismatchedVersions)
+        {
+            using var okButton = new TaskDialogButton(ButtonType.Yes);
+            using var cancelButton = new TaskDialogButton(ButtonType.No);
+            using var dialog = new TaskDialog
+            {
+                MainIcon = TaskDialogIcon.Warning,
+                WindowTitle = "Import Warning",
+                MainInstruction = "Mismatched module versions:",
+                Content = $"{string.Join(Environment.NewLine, mismatchedVersions)}{Environment.NewLine}{Environment.NewLine}Continue import?",
+                Buttons = { okButton, cancelButton },
+                CenterParent = true,
+                AllowDialogCancellation = true,
+            };
+            return dialog.ShowDialog() == okButton;
+        }
         private static ModuleInfoExtendedWithMetadata[] ReadImportList(Stream stream, LauncherModsVMMixin mixin)
         {
             static IEnumerable<string> ReadAllLines(TextReader reader)
@@ -105,11 +123,8 @@ namespace Bannerlord.BUTRLoader.Helpers
                 if (launcherModuleVersion != version)
                     mismatchedVersions.Add(new ModuleMismatch(id, version, launcherModuleVersion));
             }
-            if (mismatchedVersions.Count > 0)
-            {
-                HintManager.ShowHint($"Cancelled Import!\n\nMismatched module versions:\n{string.Join("\n", mismatchedVersions)}");
+            if (mismatchedVersions.Count > 0 && !ShowVersionWarning(mismatchedVersions.Select(x => x.ToString())))
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
-            }
 
             return importedModules.Select(x => mixin.Modules2Lookup[x.Id]).Select(x => x.ModuleInfoExtended).ToArray();
         }
@@ -117,7 +132,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             if (MetaData.Deserialize(stream) is not { } metadata)
             {
-                HintManager.ShowHint(@$"Cancelled Import!
+                HintManager.ShowHint(@"Cancelled Import!
 
 Failed to read the save file!");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
@@ -141,7 +156,6 @@ Failed to read the save file!");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
-            /*
             var mismatchedVersions = new List<ModuleMismatch>();
             foreach (var (name, version) in importedModules)
             {
@@ -151,12 +165,8 @@ Failed to read the save file!");
                 if (launcherModuleVersion != version)
                     mismatchedVersions.Add(new ModuleMismatch(name, version, launcherModuleVersion));
             }
-            if (mismatchedVersions.Count > 0)
-            {
-                HintManager.ShowHint($"Cancelled Import!\n\nMismatched module versions:\n{string.Join("\n", mismatchedVersions)}");
+            if (mismatchedVersions.Count > 0 && !ShowVersionWarning(mismatchedVersions.Select(x => x.ToString())))
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
-            }
-            */
 
             return importedModules.Select(x => mixin.Modules2.First(y => y.Name == x.Id)).Select(x => x.ModuleInfoExtended).ToArray();
         }
@@ -203,11 +213,8 @@ Failed to read the save file!");
                 if (launcherModuleVersion != version)
                     mismatchedVersions.Add(new ModuleMismatch(id, version, launcherModuleVersion));
             }
-            if (mismatchedVersions.Count > 0)
-            {
-                HintManager.ShowHint($"Cancelled Import!\n\nMismatched module versions:\n{string.Join("\n", mismatchedVersions)}");
+            if (mismatchedVersions.Count > 0 && !ShowVersionWarning(mismatchedVersions.Select(x => x.ToString())))
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
-            }
 
             return importedModules.Select(x => mixin.Modules2Lookup[x.Id]).Select(x => x.ModuleInfoExtended).ToArray();
         }
@@ -230,7 +237,8 @@ Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
                     return;
                 }
 
-                var dialog = new OpenFileDialog
+
+                var dialog = new VistaOpenFileDialog
                 {
                     Filter = "Bannerlord Module List (*.bmlist)|*.bmlist|Bannerlord Save File (*.sav)|*.sav|Novus Preset (*.xml)|*.xml|All files (*.*)|*.*",
                     Title = "Open a File with a Load Order",
@@ -239,7 +247,7 @@ Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
                     CheckPathExists = true,
                     ReadOnlyChecked = true,
                     Multiselect = false,
-                    ValidateNames = true
+                    ValidateNames = true,
                 };
 
                 if (dialog.ShowDialog() == DialogResult.OK)
@@ -257,30 +265,15 @@ Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
                         if (modules.Length == 0)
                             return;
 
-                        var loadOrderValidationIssues = LauncherModsVMMixin.IsLoadOrderCorrect(modules).ToList();
+                        var loadOrderValidationIssues = LoadOrderChecker.IsLoadOrderCorrect(modules).ToList();
                         if (loadOrderValidationIssues.Count != 0)
                         {
                             HintManager.ShowHint($"Cancelled Import!\n\nLoad Order is not correct! Reason:\n{string.Join("\n", loadOrderValidationIssues.Select(x => x.Reason))}");
                             return;
                         }
 
-                        // Deselect all
-                        foreach (var moduleVM in mixin.Modules2)
-                        {
-                            if (moduleVM.IsSelected)
-                                moduleVM.ExecuteSelect();
-                        }
-
-                        // Select all from load order
-                        foreach (var module in modules)
-                        {
-                            if (mixin.Modules2Lookup[module.Id] is { IsSelected: false } moduleVM)
-                                moduleVM.ExecuteSelect();
-                        }
-
-                        mixin.SortByDefault();
-
-                        var orderIssues = mixin.OrderBy(modules.Select(x => x.Id)).ToList();
+                        var moduleIds = modules.Select(x => x.Id).ToHashSet();
+                        var orderIssues = mixin.TryOrderByLoadOrder(modules.Select(x => x.Id), x => moduleIds.Contains(x)).ToList();
                         if (orderIssues.Count != 0)
                         {
                             HintManager.ShowHint($"Cancelled Import!\n\nLoad Order is not correct! Reason:\n{string.Join("\n", orderIssues)}");
@@ -346,7 +339,6 @@ Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
             });
             document.Save(writer);
         }
-
         public void Export()
         {
             var thread = new Thread(() =>
@@ -359,7 +351,7 @@ Internal BUTRLoader error: GetMixin() null");
                     return;
                 }
 
-                var dialog = new SaveFileDialog
+                var dialog = new VistaSaveFileDialog
                 {
                     FileName = "MyList.bmlist",
                     Filter = "Bannerlord Module List (*.bmlist)|*.bmlist|Novus Preset (*.xml)|*.xml",

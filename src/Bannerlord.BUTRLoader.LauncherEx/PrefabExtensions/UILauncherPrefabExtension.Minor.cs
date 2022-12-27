@@ -1,12 +1,12 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.Patches.Mixins;
+using Bannerlord.BUTRLoader.Mixins;
 
 using System.Linq;
 using System.Xml;
 
 using TaleWorlds.MountAndBlade.Launcher.Library;
 
-namespace Bannerlord.BUTRLoader.Patches.PrefabExtensions
+namespace Bannerlord.BUTRLoader.PrefabExtensions
 {
     /// <summary>
     /// BUTRLoader text up the Version. Singleplayer
