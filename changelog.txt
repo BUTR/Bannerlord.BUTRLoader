@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.17.2
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Minor newline improvements in Hints
+---------------------------------------------------------------------------------------------------
 Version: 1.17.1
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Added directory buttons in Mods (opens mods folder) and Saves (opens folder with save file)

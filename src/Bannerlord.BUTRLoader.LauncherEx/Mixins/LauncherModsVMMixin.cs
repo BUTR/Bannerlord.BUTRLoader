@@ -145,9 +145,9 @@ namespace Bannerlord.BUTRLoader.Mixins
         [BUTRDataSourceMethod(OverrideName = "ChangeLoadingOrderOf")]
         public void ChangeModulePosition(BUTRLauncherModuleVM targetModuleVM, int insertIndex, string _)
         {
-            ChangeModulePosition(targetModuleVM, insertIndex, (issues) =>
+            ChangeModulePosition(targetModuleVM, insertIndex, issues =>
             {
-                HintManager.ShowHint(@$"Failed to place the module to the desired position! Placing to the nearest available! Reason:\n{string.Join("\n", issues.Select(x => x.Reason))}");
+                HintManager.ShowHint($"Failed to place the module to the desired position! Placing to the nearest available!\nReason:\n{string.Join("\n", issues.Select(x => x.Reason))}");
                 Task.Factory.StartNew(async () =>
                 {
                     await Task.Delay(5000);

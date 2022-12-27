@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.ModuleManager;
 
@@ -112,9 +113,13 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
             var dangerous = string.Empty;
             if (ModuleChecker.IsInstalledInMainAndExternalModuleDirectory(moduleInfoExtended))
-                dangerous += "The Module is installed in the game's /Modules folder and on Steam Workshop!\nThe /Modules version will be used!\n";
+                dangerous += "The Module is installed in the game's /Modules folder and on Steam Workshop!\nThe /Modules version will be used!";
             if (ModuleChecker.IsObfuscated(moduleInfoExtended))
-                dangerous += "The DLL is obfuscated!\nThere is no guarantee that the code is safe!\nThe BUTR Team warns of consequences arising from running obfuscated code!\n";
+            {
+                if (dangerous.Length != 0)
+                    dangerous += "\n";
+                dangerous += "The DLL is obfuscated!\nThere is no guarantee that the code is safe!\nThe BUTR Team warns of consequences arising from running obfuscated code!";
+            }
             if (!string.IsNullOrEmpty(dangerous))
             {
                 IsDangerous = true;
@@ -185,32 +190,32 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
             foreach (var dependentModule in moduleInfoExtended.DependentModules)
             {
-                directDeps[dependentModule.Id] = $"{dependentModule.Id}{GetOptional(dependentModule.IsOptional)}{GetVersionV(dependentModule)}\n";
+                directDeps[dependentModule.Id] = $"{dependentModule.Id}{GetOptional(dependentModule.IsOptional)}{GetVersionV(dependentModule)}";
             }
 
             foreach (var dependentModule in moduleInfoExtended.IncompatibleModules)
             {
-                incompatibleDeps[dependentModule.Id] = $"{dependentModule.Id}{GetVersionV(dependentModule)}\n";
+                incompatibleDeps[dependentModule.Id] = $"{dependentModule.Id}{GetVersionV(dependentModule)}";
             }
 
             foreach (var dependentModule in moduleInfoExtended.ModulesToLoadAfterThis)
             {
-                loadAfterDeps[dependentModule.Id] = $"{dependentModule.Id}{GetVersionV(dependentModule)}\n";
+                loadAfterDeps[dependentModule.Id] = $"{dependentModule.Id}{GetVersionV(dependentModule)}";
             }
 
             foreach (var dependentModule in moduleInfoExtended.DependentModuleMetadatas)
             {
                 if (dependentModule.IsIncompatible)
                 {
-                    incompatibleDeps[dependentModule.Id] = $"{dependentModule.Id}{GetVersion(dependentModule)}\n";
+                    incompatibleDeps[dependentModule.Id] = $"{dependentModule.Id}{GetVersion(dependentModule)}";
                 }
                 else if (dependentModule.LoadType == LoadType.LoadAfterThis)
                 {
-                    loadAfterDeps[dependentModule.Id] = $"{dependentModule.Id}{GetOptional(dependentModule.IsOptional)}{GetVersion(dependentModule)}\n";
+                    loadAfterDeps[dependentModule.Id] = $"{dependentModule.Id}{GetOptional(dependentModule.IsOptional)}{GetVersion(dependentModule)}";
                 }
                 else
                 {
-                    directDeps[dependentModule.Id] = $"{dependentModule.Id}{GetOptional(dependentModule.IsOptional)}{GetVersion(dependentModule)}\n";
+                    directDeps[dependentModule.Id] = $"{dependentModule.Id}{GetOptional(dependentModule.IsOptional)}{GetVersion(dependentModule)}";
                 }
             }
 
@@ -221,9 +226,11 @@ namespace Bannerlord.BUTRLoader.ViewModels
             {
                 sb.Append("Depends on: \n");
             }
-            foreach (var str in directDeps.Values)
+            foreach (var metadata in directDeps.Values.WithMetadata())
             {
-                sb.Append(str);
+                sb.Append(metadata.Value);
+                if (!metadata.IsLast)
+                    sb.Append("\n");
             }
 
             if (incompatibleDeps.Count > 0)
@@ -234,9 +241,11 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 }
                 sb.Append("Incompatible with: \n");
             }
-            foreach (var str in incompatibleDeps.Values)
+            foreach (var metadata in incompatibleDeps.Values.WithMetadata())
             {
-                sb.Append(str);
+                sb.Append(metadata.Value);
+                if (!metadata.IsLast)
+                    sb.Append("\n");
             }
 
             if (loadAfterDeps.Count > 0)
@@ -247,9 +256,11 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 }
                 sb.Append("Needs to load before: \n");
             }
-            foreach (var str in loadAfterDeps.Values)
+            foreach (var metadata in loadAfterDeps.Values.WithMetadata())
             {
-                sb.Append(str);
+                sb.Append(metadata.Value);
+                if (!metadata.IsLast)
+                    sb.Append("\n");
             }
 
             return sb.ToString();
