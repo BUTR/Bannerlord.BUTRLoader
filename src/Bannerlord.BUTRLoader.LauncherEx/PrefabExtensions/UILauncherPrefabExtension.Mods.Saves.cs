@@ -1,5 +1,6 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 
+using System.Collections.Generic;
 using System.Xml;
 
 namespace Bannerlord.BUTRLoader.PrefabExtensions
@@ -15,7 +16,7 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public UILauncherPrefabExtension24()
         {
             XmlDocument.LoadXml(@"
-<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""SavesPage"" UpdateChildrenStates=""true"" IsSelected=""@IsSavesDataSelected"" IsHidden=""@IsNotSingleplayer"">
+<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""SavesPage"" UpdateChildrenStates=""true"" IsSelected=""@IsSavesDataSelected"" IsVisible=""@IsSingleplayer"">
   <Children>
     <TextWidget Id=""SubMenuText"" Text=""@SavesText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" Brush=""Launcher.SubMenuButton.SingleplayerText"" />
   </Children>
@@ -43,37 +44,26 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public override XmlDocument GetPrefabExtension() => XmlDocument;
     }
 
-    internal sealed class UILauncherPrefabExtension26 : PrefabExtensionSetAttributePatch
+    internal sealed class UILauncherPrefabExtension26 : PrefabExtensionSetAttributesPatch
     {
         public static string Movie => "UILauncher";
         public static string XPath => "descendant::ButtonWidget[@Id='PlaySingleplayerButton']";
 
-        public override string Attribute => "IsVisible";
-        public override string Value => "@ShowPlaySingleplayerButton";
+        public override List<Attribute> Attributes { get; } = new()
+        {
+            new Attribute("IsHidden", ""),
+            new Attribute("IsVisible", "@ShowPlaySingleplayerButton"),
+        };
     }
-    internal sealed class UILauncherPrefabExtension32 : PrefabExtensionSetAttributePatch
-    {
-        public static string Movie => "UILauncher";
-        public static string XPath => "descendant::ButtonWidget[@Id='PlaySingleplayerButton']";
-
-        public override string Attribute => "IsHidden";
-        public override string Value => "";
-    }
-
-    internal sealed class UILauncherPrefabExtension33 : PrefabExtensionSetAttributePatch
+    internal sealed class UILauncherPrefabExtension33 : PrefabExtensionSetAttributesPatch
     {
         public static string Movie => "UILauncher";
         public static string XPath => "descendant::ButtonWidget[@Id='ContinueSingleplayerButton']";
 
-        public override string Attribute => "IsHidden";
-        public override string Value => "";
-    }
-    internal sealed class UILauncherPrefabExtension34 : PrefabExtensionSetAttributePatch
-    {
-        public static string Movie => "UILauncher";
-        public static string XPath => "descendant::ButtonWidget[@Id='ContinueSingleplayerButton']";
-
-        public override string Attribute => "IsVisible";
-        public override string Value => "@IsSingleplayer2";
+        public override List<Attribute> Attributes { get; } = new()
+        {
+            new Attribute("IsHidden", ""),
+            new Attribute("IsVisible", "@IsSingleplayer2"),
+        };
     }
 }

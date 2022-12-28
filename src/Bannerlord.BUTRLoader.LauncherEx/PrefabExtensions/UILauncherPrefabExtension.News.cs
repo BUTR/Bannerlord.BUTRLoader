@@ -1,17 +1,22 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 
+using System.Collections.Generic;
+
 namespace Bannerlord.BUTRLoader.PrefabExtensions
 {
     /// <summary>
-    /// ModsPage - uses 'HasNoNews' instead of 'IsMultiplayer'
+    /// ModsPage - uses 'ShowNews' instead of 'IsMultiplayer'
     /// </summary>
-    internal sealed class UILauncherPrefabExtension8 : PrefabExtensionSetAttributePatch
+    internal sealed class UILauncherPrefabExtension8 : PrefabExtensionSetAttributesPatch
     {
         public static string Movie => "UILauncher";
         public static string XPath => "descendant::TabToggleWidget[1]";
 
-        public override string Attribute => "IsHidden";
-        public override string Value => "@HasNoNews";
+        public override List<Attribute> Attributes { get; } = new()
+        {
+            new Attribute("IsHidden", ""),
+            new Attribute("IsVisible", "@ShowNews"),
+        };
     }
 
     /// <summary>

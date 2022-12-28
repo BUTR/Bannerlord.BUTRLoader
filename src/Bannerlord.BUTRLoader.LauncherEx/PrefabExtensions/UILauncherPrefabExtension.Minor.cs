@@ -1,6 +1,7 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Mixins;
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 
@@ -22,7 +23,7 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public UILauncherPrefabExtension1()
         {
             XmlDocument.LoadXml(@$"
-<TextWidget WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""CoverChildren"" VerticalAlignment=""Bottom"" Brush=""Launcher.Version.Text"" MarginLeft=""7"" MarginBottom=""@BUTRLoaderVersionMarginBottom"" IsHidden=""@HideBUTRLoaderVersionText"" Text=""@BUTRLoaderVersionText""/>
+<TextWidget WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""CoverChildren"" VerticalAlignment=""Bottom"" Brush=""Launcher.Version.Text"" MarginLeft=""7"" MarginBottom=""@BUTRLoaderVersionMarginBottom"" IsVisible=""@ShowBUTRLoaderVersionText"" Text=""@BUTRLoaderVersionText""/>
 ");
         }
 
@@ -56,13 +57,16 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
     /// <summary>
     /// Make the random image hideable
     /// </summary>
-    internal sealed class UILauncherPrefabExtension17 : PrefabExtensionSetAttributePatch
+    internal sealed class UILauncherPrefabExtension17 : PrefabExtensionSetAttributesPatch
     {
         public static string Movie => "UILauncher";
         public static string XPath => "descendant::LauncherRandomImageWidget";
 
-        public override string Attribute => "IsHidden";
-        public override string Value => "@HideRandomImage";
+        public override List<Attribute> Attributes { get; } = new()
+        {
+            new Attribute("IsHidden", ""),
+            new Attribute("IsVisible", "@ShowRandomImage"),
+        };
     }
 
     /// <summary>

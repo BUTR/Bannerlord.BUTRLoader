@@ -83,7 +83,6 @@ namespace Bannerlord.BUTRLoader.ViewModels
                     OnPropertyChanged();
                     OnPropertyChanged(nameof(IsNotSelectable));
                     OnPropertyChanged(nameof(IsValid));
-                    OnPropertyChanged(nameof(IsNotValid));
                 }
             }
         }
@@ -95,9 +94,6 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
         [BUTRDataSourceProperty]
         public bool IsValid => string.IsNullOrWhiteSpace(IssuesText);
-
-        [BUTRDataSourceProperty]
-        public bool IsNotValid => !IsValid;
 
         [BUTRDataSourceProperty]
         public bool IsVisible { get => _isVisible; set => SetField(ref _isVisible, value, nameof(IsVisible)); }

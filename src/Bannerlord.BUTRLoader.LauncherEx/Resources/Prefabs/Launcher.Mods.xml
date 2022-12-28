@@ -15,7 +15,7 @@
         <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="26" MarginTop="10" MarginLeft="30">
           <Children>
             <Launcher.ToggleButton WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModToggle.Width" SuggestedHeight="!ModToggle.Height" Command.Click="ExecuteGlobalCheckbox" IsSelected="@GlobalCheckboxState" ManualToggle="true" />
-            <Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Icon.Size" SuggestedHeight="!Icon.Size" VerticalAlignment="Center" MarginLeft="10" IsVisible="@IsNotForceSorted" />
+            <Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Icon.Size" SuggestedHeight="!Icon.Size" VerticalAlignment="Center" MarginLeft="10" IsHidden="@IsForceSorted" />
             <BrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!Icon.Size" SuggestedHeight="!Icon.Size" VerticalAlignment="Center" MarginLeft="10" PositionYOffset="2" IsVisible="@IsForceSorted" Brush="Launcher.Error" >
               <Children>
                 <LauncherHintTriggerWidget DataSource="{ForceSortedHint}" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint" IsDisabled="true" />

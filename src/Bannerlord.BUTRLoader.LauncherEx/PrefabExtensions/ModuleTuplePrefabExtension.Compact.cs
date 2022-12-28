@@ -1,22 +1,19 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 
+using System.Collections.Generic;
+
 namespace Bannerlord.BUTRLoader.PrefabExtensions
 {
-    internal sealed class ModuleTuplePrefabExtension4 : PrefabExtensionSetAttributePatch
+    internal sealed class ModuleTuplePrefabExtension4 : PrefabExtensionSetAttributesPatch
     {
         public static string Movie => "Launcher.Mods.ModuleTuple2";
         public static string XPath => "descendant::ListPanel[@DragWidget='DragWidget']";
 
-        public override string Attribute => "SuggestedHeight";
-        public override string Value => LauncherSettings.CompactModuleList ? "24" : "26";
-    }
-    internal sealed class ModuleTuplePrefabExtension5 : PrefabExtensionSetAttributePatch
-    {
-        public static string Movie => "Launcher.Mods.ModuleTuple2";
-        public static string XPath => "descendant::ListPanel[@DragWidget='DragWidget']";
-
-        public override string Attribute => "MarginBottom";
-        public override string Value => LauncherSettings.CompactModuleList ? "2" : "10";
+        public override List<Attribute> Attributes { get; } = new()
+        {
+            new Attribute("SuggestedHeight", LauncherSettings.CompactModuleList ? "24" : "26"),
+            new Attribute("MarginBottom", LauncherSettings.CompactModuleList ? "2" : "10"),
+        };
     }
     internal sealed class ModuleTuplePrefabExtension6 : PrefabExtensionSetAttributePatch
     {

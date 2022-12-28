@@ -1,5 +1,4 @@
-﻿using Bannerlord.BUTR.Shared.Helpers;
-using Bannerlord.BUTRLoader.Helpers;
+﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.ModuleManager;
 
 using System;
@@ -8,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library;
 using TaleWorlds.SaveSystem;
 
@@ -154,10 +152,8 @@ namespace Bannerlord.BUTRLoader.ViewModels
         [BUTRDataSourceMethod]
         public void ExecuteOpen()
         {
-            var savesDirectory = new PlatformDirectoryPath(PlatformFileType.User, "Game Saves\\");
-            if (PlatformFileHelperPCExtended.GetDirectoryFullPath(savesDirectory) is not { } savesDirectoryPath) return;
-            var saveFilePath = Path.Combine(savesDirectoryPath, $"{_saveGameFileInfo.Name}.sav");
-            if (!File.Exists(saveFilePath)) return;
+            var saveFilePath = SaveHelper.GetSaveFilePath(_saveGameFileInfo);
+            if (string.IsNullOrEmpty(saveFilePath) || !File.Exists(saveFilePath)) return;
 
             Process.Start("explorer.exe", $"/select,\"{saveFilePath}\"");
         }

@@ -1,8 +1,12 @@
-﻿using Bannerlord.ModuleManager;
+﻿using Bannerlord.BUTR.Shared.Helpers;
 
 using System;
+using System.IO;
 
+using TaleWorlds.Library;
 using TaleWorlds.SaveSystem;
+
+using ApplicationVersion = Bannerlord.ModuleManager.ApplicationVersion;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
@@ -27,5 +31,12 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         public static int GetChangeSet(MetaData metadata) =>
             metadata.TryGetValue("ApplicationVersion", out var av) && av?.Split('.') is { Length: 4 } split && int.TryParse(split[3], out var cs) ? cs : -1;
+
+        public static string? GetSaveFilePath(SaveGameFileInfo saveGameFileInfo)
+        {
+            var savesDirectory = new PlatformDirectoryPath(PlatformFileType.User, "Game Saves\\");
+            if (PlatformFileHelperPCExtended.GetDirectoryFullPath(savesDirectory) is not { } savesDirectoryPath) return null;
+            return Path.Combine(savesDirectoryPath, $"{saveGameFileInfo.Name}.sav");
+        }
     }
 }

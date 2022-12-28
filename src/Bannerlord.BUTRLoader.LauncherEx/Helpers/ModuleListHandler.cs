@@ -4,8 +4,6 @@ using Bannerlord.BUTRLoader.Mixins;
 
 using HarmonyLib.BUTR.Extensions;
 
-using Newtonsoft.Json;
-
 using Ookii.Dialogs.WinForms;
 
 using System;
@@ -17,6 +15,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 
+using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade.Launcher.Library;
 using TaleWorlds.SaveSystem;
 
@@ -26,8 +25,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 {
     internal class ModuleListHandler
     {
-        private record SaveMetadata([property: JsonProperty("List")] Dictionary<string, string> List);
-        private record ModuleListEntry(string Id, ApplicationVersion Version);
+        private record ModuleListEntry(string Id, ApplicationVersion Version, string? Url = null);
         private record ModuleMismatch(string Id, ApplicationVersion OriginalVersion, ApplicationVersion CurrentVersion)
         {
             public override string ToString() => $"{Id} - Expected: {OriginalVersion}, Installed: {CurrentVersion}";
@@ -38,16 +36,6 @@ namespace Bannerlord.BUTRLoader.Helpers
             AccessTools2.GetDelegate<UpdateAndSaveUserModsDataDelegate>(typeof(LauncherVM), "UpdateAndSaveUserModsData");
 
         private static readonly int DefaultChangeSet = typeof(TaleWorlds.Library.ApplicationVersion).GetField("DefaultChangeSet")?.GetValue(null) as int? ?? 0;
-
-        private static string Serialize(IEnumerable<ModuleListEntry> modules)
-        {
-            var sb = new StringBuilder();
-            foreach (var (id, version) in modules)
-            {
-                sb.AppendLine($"{id}: {version}");
-            }
-            return sb.ToString();
-        }
 
         private readonly LauncherVM _launcherVM;
 
@@ -115,7 +103,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             }
 
             var mismatchedVersions = new List<ModuleMismatch>();
-            foreach (var (id, version) in importedModules)
+            foreach (var (id, version, _) in importedModules)
             {
                 if (!mixin.Modules2Lookup.TryGetValue(id, out var moduleVM)) continue;
 
@@ -132,9 +120,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             if (MetaData.Deserialize(stream) is not { } metadata)
             {
-                HintManager.ShowHint(@"Cancelled Import!
-
-Failed to read the save file!");
+                HintManager.ShowHint("Cancelled Import!\n\nFailed to read the save file!");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -157,7 +143,7 @@ Failed to read the save file!");
             }
 
             var mismatchedVersions = new List<ModuleMismatch>();
-            foreach (var (name, version) in importedModules)
+            foreach (var (name, version, _) in importedModules)
             {
                 if (mixin.Modules2.FirstOrDefault(x => x.Name == name) is not { } moduleVM) continue;
 
@@ -205,7 +191,7 @@ Failed to read the save file!");
             }
 
             var mismatchedVersions = new List<ModuleMismatch>();
-            foreach (var (id, version) in importedModules)
+            foreach (var (id, version, _) in importedModules)
             {
                 if (!mixin.Modules2Lookup.TryGetValue(id, out var moduleVM)) continue;
 
@@ -220,24 +206,19 @@ Failed to read the save file!");
         }
         public void Import()
         {
+            if (_launcherVM.ModsData.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is not { } mixin)
+            {
+                HintManager.ShowHint("Cancelled Import!\n\nInternal BUTRLoader error: GetMixin() null");
+                return;
+            }
+            if (UpdateAndSaveUserModsDataMethod is null)
+            {
+                HintManager.ShowHint("Cancelled Import!\n\nInternal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
+                return;
+            }
+
             var thread = new Thread(() =>
             {
-                if (_launcherVM.ModsData.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is not { } mixin)
-                {
-                    HintManager.ShowHint(@$"Cancelled Import!
-
-Internal BUTRLoader error: GetMixin() null");
-                    return;
-                }
-                if (UpdateAndSaveUserModsDataMethod is null)
-                {
-                    HintManager.ShowHint(@$"Cancelled Import!
-
-Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
-                    return;
-                }
-
-
                 var dialog = new VistaOpenFileDialog
                 {
                     Filter = "Bannerlord Module List (*.bmlist)|*.bmlist|Bannerlord Save File (*.sav)|*.sav|Novus Preset (*.xml)|*.xml|All files (*.*)|*.*",
@@ -262,42 +243,122 @@ Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
                             ".xml" => ReadNovusPreset(fs, mixin),
                             _ => Array.Empty<ModuleInfoExtendedWithMetadata>()
                         };
-                        if (modules.Length == 0)
-                            return;
-
-                        var loadOrderValidationIssues = LoadOrderChecker.IsLoadOrderCorrect(modules).ToList();
-                        if (loadOrderValidationIssues.Count != 0)
-                        {
-                            HintManager.ShowHint($"Cancelled Import!\n\nLoad Order is not correct! Reason:\n{string.Join("\n", loadOrderValidationIssues.Select(x => x.Reason))}");
-                            return;
-                        }
-
-                        var moduleIds = modules.Select(x => x.Id).ToHashSet();
-                        var orderIssues = mixin.TryOrderByLoadOrder(modules.Select(x => x.Id), x => moduleIds.Contains(x)).ToList();
-                        if (orderIssues.Count != 0)
-                        {
-                            HintManager.ShowHint($"Cancelled Import!\n\nLoad Order is not correct! Reason:\n{string.Join("\n", orderIssues)}");
-                            return;
-                        }
-
-                        UpdateAndSaveUserModsDataMethod(_launcherVM, false);
-                        HintManager.ShowHint("Successfully imported list!");
+                        ImportInternal(modules, mixin);
                     }
-                    catch (Exception) { }
+                    catch (Exception e)
+                    {
+                        HintManager.ShowHint($"Cancelled Import!\n\nException:\n{e}");
+                    }
                 }
             });
             thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
             thread.Join();
         }
-
-        private void SaveBMList(Stream stream, IReadOnlyList<ModuleInfoExtendedWithMetadata> modules)
+        public void ImportSaveFile(string saveFile)
         {
+            if (_launcherVM.ModsData.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is not { } mixin)
+            {
+                HintManager.ShowHint("Cancelled Import!\n\nInternal BUTRLoader error: GetMixin() null");
+                return;
+            }
+
+            if (MBSaveLoad.GetSaveFileWithName(saveFile) is not { } si || SaveHelper.GetSaveFilePath(si) is not { } saveFilePath || !File.Exists(saveFilePath))
+            {
+                HintManager.ShowHint("Cancelled Import!\n\nSave File not found!");
+                return;
+            }
+
+            try
+            {
+                using var fs = File.OpenRead(saveFilePath);
+                var modules = ReadSaveFile(fs, mixin);
+                ImportInternal(modules, mixin);
+            }
+            catch (Exception e)
+            {
+                HintManager.ShowHint($"Cancelled Import!\n\nException:\n{e}");
+            }
+        }
+        private void ImportInternal(ModuleInfoExtendedWithMetadata[] modules, LauncherModsVMMixin mixin)
+        {
+            if ( modules.Length == 0)
+                return;
+
+            if (UpdateAndSaveUserModsDataMethod is null)
+            {
+                HintManager.ShowHint("Cancelled Import!\n\nInternal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
+                return;
+            }
+
+            var loadOrderValidationIssues = LoadOrderChecker.IsLoadOrderCorrect(modules).ToList();
+            if (loadOrderValidationIssues.Count != 0)
+            {
+                HintManager.ShowHint($"Cancelled Import!\n\nLoad Order is not correct! Reason:\n{string.Join("\n", loadOrderValidationIssues.Select(x => x.Reason))}");
+                return;
+            }
+
+            var moduleIds = modules.Select(x => x.Id).ToHashSet();
+            var orderIssues = mixin.TryOrderByLoadOrder(modules.Select(x => x.Id), x => moduleIds.Contains(x)).ToList();
+            if (orderIssues.Count != 0)
+            {
+                HintManager.ShowHint($"Cancelled Import!\n\nLoad Order is not correct! Reason:\n{string.Join("\n", orderIssues)}");
+                return;
+            }
+
+            UpdateAndSaveUserModsDataMethod(_launcherVM, false);
+            HintManager.ShowHint("Successfully imported list!");
+        }
+
+        private static ModuleListEntry[] ReadSaveFileModuleList(Stream stream, LauncherModsVMMixin mixin)
+        {
+            if (MetaData.Deserialize(stream) is not { } metadata)
+            {
+                HintManager.ShowHint("Cancelled Export!\n\nFailed to read the save file!");
+                return Array.Empty<ModuleListEntry>();
+            }
+
+            var changeset = SaveHelper.GetChangeSet(metadata);
+            var importedModules = SaveHelper.GetModules(metadata).Select(x =>
+            {
+                var version = SaveHelper.GetModuleVersion(metadata, x);
+                if (version.ChangeSet == changeset)
+                    version = new ApplicationVersion(version.ApplicationVersionType, version.Major, version.Minor, version.Revision, 0);
+                return new ModuleListEntry(x, version);
+            }).ToArray();
+
+            var importedModuleNames = importedModules.Select(x => x.Id).ToHashSet();
+            var currentModuleNames = mixin.Modules2.Select(x => x.ModuleInfoExtended.Name).ToHashSet();
+            var mismatchedModuleNames = importedModuleNames.Except(currentModuleNames).ToList();
+            if (mismatchedModuleNames.Count > 0)
+            {
+                HintManager.ShowHint($"Cancelled Export!\n\nMissing modules:\n{string.Join("\n", mismatchedModuleNames)}");
+                return Array.Empty<ModuleListEntry>();
+            }
+
+            return importedModules
+                .Select(x => mixin.Modules2.First(y => y.Name == x.Id))
+                .Select(x => x.ModuleInfoExtended)
+                .Select(x => new ModuleListEntry(x.Id, x.Version, x.Url))
+                .ToArray();
+        }
+        private void SaveBMList(Stream stream, IEnumerable<ModuleListEntry> modules)
+        {
+            static string Serialize(IEnumerable<ModuleListEntry> modules)
+            {
+                var sb = new StringBuilder();
+                foreach (var (id, version, _) in modules)
+                {
+                    sb.AppendLine($"{id}: {version}");
+                }
+                return sb.ToString();
+            }
+
             using var writer = new StreamWriter(stream);
             var content = Serialize(modules.Select(x => new ModuleListEntry(x.Id, x.Version)).ToArray());
             writer.Write(content);
         }
-        private void SaveNovusPreset(Stream stream, IReadOnlyList<ModuleInfoExtendedWithMetadata> modules)
+        private void SaveNovusPreset(Stream stream, IEnumerable<ModuleListEntry> modules)
         {
             var document = new XmlDocument();
 
@@ -341,16 +402,14 @@ Internal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
         }
         public void Export()
         {
+            if (_launcherVM.ModsData.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is not { } mixin)
+            {
+                HintManager.ShowHint("Cancelled Export!\n\nInternal BUTRLoader error: GetMixin() null");
+                return;
+            }
+
             var thread = new Thread(() =>
             {
-                if (_launcherVM.ModsData.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is not { } mixin)
-                {
-                    HintManager.ShowHint(@$"Cancelled Export!
-
-Internal BUTRLoader error: GetMixin() null");
-                    return;
-                }
-
                 var dialog = new VistaSaveFileDialog
                 {
                     FileName = "MyList.bmlist",
@@ -370,7 +429,7 @@ Internal BUTRLoader error: GetMixin() null");
                         var modules = mixin.Modules2
                             .Where(x => x.IsSelected)
                             .Select(x => x.ModuleInfoExtended)
-                            .ToArray();
+                            .Select(x => new ModuleListEntry(x.Id, x.Version, x.Url));
 
                         using var fs = dialog.OpenFile();
                         switch (Path.GetExtension(dialog.FileName))
@@ -383,7 +442,70 @@ Internal BUTRLoader error: GetMixin() null");
                                 break;
                         }
                     }
-                    catch (Exception) { }
+                    catch (Exception e)
+                    {
+                        HintManager.ShowHint($"Cancelled Export!\n\nException:\n{e}");
+                    }
+                    HintManager.ShowHint("Successfully exported list!");
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            thread.Join();
+        }
+        public void ExportSaveFile(string saveFile)
+        {
+            if (_launcherVM.ModsData.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is not { } mixin)
+            {
+                HintManager.ShowHint("Cancelled Export!\n\nInternal BUTRLoader error: GetMixin() null");
+                return;
+            }
+
+            if (MBSaveLoad.GetSaveFileWithName(saveFile) is not { } si || SaveHelper.GetSaveFilePath(si) is not { } saveFilePath || !File.Exists(saveFilePath))
+            {
+                HintManager.ShowHint("Cancelled Export!\n\nSave File not found!");
+                return;
+            }
+
+            using var fsSave = File.OpenRead(saveFilePath);
+            var modules = ReadSaveFileModuleList(fsSave, mixin);
+            if (modules.Length == 0)
+                return;
+
+            var thread = new Thread(() =>
+            {
+                var dialog = new VistaSaveFileDialog
+                {
+                    FileName = $"{saveFile}.bmlist",
+                    Filter = "Bannerlord Module List (*.bmlist)|*.bmlist|Novus Preset (*.xml)|*.xml",
+                    Title = "Save a Bannerlord Module List File",
+
+                    CheckFileExists = false,
+                    CheckPathExists = false,
+
+                    ValidateNames = true,
+                };
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        using var fs = dialog.OpenFile();
+                        switch (Path.GetExtension(dialog.FileName))
+                        {
+                            case ".bmlist":
+                                SaveBMList(fs, modules);
+                                break;
+                            case ".xml":
+                                SaveNovusPreset(fs, modules);
+                                break;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        HintManager.ShowHint($"Cancelled Export!\n\nException:\n{e}");
+                    }
+                    HintManager.ShowHint("Successfully exported list!");
                 }
             });
             thread.SetApartmentState(ApartmentState.STA);

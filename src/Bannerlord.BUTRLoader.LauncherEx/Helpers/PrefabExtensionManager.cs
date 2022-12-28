@@ -18,6 +18,12 @@ namespace Bannerlord.BUTRLoader.Helpers
         public abstract string Attribute { get; }
         public abstract string Value { get; }
     }
+    internal abstract class PrefabExtensionSetAttributesPatch : IPrefabPatch
+    {
+        public abstract List<Attribute> Attributes { get; }
+
+        public record struct Attribute(string Name, string Value);
+    }
 
     /// <summary>
     /// https://github.com/BUTR/Bannerlord.UIExtenderEx/blob/dev/src/Bannerlord.UIExtenderEx/Prefabs/PrefabExtensionInsertAsSiblingPatch.cs
@@ -114,6 +120,34 @@ namespace Bannerlord.BUTRLoader.Helpers
                 }
 
                 node.Attributes![patch.Attribute].Value = patch.Value;
+            });
+        }
+
+        public static void RegisterPatch(string movie, string? xpath, PrefabExtensionSetAttributesPatch patch)
+        {
+            RegisterPatch(movie, xpath, node =>
+            {
+                var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument;
+                if (ownerDocument is null)
+                {
+                    return;
+                }
+
+                if (node.NodeType != XmlNodeType.Element)
+                {
+                    return;
+                }
+
+                foreach (var (attribute, value) in patch.Attributes)
+                {
+                    if (node.Attributes![attribute] is null)
+                    {
+                        var attr = ownerDocument.CreateAttribute(attribute);
+                        node.Attributes.Append(attr);
+                    }
+
+                    node.Attributes![attribute].Value = value;
+                }
             });
         }
 

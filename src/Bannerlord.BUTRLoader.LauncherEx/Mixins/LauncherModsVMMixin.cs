@@ -52,21 +52,8 @@ namespace Bannerlord.BUTRLoader.Mixins
         public Dictionary<string, BUTRLauncherModuleVM> Modules2Lookup { get; } = new();
 
         [BUTRDataSourceProperty]
-        public bool IsForceSorted
-        {
-            get => _isForceSorted;
-            set
-            {
-                if (SetField(ref _isForceSorted, value))
-                {
-                    OnPropertyChanged(nameof(IsNotForceSorted));
-                }
-            }
-        }
+        public bool IsForceSorted { get => _isForceSorted; set => SetField(ref _isForceSorted, value); }
         private bool _isForceSorted;
-
-        [BUTRDataSourceProperty]
-        public bool IsNotForceSorted => !IsForceSorted;
 
         [BUTRDataSourceProperty]
         public LauncherHintVM? ForceSortedHint { get => _forceSortedHint; set => SetField(ref _forceSortedHint, value); }

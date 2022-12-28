@@ -62,8 +62,6 @@ namespace Bannerlord.BUTRLoader.Mixins
                 }
             }
         }
-        [BUTRDataSourceProperty]
-        public bool IsNotSingleplayer => !IsSingleplayer2;
 
         [BUTRDataSourceProperty]
         public bool IsMultiplayer2
@@ -99,11 +97,6 @@ namespace Bannerlord.BUTRLoader.Mixins
                 }
             }
         }
-        [BUTRDataSourceProperty]
-        public bool IsNotOptions => !IsOptions;
-
-        [BUTRDataSourceProperty]
-        public bool HideBUTRLoaderVersionText => !IsSingleplayer2 && !IsOptions;
 
         [BUTRDataSourceProperty]
         public bool IsDigitalCompanion2
@@ -126,12 +119,36 @@ namespace Bannerlord.BUTRLoader.Mixins
         }
 
         [BUTRDataSourceProperty]
-        public HorizontalAlignment PlayButtonAlignment => _state == TopTabs.Singleplayer ? HorizontalAlignment.Right : HorizontalAlignment.Center;
+        public bool IsModsDataSelected
+        {
+            get => _isModsDataSelected;
+            set
+            {
+                if (SetField(ref _isModsDataSelected, value))
+                {
+                    OnPropertyChanged(nameof(ShowImportExport));
+                }
+            }
+        }
+        private bool _isModsDataSelected;
 
         [BUTRDataSourceProperty]
-        public bool HasNoMods => !IsSingleplayer2 && !IsMultiplayer2;
+        public bool IsSavesDataSelected
+        {
+            get => _isSavesDataSelected;
+            set
+            {
+                if (SetField(ref _isSavesDataSelected, value))
+                {
+                    OnPropertyChanged(nameof(ShowPlaySingleplayerButton));
+                    OnPropertyChanged(nameof(ShowImportExport));
+                }
+            }
+        }
+        private bool _isSavesDataSelected;
+
         [BUTRDataSourceProperty]
-        public bool HasNoNews => !IsSingleplayer2 && !IsMultiplayer2 && !IsDigitalCompanion2;
+        public HorizontalAlignment PlayButtonAlignment => _state == TopTabs.Singleplayer ? HorizontalAlignment.Right : HorizontalAlignment.Center;
 
         [BUTRDataSourceProperty]
         public bool RandomImageSwitch { get => _randomImageSwitch; set => SetField(ref _randomImageSwitch, value); }
@@ -178,41 +195,22 @@ namespace Bannerlord.BUTRLoader.Mixins
         private BUTRLauncherSavesVM? _savesData;
 
         [BUTRDataSourceProperty]
-        public bool HideRandomImage { get => _hideRandomImage; set => SetField(ref _hideRandomImage, value); }
-        private bool _hideRandomImage;
+        public bool ShowMods => IsSingleplayer2 || IsMultiplayer2;
+        [BUTRDataSourceProperty]
+        public bool ShowNews => IsSingleplayer2 || IsMultiplayer2 || IsDigitalCompanion2;
 
         [BUTRDataSourceProperty]
-        public bool IsModsDataSelected
-        {
-            get => _isModsDataSelected;
-            set
-            {
-                if (SetField(ref _isModsDataSelected, value))
-                {
-                    OnPropertyChanged(nameof(IsModsDataNotSelected));
-                }
-            }
-        }
-        private bool _isModsDataSelected;
-        [BUTRDataSourceProperty]
-        public bool IsModsDataNotSelected => !IsModsDataSelected;
+        public bool ShowRandomImage { get => _showRandomImage; set => SetField(ref _showRandomImage, value); }
+        private bool _showRandomImage;
 
         [BUTRDataSourceProperty]
-        public bool IsSavesDataSelected
-        {
-            get => _isSavesDataSelected;
-            set
-            {
-                if (SetField(ref _isSavesDataSelected, value))
-                {
-                    OnPropertyChanged(nameof(IsSavesDataNotSelected));
-                    OnPropertyChanged(nameof(ShowPlaySingleplayerButton));
-                }
-            }
-        }
-        private bool _isSavesDataSelected;
+        public bool ShowImportExport => IsModsDataSelected || (IsSavesDataSelected && SavesData?.Selected is not null);
+
         [BUTRDataSourceProperty]
-        public bool IsSavesDataNotSelected => !IsSavesDataSelected;
+        public bool ShowBUTRLoaderVersionText => IsSingleplayer2 || IsOptions;
+
+        [BUTRDataSourceProperty]
+        public bool ShowPlaySingleplayerButton => IsSingleplayer2 && !IsSavesDataSelected;
 
         [BUTRDataSourceProperty]
         public float ContentTabControlMarginRight { get => _contentTabControlMarginRight; set => SetField(ref _contentTabControlMarginRight, value); }
@@ -234,9 +232,6 @@ namespace Bannerlord.BUTRLoader.Mixins
         public float BackgroundHeight { get => _backgroundHeight; set => SetField(ref _backgroundHeight, value); }
         private float _backgroundHeight = 581; // 700
 
-        [BUTRDataSourceProperty]
-        public bool ShowPlaySingleplayerButton => IsSingleplayer2 && !IsSavesDataSelected;
-
         private readonly UserDataManager? _userDataManager;
 
         private ModuleListHandler? _currentModuleListHandler;
@@ -252,10 +247,15 @@ namespace Bannerlord.BUTRLoader.Mixins
             if (launcherVM.GetPropertyValue(nameof(LauncherVM.ModsData)) is LauncherModsVM lmvm && lmvm.GetMixin<BUTRLoader.Mixins.LauncherModsVMMixin, LauncherModsVM>() is { } mixin)
             {
                 _savesData = new BUTRLauncherSavesVM(mixin.GetModuleById, mixin.GetModuleByName);
+                _savesData.PropertyChanged += (sender, args) =>
+                {
+                    if (args.PropertyName == "SaveSelected")
+                        OnPropertyChanged(nameof(ShowImportExport));
+                };
                 mixin.SetGetSelectedSave(() => SavesData?.Selected);
             }
 
-            HideRandomImage = LauncherSettings.HideRandomImage;
+            ShowRandomImage = !LauncherSettings.HideRandomImage;
             ContentTabControlMarginRight = LauncherSettings.HideRandomImage ? 5 : 114;
             BackgroundHeight = LauncherSettings.BigMode ? 700 : 581;
 
@@ -274,12 +274,10 @@ namespace Bannerlord.BUTRLoader.Mixins
             OnPropertyChanged(nameof(IsMultiplayer2));
             OnPropertyChanged(nameof(IsOptions));
             OnPropertyChanged(nameof(IsDigitalCompanion2));
-            OnPropertyChanged(nameof(IsNotOptions));
-            OnPropertyChanged(nameof(IsNotSingleplayer));
-            OnPropertyChanged(nameof(HideBUTRLoaderVersionText));
+            OnPropertyChanged(nameof(ShowBUTRLoaderVersionText));
             OnPropertyChanged(nameof(PlayButtonAlignment));
-            OnPropertyChanged(nameof(HasNoNews));
-            OnPropertyChanged(nameof(HasNoMods));
+            OnPropertyChanged(nameof(ShowNews));
+            OnPropertyChanged(nameof(ShowMods));
             OnPropertyChanged(nameof(ShowPlaySingleplayerButton));
 
             ViewModel.IsSingleplayer = IsSingleplayer2;
@@ -288,8 +286,8 @@ namespace Bannerlord.BUTRLoader.Mixins
 
             RandomImageSwitch = !RandomImageSwitch;
 
-            ViewModel.News.SetPropertyValue(nameof(LauncherNewsVMMixin.IsDisabled2), HasNoNews);
-            ViewModel.ModsData.SetPropertyValue(nameof(LauncherModsVMMixin.IsDisabled2), HasNoMods);
+            ViewModel.News.SetPropertyValue(nameof(LauncherNewsVMMixin.IsDisabled2), !ShowNews);
+            ViewModel.ModsData.SetPropertyValue(nameof(LauncherModsVMMixin.IsDisabled2), !ShowMods);
             if (SavesData is not null)
                 SavesData.IsDisabled = !IsSingleplayer2;
             OptionsLauncherData.IsDisabled = !IsOptions;
@@ -314,7 +312,7 @@ namespace Bannerlord.BUTRLoader.Mixins
         {
             if (ViewModel is null) return;
 
-            HideRandomImage = LauncherSettings.HideRandomImage;
+            ShowRandomImage = !LauncherSettings.HideRandomImage;
             ContentTabControlMarginRight = LauncherSettings.HideRandomImage ? 5 : 114;
             BackgroundHeight = LauncherSettings.BigMode ? 700 : 581;
             UpdateAndSaveUserModsDataMethod?.Invoke(ViewModel, IsMultiplayer2);
@@ -363,26 +361,33 @@ namespace Bannerlord.BUTRLoader.Mixins
         [BUTRDataSourceMethod]
         public void ExecuteBeginHintImport()
         {
-            HintManager.ShowHint("Import Load Order");
+            if (IsModsDataSelected)
+            {
+                HintManager.ShowHint("Import Load Order");
+            }
+            if (IsSavesDataSelected)
+            {
+                HintManager.ShowHint("Import Save's Load Order");
+            }
         }
 
         [BUTRDataSourceMethod]
         public void ExecuteBeginHintExport()
         {
-            HintManager.ShowHint("Export Current Load Order");
+            if (IsModsDataSelected)
+            {
+                HintManager.ShowHint("Export Current Load Order");
+            }
+            if (IsSavesDataSelected)
+            {
+                HintManager.ShowHint("Export Save's Load Order");
+            }
         }
 
         [BUTRDataSourceMethod]
         public void ExecuteEndHint()
         {
-            if (_currentModuleListHandler is null)
-            {
-                HintManager.HideHint();
-            }
-            else
-            {
-                _currentModuleListHandler = null;
-            }
+            HintManager.HideHint();
         }
 
         [BUTRDataSourceMethod]
@@ -391,7 +396,14 @@ namespace Bannerlord.BUTRLoader.Mixins
             if (ViewModel is null) return;
 
             _currentModuleListHandler = new ModuleListHandler(ViewModel);
-            _currentModuleListHandler.Import();
+            if (IsModsDataSelected)
+            {
+                _currentModuleListHandler.Import();
+            }
+            if (IsSavesDataSelected && SavesData?.Selected?.Name is { } saveName)
+            {
+                _currentModuleListHandler.ImportSaveFile(saveName);
+            }
         }
 
         [BUTRDataSourceMethod]
@@ -400,7 +412,14 @@ namespace Bannerlord.BUTRLoader.Mixins
             if (ViewModel is null) return;
 
             _currentModuleListHandler = new ModuleListHandler(ViewModel);
-            _currentModuleListHandler.Export();
+            if (IsModsDataSelected)
+            {
+                _currentModuleListHandler.Export();
+            }
+            if (IsSavesDataSelected && SavesData?.Selected?.Name is { } saveName)
+            {
+                _currentModuleListHandler.ExportSaveFile(saveName);
+            }
         }
 
         [BUTRDataSourceMethod(OverrideName = "ExecuteStartGame")]

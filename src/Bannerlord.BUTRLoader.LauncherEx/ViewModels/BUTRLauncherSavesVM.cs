@@ -76,6 +76,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 save.IsSelected = false;
             }
             saveVM.IsSelected = true;
+            OnPropertyChanged("SaveSelected");
         }
 
         private void SearchTextChanged()

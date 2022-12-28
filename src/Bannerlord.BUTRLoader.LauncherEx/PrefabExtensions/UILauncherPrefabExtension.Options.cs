@@ -76,7 +76,7 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public UILauncherPrefabExtension6()
         {
             XmlDocument.LoadXml(@"
-<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" IsSelected=""@IsOptions"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsLauncherPage"" UpdateChildrenStates=""true"" IsHidden=""@IsNotOptions"">
+<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" IsSelected=""@IsOptions"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsLauncherPage"" UpdateChildrenStates=""true"" IsVisible=""@IsOptions"">
   <Children>
     <TextWidget Id=""SubMenuText"" Text=""@LauncherText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" Brush=""Launcher.SubMenuButton.SingleplayerText"" />
   </Children>
@@ -97,7 +97,7 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public UILauncherPrefabExtension20()
         {
             XmlDocument.LoadXml(@"
-<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsGamePage"" UpdateChildrenStates=""true"" IsHidden=""@IsNotOptions"">
+<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsGamePage"" UpdateChildrenStates=""true"" IsVisible=""@IsOptions"">
   <Children>
     <TextWidget Id=""SubMenuText"" Text=""@GameText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" Brush=""Launcher.SubMenuButton.SingleplayerText"" />
   </Children>
@@ -118,7 +118,7 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public UILauncherPrefabExtension21()
         {
             XmlDocument.LoadXml(@"
-<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsEnginePage"" UpdateChildrenStates=""true"" IsHidden=""@IsNotOptions"">
+<TabToggleWidget DoNotPassEventsToChildren=""true"" WidthSizePolicy=""Fixed"" HeightSizePolicy=""StretchToParent"" SuggestedWidth=""100"" TabControlWidget=""..\..\..\..\ContentPanel"" TabName=""OptionsEnginePage"" UpdateChildrenStates=""true"" IsVisible=""@IsOptions"">
   <Children>
     <TextWidget Id=""SubMenuText"" Text=""@EngineText"" WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""StretchToParent"" Brush=""Launcher.SubMenuButton.SingleplayerText"" />
   </Children>

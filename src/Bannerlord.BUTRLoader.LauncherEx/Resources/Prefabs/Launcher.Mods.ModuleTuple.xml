@@ -44,7 +44,7 @@
               </Children>
             </BrushWidget>
             <TextWidget Text="@Name" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" VerticalAlignment="Center" MarginLeft="5" Brush="Launcher.Mods.ModNameText" Brush.TextHorizontalAlignment="Left" IsDisabled="true" Brush.FontSize="26" />
-            <Widget WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="40" VerticalAlignment="Center" IsVisible="@IsNotValid" UpdateChildrenStates="true">
+            <Widget WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="40" VerticalAlignment="Center" IsHidden="@IsValid" UpdateChildrenStates="true">
               <Children>
                 <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="40" SuggestedHeight="40" HorizontalAlignment="Left" VerticalAlignment="Center" ButtonType="Toggle" Brush="Launcher.Mods.ExpandIndicator" IsSelected="@IsExpanded" DoNotPassEventsToChildren="true" />
               </Children>

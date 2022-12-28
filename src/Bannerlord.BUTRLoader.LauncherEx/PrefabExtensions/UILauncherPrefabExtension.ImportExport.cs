@@ -18,7 +18,7 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
 <ListPanel WidthSizePolicy=""CoverChildren"" HeightSizePolicy=""CoverChildren""
            VerticalAlignment=""Bottom""
            MarginLeft =""5"" MarginBottom=""35""
-           LayoutImp.LayoutMethod=""HorizontalLeftToRight"" IsHidden=""@IsModsDataNotSelected"">
+           LayoutImp.LayoutMethod=""HorizontalLeftToRight"" IsVisible=""@ShowImportExport"">
   <Children>
     <ButtonWidget WidthSizePolicy=""Fixed"" HeightSizePolicy=""Fixed"" SuggestedWidth=""40"" SuggestedHeight=""40""
                   VerticalAlignment=""Bottom""
