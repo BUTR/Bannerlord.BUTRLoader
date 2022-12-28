@@ -190,8 +190,6 @@ namespace Bannerlord.BUTRLoader.Mixins
                 if (SetField(ref _isModsDataSelected, value))
                 {
                     OnPropertyChanged(nameof(IsModsDataNotSelected));
-                    OnPropertyChanged(nameof(IsSavesDataSelected));
-                    OnPropertyChanged(nameof(IsSavesDataNotSelected));
                 }
             }
         }
@@ -209,8 +207,6 @@ namespace Bannerlord.BUTRLoader.Mixins
                 {
                     OnPropertyChanged(nameof(IsSavesDataNotSelected));
                     OnPropertyChanged(nameof(ShowPlaySingleplayerButton));
-                    OnPropertyChanged(nameof(IsModsDataSelected));
-                    OnPropertyChanged(nameof(IsModsDataNotSelected));
                 }
             }
         }

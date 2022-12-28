@@ -51,4 +51,29 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public override string Attribute => "IsVisible";
         public override string Value => "@ShowPlaySingleplayerButton";
     }
+    internal sealed class UILauncherPrefabExtension32 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::ButtonWidget[@Id='PlaySingleplayerButton']";
+
+        public override string Attribute => "IsHidden";
+        public override string Value => "";
+    }
+
+    internal sealed class UILauncherPrefabExtension33 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::ButtonWidget[@Id='ContinueSingleplayerButton']";
+
+        public override string Attribute => "IsHidden";
+        public override string Value => "";
+    }
+    internal sealed class UILauncherPrefabExtension34 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::ButtonWidget[@Id='ContinueSingleplayerButton']";
+
+        public override string Attribute => "IsVisible";
+        public override string Value => "@IsSingleplayer2";
+    }
 }
