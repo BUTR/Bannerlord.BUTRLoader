@@ -16,5 +16,6 @@ namespace Bannerlord.BUTRLoader
         public static bool DisableBinaryCheck { get; set; }
         public static bool HideRandomImage { get; set; }
         public static bool BetaSorting { get; set; } = true;
+        public static bool BigMode { get; set; } = true;
     }
 }

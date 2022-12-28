@@ -25,7 +25,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
             Path.Combine($@"{Environment.GetFolderPath(Environment.SpecialFolder.Personal)}", "Mount and Blade II Bannerlord","Configs", "engine_config.txt");
 
         private readonly OptionsType _optionsType;
-        private readonly LauncherExData? _launcherExData;
+        private LauncherExData? _launcherExData;
         private readonly Action _saveUserData;
         private readonly Action _refreshOptions;
 
@@ -43,18 +43,6 @@ namespace Bannerlord.BUTRLoader.ViewModels
             _optionsType = optionsType;
             _saveUserData = saveUserData;
             _refreshOptions = refreshOptions;
-
-            if (_optionsType == OptionsType.Launcher)
-            {
-                _launcherExData = new LauncherExData(
-                    LauncherSettings.AutomaticallyCheckForUpdates,
-                    LauncherSettings.UnblockFiles,
-                    LauncherSettings.FixCommonIssues,
-                    LauncherSettings.CompactModuleList,
-                    LauncherSettings.HideRandomImage,
-                    LauncherSettings.DisableBinaryCheck,
-                    LauncherSettings.BetaSorting);
-            }
         }
 
         public void Refresh()
@@ -75,6 +63,16 @@ namespace Bannerlord.BUTRLoader.ViewModels
         }
         private void RefreshLauncherOptions()
         {
+            _launcherExData = new LauncherExData(
+                LauncherSettings.AutomaticallyCheckForUpdates,
+                LauncherSettings.UnblockFiles,
+                LauncherSettings.FixCommonIssues,
+                LauncherSettings.CompactModuleList,
+                LauncherSettings.HideRandomImage,
+                LauncherSettings.DisableBinaryCheck,
+                LauncherSettings.BetaSorting,
+                LauncherSettings.BigMode);
+
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
                 DisplayName = "Unblock Files on Start",
@@ -126,6 +124,13 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 HintText = "Uses the new sorting algorithm after v1.12.x. Disable to use the old algorithm",
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.BetaSorting))!, this)
+            }));
+            SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
+            {
+                DisplayName = "Big Mode",
+                HintText = "Makes the launcher bigger in height",
+                SettingType = SettingType.Bool,
+                PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.BigMode))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
@@ -300,6 +305,12 @@ namespace Bannerlord.BUTRLoader.ViewModels
             }
 
             if (_launcherExData.BetaSorting != LauncherSettings.BetaSorting)
+            {
+                _saveUserData();
+                return;
+            }
+
+            if (_launcherExData.BigMode != LauncherSettings.BigMode)
             {
                 _saveUserData();
                 return;

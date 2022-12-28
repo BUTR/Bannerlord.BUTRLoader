@@ -235,6 +235,10 @@ namespace Bannerlord.BUTRLoader.Mixins
         private float _dividerMarginBottom = 113;
 
         [BUTRDataSourceProperty]
+        public float BackgroundHeight { get => _backgroundHeight; set => SetField(ref _backgroundHeight, value); }
+        private float _backgroundHeight = 581; // 700
+
+        [BUTRDataSourceProperty]
         public bool ShowPlaySingleplayerButton => IsSingleplayer2 && !IsSavesDataSelected;
 
         private readonly UserDataManager? _userDataManager;
@@ -257,6 +261,7 @@ namespace Bannerlord.BUTRLoader.Mixins
 
             HideRandomImage = LauncherSettings.HideRandomImage;
             ContentTabControlMarginRight = LauncherSettings.HideRandomImage ? 5 : 114;
+            BackgroundHeight = LauncherSettings.BigMode ? 700 : 581;
 
             IsMultiplayer2 = launcherVM.IsMultiplayer;
             IsSingleplayer2 = launcherVM.IsSingleplayer;
@@ -288,7 +293,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             RandomImageSwitch = !RandomImageSwitch;
 
             ViewModel.News.SetPropertyValue(nameof(LauncherNewsVMMixin.IsDisabled2), HasNoNews);
-            ViewModel.ModsData.SetPropertyValue(nameof(BUTRLoader.Mixins.LauncherModsVMMixin.IsDisabled2), HasNoMods);
+            ViewModel.ModsData.SetPropertyValue(nameof(LauncherModsVMMixin.IsDisabled2), HasNoMods);
             if (SavesData is not null)
                 SavesData.IsDisabled = !IsSingleplayer2;
             OptionsLauncherData.IsDisabled = !IsOptions;
@@ -315,6 +320,7 @@ namespace Bannerlord.BUTRLoader.Mixins
 
             HideRandomImage = LauncherSettings.HideRandomImage;
             ContentTabControlMarginRight = LauncherSettings.HideRandomImage ? 5 : 114;
+            BackgroundHeight = LauncherSettings.BigMode ? 700 : 581;
             UpdateAndSaveUserModsDataMethod?.Invoke(ViewModel, IsMultiplayer2);
         }
 

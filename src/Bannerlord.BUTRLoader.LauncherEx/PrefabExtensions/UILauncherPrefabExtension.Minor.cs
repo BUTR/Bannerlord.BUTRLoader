@@ -120,4 +120,13 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
             }
         }
     }
+
+    internal sealed class UILauncherPrefabExtension30 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget";
+
+        public override string Attribute => "SuggestedHeight";
+        public override string Value => "@BackgroundHeight";
+    }
 }

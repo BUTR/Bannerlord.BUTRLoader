@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.17.4
+Version: 1.18.0
 Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Added Big Mode in options, will make the launcher bigger in height
+* Fixed Launcher Options saving
 * UI cleanup
 ---------------------------------------------------------------------------------------------------
 Version: 1.17.3
