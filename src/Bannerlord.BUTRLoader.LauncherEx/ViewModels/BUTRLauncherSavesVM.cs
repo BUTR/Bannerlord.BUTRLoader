@@ -45,6 +45,20 @@ namespace Bannerlord.BUTRLoader.ViewModels
         public bool IsDisabled { get => _isDisabled; set => SetField(ref _isDisabled, value, nameof(IsDisabled)); }
         private bool _isDisabled;
 
+        [BUTRDataSourceProperty]
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (SetField(ref _searchText, value, nameof(SearchText)))
+                {
+                    SearchTextChanged();
+                }
+            }
+        }
+        private string _searchText = string.Empty;
+
         public BUTRLauncherSaveVM? Selected => Saves.FirstOrDefault(x => x.IsSelected);
 
         public BUTRLauncherSavesVM(Func<string, ModuleInfoExtended?> getModuleById, Func<string, ModuleInfoExtended?> getModuleByName)
@@ -62,6 +76,24 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 save.IsSelected = false;
             }
             saveVM.IsSelected = true;
+        }
+
+        private void SearchTextChanged()
+        {
+            var searchText = SearchText;
+            if (string.IsNullOrEmpty(searchText))
+            {
+                foreach (var saveVM in Saves)
+                {
+                    saveVM.IsVisible = true;
+                }
+                return;
+            }
+
+            foreach (var saveVM in Saves)
+            {
+                saveVM.IsVisible = saveVM.Name.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) != -1;
+            }
         }
 
         [BUTRDataSourceMethod]

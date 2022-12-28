@@ -99,6 +99,10 @@ namespace Bannerlord.BUTRLoader.ViewModels
         [BUTRDataSourceProperty]
         public bool IsNotValid => !IsValid;
 
+        [BUTRDataSourceProperty]
+        public bool IsVisible { get => _isVisible; set => SetField(ref _isVisible, value, nameof(IsVisible)); }
+        private bool _isVisible = true;
+
         public BUTRLauncherModuleVM(ModuleInfoExtendedWithMetadata moduleInfoExtended, Action<BUTRLauncherModuleVM> select, Func<BUTRLauncherModuleVM, IEnumerable<ModuleIssue>> validate)
         {
             ModuleInfoExtended = moduleInfoExtended;

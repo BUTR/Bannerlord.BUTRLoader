@@ -20,12 +20,18 @@
         <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="26" MarginTop="10" MarginLeft="30">
           <Children>
             <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModToggle.Width" SuggestedHeight="!ModToggle.Height" VerticalAlignment="Center" Brush="Launcher.Refresh" Command.Click="ExecuteRefresh" MarginLeft="50" />
-            <TextWidget Text="@NameCategoryText" WidthSizePolicy="StretchToParent" SuggestedWidth="!Name.Width"      HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" MarginLeft="10" />
-            <TextWidget Text="@VersionCategoryText"        WidthSizePolicy="Fixed" SuggestedWidth="!Version.Width"   HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
-            <TextWidget Text="@CharacterNameCategoryText"  WidthSizePolicy="Fixed" SuggestedWidth="!Character.Width" HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
-            <TextWidget Text="@LevelCategoryText"          WidthSizePolicy="Fixed" SuggestedWidth="!Level.Width"     HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
-            <TextWidget Text="@DaysCategoryText"           WidthSizePolicy="Fixed" SuggestedWidth="!Days.Width"      HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
-            <TextWidget Text="@CreatedAtCategoryText"      WidthSizePolicy="Fixed" SuggestedWidth="!CreatedAt.Width" HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" MarginRight="45" />
+            <TextWidget Text="@NameCategoryText" WidthSizePolicy="StretchToParent"  SuggestedWidth="!Name.Width"      HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" MarginLeft="10" />
+            <BrushWidget                                   WidthSizePolicy="Fixed"  SuggestedWidth="150"              HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Input.TextBox.Input">
+              <Children>
+                <EditableTextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" VerticalAlignment="Center" HorizontalAlignment="Center" Brush="Launcher.Input.TextBox.Text" RealText="@SearchText" IsObfuscationEnabled="false"  Command.FocusGained="StartTyping" Command.FocusLost="StopTyping" />
+                <BrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="20" SuggestedHeight="20" HorizontalAlignment="Right" VerticalAlignment="Center" MarginRight="10" Brush="Launcher.Search" IsDisabled="true" />
+              </Children>
+            </BrushWidget>
+            <TextWidget Text="@VersionCategoryText"        WidthSizePolicy="Fixed"  SuggestedWidth="!Version.Width"   HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
+            <TextWidget Text="@CharacterNameCategoryText"  WidthSizePolicy="Fixed"  SuggestedWidth="!Character.Width" HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
+            <TextWidget Text="@LevelCategoryText"          WidthSizePolicy="Fixed"  SuggestedWidth="!Level.Width"     HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
+            <TextWidget Text="@DaysCategoryText"           WidthSizePolicy="Fixed"  SuggestedWidth="!Days.Width"      HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" />
+            <TextWidget Text="@CreatedAtCategoryText"      WidthSizePolicy="Fixed"  SuggestedWidth="!CreatedAt.Width" HeightSizePolicy="StretchToParent" PositionYOffset="2" Brush="Launcher.Mods.ModNameText" MarginRight="45" />
           </Children>
         </ListPanel>
         <ScrollablePanel Id="ScrollablePanel" HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" InnerPanel="MyClipRect\InnerPanel" ClipRect="MyClipRect" MarginLeft="30" MarginTop="46" VerticalScrollbar="..\Scrollbar" AutoHideScrollBars="true" AcceptDrop="true" Command.Drop="ChangeLoadingOrderOf" CommandParameter.Drop="Mod">

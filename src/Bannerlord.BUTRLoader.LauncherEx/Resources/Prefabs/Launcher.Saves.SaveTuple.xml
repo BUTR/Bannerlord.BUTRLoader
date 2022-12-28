@@ -18,7 +18,7 @@
     <ListPanel LayoutImp.LayoutMethod="VerticalBottomToTop" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren">
       <Children>
 
-        <ListPanel Id="EntryPanel" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="26" MarginBottom="20">
+        <ListPanel Id="EntryPanel" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="26" MarginBottom="20" IsVisible="@IsVisible">
           <Children>
 
             <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModToggle.Width" SuggestedHeight="!ModToggle.Height" VerticalAlignment="Center" Brush="Launcher.Mods.ModToggle" Command.Click="ExecuteSelect" IsSelected="@IsSelected" DoNotPassEventsToChildren="true">

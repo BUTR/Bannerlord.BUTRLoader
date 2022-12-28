@@ -31,6 +31,7 @@
     <EmbeddedResource Include="Resources\Textures\refresh.png" />
     <EmbeddedResource Include="Resources\Textures\warm_overlay.png" />
     <EmbeddedResource Include="Resources\Textures\folder.png" />
+    <EmbeddedResource Include="Resources\Textures\search.png" />
   </ItemGroup>
 
   <ItemGroup>

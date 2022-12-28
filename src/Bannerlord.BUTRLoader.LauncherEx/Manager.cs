@@ -42,6 +42,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             GraphicsContextManager.CreateAndRegister("refresh", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.refresh.png"));
             GraphicsContextManager.CreateAndRegister("warm_overlay", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.warm_overlay.png"));
             GraphicsContextManager.CreateAndRegister("folder", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.folder.png"));
+            GraphicsContextManager.CreateAndRegister("search", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.search.png"));
 
             SpriteDataManager.Enable(_launcherHarmony);
             SpriteDataManager.CreateAndRegister("arrow_down");
@@ -51,6 +52,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             SpriteDataManager.CreateAndRegister("refresh");
             SpriteDataManager.CreateAndRegister("warm_overlay");
             SpriteDataManager.CreateAndRegister("folder");
+            SpriteDataManager.CreateAndRegister("search");
 
             BrushFactoryManager.Enable(_launcherHarmony);
             BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));

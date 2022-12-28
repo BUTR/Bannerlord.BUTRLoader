@@ -110,4 +110,18 @@
     </Styles>
   </Brush>
 
+  <Brush Name="Launcher.Search">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="search" Color="#E6C8A6FF" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Default" Sprite="search" Color="#FFFFFFFF" />
+      </Style>
+    </Styles>
+  </Brush>
+
 </Brushes>

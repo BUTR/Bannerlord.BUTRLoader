@@ -72,6 +72,20 @@ namespace Bannerlord.BUTRLoader.Mixins
         public LauncherHintVM? ForceSortedHint { get => _forceSortedHint; set => SetField(ref _forceSortedHint, value, nameof(ForceSortedHint)); }
         private LauncherHintVM? _forceSortedHint;
 
+        [BUTRDataSourceProperty]
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                if (SetField(ref _searchText, value, nameof(SearchText)))
+                {
+                    SearchTextChanged();
+                }
+            }
+        }
+        private string _searchText = string.Empty;
+
         public string ModuleListCode => _getSelectedSave?.Invoke() is { ModuleListCode: { } } saveVM
                 ? saveVM.ModuleListCode
                 : $"_MODULES_*{string.Join("*", Modules2.Where(x => x.IsSelected).Select(x => x.ModuleInfoExtended.Id))}*_MODULES_";
@@ -138,6 +152,24 @@ namespace Bannerlord.BUTRLoader.Mixins
 
         private bool ChangeModulePosition(BUTRLauncherModuleVM targetModuleVM, int insertIndex, Action<IReadOnlyCollection<ModuleIssue>>? onIssues = null) =>
             ChangeModulePositionInternal(Modules2, Modules2Lookup, targetModuleVM, insertIndex, onIssues);
+
+        private void SearchTextChanged()
+        {
+            var searchText = SearchText;
+            if (string.IsNullOrEmpty(searchText))
+            {
+                foreach (var moduleVM in Modules2)
+                {
+                    moduleVM.IsVisible = true;
+                }
+                return;
+            }
+
+            foreach (var moduleVM in Modules2)
+            {
+                moduleVM.IsVisible = moduleVM.Name.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) != -1;
+            }
+        }
 
         [BUTRDataSourceMethod]
         public void ExecuteRefresh() => SortByDefaultInternal(Modules2);

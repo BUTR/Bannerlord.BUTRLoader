@@ -68,6 +68,10 @@ namespace Bannerlord.BUTRLoader.ViewModels
         public LauncherHintVM? ErrorHint { get => _errorHint; set => SetField(ref _errorHint, value, nameof(ErrorHint)); }
         private LauncherHintVM? _errorHint;
 
+        [BUTRDataSourceProperty]
+        public bool IsVisible { get => _isVisible; set => SetField(ref _isVisible, value, nameof(IsVisible)); }
+        private bool _isVisible = true;
+
         public string? ModuleListCode { get; private set; }
 
         private readonly SaveGameFileInfo _saveGameFileInfo;
