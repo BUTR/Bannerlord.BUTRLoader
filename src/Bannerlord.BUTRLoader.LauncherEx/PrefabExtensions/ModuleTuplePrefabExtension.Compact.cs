@@ -7,9 +7,9 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
     internal sealed class ModuleTuplePrefabExtension4 : PrefabExtensionSetAttributesPatch
     {
         public static string Movie => "Launcher.Mods.ModuleTuple2";
-        public static string XPath => "descendant::ListPanel[@DragWidget='DragWidget']";
+        public static string XPath => "descendant::ListPanel[@Id='EntryPanel']";
 
-        public override List<Attribute> Attributes { get; } = new()
+        public override List<Attribute> Attributes => new()
         {
             new Attribute("SuggestedHeight", LauncherSettings.CompactModuleList ? "24" : "26"),
             new Attribute("MarginBottom", LauncherSettings.CompactModuleList ? "2" : "10"),
@@ -33,13 +33,16 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
     }
 
 
-    internal sealed class ModuleTuplePrefabExtension14 : PrefabExtensionSetAttributePatch
+    internal sealed class ModuleTuplePrefabExtension14 : PrefabExtensionSetAttributesPatch
     {
         public static string Movie => "Launcher.Saves.SaveTuple";
         public static string XPath => "descendant::ListPanel[@Id='EntryPanel']";
 
-        public override string Attribute => "SuggestedHeight";
-        public override string Value => LauncherSettings.CompactModuleList ? "24" : "26";
+        public override List<Attribute> Attributes => new()
+        {
+            new Attribute("SuggestedHeight", LauncherSettings.CompactModuleList ? "24" : "26"),
+            new Attribute("MarginBottom", LauncherSettings.CompactModuleList ? "2" : "10"),
+        };
     }
     internal sealed class ModuleTuplePrefabExtension8 : PrefabExtensionSetAttributePatch
     {

@@ -23,8 +23,10 @@
   <Window>
     <ListPanel LayoutImp.LayoutMethod="VerticalBottomToTop" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren">
       <Children>
-        <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="!Entry.Height" MarginBottom="5" AcceptDrag="true" DragWidget="DragWidget" IsVisible="@IsVisible">
+
+        <ListPanel Id="EntryPanel" WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="!Entry.Height" MarginBottom="5" AcceptDrag="true" DragWidget="DragWidget" IsVisible="@IsVisible">
           <Children>
+
             <Launcher.ToggleButton WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModToggle.Width" SuggestedHeight="!ModToggle.Height" Command.Click="ExecuteSelect" IsSelected="@IsSelected" ManualToggle="true" IsDisabled="@IsNotSelectable" />
             <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModSorter.Width" SuggestedHeight="!ModSorter.Height" VerticalAlignment="Center" MarginLeft="10" Brush="Launcher.Mods.ModSorter" IsDisabled="true" />
             <Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModuleType.Width" SuggestedHeight="!Icon.Size" VerticalAlignment="Center" MarginLeft="!Margin.Left" IsDisabled="true">
@@ -56,13 +58,16 @@
               </Children>
             </Widget>
             <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="!ModToggle.Width" SuggestedHeight="!ModToggle.Height" VerticalAlignment="Center" Brush="Launcher.Folder" Command.Click="ExecuteOpen" MarginRight="20"/>
+
           </Children>
         </ListPanel>
+
         <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginLeft="30" IsDisabled="true" IsVisible="@IsExpanded">
           <Children>
             <TextWidget Text="@IssuesText" WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" SuggestedHeight="500" MarginBottom="10" Brush="Launcher.Mods.IssueText" Brush.TextHorizontalAlignment="Left" />
           </Children>
         </Widget>
+
       </Children>
     </ListPanel>
   </Window>

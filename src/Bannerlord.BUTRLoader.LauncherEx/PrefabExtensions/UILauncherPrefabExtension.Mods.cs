@@ -13,7 +13,7 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public static string Movie => "UILauncher";
         public static string XPath => "descendant::TabToggleWidget[2]";
 
-        public override List<Attribute> Attributes { get; } = new()
+        public override List<Attribute> Attributes => new()
         {
             new Attribute("IsHidden", ""),
             new Attribute("IsVisible", "@ShowMods"),
