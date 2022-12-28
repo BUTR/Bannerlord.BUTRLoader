@@ -71,11 +71,12 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
         private void SelectSave(BUTRLauncherSaveVM saveVM)
         {
+            var previousState = saveVM.IsSelected;
             foreach (var save in Saves)
             {
                 save.IsSelected = false;
             }
-            saveVM.IsSelected = true;
+            saveVM.IsSelected = !previousState;
             OnPropertyChanged("SaveSelected");
         }
 

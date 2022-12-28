@@ -94,7 +94,6 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            var t = ViewModel?.GetPropertyValue(propertyName);
             ViewModel?.OnPropertyChanged(propertyName);
         }
 

@@ -63,7 +63,7 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public override List<Attribute> Attributes { get; } = new()
         {
             new Attribute("IsHidden", ""),
-            new Attribute("IsVisible", "@IsSingleplayer2"),
+            new Attribute("IsVisible", "@ShowContinueSingleplayerButton"),
         };
     }
 }

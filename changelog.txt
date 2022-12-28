@@ -2,6 +2,7 @@
 Version: 1.19.0
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Added import/export of saves load order
+* Saves tab improvements
 ---------------------------------------------------------------------------------------------------
 Version: 1.18.1
 Game Versions: v1.0.0,v1.0.1,v1.0.2

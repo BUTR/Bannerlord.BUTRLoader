@@ -48,7 +48,6 @@ namespace Bannerlord.BUTRLoader.Patches
 
             // Mods
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension9.Movie, UILauncherPrefabExtension9.XPath, new UILauncherPrefabExtension9());
-            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension27.Movie, UILauncherPrefabExtension27.XPath, new UILauncherPrefabExtension27());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension13.Movie, UILauncherPrefabExtension13.XPath, new UILauncherPrefabExtension13());
             // Mods
 

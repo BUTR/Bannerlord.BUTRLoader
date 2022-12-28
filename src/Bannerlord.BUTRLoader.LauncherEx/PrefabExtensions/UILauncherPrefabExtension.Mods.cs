@@ -17,16 +17,8 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         {
             new Attribute("IsHidden", ""),
             new Attribute("IsVisible", "@ShowMods"),
+            new Attribute("IsSelected", "@IsModsDataSelected"),
         };
-    }
-
-    internal sealed class UILauncherPrefabExtension27 : PrefabExtensionSetAttributePatch
-    {
-        public static string Movie => "UILauncher";
-        public static string XPath => "descendant::TabToggleWidget[2]";
-
-        public override string Attribute => "IsSelected";
-        public override string Value => "@IsModsDataSelected";
     }
 
     /// <summary>

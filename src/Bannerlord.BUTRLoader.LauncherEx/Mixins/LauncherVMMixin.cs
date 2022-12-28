@@ -127,6 +127,7 @@ namespace Bannerlord.BUTRLoader.Mixins
                 if (SetField(ref _isModsDataSelected, value))
                 {
                     OnPropertyChanged(nameof(ShowImportExport));
+                    OnPropertyChanged(nameof(ShowContinueSingleplayerButton));
                 }
             }
         }
@@ -141,6 +142,7 @@ namespace Bannerlord.BUTRLoader.Mixins
                 if (SetField(ref _isSavesDataSelected, value))
                 {
                     OnPropertyChanged(nameof(ShowPlaySingleplayerButton));
+                    OnPropertyChanged(nameof(ShowContinueSingleplayerButton));
                     OnPropertyChanged(nameof(ShowImportExport));
                 }
             }
@@ -204,13 +206,15 @@ namespace Bannerlord.BUTRLoader.Mixins
         private bool _showRandomImage;
 
         [BUTRDataSourceProperty]
-        public bool ShowImportExport => IsModsDataSelected || (IsSavesDataSelected && SavesData?.Selected is not null);
+        public bool ShowImportExport => IsSingleplayer2 && (IsModsDataSelected || (IsSavesDataSelected && SavesData?.Selected is not null));
 
         [BUTRDataSourceProperty]
         public bool ShowBUTRLoaderVersionText => IsSingleplayer2 || IsOptions;
 
         [BUTRDataSourceProperty]
         public bool ShowPlaySingleplayerButton => IsSingleplayer2 && !IsSavesDataSelected;
+        [BUTRDataSourceProperty]
+        public bool ShowContinueSingleplayerButton => IsSingleplayer2 && (!IsSavesDataSelected || SavesData?.Selected is not null);
 
         [BUTRDataSourceProperty]
         public float ContentTabControlMarginRight { get => _contentTabControlMarginRight; set => SetField(ref _contentTabControlMarginRight, value); }
@@ -244,13 +248,16 @@ namespace Bannerlord.BUTRLoader.Mixins
             _optionsGameData = new BUTRLauncherOptionsVM(OptionsType.Game, SaveUserData, RefreshOptions);
             _optionsLauncherData = new BUTRLauncherOptionsVM(OptionsType.Launcher, SaveUserData, RefreshOptions);
 
-            if (launcherVM.GetPropertyValue(nameof(LauncherVM.ModsData)) is LauncherModsVM lmvm && lmvm.GetMixin<BUTRLoader.Mixins.LauncherModsVMMixin, LauncherModsVM>() is { } mixin)
+            if (launcherVM.GetPropertyValue(nameof(LauncherVM.ModsData)) is LauncherModsVM lmvm && lmvm.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is { } mixin)
             {
                 _savesData = new BUTRLauncherSavesVM(mixin.GetModuleById, mixin.GetModuleByName);
-                _savesData.PropertyChanged += (sender, args) =>
+                _savesData.PropertyChanged += (_, args) =>
                 {
                     if (args.PropertyName == "SaveSelected")
+                    {
                         OnPropertyChanged(nameof(ShowImportExport));
+                        OnPropertyChanged(nameof(ShowContinueSingleplayerButton));
+                    }
                 };
                 mixin.SetGetSelectedSave(() => SavesData?.Selected);
             }
@@ -279,6 +286,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             OnPropertyChanged(nameof(ShowNews));
             OnPropertyChanged(nameof(ShowMods));
             OnPropertyChanged(nameof(ShowPlaySingleplayerButton));
+            OnPropertyChanged(nameof(ShowContinueSingleplayerButton));
 
             ViewModel.IsSingleplayer = IsSingleplayer2;
             ViewModel.IsMultiplayer = IsMultiplayer2;
@@ -361,11 +369,11 @@ namespace Bannerlord.BUTRLoader.Mixins
         [BUTRDataSourceMethod]
         public void ExecuteBeginHintImport()
         {
-            if (IsModsDataSelected)
+            if (IsSingleplayer2 && IsModsDataSelected)
             {
                 HintManager.ShowHint("Import Load Order");
             }
-            if (IsSavesDataSelected)
+            if (IsSingleplayer2 && IsSavesDataSelected)
             {
                 HintManager.ShowHint("Import Save's Load Order");
             }
@@ -374,11 +382,11 @@ namespace Bannerlord.BUTRLoader.Mixins
         [BUTRDataSourceMethod]
         public void ExecuteBeginHintExport()
         {
-            if (IsModsDataSelected)
+            if (IsSingleplayer2 && IsModsDataSelected)
             {
                 HintManager.ShowHint("Export Current Load Order");
             }
-            if (IsSavesDataSelected)
+            if (IsSingleplayer2 && IsSavesDataSelected)
             {
                 HintManager.ShowHint("Export Save's Load Order");
             }
@@ -396,11 +404,11 @@ namespace Bannerlord.BUTRLoader.Mixins
             if (ViewModel is null) return;
 
             _currentModuleListHandler = new ModuleListHandler(ViewModel);
-            if (IsModsDataSelected)
+            if (IsSingleplayer2 && IsModsDataSelected)
             {
                 _currentModuleListHandler.Import();
             }
-            if (IsSavesDataSelected && SavesData?.Selected?.Name is { } saveName)
+            if (IsSingleplayer2 && IsSavesDataSelected && SavesData?.Selected?.Name is { } saveName)
             {
                 _currentModuleListHandler.ImportSaveFile(saveName);
             }
@@ -412,11 +420,11 @@ namespace Bannerlord.BUTRLoader.Mixins
             if (ViewModel is null) return;
 
             _currentModuleListHandler = new ModuleListHandler(ViewModel);
-            if (IsModsDataSelected)
+            if (IsSingleplayer2 && IsModsDataSelected)
             {
                 _currentModuleListHandler.Export();
             }
-            if (IsSavesDataSelected && SavesData?.Selected?.Name is { } saveName)
+            if (IsSingleplayer2 && IsSavesDataSelected && SavesData?.Selected?.Name is { } saveName)
             {
                 _currentModuleListHandler.ExportSaveFile(saveName);
             }
