@@ -34,15 +34,15 @@ namespace Bannerlord.BUTRLoader.Mixins
         private Func<BUTRLauncherSaveVM?>? _getSelectedSave;
 
         [BUTRDataSourceProperty]
-        public bool GlobalCheckboxState { get => _checkboxState; set => SetField(ref _checkboxState, value, nameof(GlobalCheckboxState)); }
+        public bool GlobalCheckboxState { get => _checkboxState; set => SetField(ref _checkboxState, value); }
         private bool _checkboxState;
 
         [BUTRDataSourceProperty]
-        public bool IsSingleplayer { get => _isSingleplayer; set => SetField(ref _isSingleplayer, value, nameof(IsSingleplayer)); }
+        public bool IsSingleplayer { get => _isSingleplayer; set => SetField(ref _isSingleplayer, value); }
         private bool _isSingleplayer;
 
         [BUTRDataSourceProperty]
-        public bool IsDisabled2 { get => _isDisabled2; set => SetField(ref _isDisabled2, value, nameof(IsDisabled2)); }
+        public bool IsDisabled2 { get => _isDisabled2; set => SetField(ref _isDisabled2, value); }
         private bool _isDisabled2;
 
         [BUTRDataSourceProperty]
@@ -57,7 +57,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             get => _isForceSorted;
             set
             {
-                if (SetField(ref _isForceSorted, value, nameof(IsForceSorted)))
+                if (SetField(ref _isForceSorted, value))
                 {
                     OnPropertyChanged(nameof(IsNotForceSorted));
                 }
@@ -69,7 +69,7 @@ namespace Bannerlord.BUTRLoader.Mixins
         public bool IsNotForceSorted => !IsForceSorted;
 
         [BUTRDataSourceProperty]
-        public LauncherHintVM? ForceSortedHint { get => _forceSortedHint; set => SetField(ref _forceSortedHint, value, nameof(ForceSortedHint)); }
+        public LauncherHintVM? ForceSortedHint { get => _forceSortedHint; set => SetField(ref _forceSortedHint, value); }
         private LauncherHintVM? _forceSortedHint;
 
         [BUTRDataSourceProperty]
@@ -78,7 +78,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             get => _searchText;
             set
             {
-                if (SetField(ref _searchText, value, nameof(SearchText)))
+                if (SetField(ref _searchText, value))
                 {
                     SearchTextChanged();
                 }
@@ -174,18 +174,21 @@ namespace Bannerlord.BUTRLoader.Mixins
         [BUTRDataSourceMethod]
         public void ExecuteRefresh() => SortByDefaultInternal(Modules2);
 
-        [BUTRDataSourceMethod(OverrideName = "ChangeLoadingOrderOf")]
-        public void ChangeModulePosition(BUTRLauncherModuleVM targetModuleVM, int insertIndex, string _)
+        [BUTRDataSourceMethod]
+        public void OnDrop(BUTRLauncherModuleVM targetModuleVM, int insertIndex, string type)
         {
-            ChangeModulePosition(targetModuleVM, insertIndex, issues =>
+            if (type == "Module")
             {
-                HintManager.ShowHint($"Failed to place the module to the desired position! Placing to the nearest available!\nReason:\n{string.Join("\n", issues.Select(x => x.Reason))}");
-                Task.Factory.StartNew(async () =>
+                ChangeModulePosition(targetModuleVM, insertIndex, issues =>
                 {
-                    await Task.Delay(5000);
-                    HintManager.HideHint();
-                }, CancellationToken.None, TaskCreationOptions.AttachedToParent, TaskScheduler.Current);
-            });
+                    HintManager.ShowHint($"Failed to place the module to the desired position! Placing to the nearest available!\nReason:\n{string.Join("\n", issues.Select(x => x.Reason))}");
+                    Task.Factory.StartNew(async () =>
+                    {
+                        await Task.Delay(5000);
+                        HintManager.HideHint();
+                    }, CancellationToken.None, TaskCreationOptions.AttachedToParent, TaskScheduler.Current);
+                });
+            }
         }
 
         [BUTRDataSourceMethod]

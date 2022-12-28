@@ -103,7 +103,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             ViewModel?.OnPropertyChangedWithValue(value, propertyName);
         }
 
-        protected bool SetField<T>(ref T field, T value, string propertyName)
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
         {
             if (EqualityComparer<T>.Default.Equals(field, value))
             {

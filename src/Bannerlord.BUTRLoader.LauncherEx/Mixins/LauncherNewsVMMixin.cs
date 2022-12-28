@@ -7,7 +7,7 @@ namespace Bannerlord.BUTRLoader.Mixins
     internal sealed class LauncherNewsVMMixin : ViewModelMixin<LauncherNewsVMMixin, LauncherNewsVM>
     {
         [BUTRDataSourceProperty]
-        public bool IsDisabled2 { get => _isDisabled2; set => SetField(ref _isDisabled2, value, nameof(IsDisabled2)); }
+        public bool IsDisabled2 { get => _isDisabled2; set => SetField(ref _isDisabled2, value); }
         private bool _isDisabled2;
 
         public LauncherNewsVMMixin(LauncherNewsVM launcherNewsVM) : base(launcherNewsVM) { }

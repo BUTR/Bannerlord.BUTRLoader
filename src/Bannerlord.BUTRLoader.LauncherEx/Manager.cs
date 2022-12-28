@@ -1,6 +1,7 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Patches;
 using Bannerlord.BUTRLoader.ResourceManagers;
+using Bannerlord.BUTRLoader.Widgets;
 
 using HarmonyLib;
 
@@ -58,16 +59,25 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
 
             WidgetFactoryManager.Enable(_launcherHarmony);
+            WidgetFactoryManager.Register(typeof(ToggleButtonWidget));
+            WidgetFactoryManager.Register(typeof(SearchBoxWidget));
+
+            WidgetFactoryManager.CreateAndRegister("Launcher.ToggleButton", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.ToggleButton.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.SearchBox", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.SearchBox.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.Scrollbar", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.Scrollbar.xml"));
+
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyBoolView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyBoolView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyButtonView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyButtonView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyFloatView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyFloatView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyIntView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyIntView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyStringView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyStringView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.Options.OptionTuple", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.OptionTuple.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Mods2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Mods.ModuleTuple2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.ModuleTuple.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Saves", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Saves.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Saves.SaveTuple", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Saves.SaveTuple.xml"));
+
         }
 
         private static XmlDocument Load(string embedPath)

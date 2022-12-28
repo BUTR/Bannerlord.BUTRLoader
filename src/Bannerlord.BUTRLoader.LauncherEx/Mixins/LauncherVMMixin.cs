@@ -1,7 +1,6 @@
 ﻿using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Features.ContinueSaveFile;
 using Bannerlord.BUTRLoader.Helpers;
-using Bannerlord.BUTRLoader.LauncherEx;
 using Bannerlord.BUTRLoader.ViewModels;
 
 using HarmonyLib;
@@ -135,51 +134,51 @@ namespace Bannerlord.BUTRLoader.Mixins
         public bool HasNoNews => !IsSingleplayer2 && !IsMultiplayer2 && !IsDigitalCompanion2;
 
         [BUTRDataSourceProperty]
-        public bool RandomImageSwitch { get => _randomImageSwitch; set => SetField(ref _randomImageSwitch, value, nameof(RandomImageSwitch)); }
+        public bool RandomImageSwitch { get => _randomImageSwitch; set => SetField(ref _randomImageSwitch, value); }
         private bool _randomImageSwitch;
 
         [BUTRDataSourceProperty]
-        public string OptionsText { get => _optionsText; set => SetField(ref _optionsText, value, nameof(OptionsText)); }
+        public string OptionsText { get => _optionsText; set => SetField(ref _optionsText, value); }
         private string _optionsText = "Options";
 
         [BUTRDataSourceProperty]
-        public string LauncherText { get => _launcherText; set => SetField(ref _launcherText, value, nameof(LauncherText)); }
+        public string LauncherText { get => _launcherText; set => SetField(ref _launcherText, value); }
         private string _launcherText = "Launcher";
 
         [BUTRDataSourceProperty]
-        public string GameText { get => _gameText; set => SetField(ref _gameText, value, nameof(GameText)); }
+        public string GameText { get => _gameText; set => SetField(ref _gameText, value); }
         private string _gameText = "Game";
 
         [BUTRDataSourceProperty]
-        public string EngineText { get => _engineText; set => SetField(ref _engineText, value, nameof(EngineText)); }
+        public string EngineText { get => _engineText; set => SetField(ref _engineText, value); }
         private string _engineText = "Engine";
 
         [BUTRDataSourceProperty]
-        public string SavesText { get => _savesText; set => SetField(ref _savesText, value, nameof(SavesText)); }
+        public string SavesText { get => _savesText; set => SetField(ref _savesText, value); }
         private string _savesText = "Saves";
 
         [BUTRDataSourceProperty]
-        public string BUTRLoaderVersionText { get => _butrLoaderVersionText; set => SetField(ref _butrLoaderVersionText, value, nameof(BUTRLoaderVersionText)); }
+        public string BUTRLoaderVersionText { get => _butrLoaderVersionText; set => SetField(ref _butrLoaderVersionText, value); }
         private string _butrLoaderVersionText = $"BUTRLoader v{typeof(LauncherVMMixin).Assembly.GetName().Version.ToString(3)}";
 
         [BUTRDataSourceProperty]
-        public BUTRLauncherOptionsVM OptionsLauncherData { get => _optionsLauncherData; set => SetField(ref _optionsLauncherData, value, nameof(OptionsLauncherData)); }
+        public BUTRLauncherOptionsVM OptionsLauncherData { get => _optionsLauncherData; set => SetField(ref _optionsLauncherData, value); }
         private BUTRLauncherOptionsVM _optionsLauncherData;
 
         [BUTRDataSourceProperty]
-        public BUTRLauncherOptionsVM OptionsGameData { get => _optionsGameData; set => SetField(ref _optionsGameData, value, nameof(OptionsGameData)); }
+        public BUTRLauncherOptionsVM OptionsGameData { get => _optionsGameData; set => SetField(ref _optionsGameData, value); }
         private BUTRLauncherOptionsVM _optionsGameData;
 
         [BUTRDataSourceProperty]
-        public BUTRLauncherOptionsVM OptionsEngineData { get => _optionsEngineData; set => SetField(ref _optionsEngineData, value, nameof(OptionsEngineData)); }
+        public BUTRLauncherOptionsVM OptionsEngineData { get => _optionsEngineData; set => SetField(ref _optionsEngineData, value); }
         private BUTRLauncherOptionsVM _optionsEngineData;
 
         [BUTRDataSourceProperty]
-        public BUTRLauncherSavesVM? SavesData { get => _savesData; set => SetField(ref _savesData, value, nameof(SavesData)); }
+        public BUTRLauncherSavesVM? SavesData { get => _savesData; set => SetField(ref _savesData, value); }
         private BUTRLauncherSavesVM? _savesData;
 
         [BUTRDataSourceProperty]
-        public bool HideRandomImage { get => _hideRandomImage; set => SetField(ref _hideRandomImage, value, nameof(HideRandomImage)); }
+        public bool HideRandomImage { get => _hideRandomImage; set => SetField(ref _hideRandomImage, value); }
         private bool _hideRandomImage;
 
         [BUTRDataSourceProperty]
@@ -188,7 +187,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             get => _isModsDataSelected;
             set
             {
-                if (SetField(ref _isModsDataSelected, value, nameof(IsModsDataSelected)))
+                if (SetField(ref _isModsDataSelected, value))
                 {
                     OnPropertyChanged(nameof(IsModsDataNotSelected));
                     OnPropertyChanged(nameof(IsSavesDataSelected));
@@ -206,7 +205,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             get => _isSavesDataSelected;
             set
             {
-                if (SetField(ref _isSavesDataSelected, value, nameof(IsSavesDataSelected)))
+                if (SetField(ref _isSavesDataSelected, value))
                 {
                     OnPropertyChanged(nameof(IsSavesDataNotSelected));
                     OnPropertyChanged(nameof(ShowPlaySingleplayerButton));
@@ -220,8 +219,20 @@ namespace Bannerlord.BUTRLoader.Mixins
         public bool IsSavesDataNotSelected => !IsSavesDataSelected;
 
         [BUTRDataSourceProperty]
-        public float ContentTabControlMargin { get => _contentTabControlMargin; set => SetField(ref _contentTabControlMargin, value, nameof(ContentTabControlMargin)); }
-        private float _contentTabControlMargin;
+        public float ContentTabControlMarginRight { get => _contentTabControlMarginRight; set => SetField(ref _contentTabControlMarginRight, value); }
+        private float _contentTabControlMarginRight = 0;
+
+        [BUTRDataSourceProperty]
+        public float ContentTabControlMarginBottom { get => _contentTabControlMarginBottom; set => SetField(ref _contentTabControlMarginBottom, value); }
+        private float _contentTabControlMarginBottom = 114;
+
+        [BUTRDataSourceProperty]
+        public float BUTRLoaderVersionMarginBottom { get => _butrLoaderVersionMarginBottom; set => SetField(ref _butrLoaderVersionMarginBottom, value); }
+        private float _butrLoaderVersionMarginBottom = 90;
+
+        [BUTRDataSourceProperty]
+        public float DividerMarginBottom { get => _dividerMarginBottom; set => SetField(ref _dividerMarginBottom, value); }
+        private float _dividerMarginBottom = 113;
 
         [BUTRDataSourceProperty]
         public bool ShowPlaySingleplayerButton => IsSingleplayer2 && !IsSavesDataSelected;
@@ -245,7 +256,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             }
 
             HideRandomImage = LauncherSettings.HideRandomImage;
-            ContentTabControlMargin = LauncherSettings.HideRandomImage ? 5 : 114;
+            ContentTabControlMarginRight = LauncherSettings.HideRandomImage ? 5 : 114;
 
             IsMultiplayer2 = launcherVM.IsMultiplayer;
             IsSingleplayer2 = launcherVM.IsSingleplayer;
@@ -285,6 +296,10 @@ namespace Bannerlord.BUTRLoader.Mixins
             OptionsEngineData.IsDisabled = !IsOptions;
             if (IsOptions)
                 RefreshOptions();
+
+            ContentTabControlMarginBottom = IsOptions ? 50 : 114;
+            BUTRLoaderVersionMarginBottom = IsOptions ? 30 : 90;
+            DividerMarginBottom = IsOptions ? 49 : 113;
         }
 
         public void RefreshOptions()
@@ -299,7 +314,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             if (ViewModel is null) return;
 
             HideRandomImage = LauncherSettings.HideRandomImage;
-            ContentTabControlMargin = LauncherSettings.HideRandomImage ? 5 : 114;
+            ContentTabControlMarginRight = LauncherSettings.HideRandomImage ? 5 : 114;
             UpdateAndSaveUserModsDataMethod?.Invoke(ViewModel, IsMultiplayer2);
         }
 

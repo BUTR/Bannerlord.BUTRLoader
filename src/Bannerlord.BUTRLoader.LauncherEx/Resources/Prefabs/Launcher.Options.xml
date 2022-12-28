@@ -4,54 +4,13 @@
     <Widget HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" VerticalAlignment="Top" HorizontalAlignment="Left">
       <Children>
 
-        <ScrollablePanel Id="ScrollablePanel" HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" InnerPanel="MyClipRect\InnerPanel" ClipRect="MyClipRect" MarginLeft="30" MarginTop="46" MarginBottom="23" VerticalScrollbar="..\Scrollbar" AutoHideScrollBars="true">
+        <ScrollablePanel Id="ScrollablePanel" HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" InnerPanel="MyClipRect\InnerPanel" ClipRect="MyClipRect" MarginLeft="30" VerticalScrollbar="..\Scrollbar" AutoHideScrollBars="true">
           <Children>
             <Widget Id="MyClipRect" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" HorizontalAlignment="Center" ClipContents="true">
               <Children>
                 <ListPanel Id="InnerPanel" DataSource="{SettingProperties}" HeightSizePolicy="CoverChildren" WidthSizePolicy="StretchToParent" LayoutImp.LayoutMethod="VerticalBottomToTop" VerticalAlignment="Top">
                   <ItemTemplate>
-
-                    <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" LayoutImp.LayoutMethod="VerticalBottomToTop">
-                      <Children>
-
-                        <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="26" MarginBottom="10">
-                          <Children>
-
-                            <!-- Boolean switch widget -->
-                            <Launcher.SettingsPropertyBoolView />
-
-                            <!-- Float Slider -->
-                            <Launcher.SettingsPropertyFloatView />
-
-                            <!-- Int Slider -->
-                            <Launcher.SettingsPropertyIntView />
-
-                            <!-- String TextBox -->
-                            <Launcher.SettingsPropertyStringView />
-
-                            <!-- Button -->
-                            <Launcher.SettingsPropertyButtonView />
-
-                            <!-- Value text/button -->
-                            <!-- Show the formatted values of Int/Float -->
-                            <!--
-                            <SettingsPropertyDisplayValueView />
-                            -->
-
-                            <!-- Property Name Section -->
-                            <TextWidget HeightSizePolicy="CoverChildren" WidthSizePolicy="StretchToParent" VerticalAlignment="Center" HorizontalAlignment="Left" SuggestedWidth="200"
-                                        Brush="Launcher.Mods.ModNameText" Text="@Name">
-                              <Children>
-                                <HintWidget HeightSizePolicy="StretchToParent" WidthSizePolicy="StretchToParent" Command.HoverBegin="OnHover" Command.HoverEnd="OnHoverEnd"/>
-                              </Children>
-                            </TextWidget>
-
-                          </Children>
-                        </ListPanel>
-
-                      </Children>
-                    </ListPanel>
-
+                    <Launcher.Options.OptionTuple />
                   </ItemTemplate>
                 </ListPanel>
               </Children>
@@ -59,12 +18,7 @@
           </Children>
         </ScrollablePanel>
 
-        <ScrollbarWidget Id="Scrollbar" Handle="ScrollbarHandle" AlignmentAxis="Vertical" MinValue="0" MaxValue="100" HorizontalAlignment="Right" VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="20" MarginTop="46" MarginBottom="23" MarginRight="@ScrollbarOffset" UpdateChildrenStates="true">
-          <Children>
-            <Widget HorizontalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="4" Sprite="BlankWhiteSquare_9" Color="#5A4033FF" />
-            <Widget Id="ScrollbarHandle" SuggestedWidth="12" Sprite="BlankWhiteSquare_9" Color="#E6C8A6FF" />
-          </Children>
-        </ScrollbarWidget>
+        <Launcher.Scrollbar Id="Scrollbar" MarginTop="46" MarginBottom="23" MarginRight="@ScrollbarOffset" />
 
       </Children>
     </Widget>

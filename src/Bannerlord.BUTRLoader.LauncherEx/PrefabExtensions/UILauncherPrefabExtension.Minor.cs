@@ -22,7 +22,7 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public UILauncherPrefabExtension1()
         {
             XmlDocument.LoadXml(@$"
-<TextWidget WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""CoverChildren"" VerticalAlignment=""Bottom"" Brush=""Launcher.Version.Text"" MarginLeft=""7"" MarginBottom=""90"" IsHidden=""@HideBUTRLoaderVersionText"" Text=""@BUTRLoaderVersionText""/>
+<TextWidget WidthSizePolicy=""StretchToParent"" HeightSizePolicy=""CoverChildren"" VerticalAlignment=""Bottom"" Brush=""Launcher.Version.Text"" MarginLeft=""7"" MarginBottom=""@BUTRLoaderVersionMarginBottom"" IsHidden=""@HideBUTRLoaderVersionText"" Text=""@BUTRLoaderVersionText""/>
 ");
         }
 
@@ -74,7 +74,25 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public static string XPath => "descendant::TabControl[@Id='ContentPanel']";
 
         public override string Attribute => "MarginRight";
-        public override string Value => "@ContentTabControlMargin";
+        public override string Value => "@ContentTabControlMarginRight";
+    }
+
+    internal sealed class UILauncherPrefabExtension28 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::TabControl[@Id='ContentPanel']";
+
+        public override string Attribute => "MarginBottom";
+        public override string Value => "@ContentTabControlMarginBottom";
+    }
+
+    internal sealed class UILauncherPrefabExtension29 : PrefabExtensionSetAttributePatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "/Prefab/Window/LauncherDragWindowAreaWidget/Children/Widget/Children/Widget/Children/Widget[4]";
+
+        public override string Attribute => "MarginBottom";
+        public override string Value => "@DividerMarginBottom";
     }
 
     /// <summary>

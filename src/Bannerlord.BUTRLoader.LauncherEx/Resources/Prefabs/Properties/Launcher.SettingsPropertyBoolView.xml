@@ -1,15 +1,8 @@
 ﻿<Prefab>
   <Window>
-    <Widget HeightSizePolicy="StretchToParent" WidthSizePolicy="Fixed" SuggestedWidth="150" VerticalAlignment="Center"
-            MarginRight="15" IsVisible="@IsBoolVisible">
+    <Widget HeightSizePolicy="StretchToParent" WidthSizePolicy="Fixed" SuggestedWidth="150" VerticalAlignment="Center" MarginRight="15" IsVisible="@IsBoolVisible">
       <Children>
-        <ButtonWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="22" SuggestedHeight="22" VerticalAlignment="Center" HorizontalAlignment="Center"
-                      Brush="Launcher.Mods.ModToggle" ButtonType="Toggle" ToggleIndicator="ToggleIndicator"
-                      IsSelected="@BoolValue" UpdateChildrenStates="true" DoNotPassEventsToChildren="true">
-          <Children>
-            <ImageWidget Id="ToggleIndicator" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="Launcher.Mods.ModToggle.Checkmark" />
-          </Children>
-        </ButtonWidget>
+        <Launcher.ToggleButton WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="22" SuggestedHeight="22" VerticalAlignment="Center" HorizontalAlignment="Center" IsSelected="@BoolValue" />
       </Children>
     </Widget>
   </Window>

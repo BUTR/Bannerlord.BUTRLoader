@@ -124,4 +124,82 @@
     </Styles>
   </Brush>
 
+  <Brush Name="Launcher.Warning">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="caution" Color="#EB8634FF" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Default" Sprite="caution" Color="#FFFFFFFF" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="Launcher.Error">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="caution" Color="#FF0000FF" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Default" Sprite="caution" Color="#FFFFFFFF" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="Launcher.Official">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="official_mod" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Default" Sprite="official_mod" Color="#FFFFFFFF" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="Launcher.Community">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="community_mod" Color="#D69846FF" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Default" Sprite="community_mod" Color="#FFFFFFFF" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="Launcher.Scrollbar.Filler">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="BlankWhiteSquare_9" Color="#5A4033FF" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="Launcher.Scrollbar.Handle">
+    <Layers>
+      <BrushLayer Name="Default" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Default" Sprite="BlankWhiteSquare_9" Color="#E6C8A6FF" />
+      </Style>
+    </Styles>
+  </Brush>
+
 </Brushes>
