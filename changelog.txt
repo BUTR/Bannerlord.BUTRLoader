@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.19.3
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* When MO2 is used, module folders will be opened via explorer++
+---------------------------------------------------------------------------------------------------
 Version: 1.19.2
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Fixed Widget name conflict, fixes the bet issue

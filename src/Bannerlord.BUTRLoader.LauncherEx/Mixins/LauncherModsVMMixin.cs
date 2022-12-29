@@ -1,5 +1,4 @@
-﻿using Bannerlord.BUTR.Shared.Extensions;
-using Bannerlord.BUTR.Shared.Helpers;
+﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.ViewModels;
 using Bannerlord.ModuleManager;
@@ -26,10 +25,12 @@ namespace Bannerlord.BUTRLoader.Mixins
         private static readonly AccessTools.FieldRef<LauncherModsVM, UserDataManager>? _userDataManager =
             AccessTools2.FieldRefAccess<LauncherModsVM, UserDataManager>("_userDataManager");
 
+        // Not real modules, we declare this way our launcher capabilities
+        private static IEnumerable<ModuleInfoExtended> GetLauncherFeatures() =>
+            FeatureIds.LauncherFeatures.Select(x => new ModuleInfoExtended { Id = x, IsSingleplayerModule = true });
+
         // All installed Modules
-        private readonly Dictionary<string, ModuleInfoExtended> _extendedModuleInfoCache =
-            // Not real modules, we declare this way our launcher capabilities
-            new(FeatureIds.LauncherFeatures.ToDictionary(x => x, x => new ModuleInfoExtended { Id = x, IsSingleplayerModule = true }));
+        private readonly Dictionary<string, ModuleInfoExtended> _extendedModuleInfoCache;
 
         private Func<BUTRLauncherSaveVM?>? _getSelectedSave;
 
@@ -79,7 +80,7 @@ namespace Bannerlord.BUTRLoader.Mixins
 
         public LauncherModsVMMixin(LauncherModsVM launcherModsVM) : base(launcherModsVM)
         {
-            _extendedModuleInfoCache.AddRange(ModuleInfoHelper.GetModules().Cast<ModuleInfoExtended>().ToDictionary(x => x.Id, x => x));
+            _extendedModuleInfoCache = GetLauncherFeatures().Concat(ModuleInfoHelper.GetModules()).ToDictionary(x => x.Id, x => x);
         }
 
         public ModuleInfoExtended? GetModuleById(string id) => _extendedModuleInfoCache.TryGetValue(id, out var mie) ? mie : null;

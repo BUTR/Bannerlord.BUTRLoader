@@ -153,6 +153,14 @@ namespace Bannerlord.BUTRLoader.ViewModels
         [BUTRDataSourceMethod]
         public void ExecuteOpen()
         {
+            if (Process.GetCurrentProcess().ParentProcess() is { ProcessName: "ModOrganizer", MainModule: { FileName: { } path} } && Path.GetDirectoryName(path) is { } dir)
+            {
+                var explorer = Path.Combine(dir, "explorer++", "Explorer++.exe");
+                if (!File.Exists(explorer)) return;
+                Process.Start(explorer, $"\"{ModuleInfoExtended.Path}\"");
+                return;
+            }
+
             if (!Directory.Exists(ModuleInfoExtended.Path)) return;
             Process.Start(ModuleInfoExtended.Path);
         }
