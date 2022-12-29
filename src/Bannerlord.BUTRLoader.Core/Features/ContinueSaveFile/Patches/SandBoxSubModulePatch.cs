@@ -16,8 +16,12 @@ namespace Bannerlord.BUTRLoader.Features.ContinueSaveFile.Patches
 
         public static Func<GameStartupInfo, string?>? GetSaveGameArg;
 
+        private static Harmony? _harmony;
+
         public static bool Enable(Harmony harmony)
         {
+            _harmony = harmony;
+
             return harmony.TryPatch(
                 AccessTools2.DeclaredMethod("SandBox.SandBoxSubModule:OnInitialState"),
                 prefix: AccessTools2.DeclaredMethod(typeof(SandBoxSubModulePatch), nameof(OnInitialStatePrefix)));
@@ -34,6 +38,11 @@ namespace Bannerlord.BUTRLoader.Features.ContinueSaveFile.Patches
 
             using (var _ = new InformationManagerConfirmInquiryHandler())
                 tryLoadSave(saveFile, startGame);
+
+            _harmony?.Unpatch(
+                AccessTools2.DeclaredMethod("SandBox.SandBoxSubModule:OnInitialState"),
+                AccessTools2.DeclaredMethod(typeof(SandBoxSubModulePatch), nameof(OnInitialStatePrefix)));
+
             return false;
         }
     }

@@ -12,8 +12,12 @@ namespace Bannerlord.BUTRLoader.Features.ContinueSaveFile.Patches
     {
         public static event Action<GameStartupInfo, string>? OnSaveGameArgParsed;
 
+        private static Harmony? _harmony;
+
         public static bool Enable(Harmony harmony)
         {
+            _harmony = harmony;
+
             return true &
                    harmony.TryPatch(
                        AccessTools2.DeclaredMethod(typeof(Module), "ProcessApplicationArguments"),
@@ -30,6 +34,10 @@ namespace Bannerlord.BUTRLoader.Features.ContinueSaveFile.Patches
                 var saveGame = array[i + 1];
                 OnSaveGameArgParsed?.Invoke(__instance.StartupInfo, saveGame);
             }
+
+            _harmony?.Unpatch(
+                AccessTools2.DeclaredMethod(typeof(Module), "ProcessApplicationArguments"),
+                AccessTools2.DeclaredMethod(typeof(ModulePatch), nameof(ProcessApplicationArgumentsPostfix)));
         }
     }
 }

@@ -8,7 +8,7 @@ using TaleWorlds.GauntletUI.BaseTypes;
 
 namespace Bannerlord.BUTRLoader.Widgets
 {
-    internal sealed class ToggleButtonWidget : ImageWidget
+    internal sealed class LauncherToggleButtonWidget : ImageWidget
     {
         private enum ButtonClickState
         {
@@ -64,7 +64,7 @@ namespace Bannerlord.BUTRLoader.Widgets
 
         public List<Action<Widget>> ClickEventHandlers = new();
 
-        public ToggleButtonWidget(UIContext context) : base(context)
+        public LauncherToggleButtonWidget(UIContext context) : base(context)
         {
             FrictionEnabled = true;
         }

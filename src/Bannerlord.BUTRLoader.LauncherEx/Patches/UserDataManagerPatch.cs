@@ -38,7 +38,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static bool LoadUserDataPrefix(UserDataManager __instance, string ____filePath)
+        private static bool LoadUserDataPrefix(string ____filePath)
         {
             if (!File.Exists(____filePath))
             {
@@ -72,7 +72,7 @@ namespace Bannerlord.BUTRLoader.Patches
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         [SuppressMessage("ReSharper", "RedundantAssignment")]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void SaveUserDataPostfix(UserDataManager __instance, string ____filePath)
+        private static void SaveUserDataPostfix(string ____filePath)
         {
             var xDoc = new XmlDocument();
             xDoc.Load(____filePath);

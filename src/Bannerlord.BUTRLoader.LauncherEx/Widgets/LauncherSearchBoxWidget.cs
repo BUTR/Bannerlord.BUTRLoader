@@ -5,7 +5,7 @@ using TaleWorlds.GauntletUI.BaseTypes;
 
 namespace Bannerlord.BUTRLoader.Widgets
 {
-    internal sealed class SearchBoxWidget : BrushWidget
+    internal sealed class LauncherSearchBoxWidget : BrushWidget
     {
         public EditableTextWidget? EditableTextWidget
         {
@@ -44,6 +44,6 @@ namespace Bannerlord.BUTRLoader.Widgets
         }
         private string? _searchText;
 
-        public SearchBoxWidget(UIContext context) : base(context) { }
+        public LauncherSearchBoxWidget(UIContext context) : base(context) { }
     }
 }

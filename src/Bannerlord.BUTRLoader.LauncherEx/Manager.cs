@@ -36,31 +36,31 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             WidgetPrefabPatch.Enable(_launcherHarmony);
 
             GraphicsContextManager.Enable(_launcherHarmony);
-            GraphicsContextManager.CreateAndRegister("arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
-            GraphicsContextManager.CreateAndRegister("arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
-            GraphicsContextManager.CreateAndRegister("export", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.export.png"));
-            GraphicsContextManager.CreateAndRegister("import", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.import.png"));
-            GraphicsContextManager.CreateAndRegister("refresh", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.refresh.png"));
-            GraphicsContextManager.CreateAndRegister("warm_overlay", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.warm_overlay.png"));
-            GraphicsContextManager.CreateAndRegister("folder", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.folder.png"));
-            GraphicsContextManager.CreateAndRegister("search", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.search.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_export", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.export.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_import", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.import.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_refresh", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.refresh.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_warm_overlay", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.warm_overlay.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_folder", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.folder.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_search", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.search.png"));
 
             SpriteDataManager.Enable(_launcherHarmony);
-            SpriteDataManager.CreateAndRegister("arrow_down");
-            SpriteDataManager.CreateAndRegister("arrow_left");
-            SpriteDataManager.CreateAndRegister("import");
-            SpriteDataManager.CreateAndRegister("export");
-            SpriteDataManager.CreateAndRegister("refresh");
-            SpriteDataManager.CreateAndRegister("warm_overlay");
-            SpriteDataManager.CreateAndRegister("folder");
-            SpriteDataManager.CreateAndRegister("search");
+            SpriteDataManager.CreateAndRegister("launcher_arrow_down");
+            SpriteDataManager.CreateAndRegister("launcher_arrow_left");
+            SpriteDataManager.CreateAndRegister("launcher_import");
+            SpriteDataManager.CreateAndRegister("launcher_export");
+            SpriteDataManager.CreateAndRegister("launcher_refresh");
+            SpriteDataManager.CreateAndRegister("launcher_warm_overlay");
+            SpriteDataManager.CreateAndRegister("launcher_folder");
+            SpriteDataManager.CreateAndRegister("launcher_search");
 
             BrushFactoryManager.Enable(_launcherHarmony);
             BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
 
             WidgetFactoryManager.Enable(_launcherHarmony);
-            WidgetFactoryManager.Register(typeof(ToggleButtonWidget));
-            WidgetFactoryManager.Register(typeof(SearchBoxWidget));
+            WidgetFactoryManager.Register(typeof(LauncherToggleButtonWidget));
+            WidgetFactoryManager.Register(typeof(LauncherSearchBoxWidget));
 
             WidgetFactoryManager.CreateAndRegister("Launcher.ToggleButton", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.ToggleButton.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SearchBox", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.SearchBox.xml"));

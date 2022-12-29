@@ -4,10 +4,7 @@ using Bannerlord.BUTRLoader.LauncherEx;
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection.Emit;
 
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade.Launcher.Library;

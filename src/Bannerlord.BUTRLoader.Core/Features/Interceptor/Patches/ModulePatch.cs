@@ -13,8 +13,12 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor.Patches
         public static event Action? OnInitializeSubModulesPrefix;
         public static event Action? OnLoadSubModulesPostfix;
 
+        private static Harmony? _harmony;
+
         public static bool Enable(Harmony harmony)
         {
+            _harmony = harmony;
+
             var res1 = harmony.TryPatch(
                 AccessTools2.Method(typeof(Module), "LoadSubModules"),
                 postfix: AccessTools2.Method(typeof(ModulePatch), nameof(LoadSubModulesPostfix)));
@@ -29,9 +33,23 @@ namespace Bannerlord.BUTRLoader.Features.Interceptor.Patches
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void InitializeSubModulesPrefix() => OnInitializeSubModulesPrefix?.Invoke();
+        private static void InitializeSubModulesPrefix()
+        {
+            OnInitializeSubModulesPrefix?.Invoke();
+
+            _harmony?.Unpatch(
+                AccessTools2.Method(typeof(Module), "InitializeSubModules"),
+                AccessTools2.Method(typeof(ModulePatch), nameof(InitializeSubModulesPrefix)));
+        }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void LoadSubModulesPostfix() => OnLoadSubModulesPostfix?.Invoke();
+        private static void LoadSubModulesPostfix()
+        {
+            OnLoadSubModulesPostfix?.Invoke();
+
+            _harmony?.Unpatch(
+                AccessTools2.Method(typeof(Module), "LoadSubModules"),
+                AccessTools2.Method(typeof(ModulePatch), nameof(LoadSubModulesPostfix)));
+        }
     }
 }

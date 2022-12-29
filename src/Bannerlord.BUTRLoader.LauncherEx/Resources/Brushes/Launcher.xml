@@ -46,10 +46,10 @@
     </Layers>
     <Styles>
       <Style Name="Default">
-        <BrushLayer Name="Default" Sprite="arrow_down" Color="#E6C8A6FF" />
+        <BrushLayer Name="Default" Sprite="launcher_arrow_down" Color="#E6C8A6FF" />
       </Style>
       <Style Name="Selected">
-        <BrushLayer Name="Default" Sprite="arrow_left" Color="#E6C8A6FF" />
+        <BrushLayer Name="Default" Sprite="launcher_arrow_left" Color="#E6C8A6FF" />
       </Style>
     </Styles>
   </Brush>
@@ -60,10 +60,10 @@
     </Layers>
     <Styles>
       <Style Name="Default">
-        <BrushLayer Name="Default" Sprite="import" Color="#E6C8A6FF" />
+        <BrushLayer Name="Default" Sprite="launcher_import" Color="#E6C8A6FF" />
       </Style>
       <Style Name="Hovered">
-        <BrushLayer Name="Default" Sprite="import" Color="#FFFFFFFF" />
+        <BrushLayer Name="Default" Sprite="launcher_import" Color="#FFFFFFFF" />
       </Style>
     </Styles>
   </Brush>
@@ -74,10 +74,10 @@
     </Layers>
     <Styles>
       <Style Name="Default">
-        <BrushLayer Name="Default" Sprite="export" Color="#E6C8A6FF" />
+        <BrushLayer Name="Default" Sprite="launcher_export" Color="#E6C8A6FF" />
       </Style>
       <Style Name="Hovered">
-        <BrushLayer Name="Default" Sprite="export" Color="#FFFFFFFF" />
+        <BrushLayer Name="Default" Sprite="launcher_export" Color="#FFFFFFFF" />
       </Style>
     </Styles>
   </Brush>
@@ -88,10 +88,10 @@
     </Layers>
     <Styles>
       <Style Name="Default">
-        <BrushLayer Name="Default" Sprite="refresh" Color="#E6C8A6FF" />
+        <BrushLayer Name="Default" Sprite="launcher_refresh" Color="#E6C8A6FF" />
       </Style>
       <Style Name="Hovered">
-        <BrushLayer Name="Default" Sprite="refresh" Color="#FFFFFFFF" />
+        <BrushLayer Name="Default" Sprite="launcher_refresh" Color="#FFFFFFFF" />
       </Style>
     </Styles>
   </Brush>
@@ -102,10 +102,10 @@
     </Layers>
     <Styles>
       <Style Name="Default">
-        <BrushLayer Name="Default" Sprite="folder" Color="#E6C8A6FF" />
+        <BrushLayer Name="Default" Sprite="launcher_folder" Color="#E6C8A6FF" />
       </Style>
       <Style Name="Hovered">
-        <BrushLayer Name="Default" Sprite="folder" Color="#FFFFFFFF" />
+        <BrushLayer Name="Default" Sprite="launcher_folder" Color="#FFFFFFFF" />
       </Style>
     </Styles>
   </Brush>
@@ -116,10 +116,10 @@
     </Layers>
     <Styles>
       <Style Name="Default">
-        <BrushLayer Name="Default" Sprite="search" Color="#E6C8A6FF" />
+        <BrushLayer Name="Default" Sprite="launcher_search" Color="#E6C8A6FF" />
       </Style>
       <Style Name="Hovered">
-        <BrushLayer Name="Default" Sprite="search" Color="#FFFFFFFF" />
+        <BrushLayer Name="Default" Sprite="launcher_search" Color="#FFFFFFFF" />
       </Style>
     </Styles>
   </Brush>
