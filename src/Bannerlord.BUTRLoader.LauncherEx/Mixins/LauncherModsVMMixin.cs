@@ -107,7 +107,7 @@ namespace Bannerlord.BUTRLoader.Mixins
                 ForceSortedHint = new LauncherHintVM($"The Load Order was re-sorted with the default algorithm!\nReasons:\n{string.Join("\n", issues)}");
 
                 // Beta sorting algorithm will fail currently in some cases, use the TW fallback
-                TryOrderByLoadOrderTW(Enumerable.Empty<string>(), x => modDatas.TryGetValue(x, out var isSelected) && isSelected);
+                TryOrderByLoadOrderTW(Enumerable.Empty<string>(), x => modDatas.TryGetValue(x, out var isSelected) && isSelected, true);
                 //TryOrderByLoadOrder(Enumerable.Empty<string>(), x => modDatas.TryGetValue(x, out var isSelected) && isSelected);
             }
             else

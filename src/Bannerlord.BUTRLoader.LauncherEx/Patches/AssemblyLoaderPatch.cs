@@ -19,7 +19,7 @@ namespace Bannerlord.BUTRLoader.Patches
         public static bool Enable(Harmony harmony)
         {
             var res1 = harmony.TryPatch(
-                AccessTools2.Method(typeof(AssemblyLoader), "LoadFrom"),
+                AccessTools2.Method(typeof(AssemblyLoader), nameof(AssemblyLoader.LoadFrom)),
                 prefix: AccessTools2.DeclaredMethod(typeof(AssemblyLoaderPatch), nameof(LoadFromPrefix)));
             if (!res1) return false;
 

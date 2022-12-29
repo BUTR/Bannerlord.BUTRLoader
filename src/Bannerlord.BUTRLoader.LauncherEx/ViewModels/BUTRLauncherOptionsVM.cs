@@ -4,6 +4,7 @@ using Bannerlord.BUTRLoader.Options;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -182,32 +183,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 if (split.Length != 2) continue;
                 var key = split[0].Trim();
                 var value = split[1].Trim();
-                var settingsType = bool.TryParse(value, out _) ? SettingType.Bool
-                    : int.TryParse(value, out _) ? SettingType.Int
-                    : float.TryParse(value, out _) ? SettingType.Float
-                    : SettingType.String;
-                var storage = settingsType switch
-                {
-                    SettingType.Bool => (IRef) new StorageRef<bool>(bool.Parse(value)),
-                    SettingType.Int => (IRef) new StorageRef<int>(int.Parse(value)),
-                    SettingType.Float => (IRef) new StorageRef<float>(float.Parse(value)),
-                    SettingType.String => (IRef) new StorageRef<string>(value),
-                };
-                var propertyRef = settingsType switch
-                {
-                    SettingType.Bool => (IRef) new ProxyRef<bool>(() => (bool) storage.Value, val => { storage.Value = val; }),
-                    SettingType.Int => (IRef) new ProxyRef<int>(() => (int) storage.Value, val => { storage.Value = val; }),
-                    SettingType.Float => (IRef) new ProxyRef<float>(() => (float) storage.Value, val => { storage.Value = val; }),
-                    SettingType.String => (IRef) new ProxyRef<string>(() => (string) storage.Value, val => { storage.Value = val; }),
-                };
-                SettingProperties.Add(new SettingsPropertyVM(new ConfigSettingsPropertyDefinition
-                {
-                    ConfigKey = key,
-                    OriginalValue = value,
-                    DisplayName = ToSeparateWords(key),
-                    SettingType = settingsType,
-                    PropertyReference = propertyRef
-                }));
+                SettingProperties.Add(CreateSettingsPropertyVM(key, value, ToSeparateWords));
             }
         }
         private void RefreshEngineOptions()
@@ -219,32 +195,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 if (split.Length != 2) continue;
                 var key = split[0].Trim();
                 var value = split[1].Trim();
-                var settingsType = bool.TryParse(value, out _) ? SettingType.Bool
-                    : int.TryParse(value, out _) ? SettingType.Int
-                    : float.TryParse(value, out _) ? SettingType.Float
-                    : SettingType.String;
-                var storage = settingsType switch
-                {
-                    SettingType.Bool => (IRef) new StorageRef<bool>(bool.Parse(value)),
-                    SettingType.Int => (IRef) new StorageRef<int>(int.Parse(value)),
-                    SettingType.Float => (IRef) new StorageRef<float>(float.Parse(value)),
-                    SettingType.String => (IRef) new StorageRef<string>(value),
-                };
-                var propertyRef = settingsType switch
-                {
-                    SettingType.Bool => (IRef) new ProxyRef<bool>(() => (bool) storage.Value, val => { storage.Value = val; }),
-                    SettingType.Int => (IRef) new ProxyRef<int>(() => (int) storage.Value, val => { storage.Value = val; }),
-                    SettingType.Float => (IRef) new ProxyRef<float>(() => (float) storage.Value, val => { storage.Value = val; }),
-                    SettingType.String => (IRef) new ProxyRef<string>(() => (string) storage.Value, val => { storage.Value = val; }),
-                };
-                SettingProperties.Add(new SettingsPropertyVM(new ConfigSettingsPropertyDefinition
-                {
-                    ConfigKey = key,
-                    OriginalValue = value,
-                    DisplayName = ToTitleCase(key.Replace("_", " ")),
-                    SettingType = settingsType,
-                    PropertyReference = propertyRef
-                }));
+                SettingProperties.Add(CreateSettingsPropertyVM(key, value, x => ToTitleCase(x.Replace("_", " "))));
             }
         }
 
@@ -359,6 +310,39 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 File.WriteAllText(EngineConfigPath, sb.ToString());
         }
 
+        private static SettingsPropertyVM CreateSettingsPropertyVM(string key, string value, Func<string, string> keyProcessor)
+        {
+            var settingsType = bool.TryParse(value, out _) ? SettingType.Bool
+                : int.TryParse(value, out _) ? SettingType.Int
+                : float.TryParse(value, out _) ? SettingType.Float
+                : SettingType.String;
+            var storage = settingsType switch
+            {
+                SettingType.Bool => (IRef) new StorageRef<bool>(bool.Parse(value)),
+                SettingType.Int => (IRef) new StorageRef<int>(int.Parse(value)),
+                SettingType.Float => (IRef) new StorageRef<float>(float.Parse(value)),
+                SettingType.String => (IRef) new StorageRef<string>(value),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            var propertyRef = settingsType switch
+            {
+                SettingType.Bool => (IRef) new ProxyRef<bool>(() => (bool) storage.Value!, val => { storage.Value = val; }),
+                SettingType.Int => (IRef) new ProxyRef<int>(() => (int) storage.Value!, val => { storage.Value = val; }),
+                SettingType.Float => (IRef) new ProxyRef<float>(() => (float) storage.Value!, val => { storage.Value = val; }),
+                SettingType.String => (IRef) new ProxyRef<string>(() => (string) storage.Value!, val => { storage.Value = val; }),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+            return new SettingsPropertyVM(new ConfigSettingsPropertyDefinition
+            {
+                ConfigKey = key,
+                OriginalValue = value,
+                DisplayName = keyProcessor(key),
+                SettingType = settingsType,
+                PropertyReference = propertyRef
+            });
+        }
+
+        [return: NotNullIfNotNull("value")]
         private static string? ToSeparateWords(string? value)
         {
             if (value == null) return null;
@@ -371,20 +355,14 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
             for (; i < inChars.Length; i++)
             {
-                if (char.IsUpper(inChars[i]))
+                if (!char.IsUpper(inChars[i])) continue;
+                uCWithAnyLC.Add(i);
+                if (++i >= inChars.Length || !char.IsUpper(inChars[i])) continue;
+                while (++i < inChars.Length)
                 {
-                    uCWithAnyLC.Add(i);
-                    if (++i < inChars.Length && char.IsUpper(inChars[i]))
-                    {
-                        while (++i < inChars.Length)
-                        {
-                            if (!char.IsUpper(inChars[i]))
-                            {
-                                uCWithAnyLC.Add(i - 1);
-                                break;
-                            }
-                        }
-                    }
+                    if (char.IsUpper(inChars[i])) continue;
+                    uCWithAnyLC.Add(i - 1);
+                    break;
                 }
             }
 
@@ -402,6 +380,8 @@ namespace Bannerlord.BUTRLoader.ViewModels
             Array.Copy(inChars, lastIndex, outChars, lastPos, outChars.Length - lastPos);
             return new string(outChars);
         }
-        private static string ToTitleCase(string value) => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(value);
+
+        [return: NotNullIfNotNull("value")]
+        private static string? ToTitleCase(string? value) => value is null ? null : CultureInfo.InvariantCulture.TextInfo.ToTitleCase(value);
     }
 }

@@ -136,7 +136,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             return false;
         }
 
-        private IEnumerable<string> TryOrderByLoadOrderTW(IEnumerable<string> loadOrder, Func<string, bool> isModuleSelected)
+        private IEnumerable<string> TryOrderByLoadOrderTW(IEnumerable<string> loadOrder, Func<string, bool> isModuleSelected, bool overwriteWhenFailure = false)
         {
             var semiOrderedModules = new List<ModuleInfoExtendedWithMetadata>();
 
@@ -174,7 +174,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             }
 
             var issues = LoadOrderChecker.IsLoadOrderCorrect(orderedModules.Select(x => x.ModuleInfoExtended).ToList()).ToList();
-            if (issues.Count != 0) return issues.Select(x => x.Reason);
+            if (!overwriteWhenFailure && issues.Count != 0) return issues.Select(x => x.Reason);
 
             OverrideModuleVMs(orderedModules);
             return Enumerable.Empty<string>();

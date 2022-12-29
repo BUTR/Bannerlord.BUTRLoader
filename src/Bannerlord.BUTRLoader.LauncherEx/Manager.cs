@@ -7,7 +7,10 @@ using HarmonyLib;
 
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Xml;
+
+[assembly: InternalsVisibleTo("Bannerlord.BUTRLoader.Tests")]
 
 // ReSharper disable once CheckNamespace
 namespace Bannerlord.BUTRLoader.LauncherEx

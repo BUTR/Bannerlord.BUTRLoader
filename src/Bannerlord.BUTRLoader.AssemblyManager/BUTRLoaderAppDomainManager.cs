@@ -8,10 +8,7 @@ using HarmonyLib;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.CompilerServices;
 using System.Text;
-
-[assembly: InternalsVisibleTo("Bannerlord.BUTRLoader.Tests")]
 
 namespace Bannerlord.BUTRLoader.AssemblyManager
 {
