@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.ModuleManager;
 
 using System;
@@ -110,7 +111,8 @@ namespace Bannerlord.BUTRLoader.ViewModels
             if (nameDuplicates.Count > 0)
             {
                 HasError = true;
-                ErrorHint = new LauncherHintVM($"Duplicate Module Names:\n{string.Join("\n", nameDuplicates)}");
+                ErrorHint = new LauncherHintVM(new BUTRTextObject("{=vCwH9226}Duplicate Module Names:{NL}{MODULENAMES}")
+                    .SetTextVariable("MODULENAMES", string.Join("\n", nameDuplicates)).ToString());
                 return;
             }
             var existingModulesByName = existingModules.ToDictionary(x => x.Name, x => x);
@@ -118,16 +120,25 @@ namespace Bannerlord.BUTRLoader.ViewModels
             ModuleListCode = $"_MODULES_*{string.Join("*", existingModules.Select(x => x.Id))}*_MODULES_";
 
             var missingNames = modules.Select(x => x.Name).Except(existingModulesByName.Keys).ToArray();
-            var loadOrderIssues = LoadOrderChecker.IsLoadOrderCorrect(existingModules).Select(x => x.Reason).ToList();
+            var loadOrderIssues = LoadOrderChecker.IsLoadOrderCorrect(existingModules).ToList();
 
             //LoadOrderHint = new LauncherHintVM($"Load Order:\n{string.Join("\n", existingModules.Select(x => x.Id))}\n\nUnknown Mod Names:{string.Join("\n", missingNames)}");
-            LoadOrderHint = new LauncherHintVM($"Load Order:\n{string.Join("\n", modules.Select(x => _getModuleByName(x.Name)?.Id ?? $"{x.Name} (Unknown Id)"))}");
+            LoadOrderHint = new LauncherHintVM(new BUTRTextObject("{=sd6M4KRd}Load Order:{NL}{LOADORDER}")
+                .SetTextVariable("LOADORDER", string.Join("\n", modules.Select(x => _getModuleByName(x.Name)?.Id ?? $"{x.Name} {new BUTRTextObject("{=kxqLbSqeUnknown ID")}(Unknown Id)"))).ToString());
 
             if (missingNames.Length > 0 || loadOrderIssues.Count > 0)
             {
                 var text = string.Empty;
-                text += loadOrderIssues.Count > 0 ? $"Load Order Issues:\n{string.Join("\n\n", loadOrderIssues)}{(missingNames.Length > 0 ? "\n\n\n" : string.Empty)}" : string.Empty;
-                text += missingNames.Length > 0 ? $"Missing Modules:\n{string.Join("\n", missingNames)}" : string.Empty;
+                text += loadOrderIssues.Count > 0
+                    ? string.Format("{0}{1}",
+                        new BUTRTextObject("{=HvvA78sZ}Load Order Issues:{NL}{LOADORDERISSUES}")
+                            .SetTextVariable("LOADORDERISSUES", string.Join("\n\n", loadOrderIssues)),
+                        missingNames.Length > 0 ? "\n\n\n" : string.Empty)
+                    : string.Empty;
+                text += missingNames.Length > 0
+                    ? new BUTRTextObject("{=GtDRbC3m}Missing Modules:{NL}{MODULES}")
+                        .SetTextVariable("MODULES", string.Join("\n", missingNames)).ToString()
+                    : string.Empty;
 
                 HasError = true;
                 ErrorHint = new LauncherHintVM(text);
@@ -140,13 +151,17 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 var existingModule = existingModulesByName[module.Name];
                 if (module.Version != existingModule.Version)
                 {
-                    issues.Add($"{existingModule.Id}. Required {module.Version}. Actual {existingModule.Version}");
+                    issues.Add(new BUTRTextObject("{=nYVWoomO}{MODULEID}. Required {REQUIREDVERSION}. Actual {ACTUALVERSION}")
+                        .SetTextVariable("MODULEID", existingModule.Id)
+                        .SetTextVariable("REQUIREDVERSION", module.Version.ToString())
+                        .SetTextVariable("ACTUALVERSION", existingModule.Version.ToString()).ToString());
                 }
             }
             if (issues.Count > 0)
             {
                 HasWarning = true;
-                WarningHint = new LauncherHintVM($"Mismatched Module Versions:\n{string.Join("\n\n", issues)}");
+                WarningHint = new LauncherHintVM(new BUTRTextObject("{=BuMom4Jt}Mismatched Module Versions:{NL}{MODULEVERSIONS}")
+                    .SetTextVariable("MODULEVERSIONS", string.Join("\n\n", issues)).ToString());
             }
         }
 

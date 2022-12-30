@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.20.0
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Added localization support
+* Added Russian language
+---------------------------------------------------------------------------------------------------
 Version: 1.19.5
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Fixed crash with duplicate module ids and names

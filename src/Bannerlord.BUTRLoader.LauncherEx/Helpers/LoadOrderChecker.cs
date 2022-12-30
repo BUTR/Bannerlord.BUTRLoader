@@ -7,16 +7,16 @@ namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class LoadOrderChecker
     {
-        public static IEnumerable<ModuleIssue> IsLoadOrderCorrect(IReadOnlyList<ModuleInfoExtended> modules)
+        public static IEnumerable<string> IsLoadOrderCorrect(IReadOnlyList<ModuleInfoExtended> modules)
         {
             var loadOrder = FeatureIds.LauncherFeatures.Select(x => new ModuleInfoExtended { Id = x }).Concat(modules).ToList();
             foreach (var module in modules)
             {
                 var issues = ModuleUtilities.ValidateLoadOrder(loadOrder, module).ToList();
                 if (issues.Any())
-                    return issues;
+                    return issues.Select(ModuleIssueRenderer.Render);
             }
-            return Enumerable.Empty<ModuleIssue>();
+            return Enumerable.Empty<string>();
         }
     }
 }

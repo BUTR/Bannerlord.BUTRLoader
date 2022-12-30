@@ -1,5 +1,6 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.BUTRLoader.ViewModels;
 using Bannerlord.ModuleManager;
 
@@ -74,6 +75,11 @@ namespace Bannerlord.BUTRLoader.Mixins
         }
         private string _searchText = string.Empty;
 
+        [BUTRDataSourceProperty]
+        public string NameCategoryText2 => new BUTRTextObject("{=JtelOsIW}Name").ToString();
+        [BUTRDataSourceProperty]
+        public string VersionCategoryText2 => new BUTRTextObject("{=14WBFIS1}Version").ToString();
+
         public string ModuleListCode => _getSelectedSave?.Invoke() is { ModuleListCode: { } } saveVM
                 ? saveVM.ModuleListCode
                 : $"_MODULES_*{string.Join("*", Modules2.Where(x => x.IsSelected).Select(x => x.ModuleInfoExtended.Id))}*_MODULES_";
@@ -104,7 +110,8 @@ namespace Bannerlord.BUTRLoader.Mixins
             if (issues.Count != 0)
             {
                 IsForceSorted = true;
-                ForceSortedHint = new LauncherHintVM($"The Load Order was re-sorted with the default algorithm!\nReasons:\n{string.Join("\n", issues)}");
+                ForceSortedHint = new LauncherHintVM(new BUTRTextObject("{=pZVVdI5d}The Load Order was re-sorted with the default algorithm!{NL}Reasons:{NL}{REASONS}")
+                    .SetTextVariable("REASONS", string.Join("\n", issues)).ToString());
 
                 // Beta sorting algorithm will fail currently in some cases, use the TW fallback
                 TryOrderByLoadOrderTW(Enumerable.Empty<string>(), x => modDatas.TryGetValue(x, out var isSelected) && isSelected, true);
@@ -134,11 +141,11 @@ namespace Bannerlord.BUTRLoader.Mixins
                 modules.Validate();
         }
 
-        private IEnumerable<ModuleIssue> ValidateModule(BUTRLauncherModuleVM moduleVM) => ValidateModuleInternal(Modules2, Modules2Lookup, moduleVM);
+        private IEnumerable<string> ValidateModule(BUTRLauncherModuleVM moduleVM) => ValidateModuleInternal(Modules2, Modules2Lookup, moduleVM);
 
         private void ToggleModuleSelection(BUTRLauncherModuleVM moduleVM) => ToggleModuleSelectionInternal(Modules2, Modules2Lookup, moduleVM);
 
-        private bool ChangeModulePosition(BUTRLauncherModuleVM targetModuleVM, int insertIndex, Action<IReadOnlyCollection<ModuleIssue>>? onIssues = null) =>
+        private bool ChangeModulePosition(BUTRLauncherModuleVM targetModuleVM, int insertIndex, Action<IReadOnlyCollection<string>>? onIssues = null) =>
             ChangeModulePositionInternal(Modules2, Modules2Lookup, targetModuleVM, insertIndex, onIssues);
 
         private void SearchTextChanged()
@@ -169,7 +176,8 @@ namespace Bannerlord.BUTRLoader.Mixins
             {
                 ChangeModulePosition(targetModuleVM, insertIndex, issues =>
                 {
-                    HintManager.ShowHint($"Failed to place the module to the desired position! Placing to the nearest available!\nReason:\n{string.Join("\n", issues.Select(x => x.Reason))}");
+                    HintManager.ShowHint(new BUTRTextObject("{=sP1a61KE}Failed to place the module to the desired position! Placing to the nearest available!{NL}Reason:{NL}{REASONS}")
+                        .SetTextVariable("REASONS", string.Join("\n", issues)).ToString());
                     Task.Factory.StartNew(async () =>
                     {
                         await Task.Delay(5000);

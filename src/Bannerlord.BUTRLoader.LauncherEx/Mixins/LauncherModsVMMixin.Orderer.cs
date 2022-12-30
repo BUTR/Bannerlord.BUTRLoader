@@ -1,6 +1,7 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.BUTRLoader.ViewModels;
 using Bannerlord.ModuleManager;
 
@@ -72,12 +73,12 @@ namespace Bannerlord.BUTRLoader.Mixins
                 ModuleUtilities.EnableModule(modules, moduleVM.ModuleInfoExtended, ctx.GetIsSelected, ctx.SetIsSelected, ctx.GetIsDisabled, ctx.SetIsDisabled);
         }
 
-        private static IEnumerable<ModuleIssue> ValidateModuleInternal(IEnumerable<BUTRLauncherModuleVM> moduleVMs, IDictionary<string, BUTRLauncherModuleVM> lookup, BUTRLauncherModuleVM moduleVM)
+        private static IEnumerable<string> ValidateModuleInternal(IEnumerable<BUTRLauncherModuleVM> moduleVMs, IDictionary<string, BUTRLauncherModuleVM> lookup, BUTRLauncherModuleVM moduleVM)
         {
             var modules = moduleVMs.Select(x => x.ModuleInfoExtended).Concat(FeatureIds.LauncherFeatures.Select(x => new ModuleInfoExtended { Id = x })).ToList();
             var ctx = new ModuleContext(lookup);
 
-            return ModuleUtilities.ValidateModule(modules, moduleVM.ModuleInfoExtended, ctx.GetIsSelected, ctx.GetIsValid);
+            return ModuleUtilities.ValidateModule(modules, moduleVM.ModuleInfoExtended, ctx.GetIsSelected, ctx.GetIsValid).Select(ModuleIssueRenderer.Render);
         }
 
         private static void SortByDefaultInternal(MBBindingList<BUTRLauncherModuleVM> modules)
@@ -98,7 +99,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             //SortBy(sorted);
         }
 
-        private static bool ChangeModulePositionInternal(MBBindingList<BUTRLauncherModuleVM> moduleVMs, IDictionary<string, BUTRLauncherModuleVM> lookup, BUTRLauncherModuleVM targetModuleVM, int insertIndex, Action<IReadOnlyCollection<ModuleIssue>>? onIssues = null)
+        private static bool ChangeModulePositionInternal(MBBindingList<BUTRLauncherModuleVM> moduleVMs, IDictionary<string, BUTRLauncherModuleVM> lookup, BUTRLauncherModuleVM targetModuleVM, int insertIndex, Action<IReadOnlyCollection<string>>? onIssues = null)
         {
             if (insertIndex >= moduleVMs.IndexOf(targetModuleVM)) insertIndex--;
             insertIndex = (int) MathF.Clamp(insertIndex, 0f, moduleVMs.Count - 1);
@@ -174,7 +175,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             }
 
             var issues = LoadOrderChecker.IsLoadOrderCorrect(orderedModules.Select(x => x.ModuleInfoExtended).ToList()).ToList();
-            if (!overwriteWhenFailure && issues.Count != 0) return issues.Select(x => x.Reason);
+            if (!overwriteWhenFailure && issues.Count != 0) return issues;
 
             OverrideModuleVMs(orderedModules);
             return Enumerable.Empty<string>();
@@ -199,7 +200,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             // Check the present load order
             var loadOrderValidationIssues = LoadOrderChecker.IsLoadOrderCorrect(presentOrderedIds.Select(x => _extendedModuleInfoCache[x]).ToList()).ToList();
             if (loadOrderValidationIssues.Count != 0)
-                return loadOrderValidationIssues.Select(x => x.Reason);
+                return loadOrderValidationIssues;
 
             var orderedModules = semiOrderedModules
                 .Select(x => new BUTRLauncherModuleVM(x, ToggleModuleSelection, ValidateModule))
@@ -246,7 +247,7 @@ namespace Bannerlord.BUTRLoader.Mixins
             }
 
             if (retryCount >= retryCountMax)
-                return new[] { "Failed to order the module list!" };
+                return new[] { new BUTRTextObject("{=sLf3eIpH}Failed to order the module list!").ToString() };
 
             OverrideModuleVMs(orderedModules);
             return Enumerable.Empty<string>();

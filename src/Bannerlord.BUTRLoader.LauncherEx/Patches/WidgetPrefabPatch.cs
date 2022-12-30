@@ -21,6 +21,8 @@ namespace Bannerlord.BUTRLoader.Patches
     {
         public static bool Enable(Harmony harmony)
         {
+            PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension31.Movie, UILauncherPrefabExtension31.XPath, new UILauncherPrefabExtension31());
+
             // Options
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension3.Movie, UILauncherPrefabExtension3.XPath, new UILauncherPrefabExtension3());
             PrefabExtensionManager.RegisterPatch(UILauncherPrefabExtension4.Movie, UILauncherPrefabExtension4.XPath, new UILauncherPrefabExtension4());
@@ -69,6 +71,11 @@ namespace Bannerlord.BUTRLoader.Patches
             // Minor
 
             // Compact
+            PrefabExtensionManager.RegisterPatch(ConfirmStartPrefabExtension1.Movie, ConfirmStartPrefabExtension1.XPath, new ConfirmStartPrefabExtension1());
+            PrefabExtensionManager.RegisterPatch(ConfirmStartPrefabExtension2.Movie, ConfirmStartPrefabExtension2.XPath, new ConfirmStartPrefabExtension2());
+            PrefabExtensionManager.RegisterPatch(ConfirmStartPrefabExtension3.Movie, ConfirmStartPrefabExtension3.XPath, new ConfirmStartPrefabExtension3());
+            PrefabExtensionManager.RegisterPatch(ConfirmStartPrefabExtension4.Movie, ConfirmStartPrefabExtension4.XPath, new ConfirmStartPrefabExtension4());
+
             PrefabExtensionManager.RegisterPatch(ModuleTuplePrefabExtension4.Movie, ModuleTuplePrefabExtension4.XPath, new ModuleTuplePrefabExtension4());
             PrefabExtensionManager.RegisterPatch(ModuleTuplePrefabExtension6.Movie, ModuleTuplePrefabExtension6.XPath, new ModuleTuplePrefabExtension6());
             PrefabExtensionManager.RegisterPatch(ModuleTuplePrefabExtension7.Movie, ModuleTuplePrefabExtension7.XPath, new ModuleTuplePrefabExtension7());

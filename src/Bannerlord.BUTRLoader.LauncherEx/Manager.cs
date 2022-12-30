@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.BUTRLoader.Patches;
 using Bannerlord.BUTRLoader.ResourceManagers;
 using Bannerlord.BUTRLoader.Widgets;
@@ -7,6 +8,7 @@ using HarmonyLib;
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml;
 
@@ -44,7 +46,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             GraphicsContextManager.CreateAndRegister("launcher_export", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.export.png"));
             GraphicsContextManager.CreateAndRegister("launcher_import", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.import.png"));
             GraphicsContextManager.CreateAndRegister("launcher_refresh", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.refresh.png"));
-            GraphicsContextManager.CreateAndRegister("launcher_warm_overlay", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.warm_overlay.png"));
+            GraphicsContextManager.CreateAndRegister("warm_overlay", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.warm_overlay.png"));
             GraphicsContextManager.CreateAndRegister("launcher_folder", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.folder.png"));
             GraphicsContextManager.CreateAndRegister("launcher_search", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.search.png"));
 
@@ -54,7 +56,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             SpriteDataManager.CreateAndRegister("launcher_import");
             SpriteDataManager.CreateAndRegister("launcher_export");
             SpriteDataManager.CreateAndRegister("launcher_refresh");
-            SpriteDataManager.CreateAndRegister("launcher_warm_overlay");
+            SpriteDataManager.CreateAndRegister("warm_overlay");
             SpriteDataManager.CreateAndRegister("launcher_folder");
             SpriteDataManager.CreateAndRegister("launcher_search");
 
@@ -81,6 +83,10 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             WidgetFactoryManager.CreateAndRegister("Launcher.Saves", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Saves.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Saves.SaveTuple", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Saves.SaveTuple.xml"));
 
+            BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.EN.strings.xml"));
+            BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.RU.strings.xml"));
+
+            BUTRLocalizationManager.ActiveLanguage = BUTRLocalizationManager.GetActiveLanguage();
         }
 
         private static XmlDocument Load(string embedPath)
@@ -115,6 +121,11 @@ namespace Bannerlord.BUTRLoader.LauncherEx
         {
             OnDisable?.Invoke();
             _compatibilityChecker.Dispose();
+            GraphicsContextManager.Clear();
+            SpriteDataManager.Clear();
+            BrushFactoryManager.Clear();
+            WidgetFactoryManager.Clear();
+            BUTRLocalizationManager.Clear();
             _launcherHarmony.UnpatchAll(_launcherHarmony.Id);
         }
     }

@@ -143,11 +143,19 @@ namespace Bannerlord.BUTRLoader.Helpers
             }
         }
 
-        public static void AddMixins(LauncherVM launcherVM)
+        public static LauncherVM AddMixins(LauncherVM launcherVM)
         {
             AddMixin(launcherVM.News, new LauncherNewsVMMixin(launcherVM.News));
             AddMixin(launcherVM.ModsData, new LauncherModsVMMixin(launcherVM.ModsData));
+            AddMixin(launcherVM.ConfirmStart, new LauncherConfirmStartVMMixin(launcherVM.ConfirmStart));
             AddMixin(launcherVM, new LauncherVMMixin(launcherVM));
+            return launcherVM;
+        }
+
+        public static LauncherConfirmStartVM AddMixin(LauncherConfirmStartVM confirmStartVM)
+        {
+            AddMixin(confirmStartVM, new LauncherConfirmStartVMMixin(confirmStartVM));
+            return confirmStartVM;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     internal static class GraphicsContextManager
     {
-        public static GraphicsContext Instance { get; private set; } = default!;
+        public static WeakReference<GraphicsContext?> Instance { get; private set; } = default!;
 
         private static readonly Dictionary<string, OpenGLTexture> Textures = new();
         private static readonly Dictionary<string, Func<OpenGLTexture>> DeferredInitialization = new();
@@ -31,6 +31,13 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         }
         public static void Register(string name, Func<OpenGLTexture> func) => DeferredInitialization.Add(name, func);
         public static void CreateAndRegister(string name, byte[] data) => Register(name, () => Create(data));
+
+        public static void Clear()
+        {
+            Textures.Clear();
+            DeferredInitialization.Clear();
+            Instance.SetTarget(null);
+        }
 
         internal static bool Enable(Harmony harmony)
         {
@@ -67,7 +74,7 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void CreateContextPostfix(GraphicsContext __instance)
         {
-            Instance = __instance;
+            Instance = new(__instance);
 
             foreach (var (name, func) in DeferredInitialization)
             {

@@ -1,6 +1,7 @@
 ﻿using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Features.ContinueSaveFile;
 using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.BUTRLoader.ViewModels;
 
 using HarmonyLib;
@@ -158,23 +159,23 @@ namespace Bannerlord.BUTRLoader.Mixins
 
         [BUTRDataSourceProperty]
         public string OptionsText { get => _optionsText; set => SetField(ref _optionsText, value); }
-        private string _optionsText = "Options";
+        private string _optionsText = new BUTRTextObject("{=yS5hbWCL}Options").ToString();
 
         [BUTRDataSourceProperty]
         public string LauncherText { get => _launcherText; set => SetField(ref _launcherText, value); }
-        private string _launcherText = "Launcher";
+        private string _launcherText = new BUTRTextObject("{=V66qoU6n}Launcher").ToString();
 
         [BUTRDataSourceProperty]
         public string GameText { get => _gameText; set => SetField(ref _gameText, value); }
-        private string _gameText = "Game";
+        private string _gameText = new BUTRTextObject("{=ro4RMgyt}Game").ToString();
 
         [BUTRDataSourceProperty]
         public string EngineText { get => _engineText; set => SetField(ref _engineText, value); }
-        private string _engineText = "Engine";
+        private string _engineText = new BUTRTextObject("{=q4rQuTgG}Engine").ToString();
 
         [BUTRDataSourceProperty]
         public string SavesText { get => _savesText; set => SetField(ref _savesText, value); }
-        private string _savesText = "Saves";
+        private string _savesText = new BUTRTextObject("{=d5OjKcGE}Saves").ToString();
 
         [BUTRDataSourceProperty]
         public string BUTRLoaderVersionText { get => _butrLoaderVersionText; set => SetField(ref _butrLoaderVersionText, value); }
@@ -235,6 +236,23 @@ namespace Bannerlord.BUTRLoader.Mixins
         [BUTRDataSourceProperty]
         public float BackgroundHeight { get => _backgroundHeight; set => SetField(ref _backgroundHeight, value); }
         private float _backgroundHeight = 581; // 700
+
+        [BUTRDataSourceProperty]
+        public string SingleplayerText2 => new BUTRTextObject("{=Hk7FBBSa}Singleplayer").ToString();
+        [BUTRDataSourceProperty]
+        public string MultiplayerText2 => new BUTRTextObject("{=UOGhdUWE}Multiplayer").ToString();
+        [BUTRDataSourceProperty]
+        public string DigitalCompanionText2 => new BUTRTextObject("{=VDTcZpPr}Digital Companion").ToString();
+        [BUTRDataSourceProperty]
+        public string NewsText2 => new BUTRTextObject("{=Tg0If68v}News").ToString();
+        [BUTRDataSourceProperty]
+        public string ModsText2 => new BUTRTextObject("{=YGU9eXM0}Mods").ToString();
+        [BUTRDataSourceProperty]
+        public string PlayText2 => new BUTRTextObject("{=xYv4iv7C}Play").ToString();
+        [BUTRDataSourceProperty]
+        public string ContinueText2 => new BUTRTextObject("{=6B3iZLqR}Continue").ToString();
+        [BUTRDataSourceProperty]
+        public string LaunchText2 => new BUTRTextObject("{=eUt6GKkQ}Launch").ToString();
 
         private readonly UserDataManager? _userDataManager;
 
@@ -371,11 +389,11 @@ namespace Bannerlord.BUTRLoader.Mixins
         {
             if (IsSingleplayer2 && IsModsDataSelected)
             {
-                HintManager.ShowHint("Import Load Order");
+                HintManager.ShowHint(new BUTRTextObject("{=Aws9irMU}Import Load Order"));
             }
             if (IsSingleplayer2 && IsSavesDataSelected)
             {
-                HintManager.ShowHint("Import Save's Load Order");
+                HintManager.ShowHint(new BUTRTextObject("{=4wKr76gx}Import Save's Load Order"));
             }
         }
 
@@ -384,11 +402,11 @@ namespace Bannerlord.BUTRLoader.Mixins
         {
             if (IsSingleplayer2 && IsModsDataSelected)
             {
-                HintManager.ShowHint("Export Current Load Order");
+                HintManager.ShowHint(new BUTRTextObject("{=XdZGqnFW}Export Current Load Order"));
             }
             if (IsSingleplayer2 && IsSavesDataSelected)
             {
-                HintManager.ShowHint("Export Save's Load Order");
+                HintManager.ShowHint(new BUTRTextObject("{=G55IdM6M}Export Save's Load Order"));
             }
         }
 
@@ -457,15 +475,16 @@ namespace Bannerlord.BUTRLoader.Mixins
                     }
 
                     description.Append("\n\n");
-                    description.Append("An unstable experience could occur.\n");
-                    description.Append("Do you wish to continue loading the save?");
+                    description.Append(new BUTRTextObject("{=MlYQ0uX7}An unstable experience could occur."));
+                    description.Append("\n");
+                    description.Append(new BUTRTextObject("{=qvzptzrE}Do you wish to continue loading the save?"));
 
-                    ViewModel.ConfirmStart = new LauncherConfirmStartVM(() => ExecuteStartGame(ViewModel, 0))
+                    ViewModel.ConfirmStart = MixinManager.AddMixin(new LauncherConfirmStartVM(() => ExecuteStartGame(ViewModel, 0))
                     {
-                        Title = "WARNING",
+                        Title = new BUTRTextObject("{=dDprK7Mz}WARNING").ToString(),
                         Description = description.ToString(),
                         IsEnabled = true
-                    };
+                    });
                     return;
                 }
 

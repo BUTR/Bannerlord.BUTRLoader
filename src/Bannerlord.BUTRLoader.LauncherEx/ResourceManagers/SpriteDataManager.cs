@@ -173,9 +173,16 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         private static readonly Dictionary<string, Sprite> SpriteNames = new();
         private static readonly List<Func<Sprite>> DeferredInitialization = new();
 
-        public static Sprite Create(string name) => new SpriteFromTexture(name, new Texture(GraphicsContextManager.Instance.GetTexture(name)));
+        public static Sprite? Create(string name) => GraphicsContextManager.Instance.TryGetTarget(out var gc) && gc is not null
+            ? new SpriteFromTexture(name, new Texture(gc.GetTexture(name))) : null;
         public static void Register(Func<Sprite> func) => DeferredInitialization.Add(func);
         public static void CreateAndRegister(string name) => Register(() => Create(name));
+
+        public static void Clear()
+        {
+            SpriteNames.Clear();
+            DeferredInitialization.Clear();
+        }
 
         internal static bool Enable(Harmony harmony)
         {

@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Features.AssemblyResolver;
+using Bannerlord.BUTRLoader.Features.Commands;
 using Bannerlord.BUTRLoader.Features.ContinueSaveFile;
 using Bannerlord.BUTRLoader.Features.Interceptor;
 using Bannerlord.BUTRLoader.LauncherEx;
@@ -80,6 +81,7 @@ Version: {typeof(BUTRLoaderAppDomainManager).Assembly.GetName().Version}
             InterceptorFeature.Enable(_featureHarmony);
             AssemblyResolverFeature.Enable(_featureHarmony);
             ContinueSaveFileFeature.Enable(_featureHarmony);
+            CommandsFeature.Enable(_featureHarmony);
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Bannerlord.BUTRLoader.Localization;
+
+using System;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -19,8 +21,8 @@ namespace Bannerlord.BUTRLoader.Helpers
                     var thread = new Thread(() =>
                     {
                         var result = MessageBox.Show(
-                            "BUTRLoader detected 0Harmony.dll inside the game's root bin folder!\nThis could lead to issues, remove it?",
-                            "Warning!",
+                            new BUTRTextObject("{=tqjPGPtP}BUTRLoader detected 0Harmony.dll inside the game's root bin folder!{NL}This could lead to issues, remove it?").ToString(),
+                            new BUTRTextObject("{=dDprK7Mz}WARNING!").ToString(),
                             MessageBoxButtons.YesNoCancel);
                         if (result == DialogResult.Yes)
                         {

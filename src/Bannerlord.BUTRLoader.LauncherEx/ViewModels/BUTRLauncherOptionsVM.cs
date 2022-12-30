@@ -1,5 +1,7 @@
-﻿using Bannerlord.BUTR.Shared.Helpers;
+﻿using Bannerlord.BUTR.Shared.Extensions;
+using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.BUTRLoader.Options;
 
 using System;
@@ -20,11 +22,6 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
     internal sealed class BUTRLauncherOptionsVM : BUTRViewModel
     {
-        private static readonly string GameConfigPath =
-            Path.Combine($@"{Environment.GetFolderPath(Environment.SpecialFolder.Personal)}", "Mount and Blade II Bannerlord", "Configs", "BannerlordConfig.txt");
-        private static readonly string EngineConfigPath =
-            Path.Combine($@"{Environment.GetFolderPath(Environment.SpecialFolder.Personal)}", "Mount and Blade II Bannerlord","Configs", "engine_config.txt");
-
         private readonly OptionsType _optionsType;
         private LauncherExData? _launcherExData;
         private readonly Action _saveUserData;
@@ -76,74 +73,74 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Unblock Files on Start",
-                HintText = "Automatically unblock's .dll files on start",
+                DisplayName = new BUTRTextObject("{=zHo3tzQT}Unblock Files on Start").ToString(),
+                HintText = new BUTRTextObject("{=sOInYH9V}Automatically unblock's .dll files on start").ToString(),
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.UnblockFiles))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Fix Common Issues",
-                HintText = "Fixes issues like 0Harmony.dll bein in the /bin folder",
+                DisplayName = new BUTRTextObject("{=LXlsSS8t}Fix Common Issues").ToString(),
+                HintText = new BUTRTextObject("{=J9VbkLW4}Fixes issues like 0Harmony.dll bein in the /bin folder").ToString(),
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.FixCommonIssues))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Compact Module List",
-                HintText = "Requires restart! Makes the Mods tab content smaller",
+                DisplayName = new BUTRTextObject("{=vUAqDj9H}Compact Module List").ToString(),
+                HintText = $"{new BUTRTextObject("{=44qrhQ6g}Requires restart!")} {new BUTRTextObject("{=Qn1aPNQM}Makes the Mods tab content smaller")}",
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.CompactModuleList))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Disable Binary Compatibility Check",
-                HintText = "DISABLED! Requires restart! Disables Launcher's own check for binary compatibility of mods",
+                DisplayName = new BUTRTextObject("{=GUWbD65T}Disable Binary Compatibility Check").ToString(),
+                HintText = $"{new BUTRTextObject("{=z9WqFewN}DISABLED!")} {new BUTRTextObject("{=44qrhQ6g}Requires restart!")} {new BUTRTextObject("{=lmpQeQBS}Disables Launcher's own check for binary compatibility of mods")}",
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.DisableBinaryCheck))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Hide Random Image",
-                HintText = "Hide's the Rider image so the launcher loosk more compact",
+                DisplayName = new BUTRTextObject("{=iD27wEq7}Hide Random Image").ToString(),
+                HintText = new BUTRTextObject("{=LaPvZjwC}Hide's the Rider image so the launcher loosk more compact").ToString(),
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.HideRandomImage))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Unblock Files",
-                HintText = "Unblock all .dll files on /Modules folder",
+                DisplayName = new BUTRTextObject("{=JT7QnJJA}Unblock Files").ToString(),
+                HintText = new BUTRTextObject("{=VMIp4503}Unblock all .dll files on /Modules folder").ToString(),
                 SettingType = SettingType.Button,
-                PropertyReference = new ProxyRef<string>(() => "Unblock", _ =>
+                PropertyReference = new ProxyRef<string>(() => new BUTRTextObject("{=RDLKkiVk}Unblock").ToString(), _ =>
                 {
                     NtfsUnblocker.UnblockPath(Path.Combine(BasePath.Name, ModuleInfoHelper.ModulesFolder));
                 })
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Beta Sorting",
-                HintText = "Uses the new sorting algorithm after v1.12.x. Disable to use the old algorithm",
+                DisplayName = new BUTRTextObject("{=QJSBiZdJ}Beta Sorting").ToString(),
+                HintText = new BUTRTextObject("{=HVhaqeb4}Uses the new sorting algorithm after v1.12.x. Disable to use the old algorithm").ToString(),
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.BetaSorting))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Big Mode",
-                HintText = "Makes the launcher bigger in height",
+                DisplayName = new BUTRTextObject("{=1zt99vTt}Big Mode").ToString(),
+                HintText = new BUTRTextObject("{=XUSDSpvf}Makes the launcher bigger in height").ToString(),
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.BigMode))!, this)
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Restore Game Options Backup",
-                HintText = "BUTRLoader always makes a backup before saving the first time. This will restore the original files",
+                DisplayName = new BUTRTextObject("{=IsR2rbnG}Restore Game Options Backup").ToString(),
+                HintText = new BUTRTextObject("{=uKUsA3Sp}BUTRLoader always makes a backup before saving the first time. This will restore the original files").ToString(),
                 SettingType = SettingType.Button,
-                PropertyReference = new ProxyRef<string>(() => "Restore", _ =>
+                PropertyReference = new ProxyRef<string>(() => new BUTRTextObject("{=TLDgPay9}Restore").ToString(), _ =>
                 {
-                    var backupPath = $"{GameConfigPath}.bak";
+                    var backupPath = $"{ConfigReader.GameConfigPath}.bak";
                     if (File.Exists(backupPath))
                     {
-                        File.Copy(backupPath, GameConfigPath, true);
+                        File.Copy(backupPath, ConfigReader.GameConfigPath, true);
                         File.Delete(backupPath);
                         _refreshOptions();
                     }
@@ -151,15 +148,15 @@ namespace Bannerlord.BUTRLoader.ViewModels
             }));
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
-                DisplayName = "Restore Engine Options Backup",
-                HintText = "BUTRLoader always makes a backup before saving the first time. This will restore the original files",
+                DisplayName = new BUTRTextObject("{=5XzSM7RN}Restore Engine Options Backup").ToString(),
+                HintText = new BUTRTextObject("{=uKUsA3Sp}BUTRLoader always makes a backup before saving the first time. This will restore the original files").ToString(),
                 SettingType = SettingType.Button,
-                PropertyReference = new ProxyRef<string>(() => "Restore", _ =>
+                PropertyReference = new ProxyRef<string>(() => new BUTRTextObject("{=TLDgPay9}Restore").ToString(), _ =>
                 {
-                    var backupPath = $"{EngineConfigPath}.bak";
+                    var backupPath = $"{ConfigReader.EngineConfigPath}.bak";
                     if (File.Exists(backupPath))
                     {
-                        File.Copy(backupPath, EngineConfigPath, true);
+                        File.Copy(backupPath, ConfigReader.EngineConfigPath, true);
                         File.Delete(backupPath);
                         _refreshOptions();
                     }
@@ -176,25 +173,15 @@ namespace Bannerlord.BUTRLoader.ViewModels
         }
         private void RefreshGameOptions()
         {
-            var content = File.ReadAllText(GameConfigPath);
-            foreach (var keyValue in content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var (key, value) in ConfigReader.GetGameOptions())
             {
-                var split = keyValue.Split(new[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
-                if (split.Length != 2) continue;
-                var key = split[0].Trim();
-                var value = split[1].Trim();
                 SettingProperties.Add(CreateSettingsPropertyVM(key, value, ToSeparateWords));
             }
         }
         private void RefreshEngineOptions()
         {
-            var content = File.ReadAllText(EngineConfigPath);
-            foreach (var keyValue in content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var (key, value) in ConfigReader.GetEngineOptions())
             {
-                var split = keyValue.Split(new[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
-                if (split.Length != 2) continue;
-                var key = split[0].Trim();
-                var value = split[1].Trim();
                 SettingProperties.Add(CreateSettingsPropertyVM(key, value, x => ToTitleCase(x.Replace("_", " "))));
             }
         }
@@ -269,9 +256,9 @@ namespace Bannerlord.BUTRLoader.ViewModels
         }
         private void SaveGameOptions()
         {
-            var backupPath = $"{GameConfigPath}.bak";
+            var backupPath = $"{ConfigReader.GameConfigPath}.bak";
             if (!File.Exists(backupPath))
-                File.Copy(GameConfigPath, backupPath);
+                File.Copy(ConfigReader.GameConfigPath, backupPath);
 
             var hasChanges = false;
             var sb = new StringBuilder();
@@ -286,13 +273,16 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 sb.AppendLine($"{propertyDefinition.ConfigKey}={settingProperty.ValueAsString}");
             }
             if (hasChanges)
-                File.WriteAllText(GameConfigPath, sb.ToString());
+            {
+                File.WriteAllText(ConfigReader.GameConfigPath, sb.ToString());
+                BUTRLocalizationManager.ActiveLanguage = BUTRLocalizationManager.GetActiveLanguage();
+            }
         }
         private void SaveEngineOptions()
         {
-            var backupPath = $"{EngineConfigPath}.bak";
+            var backupPath = $"{ConfigReader.EngineConfigPath}.bak";
             if (!File.Exists(backupPath))
-                File.Copy(EngineConfigPath, backupPath);
+                File.Copy(ConfigReader.EngineConfigPath, backupPath);
 
             var hasChanges = false;
             var sb = new StringBuilder();
@@ -307,7 +297,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
                 sb.AppendLine($"{propertyDefinition.ConfigKey} = {settingProperty.ValueAsString}");
             }
             if (hasChanges)
-                File.WriteAllText(EngineConfigPath, sb.ToString());
+                File.WriteAllText(ConfigReader.EngineConfigPath, sb.ToString());
         }
 
         private static SettingsPropertyVM CreateSettingsPropertyVM(string key, string value, Func<string, string> keyProcessor)

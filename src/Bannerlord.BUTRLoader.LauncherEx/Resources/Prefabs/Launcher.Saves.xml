@@ -6,9 +6,9 @@
 
     <Constant Name="Name.Width" Value="200" />
     <Constant Name="Version.Width" Value="80" />
-    <Constant Name="Character.Width" Value="250" />
-    <Constant Name="Level.Width" Value="60" />
-    <Constant Name="Days.Width" Value="60" />
+    <Constant Name="Character.Width" Value="200" />
+    <Constant Name="Level.Width" Value="90" />
+    <Constant Name="Days.Width" Value="80" />
     <Constant Name="CreatedAt.Width" Value="120" />
   </Constants>
   <Window>

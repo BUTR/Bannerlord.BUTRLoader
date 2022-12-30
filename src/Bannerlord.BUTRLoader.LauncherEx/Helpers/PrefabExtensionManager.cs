@@ -102,7 +102,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             RegisterPatch(movie, xpath, node =>
             {
-                var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument;
+                var ownerDocument = node as XmlDocument ?? node.OwnerDocument;
                 if (ownerDocument is null)
                 {
                     return;
@@ -127,7 +127,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             RegisterPatch(movie, xpath, node =>
             {
-                var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument;
+                var ownerDocument = node as XmlDocument ?? node.OwnerDocument;
                 if (ownerDocument is null)
                 {
                     return;
@@ -155,7 +155,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             RegisterPatch(movie, xpath, node =>
             {
-                var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument;
+                var ownerDocument = node as XmlDocument ?? node.OwnerDocument;
                 if (ownerDocument is null)
                 {
                     return;
@@ -182,7 +182,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             RegisterPatch(movie, xpath, node =>
             {
-                var ownerDocument = node is XmlDocument xmlDocument ? xmlDocument : node.OwnerDocument;
+                var ownerDocument = node as XmlDocument ?? node.OwnerDocument;
                 if (ownerDocument is null)
                 {
                     return;

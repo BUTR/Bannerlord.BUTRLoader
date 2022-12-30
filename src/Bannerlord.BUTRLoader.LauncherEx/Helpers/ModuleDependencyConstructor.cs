@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.ModuleManager;
 
 using System.Collections.Generic;
@@ -6,11 +7,11 @@ using System.Text;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    internal class ModuleDependencyConstructor
+    internal static class ModuleDependencyConstructor
     {
         public static string GetDependencyHint(ModuleInfoExtended moduleInfoExtended)
         {
-            static string GetOptional(bool isOptional) => isOptional ? " (optional)" : string.Empty;
+            static string GetOptional(bool isOptional) => isOptional ? new BUTRTextObject("{=8ldMJPhQ} (optional)").ToString() : string.Empty;
 
             static string GetVersionV(DependentModule metadata)
             {
@@ -73,7 +74,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             if (directDeps.Count > 0)
             {
-                sb.Append("Depends on: \n");
+                sb.Append(new BUTRTextObject("{=f9hYP7mk}Depends on:")).Append("\n");
             }
             foreach (var metadata in directDeps.Values.WithMetadata())
             {
@@ -88,7 +89,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 {
                     sb.Append("\n----\n");
                 }
-                sb.Append("Incompatible with: \n");
+                sb.Append(new BUTRTextObject("{=eGJ387f7}Incompatible with:")).Append("\n");
             }
             foreach (var metadata in incompatibleDeps.Values.WithMetadata())
             {
@@ -103,7 +104,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 {
                     sb.Append("\n----\n");
                 }
-                sb.Append("Needs to load before: \n");
+                sb.Append(new BUTRTextObject("{=eW76jyd7}Needs to load before:")).Append("\n");
             }
             foreach (var metadata in loadAfterDeps.Values.WithMetadata())
             {

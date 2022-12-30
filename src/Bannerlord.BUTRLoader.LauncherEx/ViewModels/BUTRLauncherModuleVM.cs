@@ -1,5 +1,6 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.ModuleManager;
 
 using System;
@@ -16,7 +17,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
     {
         public readonly ModuleInfoExtendedWithMetadata ModuleInfoExtended;
         private readonly Action<BUTRLauncherModuleVM> _select;
-        private readonly Func<BUTRLauncherModuleVM, IEnumerable<ModuleIssue>> _validate;
+        private readonly Func<BUTRLauncherModuleVM, IEnumerable<string>> _validate;
 
         [BUTRDataSourceProperty]
         public string Name => ModuleInfoExtended.Name;
@@ -95,7 +96,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
         public bool IsVisible { get => _isVisible; set => SetField(ref _isVisible, value, nameof(IsVisible)); }
         private bool _isVisible = true;
 
-        public BUTRLauncherModuleVM(ModuleInfoExtendedWithMetadata moduleInfoExtended, Action<BUTRLauncherModuleVM> select, Func<BUTRLauncherModuleVM, IEnumerable<ModuleIssue>> validate)
+        public BUTRLauncherModuleVM(ModuleInfoExtendedWithMetadata moduleInfoExtended, Action<BUTRLauncherModuleVM> select, Func<BUTRLauncherModuleVM, IEnumerable<string>> validate)
         {
             ModuleInfoExtended = moduleInfoExtended;
             _select = select;
@@ -109,12 +110,13 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
             var dangerous = string.Empty;
             if (ModuleChecker.IsInstalledInMainAndExternalModuleDirectory(moduleInfoExtended))
-                dangerous += "The Module is installed in the game's /Modules folder and on Steam Workshop!\nThe /Modules version will be used!";
+            {
+                dangerous += new BUTRTextObject("{=kfMQEOFS}The Module is installed in the game's /Modules folder and on Steam Workshop!{NL}The /Modules version will be used!").ToString();
+            }
             if (ModuleChecker.IsObfuscated(moduleInfoExtended))
             {
-                if (dangerous.Length != 0)
-                    dangerous += "\n";
-                dangerous += "The DLL is obfuscated!\nThere is no guarantee that the code is safe!\nThe BUTR Team warns of consequences arising from running obfuscated code!";
+                if (dangerous.Length != 0) dangerous += "\n";
+                dangerous += new BUTRTextObject("{=aAYdk1zd}The DLL is obfuscated!{NL}There is no guarantee that the code is safe!{NL}The BUTR Team warns of consequences arising from running obfuscated code!").ToString();
             }
             if (!string.IsNullOrEmpty(dangerous))
             {
@@ -133,7 +135,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
             var validationIssues = _validate(this).ToList();
 
             IssuesText = validationIssues.Count > 0
-                ? string.Join("\n", validationIssues.Select(x => x.Reason))
+                ? string.Join("\n", validationIssues)
                 : string.Empty;
         }
 

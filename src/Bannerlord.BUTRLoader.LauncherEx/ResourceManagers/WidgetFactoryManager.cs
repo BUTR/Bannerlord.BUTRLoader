@@ -65,6 +65,16 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         public static void Register(string name, Func<WidgetPrefab?> create) => CustomTypes.Add(name, create);
         public static void CreateAndRegister(string name, XmlDocument xmlDocument) => Register(name, () => Create($"{name}.xml", xmlDocument));
 
+        public static void Clear()
+        {
+            WidgetConstructors.Clear();
+            CustomTypes.Clear();
+            BuiltinTypes.Clear();
+            LiveCustomTypes.Clear();
+            LiveInstanceTracker.Clear();
+            WidgetFactoryReference.SetTarget(null);
+        }
+
         public static bool Enable(Harmony harmony)
         {
             _harmony = harmony;

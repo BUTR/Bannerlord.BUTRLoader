@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTRLoader.Helpers;
+using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.ModuleManager;
 
 using System;
@@ -16,27 +17,27 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
         [BUTRDataSourceProperty]
         public string NameCategoryText { get => _nameCategoryText; set => SetField(ref _nameCategoryText, value, nameof(NameCategoryText)); }
-        private string _nameCategoryText = "Name";
+        private string _nameCategoryText = new BUTRTextObject("{=JtelOsIW}Name").ToString();
 
         [BUTRDataSourceProperty]
         public string VersionCategoryText { get => _versionCategoryText; set => SetField(ref _versionCategoryText, value, nameof(VersionCategoryText)); }
-        private string _versionCategoryText = "Version";
+        private string _versionCategoryText = new BUTRTextObject("{=14WBFIS1}Version").ToString();
 
         [BUTRDataSourceProperty]
         public string CharacterNameCategoryText { get => _characterNameCategoryText; set => SetField(ref _characterNameCategoryText, value, nameof(CharacterNameCategoryText)); }
-        private string _characterNameCategoryText = "Character";
+        private string _characterNameCategoryText = new BUTRTextObject("{=OJsGrGVi}Character").ToString();
 
         [BUTRDataSourceProperty]
         public string LevelCategoryText { get => _levelCategoryText; set => SetField(ref _levelCategoryText, value, nameof(LevelCategoryText)); }
-        private string _levelCategoryText = "Level";
+        private string _levelCategoryText = new BUTRTextObject("{=JxpEEQdF}Level").ToString();
 
         [BUTRDataSourceProperty]
         public string DaysCategoryText { get => _daysCategoryText; set => SetField(ref _daysCategoryText, value, nameof(DaysCategoryText)); }
-        private string _daysCategoryText = "Days";
+        private string _daysCategoryText = new BUTRTextObject("{=qkkTPycE}Days").ToString();
 
         [BUTRDataSourceProperty]
         public string CreatedAtCategoryText { get => _createdAtCategoryText; set => SetField(ref _createdAtCategoryText, value, nameof(CreatedAtCategoryText)); }
-        private string _createdAtCategoryText = "CreatedAt";
+        private string _createdAtCategoryText = new BUTRTextObject("{=aYWWDkKX}CreatedAt").ToString();
 
         [BUTRDataSourceProperty]
         public MBBindingList<BUTRLauncherSaveVM> Saves { get; } = new();

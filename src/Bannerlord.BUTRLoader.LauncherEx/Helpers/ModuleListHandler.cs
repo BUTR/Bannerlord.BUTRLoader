@@ -1,5 +1,6 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Extensions;
+using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.BUTRLoader.Mixins;
 
 using HarmonyLib.BUTR.Extensions;
@@ -93,7 +94,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             var idDuplicates = mixin.Modules2.Select(x => x.ModuleInfoExtended.Id).GroupBy(i => i).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
             if (idDuplicates.Count > 0)
             {
-                HintManager.ShowHint($"Cancelled Import!\n\nDuplicate Module Ids:\n{string.Join("\n", idDuplicates)}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=izSm5f85}Duplicate Module Ids:{NL}{MODULEIDS}").SetTextVariable("MODULEIDS", string.Join("\n", idDuplicates))}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -105,7 +106,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             var mismatchedModuleIds = importedModuleIds.Except(currentModuleIds).ToList();
             if (mismatchedModuleIds.Count > 0)
             {
-                HintManager.ShowHint($"Cancelled Import!\n\nMissing modules:\n{string.Join("\n", mismatchedModuleIds)}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=GtDRbC3m}Missing Modules:{NL}{MODULES}").SetTextVariable("MODULES", string.Join("\n", mismatchedModuleIds))}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -128,13 +129,13 @@ namespace Bannerlord.BUTRLoader.Helpers
             var nameDuplicates = mixin.Modules2.Select(x => x.ModuleInfoExtended.Name).GroupBy(i => i).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
             if (nameDuplicates.Count > 0)
             {
-                HintManager.ShowHint($"Cancelled Import!\n\nDuplicate Module Names:\n{string.Join("\n", nameDuplicates)}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=vCwH9226}Duplicate Module Names:{NL}{MODULENAMES}").SetTextVariable("{MODULENAMES}", string.Join("\n", nameDuplicates))}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
             if (MetaData.Deserialize(stream) is not { } metadata)
             {
-                HintManager.ShowHint("Cancelled Import!\n\nFailed to read the save file!");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=epU06HID}Failed to read the save file!")}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -152,7 +153,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             var mismatchedModuleNames = importedModuleNames.Except(currentModuleNames).ToList();
             if (mismatchedModuleNames.Count > 0)
             {
-                HintManager.ShowHint($"Cancelled Import!\n\nMissing modules:\n{string.Join("\n", mismatchedModuleNames)}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=GtDRbC3m}issing Modules:{NL}{MODULENAMES}").SetTextVariable("MODULENAMES", string.Join("\n", mismatchedModuleNames))}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -175,7 +176,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             var idDuplicates = mixin.Modules2.Select(x => x.ModuleInfoExtended.Id).GroupBy(i => i).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
             if (idDuplicates.Count > 0)
             {
-                HintManager.ShowHint($"Cancelled Import!\n\nDuplicate Module Ids:\n{string.Join("\n", idDuplicates)}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=izSm5f85}Duplicate Module Ids:{NL}{MODULEIDS}").SetTextVariable("MODULEIDS", string.Join("\n", idDuplicates))}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -207,7 +208,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             var mismatchedModuleIds = importedModuleIds.Except(currentModuleIds).ToList();
             if (mismatchedModuleIds.Count > 0)
             {
-                HintManager.ShowHint($"Cancelled Import!\n\nMissing modules:\n{string.Join("\n", mismatchedModuleIds)}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=GtDRbC3m}Missing Modules:{NL}{MODULES}").SetTextVariable("MODULES", string.Join("\n", mismatchedModuleIds))}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 
@@ -229,12 +230,12 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             if (_launcherVM.ModsData.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is not { } mixin)
             {
-                HintManager.ShowHint("Cancelled Import!\n\nInternal BUTRLoader error: GetMixin() null");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\nInternal BUTRLoader error: GetMixin() null");
                 return;
             }
             if (UpdateAndSaveUserModsDataMethod is null)
             {
-                HintManager.ShowHint("Cancelled Import!\n\nInternal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\nInternal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
                 return;
             }
 
@@ -243,7 +244,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 var dialog = new VistaOpenFileDialog
                 {
                     Filter = "Bannerlord Module List (*.bmlist)|*.bmlist|Bannerlord Save File (*.sav)|*.sav|Novus Preset (*.xml)|*.xml|All files (*.*)|*.*",
-                    Title = "Open a File with a Load Order",
+                    Title = new BUTRTextObject("{=DKRNkst2}Open a File with a Load Order").ToString(),
 
                     CheckFileExists = true,
                     CheckPathExists = true,
@@ -268,7 +269,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                     }
                     catch (Exception e)
                     {
-                        HintManager.ShowHint($"Cancelled Import!\n\nException:\n{e}");
+                        HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\nException:\n{e}");
                     }
                 }
             });
@@ -280,13 +281,13 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             if (_launcherVM.ModsData.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is not { } mixin)
             {
-                HintManager.ShowHint("Cancelled Import!\n\nInternal BUTRLoader error: GetMixin() null");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\nInternal BUTRLoader error: GetMixin() null");
                 return;
             }
 
             if (MBSaveLoad.GetSaveFileWithName(saveFile) is not { } si || SaveHelper.GetSaveFilePath(si) is not { } saveFilePath || !File.Exists(saveFilePath))
             {
-                HintManager.ShowHint("Cancelled Import!\n\nSave File not found!");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=B64DbmWp}Save File not found!")}");
                 return;
             }
 
@@ -298,7 +299,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             }
             catch (Exception e)
             {
-                HintManager.ShowHint($"Cancelled Import!\n\nException:\n{e}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\nException:\n{e}");
             }
         }
         private void ImportInternal(ModuleInfoExtendedWithMetadata[] modules, LauncherModsVMMixin mixin)
@@ -308,14 +309,14 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             if (UpdateAndSaveUserModsDataMethod is null)
             {
-                HintManager.ShowHint("Cancelled Import!\n\nInternal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\nInternal BUTRLoader error: UpdateAndSaveUserModsDataMethod null");
                 return;
             }
 
             var loadOrderValidationIssues = LoadOrderChecker.IsLoadOrderCorrect(modules).ToList();
             if (loadOrderValidationIssues.Count != 0)
             {
-                HintManager.ShowHint($"Cancelled Import!\n\nLoad Order is not correct! Reason:\n{string.Join("\n", loadOrderValidationIssues.Select(x => x.Reason))}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=HvvA78sZ}Load Order Issues:{NL}{LOADORDERISSUES}").SetTextVariable("LOADORDERISSUES", string.Join("\n", loadOrderValidationIssues))}");
                 return;
             }
 
@@ -323,12 +324,12 @@ namespace Bannerlord.BUTRLoader.Helpers
             var orderIssues = mixin.TryOrderByLoadOrder(modules.Select(x => x.Id), x => moduleIds.Contains(x)).ToList();
             if (orderIssues.Count != 0)
             {
-                HintManager.ShowHint($"Cancelled Import!\n\nLoad Order is not correct! Reason:\n{string.Join("\n", orderIssues)}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=HvvA78sZ}Load Order Issues:{NL}{LOADORDERISSUES}").SetTextVariable("LOADORDERISSUES", string.Join("\n", orderIssues))}");
                 return;
             }
 
             UpdateAndSaveUserModsDataMethod(_launcherVM, false);
-            HintManager.ShowHint("Successfully imported list!");
+            HintManager.ShowHint(new BUTRTextObject("{=eohqbvHU}Successfully imported list!"));
         }
 
         private static ModuleListEntry[] ReadSaveFileModuleList(Stream stream, LauncherModsVMMixin mixin)
@@ -336,13 +337,13 @@ namespace Bannerlord.BUTRLoader.Helpers
             var nameDuplicates = mixin.Modules2.Select(x => x.ModuleInfoExtended.Name).GroupBy(i => i).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
             if (nameDuplicates.Count > 0)
             {
-                HintManager.ShowHint($"Cancelled Export!\n\nDuplicate Module Names:\n{string.Join("\n", nameDuplicates)}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=BjtJ4Lxw}Cancelled Export!")}\n\n{new BUTRTextObject("{=vCwH9226}Duplicate Module Names:{NL}{MODULENAMES}").SetTextVariable("MODULENAMES", string.Join("\n", nameDuplicates))}");
                 return Array.Empty<ModuleListEntry>();
             }
 
             if (MetaData.Deserialize(stream) is not { } metadata)
             {
-                HintManager.ShowHint("Cancelled Export!\n\nFailed to read the save file!");
+                HintManager.ShowHint($"{new BUTRTextObject("{=BjtJ4Lxw}Cancelled Export!")}\n\n{new BUTRTextObject("{=epU06HID}Failed to read the save file!")}");
                 return Array.Empty<ModuleListEntry>();
             }
 
@@ -360,7 +361,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             var mismatchedModuleNames = importedModuleNames.Except(currentModuleNames).ToList();
             if (mismatchedModuleNames.Count > 0)
             {
-                HintManager.ShowHint($"Cancelled Export!\n\nMissing modules:\n{string.Join("\n", mismatchedModuleNames)}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=BjtJ4Lxw}Cancelled Export!")}\n\n{new BUTRTextObject("{=GtDRbC3m}Missing Modules:{NL}{MODULES}").SetTextVariable("MODULES", string.Join("\n", mismatchedModuleNames))}");
                 return Array.Empty<ModuleListEntry>();
             }
 
@@ -432,7 +433,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             if (_launcherVM.ModsData.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is not { } mixin)
             {
-                HintManager.ShowHint("Cancelled Export!\n\nInternal BUTRLoader error: GetMixin() null");
+                HintManager.ShowHint($"{new BUTRTextObject("{=BjtJ4Lxw}Cancelled Export!")}\n\nInternal BUTRLoader error: GetMixin() null");
                 return;
             }
 
@@ -442,7 +443,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 {
                     FileName = "MyList.bmlist",
                     Filter = "Bannerlord Module List (*.bmlist)|*.bmlist|Novus Preset (*.xml)|*.xml",
-                    Title = "Save a Bannerlord Module List File",
+                    Title = new BUTRTextObject("{=XSxlKweM}Save a Bannerlord Module List File").ToString(),
 
                     CheckFileExists = false,
                     CheckPathExists = false,
@@ -472,9 +473,9 @@ namespace Bannerlord.BUTRLoader.Helpers
                     }
                     catch (Exception e)
                     {
-                        HintManager.ShowHint($"Cancelled Export!\n\nException:\n{e}");
+                        HintManager.ShowHint($"{new BUTRTextObject("{=BjtJ4Lxw}Cancelled Export!")}\n\nException:\n{e}");
                     }
-                    HintManager.ShowHint("Successfully exported list!");
+                    HintManager.ShowHint(new BUTRTextObject("{=VwFQTk5z}Successfully exported list!"));
                 }
             });
             thread.SetApartmentState(ApartmentState.STA);
@@ -485,13 +486,13 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             if (_launcherVM.ModsData.GetMixin<LauncherModsVMMixin, LauncherModsVM>() is not { } mixin)
             {
-                HintManager.ShowHint("Cancelled Export!\n\nInternal BUTRLoader error: GetMixin() null");
+                HintManager.ShowHint($"{new BUTRTextObject("{=BjtJ4Lxw}Cancelled Export!")}\n\nInternal BUTRLoader error: GetMixin() null");
                 return;
             }
 
             if (MBSaveLoad.GetSaveFileWithName(saveFile) is not { } si || SaveHelper.GetSaveFilePath(si) is not { } saveFilePath || !File.Exists(saveFilePath))
             {
-                HintManager.ShowHint("Cancelled Export!\n\nSave File not found!");
+                HintManager.ShowHint($"{new BUTRTextObject("{=BjtJ4Lxw}Cancelled Export!")}\n\n{new BUTRTextObject("{=B64DbmWp}Save File not found!")}");
                 return;
             }
 
@@ -506,7 +507,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 {
                     FileName = $"{saveFile}.bmlist",
                     Filter = "Bannerlord Module List (*.bmlist)|*.bmlist|Novus Preset (*.xml)|*.xml",
-                    Title = "Save a Bannerlord Module List File",
+                    Title = new BUTRTextObject("{=XSxlKweM}Save a Bannerlord Module List File").ToString(),
 
                     CheckFileExists = false,
                     CheckPathExists = false,
@@ -531,9 +532,9 @@ namespace Bannerlord.BUTRLoader.Helpers
                     }
                     catch (Exception e)
                     {
-                        HintManager.ShowHint($"Cancelled Export!\n\nException:\n{e}");
+                        HintManager.ShowHint($"{new BUTRTextObject("{=BjtJ4Lxw}Cancelled Export!")}\n\nException:\n{e}");
                     }
-                    HintManager.ShowHint("Successfully exported list!");
+                    HintManager.ShowHint(new BUTRTextObject("{=VwFQTk5z}Successfully exported list!"));
                 }
             });
             thread.SetApartmentState(ApartmentState.STA);

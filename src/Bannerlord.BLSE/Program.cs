@@ -1,5 +1,6 @@
 ﻿using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Features.AssemblyResolver;
+using Bannerlord.BUTRLoader.Features.Commands;
 using Bannerlord.BUTRLoader.Features.ContinueSaveFile;
 using Bannerlord.BUTRLoader.Features.Interceptor;
 using Bannerlord.ModuleManager;
@@ -91,6 +92,7 @@ Press Yes to exit, press No to continue loading";
             InterceptorFeature.Enable(_featureHarmony);
             AssemblyResolverFeature.Enable(_featureHarmony);
             ContinueSaveFileFeature.Enable(_featureHarmony);
+            CommandsFeature.Enable(_featureHarmony);
 
             TaleWorlds.Starter.Library.Program.Main(args);
         }

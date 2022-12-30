@@ -133,4 +133,24 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         public override string Attribute => "SuggestedHeight";
         public override string Value => "@BackgroundHeight";
     }
+
+    internal sealed class UILauncherPrefabExtension31 : PrefabExtensionCustomPatch<XmlNode>
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "/Prefab";
+
+        public override void Apply(XmlNode node)
+        {
+            foreach (var selectNode in node.OwnerDocument?.SelectNodes("//*")?.OfType<XmlNode>() ?? Enumerable.Empty<XmlNode>())
+            {
+                foreach (var attribute in selectNode.Attributes?.OfType<XmlAttribute>() ?? Enumerable.Empty<XmlAttribute>())
+                {
+                    if (!attribute.Value.StartsWith("@")) continue;
+                    if (!attribute.Value.EndsWith("Text")) continue;
+                    if (attribute.Value == "@Text") continue;
+                    attribute.Value = $"{attribute.Value}2";
+                }
+            }
+        }
+    }
 }

@@ -40,6 +40,10 @@
     <EmbeddedResource Include="Resources\Textures\warm_overlay.png" />
     <EmbeddedResource Include="Resources\Textures\folder.png" />
     <EmbeddedResource Include="Resources\Textures\search.png" />
+
+    <EmbeddedResource Include="Resources\Localization\EN\strings.xml" />
+    <EmbeddedResource Include="Resources\Localization\RU\strings.xml" />
+    
   </ItemGroup>
 
   <ItemGroup>
