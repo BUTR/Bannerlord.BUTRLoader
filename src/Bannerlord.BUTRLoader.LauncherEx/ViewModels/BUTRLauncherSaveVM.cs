@@ -106,6 +106,13 @@ namespace Bannerlord.BUTRLoader.ViewModels
             }).ToArray();
 
             var existingModules = modules.Select(x => _getModuleByName(x.Name)).OfType<ModuleInfoExtended>().ToArray();
+            var nameDuplicates = existingModules.Select(x => x.Name).GroupBy(i => i).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            if (nameDuplicates.Count > 0)
+            {
+                HasError = true;
+                ErrorHint = new LauncherHintVM($"Duplicate Module Names:\n{string.Join("\n", nameDuplicates)}");
+                return;
+            }
             var existingModulesByName = existingModules.ToDictionary(x => x.Name, x => x);
 
             ModuleListCode = $"_MODULES_*{string.Join("*", existingModules.Select(x => x.Id))}*_MODULES_";
@@ -120,7 +127,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
             {
                 var text = string.Empty;
                 text += loadOrderIssues.Count > 0 ? $"Load Order Issues:\n{string.Join("\n\n", loadOrderIssues)}{(missingNames.Length > 0 ? "\n\n\n" : string.Empty)}" : string.Empty;
-                text += missingNames.Length > 0 ? $"Missing modules:\n{string.Join("\n", missingNames)}" : string.Empty;
+                text += missingNames.Length > 0 ? $"Missing Modules:\n{string.Join("\n", missingNames)}" : string.Empty;
 
                 HasError = true;
                 ErrorHint = new LauncherHintVM(text);
@@ -139,7 +146,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
             if (issues.Count > 0)
             {
                 HasWarning = true;
-                WarningHint = new LauncherHintVM($"Mismatched module versions:\n{string.Join("\n\n", issues)}");
+                WarningHint = new LauncherHintVM($"Mismatched Module Versions:\n{string.Join("\n\n", issues)}");
             }
         }
 

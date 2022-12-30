@@ -1,4 +1,8 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.19.5
+Game Versions: v1.0.0,v1.0.1,v1.0.2
+* Fixed crash with duplicate module ids and names
+---------------------------------------------------------------------------------------------------
 Version: 1.19.4
 Game Versions: v1.0.0,v1.0.1,v1.0.2
 * Fixed a case when the module list could be empty

@@ -90,6 +90,13 @@ namespace Bannerlord.BUTRLoader.Helpers
                 }
             }
 
+            var idDuplicates = mixin.Modules2.Select(x => x.ModuleInfoExtended.Id).GroupBy(i => i).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            if (idDuplicates.Count > 0)
+            {
+                HintManager.ShowHint($"Cancelled Import!\n\nDuplicate Module Ids:\n{string.Join("\n", idDuplicates)}");
+                return Array.Empty<ModuleInfoExtendedWithMetadata>();
+            }
+
             using var reader = new StreamReader(stream);
             var importedModules = Deserialize(ReadAllLines(reader)).ToArray();
 
@@ -118,6 +125,13 @@ namespace Bannerlord.BUTRLoader.Helpers
         }
         private static ModuleInfoExtendedWithMetadata[] ReadSaveFile(Stream stream, LauncherModsVMMixin mixin)
         {
+            var nameDuplicates = mixin.Modules2.Select(x => x.ModuleInfoExtended.Name).GroupBy(i => i).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            if (nameDuplicates.Count > 0)
+            {
+                HintManager.ShowHint($"Cancelled Import!\n\nDuplicate Module Names:\n{string.Join("\n", nameDuplicates)}");
+                return Array.Empty<ModuleInfoExtendedWithMetadata>();
+            }
+
             if (MetaData.Deserialize(stream) is not { } metadata)
             {
                 HintManager.ShowHint("Cancelled Import!\n\nFailed to read the save file!");
@@ -158,6 +172,13 @@ namespace Bannerlord.BUTRLoader.Helpers
         }
         private static ModuleInfoExtendedWithMetadata[] ReadNovusPreset(Stream stream, LauncherModsVMMixin mixin)
         {
+            var idDuplicates = mixin.Modules2.Select(x => x.ModuleInfoExtended.Id).GroupBy(i => i).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            if (idDuplicates.Count > 0)
+            {
+                HintManager.ShowHint($"Cancelled Import!\n\nDuplicate Module Ids:\n{string.Join("\n", idDuplicates)}");
+                return Array.Empty<ModuleInfoExtendedWithMetadata>();
+            }
+
             var document = new XmlDocument();
             document.Load(stream);
 
@@ -282,7 +303,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         }
         private void ImportInternal(ModuleInfoExtendedWithMetadata[] modules, LauncherModsVMMixin mixin)
         {
-            if ( modules.Length == 0)
+            if (modules.Length == 0)
                 return;
 
             if (UpdateAndSaveUserModsDataMethod is null)
@@ -312,6 +333,13 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         private static ModuleListEntry[] ReadSaveFileModuleList(Stream stream, LauncherModsVMMixin mixin)
         {
+            var nameDuplicates = mixin.Modules2.Select(x => x.ModuleInfoExtended.Name).GroupBy(i => i).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            if (nameDuplicates.Count > 0)
+            {
+                HintManager.ShowHint($"Cancelled Export!\n\nDuplicate Module Names:\n{string.Join("\n", nameDuplicates)}");
+                return Array.Empty<ModuleListEntry>();
+            }
+
             if (MetaData.Deserialize(stream) is not { } metadata)
             {
                 HintManager.ShowHint("Cancelled Export!\n\nFailed to read the save file!");
@@ -342,7 +370,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 .Select(x => new ModuleListEntry(x.Id, x.Version, x.Url))
                 .ToArray();
         }
-        private void SaveBMList(Stream stream, IEnumerable<ModuleListEntry> modules)
+        private static void SaveBMList(Stream stream, IEnumerable<ModuleListEntry> modules)
         {
             static string Serialize(IEnumerable<ModuleListEntry> modules)
             {
@@ -358,7 +386,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             var content = Serialize(modules.Select(x => new ModuleListEntry(x.Id, x.Version)).ToArray());
             writer.Write(content);
         }
-        private void SaveNovusPreset(Stream stream, IEnumerable<ModuleListEntry> modules)
+        private static void SaveNovusPreset(Stream stream, IEnumerable<ModuleListEntry> modules)
         {
             var document = new XmlDocument();
 
