@@ -29,7 +29,11 @@ namespace Bannerlord.BUTRLoader.Helpers
         private record ModuleListEntry(string Id, ApplicationVersion Version, string? Url = null);
         private record ModuleMismatch(string Id, ApplicationVersion OriginalVersion, ApplicationVersion CurrentVersion)
         {
-            public override string ToString() => $"{Id} - Expected: {OriginalVersion}, Installed: {CurrentVersion}";
+            public override string ToString() => new BUTRTextObject("{=nYVWoomO}{MODULEID}. Required {REQUIREDVERSION}. Actual {ACTUALVERSION}")
+                .SetTextVariable("MODULEID", Id)
+                .SetTextVariable("REQUIREDVERSION", OriginalVersion.ToString())
+                .SetTextVariable("ACTUALVERSION", CurrentVersion.ToString())
+                .ToString();
         }
 
         private delegate void UpdateAndSaveUserModsDataDelegate(LauncherVM instance, bool isMultiplayer);
@@ -47,14 +51,18 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         private static bool ShowVersionWarning(IEnumerable<string> mismatchedVersions)
         {
+            var mismatched = new BUTRTextObject("{=BuMom4Jt}Mismatched Module Versions:{NL}{MODULEVERSIONS}")
+                .SetTextVariable("NL", Environment.NewLine)
+                .SetTextVariable("MODULEVERSIONS", string.Join(Environment.NewLine, mismatchedVersions)).ToString();
+            var split = mismatched.Split('\n');
             using var okButton = new TaskDialogButton(ButtonType.Yes);
             using var cancelButton = new TaskDialogButton(ButtonType.No);
             using var dialog = new TaskDialog
             {
                 MainIcon = TaskDialogIcon.Warning,
-                WindowTitle = "Import Warning",
-                MainInstruction = "Mismatched module versions:",
-                Content = $"{string.Join(Environment.NewLine, mismatchedVersions)}{Environment.NewLine}{Environment.NewLine}Continue import?",
+                WindowTitle = new BUTRTextObject("Import Warning").ToString(),
+                MainInstruction = split[0],
+                Content = $"{split[1]}{Environment.NewLine}{Environment.NewLine}{new BUTRTextObject("{=hgew15HH}Continue import?")}",
                 Buttons = { okButton, cancelButton },
                 CenterParent = true,
                 AllowDialogCancellation = true,
@@ -81,7 +89,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                         list.Add(new ModuleListEntry(split[0], version));
                     }
                 }
-                var nativeChangeset = list.Find(x => x.Id == "Native").Version.ChangeSet is var x and not 0 ? x : DefaultChangeSet;
+                var nativeChangeset = list.Find(x => x.Id == "Native")?.Version.ChangeSet is var x and not 0 ? x : DefaultChangeSet;
                 foreach (var entry in list)
                 {
                     var version = entry.Version;
@@ -129,7 +137,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             var nameDuplicates = mixin.Modules2.Select(x => x.ModuleInfoExtended.Name).GroupBy(i => i).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
             if (nameDuplicates.Count > 0)
             {
-                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=vCwH9226}Duplicate Module Names:{NL}{MODULENAMES}").SetTextVariable("{MODULENAMES}", string.Join("\n", nameDuplicates))}");
+                HintManager.ShowHint($"{new BUTRTextObject("{=WJnTxf3v}Cancelled Import!")}\n\n{new BUTRTextObject("{=vCwH9226}Duplicate Module Names:{NL}{MODULENAMES}").SetTextVariable("MODULENAMES", string.Join("\n", nameDuplicates))}");
                 return Array.Empty<ModuleInfoExtendedWithMetadata>();
             }
 

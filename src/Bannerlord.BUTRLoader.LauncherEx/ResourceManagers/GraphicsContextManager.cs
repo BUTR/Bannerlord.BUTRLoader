@@ -1,4 +1,5 @@
 ﻿using Bannerlord.BUTR.Shared.Extensions;
+using Bannerlord.BUTRLoader.Extensions;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
@@ -20,17 +21,22 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         private static readonly Dictionary<string, OpenGLTexture> Textures = new();
         private static readonly Dictionary<string, Func<OpenGLTexture>> DeferredInitialization = new();
 
-        public static OpenGLTexture Create(byte[] data)
+        public static OpenGLTexture Create(string name, Stream stream)
         {
+            var texture = new OpenGLTexture();
+            if (texture.LoadFromStream(name, stream))
+                return texture;
+
             var path = Path.GetTempFileName();
-            File.WriteAllBytes(path, data);
+            using (var fs = File.OpenWrite(path))
+                stream.CopyTo(fs);
             var openGLTexture = OpenGLTexture.FromFile(path);
             File.Delete(path);
 
             return openGLTexture;
         }
         public static void Register(string name, Func<OpenGLTexture> func) => DeferredInitialization.Add(name, func);
-        public static void CreateAndRegister(string name, byte[] data) => Register(name, () => Create(data));
+        public static void CreateAndRegister(string name, Stream stream) => Register(name, () => Create(name, stream));
 
         public static void Clear()
         {

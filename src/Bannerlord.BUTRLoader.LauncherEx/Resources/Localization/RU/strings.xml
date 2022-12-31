@@ -85,12 +85,14 @@
     <string id="GtDRbC3m" text="Отсутствующие модули: {NL}{MODULES}" />
     <string id="BuMom4Jt" text="Несоответствующие версии модулей:{NL}{MODULEVERSIONS}" />
 
-    <string id="nYVWoomO" text="{MODULEID}. Требуется {REQUIREDVERSION}. Фактический {ACTUALVERSION}" />
+    <string id="nYVWoomO" text="{MODULEID}. Требуется {REQUIREDVERSION}. Установлено {ACTUALVERSION}" />
     <string id="sd6M4KRd" text="Порядок загрузки:{NL}{LOADORDER}" />
     <string id="HvvA78sZ" text="Проблемы с порядком загрузки:{NL}{LOADORDERISSUES}" />
 
     <string id="B64DbmWp" text="Файл сохранения не найден!" />
     <string id="epU06HID" text="Не удалось прочитать файл сохранения!" />
+
+    <string id="hgew15HH" text="Продолжить импорт?" />
 
     <string id="DKRNkst2" text="Открытие файла с порядком загрузки" />
     <string id="XSxlKweM" text="Сохраните файл со списком модулей Bannerlord" />

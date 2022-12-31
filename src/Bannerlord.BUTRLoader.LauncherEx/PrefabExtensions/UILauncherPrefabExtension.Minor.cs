@@ -145,9 +145,11 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
             {
                 foreach (var attribute in selectNode.Attributes?.OfType<XmlAttribute>() ?? Enumerable.Empty<XmlAttribute>())
                 {
+                    if (attribute.Name != "Text") continue;
                     if (!attribute.Value.StartsWith("@")) continue;
                     if (!attribute.Value.EndsWith("Text")) continue;
                     if (attribute.Value == "@Text") continue;
+                    if (attribute.Value == "@VersionText") continue;
                     attribute.Value = $"{attribute.Value}2";
                 }
             }

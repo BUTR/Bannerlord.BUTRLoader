@@ -85,7 +85,7 @@
     <string id="GtDRbC3m" text="Missing Modules:{NL}{MODULES}" />
     <string id="BuMom4Jt" text="Mismatched Module Versions:{NL}{MODULEVERSIONS}" />
 
-    <string id="nYVWoomO" text="{MODULEID}. Required {REQUIREDVERSION}. Actual {ACTUALVERSION}" />
+    <string id="nYVWoomO" text="{MODULEID}. Required {REQUIREDVERSION}. Installed {ACTUALVERSION}" />
     <string id="sd6M4KRd" text="Load Order:{NL}{LOADORDER}" />
     <string id="HvvA78sZ" text="Load Order Issues:{NL}{LOADORDERISSUES}" />
 
@@ -94,6 +94,8 @@
 
     <string id="DKRNkst2" text="Open a File with a Load Order" />
     <string id="XSxlKweM" text="Save a Bannerlord Module List File" />
+
+    <string id="hgew15HH" text="Continue import?" />
 
     <string id="tqjPGPtP" text="BUTRLoader detected 0Harmony.dll inside the game's root bin folder!{NL}This could lead to issues, remove it?" />
 

@@ -41,14 +41,14 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             WidgetPrefabPatch.Enable(_launcherHarmony);
 
             GraphicsContextManager.Enable(_launcherHarmony);
-            GraphicsContextManager.CreateAndRegister("launcher_arrow_down", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
-            GraphicsContextManager.CreateAndRegister("launcher_arrow_left", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
-            GraphicsContextManager.CreateAndRegister("launcher_export", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.export.png"));
-            GraphicsContextManager.CreateAndRegister("launcher_import", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.import.png"));
-            GraphicsContextManager.CreateAndRegister("launcher_refresh", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.refresh.png"));
-            GraphicsContextManager.CreateAndRegister("warm_overlay", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.warm_overlay.png"));
-            GraphicsContextManager.CreateAndRegister("launcher_folder", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.folder.png"));
-            GraphicsContextManager.CreateAndRegister("launcher_search", LoadRaw("Bannerlord.BUTRLoader.Resources.Textures.search.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_arrow_down", LoadStream("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_arrow_left", LoadStream("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_export", LoadStream("Bannerlord.BUTRLoader.Resources.Textures.export.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_import", LoadStream("Bannerlord.BUTRLoader.Resources.Textures.import.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_refresh", LoadStream("Bannerlord.BUTRLoader.Resources.Textures.refresh.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_folder", LoadStream("Bannerlord.BUTRLoader.Resources.Textures.folder.png"));
+            GraphicsContextManager.CreateAndRegister("launcher_search", LoadStream("Bannerlord.BUTRLoader.Resources.Textures.search.png"));
+            GraphicsContextManager.CreateAndRegister("warm_overlay", LoadStream("Bannerlord.BUTRLoader.Resources.Textures.warm_overlay.png"));
 
             SpriteDataManager.Enable(_launcherHarmony);
             SpriteDataManager.CreateAndRegister("launcher_arrow_down");
@@ -56,7 +56,6 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             SpriteDataManager.CreateAndRegister("launcher_import");
             SpriteDataManager.CreateAndRegister("launcher_export");
             SpriteDataManager.CreateAndRegister("launcher_refresh");
-            SpriteDataManager.CreateAndRegister("warm_overlay");
             SpriteDataManager.CreateAndRegister("launcher_folder");
             SpriteDataManager.CreateAndRegister("launcher_search");
 
@@ -98,11 +97,15 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             doc.Load(xmlReader);
             return doc;
         }
+        private static Stream LoadStream(string embedPath)
+        {
+            return typeof(Manager).Assembly.GetManifestResourceStream(embedPath) ?? Stream.Null;
+        }
         private static byte[] LoadRaw(string embedPath)
         {
             static byte[] ReadFully(Stream input)
             {
-                byte[] buffer = new byte[16 * 1024];
+                var buffer = new byte[16 * 1024];
                 using var ms = new MemoryStream();
                 int read;
                 while ((read = input.Read(buffer, 0, buffer.Length)) > 0)
