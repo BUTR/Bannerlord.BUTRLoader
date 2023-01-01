@@ -252,11 +252,11 @@ namespace Bannerlord.BUTRLoader.Mixins
         [BUTRDataSourceProperty]
         public string ModsText2 => new BUTRTextObject("{=YGU9eXM0}Mods").ToString();
         [BUTRDataSourceProperty]
-        public string PlayText2 => new BUTRTextObject("{=xYv4iv7C}Play").ToString();
+        public string PlayText2 => new BUTRTextObject("{=xYv4iv7C}PLAY").ToString();
         [BUTRDataSourceProperty]
-        public string ContinueText2 => new BUTRTextObject("{=6B3iZLqR}Continue").ToString();
+        public string ContinueText2 => new BUTRTextObject("{=6B3iZLqR}CONTINUE").ToString();
         [BUTRDataSourceProperty]
-        public string LaunchText2 => new BUTRTextObject("{=eUt6GKkQ}Launch").ToString();
+        public string LaunchText2 => new BUTRTextObject("{=eUt6GKkQ}LAUNCH").ToString();
 
         private readonly UserDataManager? _userDataManager;
 

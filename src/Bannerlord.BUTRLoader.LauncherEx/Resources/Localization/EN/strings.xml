@@ -78,7 +78,7 @@
     <string id="VwFQTk5z" text="Successfully exported list!" />
 
     <!-- Issues -->
-    <string id="kxqLbSqe" text="Unknown ID" />
+    <string id="kxqLbSqe" text="(Unknown ID)" />
 
     <string id="izSm5f85" text="Duplicate Module Ids:{NL}{MODULEIDS}" />
     <string id="vCwH9226" text="Duplicate Module Names:{NL}{MODULENAMES}" />
@@ -118,6 +118,5 @@
     <string id="f9hYP7mk" text="Depends on:" />
     <string id="eGJ387f7" text="Incompatible with:" />
     <string id="eW76jyd7" text="Needs to load before:" />
-
   </strings>
 </LanguageData>

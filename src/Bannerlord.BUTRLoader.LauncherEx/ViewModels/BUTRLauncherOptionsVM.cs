@@ -81,7 +81,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
                 DisplayName = new BUTRTextObject("{=LXlsSS8t}Fix Common Issues").ToString(),
-                HintText = new BUTRTextObject("{=J9VbkLW4}Fixes issues like 0Harmony.dll bein in the /bin folder").ToString(),
+                HintText = new BUTRTextObject("{=J9VbkLW4}Fixes issues like 0Harmony.dll being in the /bin folder").ToString(),
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.FixCommonIssues))!, this)
             }));
@@ -102,7 +102,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
             SettingProperties.Add(new SettingsPropertyVM(new SettingsPropertyDefinition
             {
                 DisplayName = new BUTRTextObject("{=iD27wEq7}Hide Random Image").ToString(),
-                HintText = new BUTRTextObject("{=LaPvZjwC}Hide's the Rider image so the launcher loosk more compact").ToString(),
+                HintText = new BUTRTextObject("{=LaPvZjwC}Hide's the Rider image so the launcher looks more compact").ToString(),
                 SettingType = SettingType.Bool,
                 PropertyReference = new PropertyRef(typeof(LauncherSettings).GetProperty(nameof(LauncherSettings.HideRandomImage))!, this)
             }));

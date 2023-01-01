@@ -124,7 +124,7 @@ namespace Bannerlord.BUTRLoader.ViewModels
 
             //LoadOrderHint = new LauncherHintVM($"Load Order:\n{string.Join("\n", existingModules.Select(x => x.Id))}\n\nUnknown Mod Names:{string.Join("\n", missingNames)}");
             LoadOrderHint = new LauncherHintVM(new BUTRTextObject("{=sd6M4KRd}Load Order:{NL}{LOADORDER}")
-                .SetTextVariable("LOADORDER", string.Join("\n", modules.Select(x => _getModuleByName(x.Name)?.Id ?? $"{x.Name} {new BUTRTextObject("{=kxqLbSqeUnknown ID")}(Unknown Id)"))).ToString());
+                .SetTextVariable("LOADORDER", string.Join("\n", modules.Select(x => _getModuleByName(x.Name)?.Id ?? $"{x.Name} {new BUTRTextObject("{=kxqLbSqe}(Unknown ID)")}"))).ToString());
 
             if (missingNames.Length > 0 || loadOrderIssues.Count > 0)
             {

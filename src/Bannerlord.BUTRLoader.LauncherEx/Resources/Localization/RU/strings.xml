@@ -78,7 +78,7 @@
     <string id="VwFQTk5z" text="Список успешно экспортирован!" />
 
     <!-- Issues -->
-    <string id="kxqLbSqe" text="Неизвестный ID" />
+    <string id="kxqLbSqe" text="(Неизвестный ID)" />
 
     <string id="izSm5f85" text="Дублирующиеся Id модулей:{NL}{MODULIDS}" />
     <string id="vCwH9226" text="Дублирующиеся имена модулей: {NL}{MODULENAMES}" />

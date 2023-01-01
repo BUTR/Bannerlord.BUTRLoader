@@ -29,7 +29,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         private record ModuleListEntry(string Id, ApplicationVersion Version, string? Url = null);
         private record ModuleMismatch(string Id, ApplicationVersion OriginalVersion, ApplicationVersion CurrentVersion)
         {
-            public override string ToString() => new BUTRTextObject("{=nYVWoomO}{MODULEID}. Required {REQUIREDVERSION}. Actual {ACTUALVERSION}")
+            public override string ToString() => new BUTRTextObject("{=nYVWoomO}{MODULEID}. Required {REQUIREDVERSION}. Installed {ACTUALVERSION}")
                 .SetTextVariable("MODULEID", Id)
                 .SetTextVariable("REQUIREDVERSION", OriginalVersion.ToString())
                 .SetTextVariable("ACTUALVERSION", CurrentVersion.ToString())
