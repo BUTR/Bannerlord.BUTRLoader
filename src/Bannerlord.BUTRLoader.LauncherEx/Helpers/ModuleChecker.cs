@@ -32,7 +32,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 var asm = Path.GetFullPath(Path.Combine(moduleInfoExtended.Path, "bin", "Win64_Shipping_Client", subModule.DLLName));
                 if (!File.Exists(asm)) continue;
 
-                    try
+                try
                 {
                     using var moduleDefinition = ModuleDefinition.ReadModule(asm);
 

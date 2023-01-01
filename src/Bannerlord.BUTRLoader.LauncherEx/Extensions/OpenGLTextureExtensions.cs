@@ -64,7 +64,7 @@ namespace Bannerlord.BUTRLoader.Extensions
                     goto IL_112;
             }
             flag = false;
-            IL_112:
+        IL_112:
             if (flag)
             {
                 TexImage2D(0x00000DE1, 0, num, image.Width, image.Height, 0, pixelFormat, 0x00001401, image.Data);

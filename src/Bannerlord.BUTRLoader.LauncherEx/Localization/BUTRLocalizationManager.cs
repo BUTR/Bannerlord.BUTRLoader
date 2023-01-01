@@ -58,7 +58,7 @@ namespace Bannerlord.BUTRLoader.Localization
 
         private static string GetLocalizedText(string text)
         {
-            if (text is not {Length: > 2} || text[0] != '{' || text[1] != '=') return text;
+            if (text is not { Length: > 2 } || text[0] != '{' || text[1] != '=') return text;
 
             (_idStringBuilder ??= new StringBuilder(8)).Clear();
             (_targetStringBuilder ??= new StringBuilder(100)).Clear();

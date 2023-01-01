@@ -51,7 +51,7 @@ namespace Bannerlord.BLSE
             Common.PlatformFileHelper = new PlatformFileHelperPC("Mount and Blade II Bannerlord");
             try
             {
-                if (MBSaveLoad.GetSaveFileWithName(saveFile) is not {IsCorrupted: false} saveGameFileInfo) return;
+                if (MBSaveLoad.GetSaveFileWithName(saveFile) is not { IsCorrupted: false } saveGameFileInfo) return;
 
                 var loadedModule = ModuleInfoHelper.GetModules();
 
@@ -62,7 +62,7 @@ namespace Bannerlord.BLSE
                 var missingNames = moduleNames.Select(x => x).Except(existingModulesByName.Keys).ToArray();
                 if (missingNames.Length == 0)
                 {
-                    args = args.Concat(new[] {$"_MODULES_*{string.Join("*", existingModules.Select(x => x.Id))}*_MODULES_"}).ToArray();
+                    args = args.Concat(new[] { $"_MODULES_*{string.Join("*", existingModules.Select(x => x.Id))}*_MODULES_" }).ToArray();
                     return;
                 }
 

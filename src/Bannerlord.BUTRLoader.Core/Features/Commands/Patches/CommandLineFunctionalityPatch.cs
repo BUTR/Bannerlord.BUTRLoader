@@ -29,7 +29,7 @@ namespace Bannerlord.BUTRLoader.Features.Commands.Patches
 
             private CommandLineFunctionHandle(object obj) => Object = obj;
         }
-        
+
         private static Harmony? _harmony;
 
         public static bool Enable(Harmony harmony)
@@ -47,7 +47,7 @@ namespace Bannerlord.BUTRLoader.Features.Commands.Patches
             {
                 foreach (var (name, function) in CommandsFeature.Functions)
                 {
-                    if (CommandLineFunctionHandle.Create(function) is not {  Object: { } cmdFuncObject }) continue;
+                    if (CommandLineFunctionHandle.Create(function) is not { Object: { } cmdFuncObject }) continue;
                     ___AllFunctions.Add(name, cmdFuncObject);
                     __result.Add(name);
                 }

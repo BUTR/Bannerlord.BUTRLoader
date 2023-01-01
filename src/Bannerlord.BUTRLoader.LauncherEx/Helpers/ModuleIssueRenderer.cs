@@ -1,4 +1,4 @@
-using Bannerlord.BUTRLoader.Localization;
+﻿using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.ModuleManager;
 
 using System;

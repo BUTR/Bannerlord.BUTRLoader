@@ -9,7 +9,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         public static readonly string GameConfigPath =
             Path.Combine($@"{Environment.GetFolderPath(Environment.SpecialFolder.Personal)}", "Mount and Blade II Bannerlord", "Configs", "BannerlordConfig.txt");
         public static readonly string EngineConfigPath =
-            Path.Combine($@"{Environment.GetFolderPath(Environment.SpecialFolder.Personal)}", "Mount and Blade II Bannerlord","Configs", "engine_config.txt");
+            Path.Combine($@"{Environment.GetFolderPath(Environment.SpecialFolder.Personal)}", "Mount and Blade II Bannerlord", "Configs", "engine_config.txt");
 
         public static IEnumerable<KeyValuePair<string, string>> GetGameOptions()
         {
