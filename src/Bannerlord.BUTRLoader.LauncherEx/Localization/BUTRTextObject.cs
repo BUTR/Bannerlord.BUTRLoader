@@ -146,7 +146,7 @@ namespace Bannerlord.BUTRLoader.Localization
         {
             var mbstringBuilder = default(MBStringBuilder);
             mbstringBuilder.Initialize();
-            if (Value is {Length: > 2} && Value[0] == '{' && Value[1] == '=')
+            if (Value is { Length: > 2 } && Value[0] == '{' && Value[1] == '=')
             {
                 var num = 2;
                 while (num < Value.Length && Value[num] != '}')

@@ -155,4 +155,21 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
             }
         }
     }
+
+    internal sealed class UILauncherPrefabExtension32 : PrefabExtensionInsertAsSiblingPatch
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "descendant::Launcher.ConfirmStart";
+
+        private XmlDocument XmlDocument { get; } = new();
+
+        public UILauncherPrefabExtension32()
+        {
+            XmlDocument.LoadXml(@"
+<Launcher.MessageBox DataSource=""{MessageBox}""/>
+");
+        }
+
+        public override XmlDocument GetPrefabExtension() => XmlDocument;
+    }
 }

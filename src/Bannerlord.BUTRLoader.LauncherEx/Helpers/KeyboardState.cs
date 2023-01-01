@@ -26,7 +26,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             _keys5 = 0;
             _keys6 = 0;
             _keys7 = 0;
-            _modifiers = (byte)(0 | (capsLock ? CapsLockModifier : 0) | (numLock ? NumLockModifier : 0));
+            _modifiers = (byte) (0 | (capsLock ? CapsLockModifier : 0) | (numLock ? NumLockModifier : 0));
 
             if (keys != null)
             {
@@ -44,7 +44,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         {
             var count = CountBits(_keys0) + CountBits(_keys1) + CountBits(_keys2) + CountBits(_keys3)
                         + CountBits(_keys4) + CountBits(_keys5) + CountBits(_keys6) + CountBits(_keys7);
-            return (int)count;
+            return (int) count;
         }
         public Keys[] GetPressedKeys()
         {
@@ -68,7 +68,7 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         private bool InternalGetKey(Keys key)
         {
-            var mask = (uint)1 << ((int)key & 0x1f);
+            var mask = (uint) 1 << ((int) key & 0x1f);
             uint element = ((int) key >> 5) switch
             {
                 0 => _keys0,
@@ -85,8 +85,8 @@ namespace Bannerlord.BUTRLoader.Helpers
         }
         internal void InternalSetKey(Keys key)
         {
-            var mask = (uint)1 << ((int)key & 0x1f);
-            switch ((int)key >> 5)
+            var mask = (uint) 1 << ((int) key & 0x1f);
+            switch ((int) key >> 5)
             {
                 case 0: _keys0 |= mask; break;
                 case 1: _keys1 |= mask; break;
@@ -100,8 +100,8 @@ namespace Bannerlord.BUTRLoader.Helpers
         }
         internal void InternalClearKey(Keys key)
         {
-            var mask = (uint)1 << (((int)key) & 0x1f);
-            switch (((int)key) >> 5)
+            var mask = (uint) 1 << (((int) key) & 0x1f);
+            switch (((int) key) >> 5)
             {
                 case 0: _keys0 &= ~mask; break;
                 case 1: _keys1 &= ~mask; break;
@@ -125,7 +125,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             _keys7 = 0;
         }
 
-        public override int GetHashCode() => (int)(_keys0 ^ _keys1 ^ _keys2 ^ _keys3 ^ _keys4 ^ _keys5 ^ _keys6 ^ _keys7);
+        public override int GetHashCode() => (int) (_keys0 ^ _keys1 ^ _keys2 ^ _keys3 ^ _keys4 ^ _keys5 ^ _keys6 ^ _keys7);
 
         public static bool operator ==(KeyboardState a, KeyboardState b) =>
             a._keys0 == b._keys0
@@ -154,7 +154,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             for (var i = 0; i < 32; i++)
             {
                 if ((keys & (1 << i)) != 0)
-                    pressedKeys[index++] = (Keys)(offset + i);
+                    pressedKeys[index++] = (Keys) (offset + i);
             }
             return index;
         }

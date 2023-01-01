@@ -198,6 +198,10 @@ namespace Bannerlord.BUTRLoader.Mixins
         private BUTRLauncherSavesVM? _savesData;
 
         [BUTRDataSourceProperty]
+        public BUTRLauncherMessageBoxVM MessageBox { get => _messageBox; set => SetField(ref _messageBox, value); }
+        private BUTRLauncherMessageBoxVM? _messageBox = new();
+
+        [BUTRDataSourceProperty]
         public bool ShowMods => IsSingleplayer2 || IsMultiplayer2;
         [BUTRDataSourceProperty]
         public bool ShowNews => IsSingleplayer2 || IsMultiplayer2 || IsDigitalCompanion2;
@@ -479,12 +483,7 @@ namespace Bannerlord.BUTRLoader.Mixins
                     description.Append("\n");
                     description.Append(new BUTRTextObject("{=qvzptzrE}Do you wish to continue loading the save?"));
 
-                    ViewModel.ConfirmStart = MixinManager.AddMixin(new LauncherConfirmStartVM(() => ExecuteStartGame(ViewModel, 0))
-                    {
-                        Title = new BUTRTextObject("{=dDprK7Mz}WARNING").ToString(),
-                        Description = description.ToString(),
-                        IsEnabled = true
-                    });
+                    MessageBox.Show(new BUTRTextObject("{=dDprK7Mz}WARNING").ToString(), description.ToString(), () => ExecuteStartGame(ViewModel, 0), null);
                     return;
                 }
 

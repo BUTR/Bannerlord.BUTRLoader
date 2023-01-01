@@ -81,6 +81,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             WidgetFactoryManager.CreateAndRegister("Launcher.Mods.ModuleTuple2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.ModuleTuple.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Saves", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Saves.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Saves.SaveTuple", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Saves.SaveTuple.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.MessageBox", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.MessageBox.xml"));
 
             BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.EN.strings.xml"));
             BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.RU.strings.xml"));

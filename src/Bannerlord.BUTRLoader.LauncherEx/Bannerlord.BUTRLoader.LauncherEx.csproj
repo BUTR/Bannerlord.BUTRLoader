@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\Brushes\Launcher.xml" />
+    <EmbeddedResource Include="Resources\Prefabs\Launcher.MessageBox.xml" />
     <EmbeddedResource Include="Resources\Prefabs\Launcher.Options.OptionTuple.xml" />
     <EmbeddedResource Include="Resources\Prefabs\Widgets\Launcher.Scrollbar.xml" />
     <EmbeddedResource Include="Resources\Prefabs\Widgets\Launcher.SearchBox.xml" />

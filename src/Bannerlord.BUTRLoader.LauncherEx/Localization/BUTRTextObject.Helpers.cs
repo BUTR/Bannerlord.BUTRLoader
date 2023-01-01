@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Bannerlord.BUTRLoader.Localization
+﻿namespace Bannerlord.BUTRLoader.Localization
 {
     internal partial class BUTRTextObject
     {

@@ -52,6 +52,17 @@ namespace Bannerlord.BUTRLoader.Helpers
                 }
             }
         }
+
+        protected new bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+            field = value;
+            OnPropertyChangedWithValue(value, propertyName);
+            return true;
+        }
     }
 
     internal abstract class ViewModelMixin<TViewModelMixin, TViewModel>

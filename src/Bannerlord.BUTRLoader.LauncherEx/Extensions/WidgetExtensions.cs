@@ -26,7 +26,7 @@ namespace Bannerlord.BUTRLoader.Extensions
             if (method is null || property is null)
                 return false;
 
-            if (method?.Invoke(widget, new object[] {property.GetValue(widget.EventManager)}) is not bool result)
+            if (method?.Invoke(widget, new object[] { property.GetValue(widget.EventManager) }) is not bool result)
                 return false;
 
             return result;

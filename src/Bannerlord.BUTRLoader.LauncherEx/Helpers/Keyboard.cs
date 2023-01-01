@@ -13,7 +13,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         private static readonly byte[] _dfinedKeyCodes;
         private static readonly byte[] _keyState = new byte[256];
         private static readonly List<Keys> _keys = new(10);
-        private static readonly Predicate<Keys> IsKeyReleasedPredicate = key => IsKeyReleased((byte)key);
+        private static readonly Predicate<Keys> IsKeyReleasedPredicate = key => IsKeyReleased((byte) key);
 
         static Keyboard()
         {
@@ -30,7 +30,7 @@ namespace Bannerlord.BUTRLoader.Helpers
             foreach (var keyCode in _dfinedKeyCodes)
             {
                 if (IsKeyReleased(keyCode)) continue;
-                var key = (Keys)keyCode;
+                var key = (Keys) keyCode;
                 if (!_keys.Contains(key))
                     _keys.Add(key);
             }
