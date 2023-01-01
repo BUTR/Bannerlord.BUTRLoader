@@ -58,6 +58,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             SpriteDataManager.CreateAndRegister("launcher_refresh");
             SpriteDataManager.CreateAndRegister("launcher_folder");
             SpriteDataManager.CreateAndRegister("launcher_search");
+            SpriteDataManager.CreateAndRegister("warm_overlay");
 
             BrushFactoryManager.Enable(_launcherHarmony);
             BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));

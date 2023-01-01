@@ -1,23 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
-    internal struct KeyboardState
+    internal readonly struct KeyboardState
     {
+        [DllImport("User32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
+        [DllImport("User32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetKeyboardLayout(uint idThread);
+
+        [DllImport("user32.dll")]
+        private static extern uint MapVirtualKeyEx(uint uCode, uint uMapType, IntPtr dwhkl);
+
+        [DllImport("user32.dll", ExactSpelling = true)]
+        private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
+
+
+        private static readonly byte[] _definedKeyCodes =
+            ((Keys[]) Enum.GetValues(typeof(Keys))).Cast<int>().Where(keyCode => keyCode is >= 1 and <= 255).Select(keyCode => (byte) keyCode).ToArray();
+
         private const byte CapsLockModifier = 1;
         private const byte NumLockModifier = 2;
 
+        private readonly byte[] _keyState;
         // Array of 256 bits:
-        private uint _keys0, _keys1, _keys2, _keys3, _keys4, _keys5, _keys6, _keys7;
+        private readonly uint _keys0, _keys1, _keys2, _keys3, _keys4, _keys5, _keys6, _keys7;
         private readonly byte _modifiers;
 
         public bool CapsLock => (_modifiers & CapsLockModifier) > 0;
         public bool NumLock => (_modifiers & NumLockModifier) > 0;
         public KeyState this[Keys key] => InternalGetKey(key) ? KeyState.Down : KeyState.Up;
 
-        public KeyboardState(List<Keys> keys, bool capsLock = false, bool numLock = false) : this()
+        public KeyboardState(byte[] keyState, bool capsLock = false, bool numLock = false) : this()
         {
+            _keyState = keyState;
             _keys0 = 0;
             _keys1 = 0;
             _keys2 = 0;
@@ -28,11 +52,25 @@ namespace Bannerlord.BUTRLoader.Helpers
             _keys7 = 0;
             _modifiers = (byte) (0 | (capsLock ? CapsLockModifier : 0) | (numLock ? NumLockModifier : 0));
 
-            if (keys != null)
+            var keys = new HashSet<Keys>();
+            for (var i = 0; i < _definedKeyCodes.Length; i++)
             {
-                foreach (var k in keys)
+                if ((_keyState[_definedKeyCodes[i]] & 0x80) == 0) continue;
+                var key = (Keys) _definedKeyCodes[i];
+                if (keys.Contains(key)) continue;
+                keys.Add(key);
+
+                var mask = (uint) 1 << ((int) key & 0x1f);
+                switch ((int) key >> 5)
                 {
-                    InternalSetKey(k);
+                    case 0: _keys0 |= mask; break;
+                    case 1: _keys1 |= mask; break;
+                    case 2: _keys2 |= mask; break;
+                    case 3: _keys3 |= mask; break;
+                    case 4: _keys4 |= mask; break;
+                    case 5: _keys5 |= mask; break;
+                    case 6: _keys6 |= mask; break;
+                    case 7: _keys7 |= mask; break;
                 }
             }
         }
@@ -49,8 +87,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         public Keys[] GetPressedKeys()
         {
             var count = GetPressedKeyCount();
-            if (count == 0)
-                return Array.Empty<Keys>();
+            if (count == 0) return Array.Empty<Keys>();
             var keys = new Keys[count];
 
             var index = 0;
@@ -83,69 +120,47 @@ namespace Bannerlord.BUTRLoader.Helpers
             };
             return (element & mask) != 0;
         }
-        internal void InternalSetKey(Keys key)
-        {
-            var mask = (uint) 1 << ((int) key & 0x1f);
-            switch ((int) key >> 5)
-            {
-                case 0: _keys0 |= mask; break;
-                case 1: _keys1 |= mask; break;
-                case 2: _keys2 |= mask; break;
-                case 3: _keys3 |= mask; break;
-                case 4: _keys4 |= mask; break;
-                case 5: _keys5 |= mask; break;
-                case 6: _keys6 |= mask; break;
-                case 7: _keys7 |= mask; break;
-            }
-        }
-        internal void InternalClearKey(Keys key)
-        {
-            var mask = (uint) 1 << (((int) key) & 0x1f);
-            switch (((int) key) >> 5)
-            {
-                case 0: _keys0 &= ~mask; break;
-                case 1: _keys1 &= ~mask; break;
-                case 2: _keys2 &= ~mask; break;
-                case 3: _keys3 &= ~mask; break;
-                case 4: _keys4 &= ~mask; break;
-                case 5: _keys5 &= ~mask; break;
-                case 6: _keys6 &= ~mask; break;
-                case 7: _keys7 &= ~mask; break;
-            }
-        }
-        internal void InternalClearAllKeys()
-        {
-            _keys0 = 0;
-            _keys1 = 0;
-            _keys2 = 0;
-            _keys3 = 0;
-            _keys4 = 0;
-            _keys5 = 0;
-            _keys6 = 0;
-            _keys7 = 0;
-        }
 
         public override int GetHashCode() => (int) (_keys0 ^ _keys1 ^ _keys2 ^ _keys3 ^ _keys4 ^ _keys5 ^ _keys6 ^ _keys7);
 
-        public static bool operator ==(KeyboardState a, KeyboardState b) =>
-            a._keys0 == b._keys0
-            && a._keys1 == b._keys1
-            && a._keys2 == b._keys2
-            && a._keys3 == b._keys3
-            && a._keys4 == b._keys4
-            && a._keys5 == b._keys5
-            && a._keys6 == b._keys6
-            && a._keys7 == b._keys7;
+        public static bool operator ==(KeyboardState a, KeyboardState b) => a._keys0 == b._keys0 &&
+                                                                            a._keys1 == b._keys1 &&
+                                                                            a._keys2 == b._keys2 &&
+                                                                            a._keys3 == b._keys3 &&
+                                                                            a._keys4 == b._keys4 &&
+                                                                            a._keys5 == b._keys5 &&
+                                                                            a._keys6 == b._keys6 &&
+                                                                            a._keys7 == b._keys7;
 
         public static bool operator !=(KeyboardState a, KeyboardState b) => !(a == b);
 
         public override bool Equals(object obj) => obj is KeyboardState state && this == state;
 
+        public string AsString(Keys key)
+        {
+            var vkCode = (uint) key;
+            var result = new StringBuilder(5);
+
+            var currentHWnd = GetForegroundWindow();
+            var currentWindowThreadID = GetWindowThreadProcessId(currentHWnd, out _);
+
+            var hkl = GetKeyboardLayout(currentWindowThreadID);
+            var lScanCode = MapVirtualKeyEx(vkCode, 0, hkl);
+
+            var relevantKeyCountInBuffer = ToUnicodeEx(vkCode, lScanCode, _keyState, result, result.Capacity, 0, hkl);
+            return relevantKeyCountInBuffer switch
+            {
+                -1 or 0 => string.Empty,
+                1 => result[0].ToString(),
+                2 or _ => result.ToString().Substring(0, 2),
+            };
+        }
+
         private static uint CountBits(uint v)
         {
             // http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
-            v = v - ((v >> 1) & 0x55555555);                    // reuse input as temporary
-            v = (v & 0x33333333) + ((v >> 2) & 0x33333333);     // temp
+            v = v - ((v >> 1) & 0x55555555);                       // reuse input as temporary
+            v = (v & 0x33333333) + ((v >> 2) & 0x33333333);        // temp
             return ((v + (v >> 4) & 0xF0F0F0F) * 0x1010101) >> 24; // count
         }
 
