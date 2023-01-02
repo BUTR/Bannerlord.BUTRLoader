@@ -1,28 +1,16 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
+
+using Windows.Win32;
+using Windows.Win32.Foundation;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal readonly struct KeyboardState
     {
-        [DllImport("User32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("User32.dll")]
-        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetKeyboardLayout(uint idThread);
-
-        [DllImport("user32.dll")]
-        private static extern uint MapVirtualKeyEx(uint uCode, uint uMapType, IntPtr dwhkl);
-
-        [DllImport("user32.dll", ExactSpelling = true)]
-        private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
-
+        public static KeyboardState Empty = new(null);
 
         private static readonly byte[] _definedKeyCodes =
             ((Keys[]) Enum.GetValues(typeof(Keys))).Cast<int>().Where(keyCode => keyCode is >= 1 and <= 255).Select(keyCode => (byte) keyCode).ToArray();
@@ -30,7 +18,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         private const byte CapsLockModifier = 1;
         private const byte NumLockModifier = 2;
 
-        private readonly byte[] _keyState;
+        private readonly IMemoryOwner<byte>? _keyState;
         // Array of 256 bits:
         private readonly uint _keys0, _keys1, _keys2, _keys3, _keys4, _keys5, _keys6, _keys7;
         private readonly byte _modifiers;
@@ -39,7 +27,7 @@ namespace Bannerlord.BUTRLoader.Helpers
         public bool NumLock => (_modifiers & NumLockModifier) > 0;
         public KeyState this[Keys key] => InternalGetKey(key) ? KeyState.Down : KeyState.Up;
 
-        public KeyboardState(byte[] keyState, bool capsLock = false, bool numLock = false) : this()
+        public KeyboardState(IMemoryOwner<byte>? keyState, bool capsLock = false, bool numLock = false) : this()
         {
             _keyState = keyState;
             _keys0 = 0;
@@ -52,10 +40,12 @@ namespace Bannerlord.BUTRLoader.Helpers
             _keys7 = 0;
             _modifiers = (byte) (0 | (capsLock ? CapsLockModifier : 0) | (numLock ? NumLockModifier : 0));
 
+            if (_keyState is null) return;
             var keys = new HashSet<Keys>();
+            var span = _keyState.Memory.Span;
             for (var i = 0; i < _definedKeyCodes.Length; i++)
             {
-                if ((_keyState[_definedKeyCodes[i]] & 0x80) == 0) continue;
+                if ((span[_definedKeyCodes[i]] & 0x80) == 0) continue;
                 var key = (Keys) _definedKeyCodes[i];
                 if (keys.Contains(key)) continue;
                 keys.Add(key);
@@ -136,23 +126,26 @@ namespace Bannerlord.BUTRLoader.Helpers
 
         public override bool Equals(object obj) => obj is KeyboardState state && this == state;
 
-        public string AsString(Keys key)
+        public unsafe string AsString(Keys key)
         {
+            if (_keyState is null)
+                return string.Empty;
+
             var vkCode = (uint) key;
-            var result = new StringBuilder(5);
 
-            var currentHWnd = GetForegroundWindow();
-            var currentWindowThreadID = GetWindowThreadProcessId(currentHWnd, out _);
+            var currentHWnd = PInvoke.GetForegroundWindow();
+            var currentWindowThreadID = PInvoke.GetWindowThreadProcessId(currentHWnd);
 
-            var hkl = GetKeyboardLayout(currentWindowThreadID);
-            var lScanCode = MapVirtualKeyEx(vkCode, 0, hkl);
+            var hkl = PInvoke.GetKeyboardLayout(currentWindowThreadID);
+            var lScanCode = PInvoke.MapVirtualKeyEx(vkCode, 0, hkl);
 
-            var relevantKeyCountInBuffer = ToUnicodeEx(vkCode, lScanCode, _keyState, result, result.Capacity, 0, hkl);
+            var span = stackalloc char[5];
+            var relevantKeyCountInBuffer = PInvoke.ToUnicodeEx(vkCode, lScanCode, _keyState.Memory.Span, new PWSTR(span), 5, 0, hkl);
             return relevantKeyCountInBuffer switch
             {
                 -1 or 0 => string.Empty,
-                1 => result[0].ToString(),
-                2 or _ => result.ToString().Substring(0, 2),
+                1 => span[0].ToString(),
+                2 or _ => new string(span, 0, 2),
             };
         }
 
@@ -172,6 +165,11 @@ namespace Bannerlord.BUTRLoader.Helpers
                     pressedKeys[index++] = (Keys) (offset + i);
             }
             return index;
+        }
+
+        public void Dispose()
+        {
+            _keyState?.Dispose();
         }
     }
 }

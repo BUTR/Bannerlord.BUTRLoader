@@ -10,34 +10,47 @@ using TaleWorlds.Library;
 namespace Bannerlord.BUTRLoader.Helpers
 {
     // Can't believe I need to add a custom keyboard handler for the launcher
-    internal class BUTRInputManager : IInputManager
+    internal class BUTRInputManager : IInputManager, IDisposable
     {
-        private readonly IInputManager _inputManager;
+        public readonly IInputManager InputManager;
+        public readonly int[] ReleasedChars = new int[10];
 
-        public char[] ReleasedChars;
         private KeyboardState _currentState;
         private KeyboardState _previousState;
 
-        public BUTRInputManager(IInputManager inputManager) => _inputManager = inputManager;
+        public BUTRInputManager(IInputManager inputManager) => InputManager = inputManager;
 
         public void Update()
         {
+            _currentState.Dispose();
+
             _previousState = _currentState;
             _currentState = Keyboard.GetState();
 
             var previousPressedKeys = _previousState.GetPressedKeys();
             var currentPressedKeys = _currentState.GetPressedKeys();
-            var releasedKeys = previousPressedKeys.Except(currentPressedKeys).ToArray();
-            ReleasedChars = releasedKeys.Select(x => _currentState.AsString(x)).Where(x => !string.IsNullOrEmpty(x)).Select(x => x[0]).ToArray();
+
+            var i = 0;
+            foreach (var str in previousPressedKeys.Except(currentPressedKeys).Select(x => _currentState.AsString(x)))
+            {
+                if (string.IsNullOrEmpty(str)) continue;
+
+                ReleasedChars[i] = str[0];
+                i++;
+            }
+            for (; i < ReleasedChars.Length; i++)
+            {
+                ReleasedChars[i] = default;
+            }
         }
 
-        public bool IsMouseActive() => _inputManager.IsMouseActive();
-        public float GetMousePositionX() => _inputManager.GetMousePositionX();
-        public float GetMousePositionY() => _inputManager.GetMousePositionY();
-        public float GetMouseScrollValue() => _inputManager.GetMouseScrollValue();
-        public float GetMouseMoveY() => _inputManager.GetMouseMoveY();
-        public float GetMouseSensitivity() => _inputManager.GetMouseSensitivity();
-        public float GetMouseDeltaZ() => _inputManager.GetMouseDeltaZ();
+        public bool IsMouseActive() => InputManager.IsMouseActive();
+        public float GetMousePositionX() => InputManager.GetMousePositionX();
+        public float GetMousePositionY() => InputManager.GetMousePositionY();
+        public float GetMouseScrollValue() => InputManager.GetMouseScrollValue();
+        public float GetMouseMoveY() => InputManager.GetMouseMoveY();
+        public float GetMouseSensitivity() => InputManager.GetMouseSensitivity();
+        public float GetMouseDeltaZ() => InputManager.GetMouseDeltaZ();
 
         public void SetClipboardText(string text)
         {
@@ -59,30 +72,30 @@ namespace Bannerlord.BUTRLoader.Helpers
         }
 
         public Vec2 GetKeyState(InputKey key) =>
-            IsAction(key, rawKey => new Vec2(_currentState.IsKeyDown(rawKey) ? 1f : 0f, _previousState.IsKeyDown(rawKey) ? 1f : 0f), _key => _inputManager.GetKeyState(_key));
+            IsAction(key, rawKey => new Vec2(_currentState.IsKeyDown(rawKey) ? 1f : 0f, _previousState.IsKeyDown(rawKey) ? 1f : 0f), _key => InputManager.GetKeyState(_key));
         public bool IsKeyPressed(InputKey key) =>
-            IsAction(key, rawKey => _currentState.IsKeyDown(rawKey) && _previousState.IsKeyUp(rawKey), _key => _inputManager.IsKeyPressed(_key));
+            IsAction(key, rawKey => _currentState.IsKeyDown(rawKey) && _previousState.IsKeyUp(rawKey), _key => InputManager.IsKeyPressed(_key));
         public bool IsKeyDown(InputKey key) =>
-            IsAction(key, rawKey => _currentState.IsKeyDown(rawKey) || _previousState.IsKeyDown(rawKey), _key => _inputManager.IsKeyDown(_key));
+            IsAction(key, rawKey => _currentState.IsKeyDown(rawKey) || _previousState.IsKeyDown(rawKey), _key => InputManager.IsKeyDown(_key));
         public bool IsKeyReleased(InputKey key) =>
-            IsAction(key, rawKey => _currentState.IsKeyUp(rawKey) && _previousState.IsKeyDown(rawKey), _key => _inputManager.IsKeyReleased(_key));
+            IsAction(key, rawKey => _currentState.IsKeyUp(rawKey) && _previousState.IsKeyDown(rawKey), _key => InputManager.IsKeyReleased(_key));
         public bool IsKeyDownImmediate(InputKey key) =>
-            IsAction(key, rawKey => _currentState.IsKeyDown(rawKey), _key => _inputManager.IsKeyDownImmediate(_key));
+            IsAction(key, rawKey => _currentState.IsKeyDown(rawKey), _key => InputManager.IsKeyDownImmediate(_key));
 
-        public Vec2 GetResolution() => _inputManager.GetResolution();
-        public Vec2 GetDesktopResolution() => _inputManager.GetDesktopResolution();
+        public Vec2 GetResolution() => InputManager.GetResolution();
+        public Vec2 GetDesktopResolution() => InputManager.GetDesktopResolution();
 
-        public void SetCursorPosition(int x, int y) => _inputManager.SetCursorPosition(x, y);
-        public void SetCursorFriction(float frictionValue) => _inputManager.SetCursorFriction(frictionValue);
+        public void SetCursorPosition(int x, int y) => InputManager.SetCursorPosition(x, y);
+        public void SetCursorFriction(float frictionValue) => InputManager.SetCursorFriction(frictionValue);
 
-        public void PressKey(InputKey key) => _inputManager.PressKey(key);
-        public void ClearKeys() => _inputManager.ClearKeys();
-        public int GetVirtualKeyCode(InputKey key) => _inputManager.GetVirtualKeyCode(key);
-        public float GetMouseMoveX() => _inputManager.GetMouseMoveX();
-        public void UpdateKeyData(byte[] keyData) => _inputManager.UpdateKeyData(keyData);
+        public void PressKey(InputKey key) => InputManager.PressKey(key);
+        public void ClearKeys() => InputManager.ClearKeys();
+        public int GetVirtualKeyCode(InputKey key) => InputManager.GetVirtualKeyCode(key);
+        public float GetMouseMoveX() => InputManager.GetMouseMoveX();
+        public void UpdateKeyData(byte[] keyData) => InputManager.UpdateKeyData(keyData);
 
-        public bool IsControllerConnected() => _inputManager.IsControllerConnected();
-        public InputKey GetControllerClickKey() => _inputManager.GetControllerClickKey();
+        public bool IsControllerConnected() => InputManager.IsControllerConnected();
+        public InputKey GetControllerClickKey() => InputManager.GetControllerClickKey();
 
         private static TReturn IsAction<TReturn>(InputKey key, Func<Keys, TReturn> action, Func<InputKey, TReturn> fallback)
         {
@@ -107,6 +120,12 @@ namespace Bannerlord.BUTRLoader.Helpers
             }
 
             return action(rawKey);
+        }
+
+        public void Dispose()
+        {
+            _currentState.Dispose();
+            _previousState.Dispose();
         }
     }
 }

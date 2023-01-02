@@ -1,17 +1,18 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using System.Buffers;
+
+using Windows.Win32;
 
 namespace Bannerlord.BUTRLoader.Helpers
 {
     internal static class Keyboard
     {
-        [DllImport("user32.dll")]
-        private static extern bool GetKeyboardState(byte[] lpKeyState);
-
-        private static readonly byte[] _keyState = new byte[256];
-
-        public static KeyboardState GetState() => !GetKeyboardState(_keyState)
-            ? new KeyboardState(Array.Empty<byte>(), Console.CapsLock, Console.NumberLock)
-            : new KeyboardState(_keyState, Console.CapsLock, Console.NumberLock);
+        public static KeyboardState GetState()
+        {
+            var keyState = MemoryPool<byte>.Shared.Rent(256);
+            return !PInvoke.GetKeyboardState(keyState.Memory.Span)
+                ? KeyboardState.Empty
+                : new KeyboardState(keyState, Console.CapsLock, Console.NumberLock);
+        }
     }
 }

@@ -9,6 +9,7 @@ using HarmonyLib;
 
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using TaleWorlds.Core;
@@ -20,6 +21,9 @@ namespace Bannerlord.BLSE
 {
     public static class Program
     {
+        [DllImport("user32.dll")]
+        private static extern bool SetProcessDPIAware();
+
         private static readonly Harmony _featureHarmony = new("bannerlord.butrloader.features");
 
         private static string[] GetModules(MetaData metadata)
@@ -87,6 +91,9 @@ Press Yes to exit, press No to continue loading";
         [STAThread]
         public static void Main(string[] args)
         {
+            if (Environment.OSVersion.Version.Major >= 6)
+                SetProcessDPIAware();
+
             TryLoadLoadOrderFromSaveFile(ref args);
 
             InterceptorFeature.Enable(_featureHarmony);

@@ -4,8 +4,6 @@ using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;
 
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Runtime.CompilerServices;
 
 using TaleWorlds.GauntletUI;
@@ -29,13 +27,14 @@ namespace Bannerlord.BUTRLoader.Patches
                 postfix: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch), nameof(UpdatePostfix)));
             if (!res2) return false;
 
+            var res3 = harmony.TryPatch(
+                AccessTools2.DeclaredPropertyGetter(typeof(LauncherUI), "AdditionalArgs"),
+                postfix: AccessTools2.DeclaredMethod(typeof(LauncherUIPatch), nameof(AdditionalArgsPostfix)));
+            if (!res3) return false;
+
             return true;
         }
 
-        [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "RedundantAssignment")]
         [MethodImpl(MethodImplOptions.NoInlining)]
         private static void InitializePostfix(GauntletMovie ____movie, LauncherVM ____viewModel)
         {
@@ -44,25 +43,30 @@ namespace Bannerlord.BUTRLoader.Patches
             ____movie.RefreshDataSource(____viewModel);
         }
 
-        [SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>")]
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For Resharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "RedundantAssignment")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void UpdatePostfix(UIContext ____context)
         {
             if (Input.InputManager is BUTRInputManager butrInputManager)
             {
-                butrInputManager.Update();
-
-                if (____context?.EventManager?.FocusedWidget is { } focusedWidget)
+                if (____context.EventManager?.FocusedWidget is { } focusedWidget)
                 {
-                    focusedWidget.HandleInput(butrInputManager.ReleasedChars.Select(x => (int) x).ToArray());
+                    butrInputManager.Update();
+
+                    focusedWidget.HandleInput(butrInputManager.ReleasedChars);
                 }
             }
             else
             {
                 Input.Initialize(new BUTRInputManager(Input.InputManager), null);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private static void AdditionalArgsPostfix()
+        {
+            if (Input.InputManager is BUTRInputManager butrInputManager)
+            {
+                Input.Initialize(butrInputManager.InputManager, null);
+                butrInputManager.Dispose();
             }
         }
 

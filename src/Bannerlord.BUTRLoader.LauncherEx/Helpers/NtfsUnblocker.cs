@@ -1,6 +1,8 @@
 ﻿using System.IO;
 using System.Runtime.InteropServices;
 
+using Windows.Win32;
+
 namespace Bannerlord.BUTRLoader.Helpers
 {
     /// <summary>
@@ -8,10 +10,6 @@ namespace Bannerlord.BUTRLoader.Helpers
     /// </summary>
     internal static class NtfsUnblocker
     {
-        [DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool DeleteFile(string name);
-
         public static void UnblockPath(string path, string wildcard = "*")
         {
             foreach (var file in Directory.GetFiles(path, wildcard))
@@ -21,6 +19,6 @@ namespace Bannerlord.BUTRLoader.Helpers
                 UnblockPath(dir);
         }
 
-        public static bool UnblockFile(string fileName) => DeleteFile($"{fileName}:Zone.Identifier");
+        public static bool UnblockFile(string fileName) => PInvoke.DeleteFile($"{fileName}:Zone.Identifier");
     }
 }

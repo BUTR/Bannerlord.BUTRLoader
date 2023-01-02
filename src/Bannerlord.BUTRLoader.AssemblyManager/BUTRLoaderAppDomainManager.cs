@@ -9,6 +9,7 @@ using HarmonyLib;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Bannerlord.BUTRLoader.AssemblyManager
@@ -17,6 +18,9 @@ namespace Bannerlord.BUTRLoader.AssemblyManager
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     internal sealed class BUTRLoaderAppDomainManager : AppDomainManager
     {
+        [DllImport("user32.dll")]
+        private static extern bool SetProcessDPIAware();
+
         private static readonly Harmony _featureHarmony = new("bannerlord.butrloader.features");
 
         public override void InitializeNewDomain(AppDomainSetup appDomainInfo)
@@ -24,6 +28,9 @@ namespace Bannerlord.BUTRLoader.AssemblyManager
             base.InitializeNewDomain(appDomainInfo);
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
+
+            if (Environment.OSVersion.Version.Major >= 6)
+                SetProcessDPIAware();
 
             // delete old files
             var files = new[]
