@@ -15,7 +15,7 @@ namespace Bannerlord.BUTRLoader.Localization
     {
         public static readonly string DefaultLanguage = "English";
 
-        public static string ActiveLanguage = "Русский";//DefaultLanguage;
+        public static string ActiveLanguage = DefaultLanguage;
 
         [ThreadStatic]
         private static StringBuilder? _idStringBuilder;

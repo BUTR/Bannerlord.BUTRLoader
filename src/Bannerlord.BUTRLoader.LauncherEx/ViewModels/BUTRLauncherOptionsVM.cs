@@ -173,17 +173,25 @@ namespace Bannerlord.BUTRLoader.ViewModels
         }
         private void RefreshGameOptions()
         {
-            foreach (var (key, value) in ConfigReader.GetGameOptions())
+            try
             {
-                SettingProperties.Add(CreateSettingsPropertyVM(key, value, ToSeparateWords));
+                foreach (var (key, value) in ConfigReader.GetGameOptions())
+                {
+                    SettingProperties.Add(CreateSettingsPropertyVM(key, value, ToSeparateWords));
+                }
             }
+            catch (Exception) { }
         }
         private void RefreshEngineOptions()
         {
-            foreach (var (key, value) in ConfigReader.GetEngineOptions())
+            try
             {
-                SettingProperties.Add(CreateSettingsPropertyVM(key, value, x => ToTitleCase(x.Replace("_", " "))));
+                foreach (var (key, value) in ConfigReader.GetEngineOptions())
+                {
+                    SettingProperties.Add(CreateSettingsPropertyVM(key, value, x => ToTitleCase(x.Replace("_", " "))));
+                }
             }
+            catch (Exception) { }
         }
 
         public void Save()
