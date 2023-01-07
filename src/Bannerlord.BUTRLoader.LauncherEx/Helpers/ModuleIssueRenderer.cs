@@ -9,6 +9,12 @@ namespace Bannerlord.BUTRLoader.Helpers
     {
         public static string Render(ModuleIssue issue) => RenderTextObject(issue).ToString();
 
+        private static string Version(ApplicationVersionRange version) => version == ApplicationVersionRange.Empty
+            ? version.ToString()
+            : version.Min == version.Max
+                ? version.Min.ToString()
+                : "";
+
         public static BUTRTextObject RenderTextObject(ModuleIssue issue) => issue.Type switch
         {
             ModuleIssueType.Missing => new BUTRTextObject("{=J3Uh6MV4}Missing '{ID}' {VERSION} in modules list")
@@ -16,12 +22,8 @@ namespace Bannerlord.BUTRLoader.Helpers
                 .SetTextVariable("VERSION", issue.SourceVersion.Min.ToString()),
 
             ModuleIssueType.MissingDependencies => new BUTRTextObject("{=3eQSr6wt}Missing '{ID}' {VERSION}")
-                .SetTextVariable("ID", issue.Target.Id)
-                .SetTextVariable("VERSION", issue.SourceVersion == ApplicationVersionRange.Empty
-                    ? issue.SourceVersion.ToString()
-                    : issue.SourceVersion.Min == issue.SourceVersion.Max
-                        ? issue.SourceVersion.Min.ToString()
-                        : ""),
+                .SetTextVariable("ID", issue.SourceId)
+                .SetTextVariable("VERSION", Version(issue.SourceVersion)),
             ModuleIssueType.DependencyMissingDependencies => new BUTRTextObject("{=U858vdQX}'{ID}' is missing it's dependencies!")
                 .SetTextVariable("ID", issue.SourceId),
 
@@ -30,13 +32,13 @@ namespace Bannerlord.BUTRLoader.Helpers
 
             ModuleIssueType.VersionMismatchLessThanOrEqual => new BUTRTextObject("{=Vjz9HQ41}'{ID}' wrong version <= {VERSION}")
                 .SetTextVariable("ID", issue.SourceId)
-                .SetTextVariable("VERSION", issue.SourceVersion.ToString()),
+                .SetTextVariable("VERSION", Version(issue.SourceVersion)),
             ModuleIssueType.VersionMismatchLessThan => new BUTRTextObject("{=ZvnlL7VE}'{ID}' wrong version < [{VERSION}]")
                 .SetTextVariable("ID", issue.SourceId)
-                .SetTextVariable("VERSION", issue.SourceVersion.ToString()),
+                .SetTextVariable("VERSION", Version(issue.SourceVersion)),
             ModuleIssueType.VersionMismatchGreaterThan => new BUTRTextObject("{=EfNuH2bG}'{ID}' wrong version > [{VERSION}]")
                 .SetTextVariable("ID", issue.SourceId)
-                .SetTextVariable("VERSION", issue.SourceVersion.ToString()),
+                .SetTextVariable("VERSION", Version(issue.SourceVersion)),
 
             ModuleIssueType.Incompatible => new BUTRTextObject("{=zXDidmpQ}'{ID}' is incompatible with this module")
                 .SetTextVariable("ID", issue.SourceId),
@@ -54,7 +56,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 .SetTextVariable("SOURCEID", issue.SourceId),
 
             ModuleIssueType.DependencyNotLoadedAfterThis => new BUTRTextObject("{=2ALJB7z2}'{TARGETID}' should be loaded after '{SOURCEID}'")
-                .SetTextVariable("ID", issue.Target.Id),
+                .SetTextVariable("ID", issue.SourceId),
 
             _ => throw new ArgumentOutOfRangeException()
         };
