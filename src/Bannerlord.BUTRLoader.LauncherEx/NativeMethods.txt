@@ -9,3 +9,11 @@ CreateToolhelp32Snapshot
 Process32First
 Process32Next
 CloseHandle
+DragAcceptFiles
+DragQueryFile
+DragFinish
+SetWindowsHookEx
+CallNextHookEx
+UnhookWindowsHookEx
+GetModuleHandle
+GetCurrentThreadId

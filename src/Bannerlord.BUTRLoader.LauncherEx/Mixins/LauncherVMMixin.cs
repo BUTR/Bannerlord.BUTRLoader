@@ -127,6 +127,22 @@ namespace Bannerlord.BUTRLoader.Mixins
             {
                 if (SetField(ref _isModsDataSelected, value))
                 {
+                    if (value)
+                    {
+                        _currentDragAndDropManager?.Dispose();
+                        _currentDragAndDropManager = new DragAndDropManager(files =>
+                        {
+                            foreach (var file in files)
+                            {
+                                ModuleInstaller.InstallArchive(file);
+                            }
+                        });
+                    }
+                    else
+                    {
+                        _currentDragAndDropManager?.Dispose();
+                    }
+
                     OnPropertyChanged(nameof(ShowImportExport));
                     OnPropertyChanged(nameof(ShowContinueSingleplayerButton));
                 }
@@ -261,6 +277,7 @@ namespace Bannerlord.BUTRLoader.Mixins
         private readonly UserDataManager? _userDataManager;
 
         private ModuleListHandler? _currentModuleListHandler;
+        private DragAndDropManager? _currentDragAndDropManager;
 
         public LauncherVMMixin(LauncherVM launcherVM) : base(launcherVM)
         {
