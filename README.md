@@ -9,6 +9,9 @@
   <a href="https://codeclimate.com/github/BUTR/Bannerlord.BUTRLoader/maintainability">
     <img alt="Code Climate maintainability" src="https://img.shields.io/codeclimate/maintainability-percentage/BUTR/Bannerlord.BUTRLoader">
   </a>
+  <a title="Crowdin" target="_blank" href="https://crowdin.com/project/butrloader">
+    <img src="https://badges.crowdin.net/butrloader/localized.svg">
+  </a>
   </br>
   <a href="https://github.com/BUTR/Bannerlord.BUTRLoader/actions/workflows/test.yml?query=branch%3Amaster">
     <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/BUTR/Bannerlord.BUTRLoader/test.yml?branch=master&label=Game%20Stable%20and%20Beta">
