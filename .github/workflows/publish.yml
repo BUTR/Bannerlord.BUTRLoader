@@ -91,16 +91,25 @@ jobs:
           dotnet build src/Bannerlord.BLSE/Bannerlord.BLSE.csproj -p:configuration=Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
+    - name: Create bannerlord folder
+      run: mkdir bannerlord-launcher;
+
     - name: Build Bannerlord.BLSE.Launcher
       run: >-
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
-          dotnet build src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj -p:configuration=Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
+          dotnet build src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj -p:configuration=Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord-launcher";
+      shell: pwsh
+
+    - name: Build Bannerlord.BLSE.Launcher
+      run: >-
+          Copy-Item -Path "$PWD/bannerlord" -Destination "$PWD/bannerlord-final" -Recurse;
+          Copy-Item -Path "$PWD/bannerlord-laucher" -Destination "$PWD/bannerlord-final" -Recurse
       shell: pwsh
 
     - name: Cleanup
       run: >-
-          cd $PWD/bannerlord;
+          cd $PWD/bannerlord-final;
           Get-ChildItem -Exclude bin | Remove-Item -Recurse -Force;
           cd bin;
           cd Win64_Shipping_Client;
@@ -111,7 +120,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: bannerlord-blse
-        path: ./bannerlord/
+        path: ./bannerlord-final/
 
 
 ###########################
