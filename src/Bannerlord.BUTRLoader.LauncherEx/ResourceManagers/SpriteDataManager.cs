@@ -3,35 +3,52 @@ using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
-using TaleWorlds.Engine.GauntletUI;
-using TaleWorlds.GauntletUI;
 using TaleWorlds.TwoDimension;
 
 namespace Bannerlord.BUTRLoader.ResourceManagers
 {
     internal static class SpriteDataManager
     {
-        internal sealed class SpriteFromTexture : Sprite
+        // Replaces the Sprite Sheet mechanism with a single texture
+        private sealed class SpriteGenericFromTexture : SpriteGeneric
         {
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldMapX =
-                AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("MapX");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldMapY =
-                AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("MapY");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldScale =
-                AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("Scale");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldWidth =
-                AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("Width");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldHeight =
-                AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("Height");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, bool>? FieldHorizontalFlip =
-                AccessTools2.StructFieldRefAccess<SpriteDrawData, bool>("HorizontalFlip");
-            private static readonly AccessTools.StructFieldRef<SpriteDrawData, bool>? FieldVerticalFlip =
-                AccessTools2.StructFieldRefAccess<SpriteDrawData, bool>("VerticalFlip");
+            private delegate void SetIsLoadedDelegate(SpriteCategory instance, bool value);
+            private static readonly SetIsLoadedDelegate? SetIsLoaded =
+                AccessTools2.GetPropertySetterDelegate<SetIsLoadedDelegate>(typeof(SpriteCategory), "IsLoaded");
+
+            private static SpritePart GetSpritePart(string name, Texture texture)
+            {
+                var data = new SpriteData(name);
+                var category = new SpriteCategory(name, data, 0)
+                {
+                    SpriteSheets =
+                    {
+                        texture
+                    },
+                    SpriteSheetCount = 1
+                };
+                SetIsLoaded?.Invoke(category, true);
+
+                return new SpritePart(name, category, texture.Width, texture.Height)
+                {
+                    SheetID = 1,
+                };
+            }
+            public SpriteGenericFromTexture(string name, Texture texture) : base(name, GetSpritePart(name, texture)) { }
+        }
+
+        private sealed class SpriteFromTexture : Sprite
+        {
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldMapX = AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("MapX");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldMapY = AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("MapY");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldScale = AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("Scale");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldWidth = AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("Width");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, float>? FieldHeight = AccessTools2.StructFieldRefAccess<SpriteDrawData, float>("Height");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, bool>? FieldHorizontalFlip = AccessTools2.StructFieldRefAccess<SpriteDrawData, bool>("HorizontalFlip");
+            private static readonly AccessTools.StructFieldRef<SpriteDrawData, bool>? FieldVerticalFlip = AccessTools2.StructFieldRefAccess<SpriteDrawData, bool>("VerticalFlip");
 
             private static readonly Type? Vector2 = Type.GetType("System.Numerics.Vector2, System.Numerics.Vectors");
             private static readonly ConstructorInfo? Vector2Constructor = AccessTools2.Constructor(Vector2!, new[] { typeof(float), typeof(float) });
@@ -175,8 +192,11 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
         public static Sprite? Create(string name) => GraphicsContextManager.Instance.TryGetTarget(out var gc) && gc is not null
             ? new SpriteFromTexture(name, new Texture(gc.GetTexture(name))) : null;
+        public static Sprite? CreateGeneric(string name) => GraphicsContextManager.Instance.TryGetTarget(out var gc) && gc is not null
+            ? new SpriteGenericFromTexture(name, new Texture(gc.GetTexture(name))) : null;
         public static void Register(Func<Sprite> func) => DeferredInitialization.Add(func);
         public static void CreateAndRegister(string name) => Register(() => Create(name));
+        public static void CreateGenericAndRegister(string name) => Register(() => CreateGeneric(name));
 
         public static void Clear()
         {
@@ -196,54 +216,9 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 postfix: AccessTools2.DeclaredMethod(typeof(SpriteDataManager), nameof(LoadPostfix)));
             if (!res2) return false;
 
-            // Preventing inlining GetSprite
-            harmony.TryPatch(
-                AccessTools2.Method(typeof(BrushFactory), "LoadBrushAnimationFrom", logErrorInTrace: false),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method(typeof(BrushFactory), "LoadBrushLayerInto", logErrorInTrace: false),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.CanvasImage:LoadFrom", logErrorInTrace: false),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.CanvasLineImage:LoadFrom", logErrorInTrace: false),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.EditableTextWidget:OnRender", logErrorInTrace: false),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.ConstantDefinition:GetValue", logErrorInTrace: false),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:ConvertObject", logErrorInTrace: false),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:SetWidgetAttributeFromString", logErrorInTrace: false),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Constructor("TaleWorlds.TwoDimension.Font", new[] { typeof(string), typeof(string), typeof(SpriteData) }, logErrorInTrace: false),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.TwoDimension.RichText:FillPartsWithTokens", logErrorInTrace: false),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            // Preventing inlining GetSprite
-            // Preventing inlining Load
-            harmony.TryPatch(
-                AccessTools2.Method(typeof(UIResourceManager), "Initialize"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method(typeof(UIContext), "Initialize"),
-                transpiler: AccessTools2.Method(typeof(SpriteDataManager), nameof(BlankTranspiler)));
-            // Preventing inlining Load
-
             return true;
         }
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "RedundantAssignment")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetSpritePrefix(string name, ref Sprite __result)
         {
             if (!SpriteNames.TryGetValue(name, out __result))
@@ -251,7 +226,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             return false;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void LoadPostfix()
         {
             foreach (var func in DeferredInitialization)
@@ -261,7 +235,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static IEnumerable<CodeInstruction> BlankTranspiler(IEnumerable<CodeInstruction> instructions) => instructions;
     }
 }

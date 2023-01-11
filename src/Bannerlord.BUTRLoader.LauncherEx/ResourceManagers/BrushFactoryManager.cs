@@ -3,9 +3,7 @@ using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Xml;
 
 using TaleWorlds.GauntletUI;
@@ -74,42 +72,14 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
             if (!res3) return false;
 
-            // Preventing inlining Initialize
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.BrushFactory:Initialize"),
-                transpiler: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
-            // Preventing inlining GetBrush
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.ConstantDefinition:GetValue"),
-                transpiler: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:SetWidgetAttributeFromString"),
-                transpiler: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.UIContext:GetBrush"),
-                transpiler: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetExtensions:ConvertObject"),
-                transpiler: AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
-            //harmony.TryPatch(
-            //    AccessTools2.Method(typeof(BoolBrushChanger), "OnBooleanUpdated"),
-            //    transpiler: AccessTools2.Method(typeof(BrushFactoryManager), nameof(BlankTranspiler)));
-            // Preventing inlining GetBrush
-
             return true;
         }
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void GetBrushesPostfix(ref IEnumerable<Brush> __result)
         {
             __result = __result.Concat(CustomBrushes.Values);
         }
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetBrushPrefix(string name, Dictionary<string, Brush> ____brushes, ref Brush __result)
         {
             if (____brushes.ContainsKey(name) || !CustomBrushes.ContainsKey(name))
@@ -125,9 +95,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
         }
 
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void LoadBrushesPostfix(ref BrushFactory __instance)
         {
             SetBrushFactory(__instance);
@@ -137,7 +104,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 AccessTools2.DeclaredMethod(typeof(BrushFactoryManager), nameof(LoadBrushesPostfix)));
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static IEnumerable<CodeInstruction> BlankTranspiler(IEnumerable<CodeInstruction> instructions) => instructions;
     }
 }

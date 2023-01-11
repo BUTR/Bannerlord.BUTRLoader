@@ -13,8 +13,13 @@ namespace Bannerlord.BUTRLoader.Localization
 {
     internal static partial class BUTRLocalizationManager
     {
-        public static readonly string DefaultLanguage = "English";
+        public const string English = "English";
+        public const string ChineseTraditional = "繁體中文";
+        public const string ChineseSimple = "简体中文";
+        public const string Japanese = "日本語";
+        public const string Korean = "한국어";
 
+        public static readonly string DefaultLanguage = English;
         public static string ActiveLanguage = DefaultLanguage;
 
         [ThreadStatic]

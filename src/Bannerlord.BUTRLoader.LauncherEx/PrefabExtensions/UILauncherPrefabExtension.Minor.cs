@@ -156,6 +156,26 @@ namespace Bannerlord.BUTRLoader.PrefabExtensions
         }
     }
 
+    internal sealed class UILauncherPrefabExtension34 : PrefabExtensionCustomPatch<XmlNode>
+    {
+        public static string Movie => "UILauncher";
+        public static string XPath => "/Prefab";
+
+        public override void Apply(XmlNode node)
+        {
+            foreach (var selectNode in node.OwnerDocument?.SelectNodes("//*")?.OfType<XmlNode>() ?? Enumerable.Empty<XmlNode>())
+            {
+                foreach (var attribute in selectNode.Attributes?.OfType<XmlAttribute>() ?? Enumerable.Empty<XmlAttribute>())
+                {
+                    if (attribute.Name != "Brush") continue;
+                    if (attribute.Value != "Launcher.PlayButton.Text") continue;
+                    if (attribute.Value == "@VersionText") continue;
+                    attribute.Value = "Launcher.Button.Text";
+                }
+            }
+        }
+    }
+
     internal sealed class UILauncherPrefabExtension32 : PrefabExtensionInsertAsSiblingPatch
     {
         public static string Movie => "UILauncher";

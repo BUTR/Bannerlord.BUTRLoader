@@ -7,9 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Xml;
 
 using TaleWorlds.GauntletUI;
@@ -109,35 +107,14 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 prefix: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(CreateBuiltinWidgetPrefix)));
             if (!res6) return false;
 
-            // GetCustomType is too complex to be inlined
-            // CreateBuiltinWidget is too complex to be inlined
-            // GetWidgetTypes is not used?
-            // Preventing inlining IsCustomType
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetTemplate:CreateWidgets"),
-                transpiler: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(BlankTranspiler)));
-            harmony.TryPatch(
-                AccessTools2.Method("TaleWorlds.GauntletUI.PrefabSystem.WidgetTemplate:OnRelease"),
-                transpiler: AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(BlankTranspiler)));
-            // Preventing inlining GetCustomType
-            //harmony.Patch(
-            //    AccessTools2.Method(typeof(GauntletMovie), "LoadMovie"),
-            //    transpiler: new HarmonyMethod(AccessTools2.Method(typeof(WidgetFactoryManager), nameof(BlankTranspiler))));
-
             return true;
         }
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void GetWidgetTypesPostfix(ref IEnumerable<string> __result)
         {
             __result = __result.Concat(BuiltinTypes.Keys).Concat(CustomTypes.Keys);
         }
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool CreateBuiltinWidgetPrefix(UIContext context, string typeName, ref object? __result)
         {
             if (!BuiltinTypes.TryGetValue(typeName, out var type))
@@ -151,9 +128,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             return false;
         }
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool IsCustomTypePrefix(string typeName, ref bool __result)
         {
             if (!CustomTypes.ContainsKey(typeName))
@@ -163,9 +137,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             return false;
         }
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetCustomTypePrefix(WidgetFactory __instance, string typeName, ref WidgetPrefab __result)
         {
             if (_liveCustomTypes?.Invoke(__instance) is { } ____liveCustomTypes &&
@@ -191,7 +162,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             return true;
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool OnUnloadPrefix(string typeName)
         {
             if (LiveCustomTypes.ContainsKey(typeName))
@@ -208,9 +178,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             return true;
         }
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void InitializePostfix(ref WidgetFactory __instance)
         {
             SetWidgetFactory(__instance);
@@ -220,7 +187,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 AccessTools2.DeclaredMethod(typeof(WidgetFactoryManager), nameof(InitializePostfix)));
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static IEnumerable<CodeInstruction> BlankTranspiler(IEnumerable<CodeInstruction> instructions) => instructions;
     }
 }

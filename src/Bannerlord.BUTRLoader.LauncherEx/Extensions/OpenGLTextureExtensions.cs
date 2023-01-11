@@ -1,7 +1,12 @@
-﻿using HarmonyLib.BUTR.Extensions;
+﻿using Bannerlord.BUTRLoader.TPac;
+
+using HarmonyLib.BUTR.Extensions;
 
 using StbSharp;
 
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -9,7 +14,7 @@ using TaleWorlds.TwoDimension.Standalone;
 
 namespace Bannerlord.BUTRLoader.Extensions
 {
-    public static class OpenGLTextureExtensions
+    internal static class OpenGLTextureExtensions
     {
         private enum PixelFormat : uint
         {
@@ -35,6 +40,9 @@ namespace Bannerlord.BUTRLoader.Extensions
         [DllImport("Opengl32.dll", EntryPoint = "glTexImage2D")]
         private static extern void TexImage2D(uint target, int level, uint pixelInternalformat, int width, int height, int border, PixelFormat format, uint type, byte[] pixels);
 
+        [DllImport("Opengl32.dll", EntryPoint = "glTexImage2D")]
+        private static extern void TexImage2D2(uint target, int level, uint pixelInternalformat, int width, int height, int border, PixelFormat format, uint type, IntPtr pixels);
+
         public static void MakeActive(this OpenGLTexture texture) => _makeActiveDelegate?.Invoke(texture);
 
         public static bool LoadFromStream(this OpenGLTexture texture, string name, Stream stream)
@@ -56,6 +64,27 @@ namespace Bannerlord.BUTRLoader.Extensions
             {
                 TexImage2D(0x00000DE1, 0, pixelInternalformat, image.Width, image.Height, 0, pixelFormat, 0x00001401, image.Data);
             }
+
+            return true;
+        }
+
+        public static bool LoadFromAssetTexture(this OpenGLTexture texture, string name, Texture source)
+        {
+            if (_makeActiveDelegate is null)
+                return false;
+
+            if (source.TexturePixels is null)
+                return false;
+
+            var textureData = source.TexturePixels.GetData();
+            using var bitmap = TextureUtil.DecodeTextureDataToBitmap(textureData.PrimaryRawImage, (int) source.Width, (int) source.Height, source.Format);
+            var data = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            texture.Initialize(name, (int) source.Width, (int) source.Height);
+            texture.MakeActive();
+            TexImage2D2(0x00000DE1, 0, 0x8058U, data.Width, data.Height, 0, PixelFormat.BGRA, 0x00001401, data.Scan0);
+
+            bitmap.UnlockBits(data);
 
             return true;
         }

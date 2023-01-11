@@ -6,9 +6,7 @@ using HarmonyLib.BUTR.Extensions;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 using TaleWorlds.TwoDimension.Standalone;
 
@@ -35,8 +33,15 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
 
             return openGLTexture;
         }
+        private static OpenGLTexture CreateAssetTexture(string name, TPac.Texture assetTexture)
+        {
+            var texture = new OpenGLTexture();
+            texture.LoadFromAssetTexture(name, assetTexture);
+            return texture;
+        }
         public static void Register(string name, Func<OpenGLTexture> func) => DeferredInitialization.Add(name, func);
         public static void CreateAndRegister(string name, Stream stream) => Register(name, () => Create(name, stream));
+        public static void CreateAssetTextureAndRegister(string name, TPac.Texture texture) => Register(name, () => CreateAssetTexture(name, texture));
 
         public static void Clear()
         {
@@ -57,17 +62,9 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
                 postfix: AccessTools2.DeclaredMethod(typeof(GraphicsContextManager), nameof(CreateContextPostfix)));
             if (!res2) return false;
 
-            // Preventing inlining GetTexture
-
-            // Preventing inlining GetTexture
-
             return true;
         }
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [SuppressMessage("ReSharper", "RedundantAssignment")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool GetTexturePrefix(string textureName, ref OpenGLTexture __result)
         {
             if (!Textures.TryGetValue(textureName, out __result))
@@ -75,9 +72,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             return false;
         }
 
-        [SuppressMessage("CodeQuality", "IDE0079:Remove unnecessary suppression", Justification = "For ReSharper")]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static void CreateContextPostfix(GraphicsContext __instance)
         {
             Instance = new(__instance);
@@ -88,7 +82,6 @@ namespace Bannerlord.BUTRLoader.ResourceManagers
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
         private static IEnumerable<CodeInstruction> BlankTranspiler(IEnumerable<CodeInstruction> instructions) => instructions;
     }
 }

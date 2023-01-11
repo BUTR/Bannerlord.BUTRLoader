@@ -2,6 +2,7 @@
 using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.BUTRLoader.Patches;
 using Bannerlord.BUTRLoader.ResourceManagers;
+using Bannerlord.BUTRLoader.TPac;
 using Bannerlord.BUTRLoader.Widgets;
 
 using HarmonyLib;
@@ -11,6 +12,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml;
+
+using TaleWorlds.Library;
 
 [assembly: InternalsVisibleTo("Bannerlord.BUTRLoader.Tests")]
 
@@ -40,6 +43,11 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             ViewModelPatch.Enable(_launcherHarmony);
             WidgetPrefabPatch.Enable(_launcherHarmony);
 
+            BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.EN.strings.xml"));
+            BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.RU.strings.xml"));
+            BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.CNs.strings.xml"));
+            BUTRLocalizationManager.ActiveLanguage = BUTRLocalizationManager.GetActiveLanguage();
+
             GraphicsContextManager.Enable(_launcherHarmony);
             GraphicsContextManager.CreateAndRegister("launcher_arrow_down", LoadStream("Bannerlord.BUTRLoader.Resources.Textures.arrow_down.png"));
             GraphicsContextManager.CreateAndRegister("launcher_arrow_left", LoadStream("Bannerlord.BUTRLoader.Resources.Textures.arrow_left.png"));
@@ -60,6 +68,41 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             SpriteDataManager.CreateAndRegister("launcher_search");
             SpriteDataManager.CreateAndRegister("warm_overlay");
 
+            switch (BUTRLocalizationManager.ActiveLanguage)
+            {
+                case BUTRLocalizationManager.ChineseTraditional or BUTRLocalizationManager.ChineseSimple:
+                {
+                    var asset = new AssetPackage(Path.Combine(BasePath.Name, "Modules/Native/AssetPackages/gauntlet_ui.tpac"));
+                    if (asset.Items.OfType<Texture>().FirstOrDefault(x => x.Name == "ui_fonts_1") is { } chinese)
+                    {
+                        GraphicsContextManager.CreateAssetTextureAndRegister("simkai", chinese);
+                        SpriteDataManager.CreateGenericAndRegister("simkai");
+                    }
+                    break;
+                }
+                case BUTRLocalizationManager.Japanese:
+                {
+                    var asset = new AssetPackage(Path.Combine(BasePath.Name, "Modules/Native/AssetPackages/gauntlet_ui.tpac"));
+                    if (asset.Items.OfType<Texture>().FirstOrDefault(x => x.Name == "ui_fonts_2") is { } japanese)
+                    {
+                        GraphicsContextManager.CreateAssetTextureAndRegister("SourceHanSansJP", japanese);
+                        SpriteDataManager.CreateGenericAndRegister("SourceHanSansJP");
+                    }
+                    break;
+                }
+                case BUTRLocalizationManager.Korean:
+                {
+                    var asset = new AssetPackage(Path.Combine(BasePath.Name, "Modules/Native/AssetPackages/gauntlet_ui.tpac"));
+                    if (asset.Items.OfType<Texture>().FirstOrDefault(x => x.Name == "ui_fonts_1") is { } korean)
+                    {
+                        GraphicsContextManager.CreateAssetTextureAndRegister("NanumGothicKR", korean);
+                        SpriteDataManager.CreateGenericAndRegister("NanumGothicKR");
+                    }
+                    break;
+                }
+            }
+
+
             BrushFactoryManager.Enable(_launcherHarmony);
             BrushFactoryManager.CreateAndRegister(Load("Bannerlord.BUTRLoader.Resources.Brushes.Launcher.xml"));
 
@@ -70,12 +113,14 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             WidgetFactoryManager.CreateAndRegister("Launcher.ToggleButton", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.ToggleButton.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SearchBox", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.SearchBox.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Scrollbar", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.Scrollbar.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.Dropdown", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.Dropdown.xml"));
 
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyBoolView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyBoolView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyButtonView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyButtonView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyFloatView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyFloatView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyIntView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyIntView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyStringView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyStringView.xml"));
+            WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyDropdownView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyDropdownView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Options.OptionTuple", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.OptionTuple.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Mods2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.xml"));
@@ -84,10 +129,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             WidgetFactoryManager.CreateAndRegister("Launcher.Saves.SaveTuple", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Saves.SaveTuple.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.MessageBox", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.MessageBox.xml"));
 
-            BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.EN.strings.xml"));
-            BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.RU.strings.xml"));
-
-            BUTRLocalizationManager.ActiveLanguage = BUTRLocalizationManager.GetActiveLanguage();
+            FontFactoryManager.Enable(_launcherHarmony);
         }
 
         private static XmlDocument Load(string embedPath)

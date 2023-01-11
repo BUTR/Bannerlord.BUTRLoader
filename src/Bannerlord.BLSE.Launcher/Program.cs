@@ -3,7 +3,6 @@ using Bannerlord.BUTRLoader.Features.Commands;
 using Bannerlord.BUTRLoader.Features.ContinueSaveFile;
 using Bannerlord.BUTRLoader.Features.Interceptor;
 using Bannerlord.BUTRLoader.LauncherEx;
-using Bannerlord.BUTRLoader.Localization;
 
 using HarmonyLib;
 
