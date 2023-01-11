@@ -103,6 +103,7 @@ jobs:
 
     - name: Build Bannerlord.BLSE.Launcher
       run: >-
+          mkdir bannerlord-final;
           Copy-Item -Path "$PWD/bannerlord" -Destination "$PWD/bannerlord-final" -Recurse;
           Copy-Item -Path "$PWD/bannerlord-laucher" -Destination "$PWD/bannerlord-final" -Recurse
       shell: pwsh
