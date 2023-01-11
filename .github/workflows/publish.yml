@@ -49,7 +49,6 @@ jobs:
 
     - name: Build Launcher Extension
       run: >-
-          mkdir bannerlord;
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
           dotnet build src/Bannerlord.BUTRLoader.AssemblyManager/Bannerlord.BUTRLoader.AssemblyManager.csproj -p:configuration=Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
@@ -78,9 +77,6 @@ jobs:
       uses: butr/actions-common-setup@v2
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
-
-    - name: Create bannerlord folder
-      run: mkdir bannerlord;
 
     - name: Build Bannerlord.BLSE
       run: >-
