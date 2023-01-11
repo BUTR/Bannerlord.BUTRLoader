@@ -35,6 +35,16 @@
     <GameFolder Condition="$(IsBeta)">$(BANNERLORD_BETA_DIR)</GameFolder>
   </PropertyGroup>
 
+  <ItemGroup Condition="!Exists('$(GameFolder)') AND !Exists('$(GameFolder)\bin\Win64_Shipping_Client')">
+    <PackageReference Include="Bannerlord.ReferenceAssemblies.Core" Version="$(GameVersion).*-*" PrivateAssets="All" />
+  </ItemGroup>
+  <ItemGroup Condition="Exists('$(GameFolder)') AND Exists('$(GameFolder)\bin\Win64_Shipping_Client')">
+    <Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.*.dll" Exclude="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Native.dll">
+      <HintPath>%(Identity)</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
 
   <!--GitHub Actions-->
   <PropertyGroup Condition="$(GITHUB_ACTIONS) == 'true'">

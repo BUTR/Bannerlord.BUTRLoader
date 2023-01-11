@@ -18,16 +18,6 @@
     <PackageReference Include="Lib.Harmony" Version="$(HarmonyVersion)" />
   </ItemGroup>
 
-  <ItemGroup Condition="!Exists($(GameFolder))">
-    <PackageReference Include="Bannerlord.ReferenceAssemblies.Core" Version="$(GameVersion).*-*" PrivateAssets="All" />
-  </ItemGroup>
-  <ItemGroup Condition="Exists($(GameFolder))">
-    <Reference Include="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.*.dll" Exclude="$(GameFolder)\bin\Win64_Shipping_Client\TaleWorlds.Native.dll">
-      <HintPath>%(Identity)</HintPath>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
-  
   <ItemGroup>
     <ProjectReference Include="..\Bannerlord.BUTRLoader.LauncherEx\Bannerlord.BUTRLoader.LauncherEx.csproj" />
     <ProjectReference Include="..\Bannerlord.BUTRLoader.Core\Bannerlord.BUTRLoader.Core.csproj" />

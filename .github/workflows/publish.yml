@@ -47,6 +47,9 @@ jobs:
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
 
+    - name: Create bannerlord folder
+      run: mkdir bannerlord;
+
     - name: Build Launcher Extension
       run: >-
           $game_version=$env:MIN_VERSION;
@@ -77,6 +80,9 @@ jobs:
       uses: butr/actions-common-setup@v2
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
+
+    - name: Create bannerlord folder
+      run: mkdir bannerlord;
 
     - name: Build Bannerlord.BLSE
       run: >-
