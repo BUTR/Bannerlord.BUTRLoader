@@ -15,7 +15,7 @@ namespace Bannerlord.BUTRLoader.TPac
             RegisterType(typeof(TexturePixelData));
         }
 
-        public static void RegisterType( Type typeClass)
+        public static void RegisterType(Type typeClass)
         {
             var field = typeClass.GetField("TYPE_GUID", BindingFlags.Static | BindingFlags.Public) ?? throw new ArgumentException("Cannot find public static field \"TYPE_GUID\" from class " + typeClass.FullName);
             if (field.FieldType != typeof(Guid)) throw new ArgumentException("\"TYPE_GUID\" must be Guid");
@@ -33,7 +33,7 @@ namespace Bannerlord.BUTRLoader.TPac
 
             var loaderType = typeof(ExternalLoader<>).MakeGenericType(typeClass);
             guidToLoaderTypeMap[typeGuid] = loaderType;
-            guidToLoaderConstructorMap[typeGuid] = loaderType.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new[] {typeof(FileInfo)}, null);
+            guidToLoaderConstructorMap[typeGuid] = loaderType.GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic, null, new[] { typeof(FileInfo) }, null);
         }
 
         public static bool CreateTypedLoader(Guid typeGuid, FileInfo file, out AbstractExternalLoader result)
@@ -43,7 +43,7 @@ namespace Bannerlord.BUTRLoader.TPac
             if (guidToLoaderTypeMap.ContainsKey(typeGuid))
             {
                 var constructor = guidToLoaderConstructorMap[typeGuid];
-                loader = (AbstractExternalLoader) constructor.Invoke(new object[] {file});
+                loader = (AbstractExternalLoader) constructor.Invoke(new object[] { file });
                 isFound = true;
             }
 
