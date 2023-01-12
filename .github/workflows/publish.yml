@@ -91,25 +91,16 @@ jobs:
           dotnet build src/Bannerlord.BLSE/Bannerlord.BLSE.csproj -p:configuration=Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
-    - name: Create bannerlord folder
-      run: mkdir bannerlord-launcher;
-
     - name: Build Bannerlord.BLSE.Launcher
       run: >-
           $game_version=$env:MIN_VERSION;
           $game_version=$game_version.substring(1);
-          dotnet build src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj -p:configuration=Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord-launcher";
-      shell: pwsh
-
-    - name: Build Bannerlord.BLSE.Launcher
-      run: >-
-          Copy-Item -Path "$PWD/bannerlord" -Destination "$PWD/bannerlord-final" -Recurse;
-          Copy-Item -Path "$PWD/bannerlord-launcher" -Destination "$PWD/bannerlord-final" -Recurse
+          dotnet build src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj -p:configuration=Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
     - name: Cleanup
       run: >-
-          cd $PWD/bannerlord-final;
+          cd $PWD/bannerlord;
           Get-ChildItem -Exclude bin | Remove-Item -Recurse -Force;
           cd bin;
           cd Win64_Shipping_Client;
@@ -120,7 +111,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: bannerlord-blse
-        path: ./bannerlord-final/
+        path: ./bannerlord/
 
 
 ###########################
@@ -128,6 +119,7 @@ jobs:
 ###########################
   publish-on-nexusmods-launcher-extension:
     needs: ["changelog", "build-launcher-extension"]
+    if: startsWith(github.ref, 'refs/tags/v')
     name: Publish Launcher Extension on NexusMods
     uses: BUTR/workflows/.github/workflows/release-nexusmods.yml@master
     with:
@@ -147,6 +139,7 @@ jobs:
   publish-on-nexusmods-blse:
     needs: ["changelog", "build-blse"]
     if: false
+    #if: startsWith(github.ref, 'refs/tags/v')
     name: Publish BLSE on NexusMods
     uses: BUTR/workflows/.github/workflows/release-nexusmods.yml@master
     with:
@@ -166,6 +159,7 @@ jobs:
 ###########################
   publish-on-github:
     needs: ["changelog", "build-launcher-extension", "build-blse"]
+    if: startsWith(github.ref, 'refs/tags/v')
     name: Publish Launcher Extension and BLSE on GitHub
     runs-on: ubuntu-latest
     environment:
