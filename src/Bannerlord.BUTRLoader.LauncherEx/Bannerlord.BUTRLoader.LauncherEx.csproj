@@ -45,6 +45,7 @@
     <EmbeddedResource Include="Resources\Localization\EN\strings.xml" />
     <EmbeddedResource Include="Resources\Localization\RU\strings.xml" />
     <EmbeddedResource Include="Resources\Localization\CNs\strings.xml" />
+    <EmbeddedResource Include="Resources\Localization\TR\strings.xml" />
   </ItemGroup>
 
   <ItemGroup>

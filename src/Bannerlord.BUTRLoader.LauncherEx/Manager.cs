@@ -45,6 +45,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.EN.strings.xml"));
             BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.RU.strings.xml"));
             BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.CNs.strings.xml"));
+            BUTRLocalizationManager.LoadLanguage(Load("Bannerlord.BUTRLoader.Resources.Localization.TR.strings.xml"));
             BUTRLocalizationManager.ActiveLanguage = BUTRLocalizationManager.GetActiveLanguage();
 
             GraphicsContextManager.Enable(_launcherHarmony);

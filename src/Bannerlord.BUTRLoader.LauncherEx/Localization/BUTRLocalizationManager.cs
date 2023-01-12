@@ -27,7 +27,7 @@ namespace Bannerlord.BUTRLoader.Localization
         [ThreadStatic]
         private static StringBuilder? _targetStringBuilder;
 
-        public static string GetActiveLanguage() => ConfigReader.GetGameOptions().FirstOrDefault(x => x.Key == "Language").Value ?? "English";
+        public static string GetActiveLanguage() => ConfigReader.GetGameOptions().TryGetValue("Language", out var lang) ? lang : "English";
 
         public static void LoadLanguage(XmlDocument xmlDocument)
         {
