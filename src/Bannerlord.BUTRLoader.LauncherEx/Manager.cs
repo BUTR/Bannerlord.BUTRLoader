@@ -93,7 +93,7 @@ namespace Bannerlord.BUTRLoader.LauncherEx
                 case BUTRLocalizationManager.Korean:
                 {
                     var asset = new AssetPackage(Path.Combine(BasePath.Name, "Modules/Native/AssetPackages/gauntlet_ui.tpac"));
-                    if (asset.Items.OfType<Texture>().FirstOrDefault(x => x.Name == "ui_fonts_1") is { } korean)
+                    if (asset.Items.OfType<Texture>().FirstOrDefault(x => x.Name == "ui_fonts_4") is { } korean)
                     {
                         GraphicsContextManager.CreateAssetTextureAndRegister("NanumGothicKR", korean);
                         SpriteDataManager.CreateGenericAndRegister("NanumGothicKR");
@@ -113,14 +113,12 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             WidgetFactoryManager.CreateAndRegister("Launcher.ToggleButton", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.ToggleButton.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SearchBox", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.SearchBox.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Scrollbar", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.Scrollbar.xml"));
-            WidgetFactoryManager.CreateAndRegister("Launcher.Dropdown", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Widgets.Launcher.Dropdown.xml"));
 
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyBoolView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyBoolView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyButtonView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyButtonView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyFloatView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyFloatView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyIntView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyIntView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyStringView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyStringView.xml"));
-            WidgetFactoryManager.CreateAndRegister("Launcher.SettingsPropertyDropdownView", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Properties.Launcher.SettingsPropertyDropdownView.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Options", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Options.OptionTuple", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Options.OptionTuple.xml"));
             WidgetFactoryManager.CreateAndRegister("Launcher.Mods2", Load("Bannerlord.BUTRLoader.Resources.Prefabs.Launcher.Mods.xml"));
