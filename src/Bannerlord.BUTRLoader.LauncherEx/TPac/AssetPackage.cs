@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Bannerlord.BUTRLoader.TPac
@@ -9,18 +10,21 @@ namespace Bannerlord.BUTRLoader.TPac
     {
         public const uint TPAC_MAGIC_NUMBER = 0x43415054;
 
-        public bool HeaderLoaded { private set; get; }
+        public bool HeaderLoaded { get; private set; } = false;
 
-        public FileInfo File { private set; get; }
+        public FileInfo File { get; }
 
-        public List<AssetItem> Items { private set; get; }
+        public List<AssetItem> Items { get; } = new();
 
         public AssetPackage(string filePath)
         {
             File = new FileInfo(filePath);
-            HeaderLoaded = false;
-            Items = new List<AssetItem>();
+        }
+
+        public Texture? GetTexture(string id)
+        {
             Load();
+            return Items.OfType<Texture>().FirstOrDefault(x => x.Name == id);
         }
 
         public void Load()

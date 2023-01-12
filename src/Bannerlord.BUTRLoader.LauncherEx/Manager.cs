@@ -9,7 +9,6 @@ using HarmonyLib;
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Xml;
 
@@ -68,38 +67,21 @@ namespace Bannerlord.BUTRLoader.LauncherEx
             SpriteDataManager.CreateAndRegister("launcher_search");
             SpriteDataManager.CreateAndRegister("warm_overlay");
 
+            var asset = new AssetPackage(Path.Combine(BasePath.Name, "Modules/Native/AssetPackages/gauntlet_ui.tpac"));
             switch (BUTRLocalizationManager.ActiveLanguage)
             {
-                case BUTRLocalizationManager.ChineseTraditional or BUTRLocalizationManager.ChineseSimple:
-                {
-                    var asset = new AssetPackage(Path.Combine(BasePath.Name, "Modules/Native/AssetPackages/gauntlet_ui.tpac"));
-                    if (asset.Items.OfType<Texture>().FirstOrDefault(x => x.Name == "ui_fonts_1") is { } chinese)
-                    {
-                        GraphicsContextManager.CreateAssetTextureAndRegister("simkai", chinese);
-                        SpriteDataManager.CreateGenericAndRegister("simkai");
-                    }
+                case BUTRLocalizationManager.ChineseTraditional or BUTRLocalizationManager.ChineseSimple when asset.GetTexture("ui_fonts_1") is { } chinese:
+                    GraphicsContextManager.CreateAssetTextureAndRegister("simkai", chinese);
+                    SpriteDataManager.CreateGenericAndRegister("simkai");
                     break;
-                }
-                case BUTRLocalizationManager.Japanese:
-                {
-                    var asset = new AssetPackage(Path.Combine(BasePath.Name, "Modules/Native/AssetPackages/gauntlet_ui.tpac"));
-                    if (asset.Items.OfType<Texture>().FirstOrDefault(x => x.Name == "ui_fonts_2") is { } japanese)
-                    {
-                        GraphicsContextManager.CreateAssetTextureAndRegister("SourceHanSansJP", japanese);
-                        SpriteDataManager.CreateGenericAndRegister("SourceHanSansJP");
-                    }
+                case BUTRLocalizationManager.Japanese when asset.GetTexture("ui_fonts_2") is { } japanese:
+                    GraphicsContextManager.CreateAssetTextureAndRegister("SourceHanSansJP", japanese);
+                    SpriteDataManager.CreateGenericAndRegister("SourceHanSansJP");
                     break;
-                }
-                case BUTRLocalizationManager.Korean:
-                {
-                    var asset = new AssetPackage(Path.Combine(BasePath.Name, "Modules/Native/AssetPackages/gauntlet_ui.tpac"));
-                    if (asset.Items.OfType<Texture>().FirstOrDefault(x => x.Name == "ui_fonts_4") is { } korean)
-                    {
-                        GraphicsContextManager.CreateAssetTextureAndRegister("NanumGothicKR", korean);
-                        SpriteDataManager.CreateGenericAndRegister("NanumGothicKR");
-                    }
+                case BUTRLocalizationManager.Korean when asset.GetTexture("ui_fonts_4") is { } korean:
+                    GraphicsContextManager.CreateAssetTextureAndRegister("NanumGothicKR", korean);
+                    SpriteDataManager.CreateGenericAndRegister("NanumGothicKR");
                     break;
-                }
             }
 
 
