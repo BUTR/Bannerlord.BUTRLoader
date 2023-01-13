@@ -1,9 +1,9 @@
 ﻿<Prefab>
   <Window>
-    <ScrollbarWidget Id="Scrollbar" HorizontalAlignment="Right" VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="20" Handle="ScrollbarHandle" AlignmentAxis="Vertical" MinValue="0" MaxValue="100" UpdateChildrenStates="true">
+    <ScrollbarWidget HorizontalAlignment="Right" VerticalAlignment="Center" WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="20" Handle="ScrollbarHandle" AlignmentAxis="Vertical" MinValue="0" MaxValue="100" >
       <Children>
         <BrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="4" HorizontalAlignment="Center" Brush="Launcher.Scrollbar.Filler" />
-        <BrushWidget Id="ScrollbarHandle" SuggestedWidth="12" Brush="Launcher.Scrollbar.Handle" />
+        <ImageWidget Id="ScrollbarHandle" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedHeight="60" SuggestedWidth="12" HorizontalAlignment="Center" Brush="Launcher.Scrollbar.Handle" />
       </Children>
     </ScrollbarWidget>
   </Window>

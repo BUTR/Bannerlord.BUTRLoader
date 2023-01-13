@@ -97,6 +97,19 @@ namespace Bannerlord.BUTRLoader.Helpers
         public bool IsControllerConnected() => InputManager.IsControllerConnected();
         public InputKey GetControllerClickKey() => InputManager.GetControllerClickKey();
 
+        public void SetRumbleEffect(float[] lowFrequencyLevels, float[] lowFrequencyDurations, int numLowFrequencyElements, float[] highFrequencyLevels,
+            float[] highFrequencyDurations, int numHighFrequencyElements) =>
+            InputManager.SetRumbleEffect(lowFrequencyLevels, lowFrequencyDurations, numLowFrequencyElements, highFrequencyLevels, highFrequencyDurations, numHighFrequencyElements);
+        public void SetTriggerFeedback(byte leftTriggerPosition, byte leftTriggerStrength, byte rightTriggerPosition, byte rightTriggerStrength) =>
+            InputManager.SetTriggerFeedback(leftTriggerPosition, leftTriggerStrength, rightTriggerPosition, rightTriggerStrength);
+        public void SetTriggerWeaponEffect(byte leftStartPosition, byte leftEnd_position, byte leftStrength, byte rightStartPosition, byte rightEndPosition, byte rightStrength) =>
+            InputManager.SetTriggerWeaponEffect(leftStartPosition, leftEnd_position, leftStrength, rightStartPosition, rightEndPosition, rightStrength);
+        public void SetTriggerVibration(float[] leftTriggerAmplitudes, float[] leftTriggerFrequencies, float[] leftTriggerDurations, int numLeftTriggerElements,
+            float[] rightTriggerAmplitudes, float[] rightTriggerFrequencies, float[] rightTriggerDurations, int numRightTriggerElements) =>
+            InputManager.SetTriggerVibration(leftTriggerAmplitudes, leftTriggerFrequencies, leftTriggerDurations, numLeftTriggerElements, rightTriggerAmplitudes,
+                rightTriggerFrequencies, rightTriggerDurations, numRightTriggerElements);
+        public void SetLightbarColor(float red, float green, float blue) => InputManager.SetLightbarColor(red, green, blue);
+
         private static TReturn IsAction<TReturn>(InputKey key, Func<Keys, TReturn> action, Func<InputKey, TReturn> fallback)
         {
             var rawKey = key switch

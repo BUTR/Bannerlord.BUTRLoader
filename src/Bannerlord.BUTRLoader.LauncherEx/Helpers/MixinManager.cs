@@ -60,7 +60,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 return false;
             }
             field = value;
-            OnPropertyChangedWithValue(value, propertyName);
+            OnPropertyChanged(propertyName);
             return true;
         }
     }
@@ -108,9 +108,9 @@ namespace Bannerlord.BUTRLoader.Helpers
             ViewModel?.OnPropertyChanged(propertyName);
         }
 
-        protected void OnPropertyChangedWithValue(object? value, [CallerMemberName] string? propertyName = null)
+        protected void OnPropertyChangedWithValue<T>(T value, [CallerMemberName] string? propertyName = null) where T : class
         {
-            ViewModel?.OnPropertyChangedWithValue(value, propertyName);
+            ViewModel?.OnPropertyChangedWithValue<T>(value, propertyName);
         }
 
         protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
@@ -120,7 +120,7 @@ namespace Bannerlord.BUTRLoader.Helpers
                 return false;
             }
             field = value;
-            OnPropertyChangedWithValue(value, propertyName);
+            OnPropertyChanged(propertyName);
             return true;
         }
 
