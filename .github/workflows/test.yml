@@ -43,10 +43,12 @@ jobs:
         github-token: ${{secrets.GITHUB_TOKEN}}
         steam-login: ${{secrets.STEAM_LOGIN}}
         steam-password: ${{secrets.STEAM_PASSWORD}}
-        stable-version: ${{secrets.SYNCED_GAME_STABLE_VERSION}}
+        stable-version: ${{env.MIN_VERSION}}
 
     - name: Test
       run: >-
-          dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Debug -p:GameFolder="$PWD/bannerlord";
-          dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Release -p:GameFolder="$PWD/bannerlord";
+          $game_version=$env:MIN_VERSION;
+          $game_version=$game_version.substring(1);
+          dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Debug -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
+          dotnet test tests/Bannerlord.BUTRLoader.Tests/Bannerlord.BUTRLoader.Tests.csproj --configuration Release -p:GameVersion=$game_version -p:GameFolder="$PWD/bannerlord";
       shell: pwsh
