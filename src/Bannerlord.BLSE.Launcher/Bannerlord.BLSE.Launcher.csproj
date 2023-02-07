@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bannerlord.BUTRLoader.LauncherEx\Bannerlord.BUTRLoader.LauncherEx.csproj" />
-    <ProjectReference Include="..\Bannerlord.BUTRLoader.Core\Bannerlord.BUTRLoader.Core.csproj" />
+    <ProjectReference Include="..\Bannerlord.BLSE\Bannerlord.BLSE.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="CopyFilesToOutputDirectory" Condition="Exists($(GameFolder))">

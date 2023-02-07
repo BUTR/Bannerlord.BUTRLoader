@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTRLoader.Extensions;
+﻿using Bannerlord.BLSE;
+using Bannerlord.BUTRLoader.Extensions;
 using Bannerlord.BUTRLoader.Mixins;
 
 using HarmonyLib;

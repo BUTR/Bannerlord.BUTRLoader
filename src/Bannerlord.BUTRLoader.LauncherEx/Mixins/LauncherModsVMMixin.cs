@@ -1,4 +1,5 @@
-﻿using Bannerlord.BUTR.Shared.Helpers;
+﻿using Bannerlord.BLSE;
+using Bannerlord.BUTR.Shared.Helpers;
 using Bannerlord.BUTRLoader.Helpers;
 using Bannerlord.BUTRLoader.Localization;
 using Bannerlord.BUTRLoader.ViewModels;

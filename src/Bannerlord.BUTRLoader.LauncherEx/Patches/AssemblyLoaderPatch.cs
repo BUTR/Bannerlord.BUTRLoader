@@ -1,5 +1,6 @@
-﻿using Bannerlord.BUTR.Shared.Helpers;
-using Bannerlord.BUTRLoader.Utils;
+﻿using Bannerlord.BLSE.Utils;
+using Bannerlord.BUTR.Shared.Helpers;
+using Bannerlord.BUTRLoader.Helpers;
 
 using HarmonyLib;
 using HarmonyLib.BUTR.Extensions;

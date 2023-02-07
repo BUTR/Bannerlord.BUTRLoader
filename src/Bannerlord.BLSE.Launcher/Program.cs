@@ -1,7 +1,7 @@
-﻿using Bannerlord.BUTRLoader.Features.AssemblyResolver;
-using Bannerlord.BUTRLoader.Features.Commands;
-using Bannerlord.BUTRLoader.Features.ContinueSaveFile;
-using Bannerlord.BUTRLoader.Features.Interceptor;
+﻿using Bannerlord.BLSE.Features.AssemblyResolver;
+using Bannerlord.BLSE.Features.Commands;
+using Bannerlord.BLSE.Features.ContinueSaveFile;
+using Bannerlord.BLSE.Features.Interceptor;
 using Bannerlord.BUTRLoader.LauncherEx;
 
 using HarmonyLib;
@@ -16,7 +16,7 @@ namespace Bannerlord.BLSE.Launcher
         [DllImport("user32.dll")]
         private static extern bool SetProcessDPIAware();
 
-        private static readonly Harmony _featureHarmony = new("bannerlord.butrloader.features");
+        private static readonly Harmony _featureHarmony = new("bannerlord.blse.features");
 
         public static void Main(string[] args)
         {
