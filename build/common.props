@@ -11,7 +11,7 @@
     <HarmonyVersion>2.2.2</HarmonyVersion>
     <BUTRSharedVersion>3.0.0.127</BUTRSharedVersion>
     <BUTRModuleManagerVersion>5.0.166</BUTRModuleManagerVersion>
-    <HarmonyExtensionsVersion>3.2.0.72</HarmonyExtensionsVersion>
+    <HarmonyExtensionsVersion>3.2.0.73</HarmonyExtensionsVersion>
     <HarmonyAnalyzerVersion>1.0.1.44</HarmonyAnalyzerVersion>
     <DebugType>full</DebugType>
   </PropertyGroup>
