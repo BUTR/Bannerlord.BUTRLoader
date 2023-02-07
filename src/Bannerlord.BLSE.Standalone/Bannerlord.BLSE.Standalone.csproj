@@ -1,39 +1,42 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
+    <OutputType>winexe</OutputType>
+    <ApplicationIcon>../../resources/Butter.ico</ApplicationIcon>
 
     <Configurations>Stable_Debug;Stable_Release;Beta_Debug;Beta_Release</Configurations>
     <ILRepackTargetConfigurations>$(Configurations);Debug;Release;</ILRepackTargetConfigurations>
     <ILRepackMergeDebugSymbols>true</ILRepackMergeDebugSymbols>
     <ILRepackPerformInternalize>false</ILRepackPerformInternalize>
-    <AssemblyName>Bannerlord.BUTRLoader</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ILRepack.FullAuto" Version="1.2.0" PrivateAssets="all" />
     <PackageReference Include="Lib.Harmony" Version="$(HarmonyVersion)" />
+
+    <PackageReference Include="Bannerlord.BUTR.Shared" Version="$(BUTRSharedVersion)" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Bannerlord.ModuleManager.Source" Version="$(BUTRModuleManagerVersion)" />
+    <PackageReference Include="Harmony.Extensions" Version="$(HarmonyExtensionsVersion)" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+
+    <PackageReference Include="ILRepack.FullAuto" Version="1.2.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bannerlord.BUTRLoader.LauncherEx\Bannerlord.BUTRLoader.LauncherEx.csproj" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Bannerlord.BLSE\Bannerlord.BLSE.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="CopyFilesToOutputDirectory" Condition="Exists($(GameFolder))">
     <ItemGroup>
-      <Files Include="$(MSBuildProjectDirectory)\$(OutputPath)\$(AssemblyName).dll" />
-      <Files Include="$(MSBuildProjectDirectory)\$(OutputPath)\$(AssemblyName).pdb" />
-      <Files2 Include="_GameRoot\**\*" />
-      <Files3 Include="@(Files2)">
-        <SubDir>%(Files2.RecursiveDir)</SubDir>
-      </Files3>
+      <Files Include="$(MSBuildProjectDirectory)\$(OutputPath)\$(AssemblyName).exe" />
     </ItemGroup>
     <Copy SourceFiles="@(Files)" DestinationFolder="$(GameFolder)\bin\Win64_Shipping_Client" />
-    <Copy SourceFiles="@(Files3)" DestinationFolder="$(GameFolder)\%(SubDir)" />
   </Target>
   
 </Project>

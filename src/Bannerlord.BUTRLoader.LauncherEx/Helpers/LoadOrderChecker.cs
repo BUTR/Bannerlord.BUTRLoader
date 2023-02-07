@@ -1,4 +1,5 @@
-﻿using Bannerlord.ModuleManager;
+﻿using Bannerlord.BLSE;
+using Bannerlord.ModuleManager;
 
 using System.Collections.Generic;
 using System.Linq;

@@ -67,7 +67,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bannerlord.BUTRLoader.Core\Bannerlord.BUTRLoader.Core.csproj" />
+    <ProjectReference Include="..\Bannerlord.BLSE\Bannerlord.BLSE.csproj" />
   </ItemGroup>
 
   <Target Name="SetBUTRBaseUrl" BeforeTargets="BeforeCompile">

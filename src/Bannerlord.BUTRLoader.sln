@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bannerlord.BUTRLoader.Core", "Bannerlord.BUTRLoader.Core\Bannerlord.BUTRLoader.Core.csproj", "{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bannerlord.BLSE", "Bannerlord.BLSE\Bannerlord.BLSE.csproj", "{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{18F85D07-5188-4633-BC5D-24E75DF10113}"
 	ProjectSection(SolutionItems) = preProject
@@ -26,11 +26,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	ProjectSection(SolutionItems) = preProject
 		..\.github\workflows\publish.yml = ..\.github\workflows\publish.yml
 		..\.github\workflows\test.yml = ..\.github\workflows\test.yml
+		..\.github\workflows\publish-blse.yml = ..\.github\workflows\publish-blse.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bannerlord.BUTRLoader.LauncherEx", "Bannerlord.BUTRLoader.LauncherEx\Bannerlord.BUTRLoader.LauncherEx.csproj", "{9DCDD236-D7C8-4CC6-A899-306284EA62FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bannerlord.BLSE", "Bannerlord.BLSE\Bannerlord.BLSE.csproj", "{C7216B10-2F73-4D47-9971-F32A6F961613}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bannerlord.BLSE.Standalone", "Bannerlord.BLSE.Standalone\Bannerlord.BLSE.Standalone.csproj", "{C7216B10-2F73-4D47-9971-F32A6F961613}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bannerlord.BUTRLoader.AssemblyManager", "Bannerlord.BUTRLoader.AssemblyManager\Bannerlord.BUTRLoader.AssemblyManager.csproj", "{4FB0EA62-6080-430D-AD66-FF1EECFD19E6}"
 EndProject
@@ -50,14 +51,6 @@ Global
 		Stable Release|Any CPU = Stable Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Beta Debug|Any CPU.ActiveCfg = Beta_Debug|Any CPU
-		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Beta Debug|Any CPU.Build.0 = Beta_Debug|Any CPU
-		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Beta Release|Any CPU.ActiveCfg = Beta_Release|Any CPU
-		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Beta Release|Any CPU.Build.0 = Beta_Release|Any CPU
-		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Stable Debug|Any CPU.ActiveCfg = Stable_Debug|Any CPU
-		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Stable Debug|Any CPU.Build.0 = Stable_Debug|Any CPU
-		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Stable Release|Any CPU.ActiveCfg = Stable_Release|Any CPU
-		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Stable Release|Any CPU.Build.0 = Stable_Release|Any CPU
 		{C392E7E8-6705-4EC3-A0E6-31CE7DA298E4}.Beta Debug|Any CPU.ActiveCfg = Beta_Debug|Any CPU
 		{C392E7E8-6705-4EC3-A0E6-31CE7DA298E4}.Beta Debug|Any CPU.Build.0 = Beta_Debug|Any CPU
 		{C392E7E8-6705-4EC3-A0E6-31CE7DA298E4}.Beta Release|Any CPU.ActiveCfg = Beta_Release|Any CPU
@@ -98,6 +91,14 @@ Global
 		{443F4C56-4475-4446-9896-4DCBBCB3D771}.Stable Debug|Any CPU.Build.0 = Stable_Debug|Any CPU
 		{443F4C56-4475-4446-9896-4DCBBCB3D771}.Stable Release|Any CPU.ActiveCfg = Stable_Release|Any CPU
 		{443F4C56-4475-4446-9896-4DCBBCB3D771}.Stable Release|Any CPU.Build.0 = Stable_Release|Any CPU
+		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Beta Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Beta Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Beta Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Beta Release|Any CPU.Build.0 = Release|Any CPU
+		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Stable Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Stable Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Stable Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BFBC941-B5ED-43A1-AC03-7D0A1A6E8865}.Stable Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
