@@ -38,7 +38,7 @@ jobs:
 
   build:
     name: Build BUTRLoader
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
     - name: Setup
       uses: butr/actions-common-setup@v2
