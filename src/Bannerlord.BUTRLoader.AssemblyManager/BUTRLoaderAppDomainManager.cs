@@ -89,6 +89,8 @@ Version: {typeof(BUTRLoaderAppDomainManager).Assembly.GetName().Version}
             AssemblyResolverFeature.Enable(_featureHarmony);
             ContinueSaveFileFeature.Enable(_featureHarmony);
             CommandsFeature.Enable(_featureHarmony);
+            
+            ModuleInitializer.Disable();
         }
     }
 }

@@ -1,0 +1,4 @@
+[submodule "src/Bannerlord.BLSE"]
+	path = src/Bannerlord.BLSE
+	url = https://github.com/BUTR/Bannerlord.BLSE
+	branch = master
