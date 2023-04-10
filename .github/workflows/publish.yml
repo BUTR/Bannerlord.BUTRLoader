@@ -1,4 +1,4 @@
-name: Publish BLSE and Launcher Extension
+name: Publish BUTRLoader
 
 on:
   push:
@@ -36,8 +36,8 @@ jobs:
           echo "::set-output name=mod_description::$desc"
         shell: bash
 
-  build-launcher-extension:
-    name: Build Launcher Extension
+  build:
+    name: Build BUTRLoader
     runs-on: ubuntu-latest
     steps:
     - name: Setup
@@ -48,7 +48,7 @@ jobs:
     - name: Create bannerlord folder
       run: mkdir bannerlord;
 
-    - name: Build Launcher Extension
+    - name: Build BUTRLoader
       run: dotnet build src/Bannerlord.BUTRLoader.AssemblyManager/Bannerlord.BUTRLoader.AssemblyManager.csproj -p:configuration=Release -p:GameFolder="$PWD/bannerlord";
       shell: pwsh
 
@@ -64,52 +64,17 @@ jobs:
     - name: Upload Bannerlord folder
       uses: actions/upload-artifact@v3
       with:
-        name: bannerlord-launcher-extension
-        path: ./bannerlord/
-
-  build-blse:
-    name: Build BLSE
-    runs-on: ubuntu-latest
-    steps:
-    - name: Setup
-      uses: butr/actions-common-setup@v2
-      with:
-        github-token: ${{secrets.GITHUB_TOKEN}}
-
-    - name: Create bannerlord folder
-      run: mkdir bannerlord;
-
-    - name: Build Bannerlord.BLSE
-      run: dotnet build src/Bannerlord.BLSE/Bannerlord.BLSE.csproj -p:configuration=Release -p:GameFolder="$PWD/bannerlord";
-      shell: pwsh
-
-    - name: Build Bannerlord.BLSE.Launcher
-      run: dotnet build src/Bannerlord.BLSE.Launcher/Bannerlord.BLSE.Launcher.csproj -p:configuration=Release -p:GameFolder="$PWD/bannerlord";
-      shell: pwsh
-
-    - name: Cleanup
-      run: >-
-          cd $PWD/bannerlord;
-          Get-ChildItem -Exclude bin | Remove-Item -Recurse -Force;
-          cd bin;
-          cd Win64_Shipping_Client;
-          Get-ChildItem -Exclude Bannerlord.BLSE.exe,Bannerlord.BLSE.Launcher.exe | Remove-Item -Recurse -Force;
-      shell: pwsh
-
-    - name: Upload Bannerlord folder
-      uses: actions/upload-artifact@v3
-      with:
-        name: bannerlord-blse
+        name: bannerlord
         path: ./bannerlord/
 
 
 ###########################
 #        NEXUSMODS        #
 ###########################
-  publish-on-nexusmods-launcher-extension:
-    needs: ["changelog", "build-launcher-extension"]
+  publish-on-nexusmods:
+    needs: ["changelog", "build"]
     if: startsWith(github.ref, 'refs/tags/v')
-    name: Publish Launcher Extension on NexusMods
+    name: Publish BUTRLoader on NexusMods
     uses: BUTR/workflows/.github/workflows/release-nexusmods.yml@master
     with:
       nexusmods_game_id: mountandblade2bannerlord
@@ -117,39 +82,18 @@ jobs:
       mod_filename: BUTRLoader
       mod_version: ${{ needs.changelog.outputs.mod_version }}
       mod_description: ${{ needs.changelog.outputs.mod_description }}
-      artifact_name: bannerlord-launcher-extension
+      artifact_name: bannerlord
     secrets:
       NEXUSMODS_APIKEY: ${{ secrets.NEXUSMODS_APIKEY }}
       NEXUSMODS_COOKIES: ${{ secrets.NEXUSMODS_COOKIES }}
-
-###########################
-#        NEXUSMODS        #
-###########################
-  publish-on-nexusmods-blse:
-    needs: ["changelog", "build-blse"]
-    if: false
-    #if: startsWith(github.ref, 'refs/tags/v')
-    name: Publish BLSE on NexusMods
-    uses: BUTR/workflows/.github/workflows/release-nexusmods.yml@master
-    with:
-      nexusmods_game_id: mountandblade2bannerlord
-      nexusmods_mod_id: 1
-      mod_filename: BUTRLoader
-      mod_version: ${{ needs.changelog.outputs.mod_version }}
-      mod_description: ${{ needs.changelog.outputs.mod_description }}
-      artifact_name: bannerlord-blse
-    secrets:
-      NEXUSMODS_APIKEY: ${{ secrets.NEXUSMODS_APIKEY }}
-      NEXUSMODS_COOKIES: ${{ secrets.NEXUSMODS_COOKIES }}
-
 
 ###########################
 #         GITHUB          #
 ###########################
   publish-on-github:
-    needs: ["changelog", "build-launcher-extension", "build-blse"]
+    needs: ["changelog", "build"]
     if: startsWith(github.ref, 'refs/tags/v')
-    name: Publish Launcher Extension and BLSE on GitHub
+    name: Publish BUTRLoader on GitHub
     runs-on: ubuntu-latest
     environment:
       name: GitHub Release
@@ -161,25 +105,14 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Download Launcher Extension artifact
+    - name: Download BUTRLoader artifact
       uses: actions/download-artifact@v3
       with:
-        name: bannerlord-launcher-extension
-        path: ./launcher-extension
+        name: bannerlord
+        path: ./bannerlord
 
-    - name: Download BLSE artifact
-      uses: actions/download-artifact@v3
-      with:
-        name: bannerlord-blse
-        path: ./blse
-
-    - name: 7z Launcher Extension
-      run: 7z a -t7z Bannerlord.BUTRLoader.7z ./launcher-extension/* -mx9
-      #shell: pwsh
-      # pwsh casues it to include the root folder
-      
-    - name: 7z BLSE
-      run: 7z a -t7z BLSE.7z ./blse/* -mx9
+    - name: 7z BUTRLoader
+      run: 7z a -t7z Bannerlord.BUTRLoader.7z ./bannerlord/* -mx9
       #shell: pwsh
       # pwsh casues it to include the root folder
 
@@ -230,22 +163,12 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
-    - name: Upload Release Asset Launcher Extension
+    - name: Upload Release Asset BUTRLoader
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./Bannerlord.BUTRLoader.7z
         asset_name: Bannerlord.BUTRLoader.7z
-        asset_content_type: application/x-7z-compressed
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload Release Asset BLSE
-      uses: actions/upload-release-asset@v1
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./BLSE.7z
-        asset_name: BLSE.7z
         asset_content_type: application/x-7z-compressed
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

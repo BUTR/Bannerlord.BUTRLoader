@@ -3,22 +3,22 @@
 
   <PropertyGroup>
     <GameVersion>1.1.0</GameVersion>
+    <BUTRSharedVersion>3.0.0.136</BUTRSharedVersion>
+    <BUTRModuleManagerVersion>5.0.198</BUTRModuleManagerVersion>
+    <HarmonyExtensionsVersion>3.2.0.77</HarmonyExtensionsVersion>
+    <HarmonyAnalyzerVersion>1.0.1.44</HarmonyAnalyzerVersion>
   </PropertyGroup>
 
   <!--Development Variables-->
   <PropertyGroup>
-    <Version>1.22.0</Version>
+    <Version>1.24.0</Version>
     <HarmonyVersion>2.2.2</HarmonyVersion>
-    <BUTRSharedVersion>3.0.0.127</BUTRSharedVersion>
-    <BUTRModuleManagerVersion>5.0.166</BUTRModuleManagerVersion>
-    <HarmonyExtensionsVersion>3.2.0.72</HarmonyExtensionsVersion>
-    <HarmonyAnalyzerVersion>1.0.1.44</HarmonyAnalyzerVersion>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
+  
   <PropertyGroup>
     <Authors>BUTR Team</Authors>
-    <Product>BUTR Loader for Bannerlord Launcher</Product>
+    <Product>BUTRLoader with BLSE Bannerlord</Product>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -27,7 +27,7 @@
     <IsBeta>false</IsBeta>
     <IsBeta Condition="$(Configuration.Contains('Beta'))">true</IsBeta>
   </PropertyGroup>
-
+  
   <PropertyGroup>
     <!--Bannerlord's Root Folder. Leave empty if you want it to be tried to be autoresolved.-->
     <GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
@@ -64,7 +64,7 @@
   </PropertyGroup>
   <!--SorceLink-->
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="all" />
   </ItemGroup>
   <!--CI Builds-->
   <ItemGroup Condition="$(TargetFramework) == 'net472' AND $(OS) != 'Windows_NT'">
@@ -80,6 +80,5 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-
 
 </Project>

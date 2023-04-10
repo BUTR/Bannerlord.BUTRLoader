@@ -1,1 +1,0 @@
-Executable that injects BUTRLoader features and launches the game's launcher.

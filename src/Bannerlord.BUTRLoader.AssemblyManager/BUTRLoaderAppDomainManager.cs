@@ -2,7 +2,7 @@
 using Bannerlord.BLSE.Features.Commands;
 using Bannerlord.BLSE.Features.ContinueSaveFile;
 using Bannerlord.BLSE.Features.Interceptor;
-using Bannerlord.BUTRLoader.LauncherEx;
+using Bannerlord.LauncherEx;
 
 using HarmonyLib;
 
@@ -46,12 +46,12 @@ namespace Bannerlord.BUTRLoader.AssemblyManager
                 {
                     File.Delete(file);
                 }
-                catch (Exception) { }
+                catch (Exception) { /* ignore */ }
             }
 
             Initialize();
 
-            AppDomain.CurrentDomain.AssemblyLoad += (sender, args) =>
+            AppDomain.CurrentDomain.AssemblyLoad += (_, args) =>
             {
                 if (args.LoadedAssembly.GetName().Name == "TaleWorlds.MountAndBlade.Launcher.Library")
                 {
@@ -68,7 +68,7 @@ namespace Bannerlord.BUTRLoader.AssemblyManager
                 .AppendLine(!string.IsNullOrWhiteSpace(ex.Message) ? $"Message: {ex.Message}" : string.Empty)
                 .AppendLine(!string.IsNullOrWhiteSpace(ex.Source) ? $"Source: {ex.Source}" : string.Empty)
                 .AppendLine(!string.IsNullOrWhiteSpace(ex.StackTrace) ? $@"CallStack:{Environment.NewLine}{string.Join(Environment.NewLine, ex.StackTrace.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))}" : string.Empty)
-                .AppendLine(ex.InnerException != null ? $@"{Environment.NewLine}{Environment.NewLine}Inner {GetRecursiveException(ex.InnerException)}" : string.Empty)
+                .AppendLine(ex.InnerException is not null ? $@"{Environment.NewLine}{Environment.NewLine}Inner {GetRecursiveException(ex.InnerException)}" : string.Empty)
                 .ToString();
 
             using var fs = File.Open("BUTRLoader_lasterror.log", FileMode.OpenOrCreate, FileAccess.Write);
@@ -89,6 +89,8 @@ Version: {typeof(BUTRLoaderAppDomainManager).Assembly.GetName().Version}
             AssemblyResolverFeature.Enable(_featureHarmony);
             ContinueSaveFileFeature.Enable(_featureHarmony);
             CommandsFeature.Enable(_featureHarmony);
+            
+            ModuleInitializer.Disable();
         }
     }
 }

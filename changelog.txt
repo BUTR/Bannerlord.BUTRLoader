@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.24.0
+Game Versions: v1.0.0,v1.0.1,v1.0.2,v1.0.3,v1.1.0
+* Backported BLSE to BUTRLoader
+* Added support of v1.0.0,v1.0.1,v1.0.2,v1.0.3 back
+* Added the requirement of an installed Harmony module
+---------------------------------------------------------------------------------------------------
 Version: 1.22.0
 Game Versions: v1.1.0
 * Switched minimal supported version to v1.1.0

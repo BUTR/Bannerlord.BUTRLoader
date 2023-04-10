@@ -2,25 +2,43 @@
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>11.0</LangVersion>
     <Nullable>enable</Nullable>
     <PlatformTarget>x64</PlatformTarget>
-
-    <Configurations>Stable_Debug;Stable_Release;Beta_Debug;Beta_Release</Configurations>
-    <ILRepackTargetConfigurations>$(Configurations);Debug;Release;</ILRepackTargetConfigurations>
-    <ILRepackMergeDebugSymbols>true</ILRepackMergeDebugSymbols>
-    <ILRepackPerformInternalize>false</ILRepackPerformInternalize>
+    <OutputType>library</OutputType>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>Bannerlord.BUTRLoader</AssemblyName>
+
+    <ILRepackTargetConfigurations>$(Configurations)</ILRepackTargetConfigurations>
+    <ILRepackAllowDuplicateResources>false</ILRepackAllowDuplicateResources>
+    <ILRepackMergeDebugSymbols>true</ILRepackMergeDebugSymbols>
+    <!-- No. No. LauncherExData is inaccessible due to its protection level. -->
+    <ILRepackPerformInternalize>false</ILRepackPerformInternalize>
+    <ILRepackCopyAttributes>true</ILRepackCopyAttributes>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ILRepack" Version="2.0.18" PrivateAssets="all" />
     <PackageReference Include="ILRepack.FullAuto" Version="1.2.0" PrivateAssets="all" />
-    <PackageReference Include="Lib.Harmony" Version="$(HarmonyVersion)" />
+    
+    <PackageReference Include="Bannerlord.BUTR.Shared" Version="$(BUTRSharedVersion)" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Bannerlord.ModuleManager.Source" PrivateAssets="all" Version="$(BUTRModuleManagerVersion)" />
+    <PackageReference Include="Harmony.Extensions" Version="$(HarmonyExtensionsVersion)" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="IsExternalInit" Version="1.0.3" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.188-beta" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.4" IncludeAssets="compile" />
+    <PackageReference Include="System.Memory" Version="4.5.5" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bannerlord.BUTRLoader.LauncherEx\Bannerlord.BUTRLoader.LauncherEx.csproj" />
-    <ProjectReference Include="..\Bannerlord.BLSE\Bannerlord.BLSE.csproj" />
+    <ProjectReference Include="..\Bannerlord.BLSE\src\Bannerlord.BLSE\Bannerlord.BLSE.csproj" Private="true" />
+  </ItemGroup>
+  <ItemGroup Condition="$(Configuration) == 'Debug'">
+    <ProjectReference Include="..\Bannerlord.BLSE\src\Bannerlord.LauncherEx\Bannerlord.LauncherEx.csproj" Private="true" />
+  </ItemGroup>
+  <ItemGroup Condition="$(Configuration) == 'Release'">
+    <ProjectReference Include="..\Bannerlord.BLSE\src\Bannerlord.LauncherEx\Bannerlord.LauncherEx.csproj" Private="false" IncludeAssets="compile" PrivateAssets="all" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="CopyFilesToOutputDirectory" Condition="Exists($(GameFolder))">
@@ -34,6 +52,35 @@
     </ItemGroup>
     <Copy SourceFiles="@(Files)" DestinationFolder="$(GameFolder)\bin\Win64_Shipping_Client" />
     <Copy SourceFiles="@(Files3)" DestinationFolder="$(GameFolder)\%(SubDir)" />
+  </Target>
+
+  <!-- Embedding multiple versions of LauncherEx -->
+  <ItemGroup Condition="$(Configuration) == 'Release'">
+    <!-- From highest to lowest. Don't ask why. -->
+    <GameAPIVersion Include="v1.1.0-v1.1.1" GameVersion="1.1.0" Version="v1.1.0" Flat="110" Visible="false" />
+    <GameAPIVersion Include="v1.0.0-v1.0.3" GameVersion="1.0.0" Version="v1.0.0" Flat="100" Visible="false" />
+    <EmbeddedResource Include="@(GameAPIVersion->'..\Bannerlord.BLSE\src\Bannerlord.LauncherEx\bin\$(Configuration)_%(Flat)\netstandard2.0\Bannerlord.LauncherEx.dll')" Visible="false">
+      <Link>Bannerlord.LauncherEx_%(Version).dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Target Condition="$(Configuration) == 'Release'" Name="BeforeBuildLauncherEx" BeforeTargets="BeforeBuild">
+    <PropertyGroup>
+      <LauncherExProject>$(MSBuildThisFileDirectory)..\Bannerlord.BLSE\src\Bannerlord.LauncherEx\Bannerlord.LauncherEx.csproj</LauncherExProject>
+      <LauncherExProjectFull>"$([System.IO.Path]::GetFullPath('$(LauncherExProject)'))"</LauncherExProjectFull>
+    </PropertyGroup>
+    <Message Text="dotnet build $(LauncherExProjectFull) --target:BuildExtended -p:GameVersion=%(GameAPIVersion.GameVersion) -p:Configuration=$(Configuration)_%(GameAPIVersion.Flat) -p:ILRepackBuildEnable=true" Importance="High" />
+    <Exec Command="dotnet build $(LauncherExProjectFull) --target:BuildExtended -p:GameVersion=%(GameAPIVersion.GameVersion) -p:Configuration=$(Configuration)_%(GameAPIVersion.Flat) -p:ILRepackBuildEnable=true" />
+  </Target>
+  <Target Condition="$(Configuration) == 'Release'" Name="BeforeBuildCompress" AfterTargets="BeforeBuildLauncherEx">
+    <GZip Files="@(EmbeddedResource)">
+      <Output ItemName="GZipEmbeddedResource" TaskParameter="Result" />
+    </GZip>
+    <Message Text="Source EmbeddedResources: @(EmbeddedResource)" Importance="High" />
+    <Message Text="GZipped EmbeddedResources: @(GZipEmbeddedResource)" Importance="High" />
+    <ItemGroup>
+      <EmbeddedResource Remove="@(EmbeddedResource)" />
+      <EmbeddedResource Include="@(GZipEmbeddedResource)" />
+    </ItemGroup>
   </Target>
   
 </Project>
