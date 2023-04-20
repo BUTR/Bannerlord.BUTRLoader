@@ -10,7 +10,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Xml;
 
 using TaleWorlds.Core;
 
@@ -24,6 +23,75 @@ internal static class ModuleInitializer
         if (Interlocked.Exchange(ref _isAttached, 1) == 1)
             return;
         AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+    }
+
+    private static string? ResolveHarmonyAssembliesFile(AssemblyName assemblyName)
+    {
+        var assemblyNameFull = $"{assemblyName.Name}.dll";
+        var configName = Path.GetFileName(Directory.GetCurrentDirectory());
+
+        switch (HarmonyFinder.TryResolveHarmonyAssembliesFileFull(assemblyName, out var path))
+        {
+            case HarmonyDiscoveryResult.Discovered:
+                return path;
+            case HarmonyDiscoveryResult.ModuleMissing:
+                MessageBoxDialog.Show(@"The Harmony module is missing!
+Can't launch with 'Bannerlord.Harmony' module missing!
+
+If the module was installed manually, make sure that the module in installed in 'Modules/Bannerlord.Harmony'!
+If Vortex is used, try to reinstall manually!
+If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
+                Environment.Exit(1);
+                return null;
+            case HarmonyDiscoveryResult.ModuleSubModuleMissing:
+                MessageBoxDialog.Show(@$"The Harmony module is corrupted!
+Can't find '{ModuleInfoHelper.SubModuleFile}' in 'Bannerlord.Harmony'!
+
+If the module was installed manually, try to do a clean reinstall!
+If Vortex is used, try to reinstall manually!
+If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
+                Environment.Exit(1);
+                return null;
+            case HarmonyDiscoveryResult.ModuleSubModuleCorrupted:
+                MessageBoxDialog.Show(@$"The Harmony module is corrupted!
+Failed to read '{ModuleInfoHelper.SubModuleFile}'!
+
+If the module was installed manually, try to do a clean reinstall!
+If Vortex is used, try to reinstall manually!
+If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
+                Environment.Exit(1);
+                return null;
+            case HarmonyDiscoveryResult.ModuleVersionWrong:
+                MessageBoxDialog.Show(@"The Harmony module is wrong!
+At least v2.2.2.x is required!
+
+If the module was installed manually, find and install the latest version!
+If Vortex is used, try to reinstall manually the latest version!
+If Steam is used, download the latest Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
+                Environment.Exit(1);
+                return null;
+            case HarmonyDiscoveryResult.ModuleBinariesMissing:
+                MessageBoxDialog.Show(@$"The Harmony module is corrupted!
+Can't find '{Path.Combine("bin", configName)}' in 'Bannerlord.Harmony'!
+
+If the module was installed manually, try to do a clean reinstall!
+If Vortex is used, try to reinstall manually!
+If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
+                Environment.Exit(1);
+                return null;
+            case HarmonyDiscoveryResult.ModuleHarmonyMissing:
+                MessageBoxDialog.Show(@$"The Harmony module is corrupted!
+Can't find '{assemblyNameFull}' in 'Bannerlord.Harmony'!
+
+If the module was installed manually, try to do a clean reinstall!
+If Vortex is used, try to reinstall manually!
+If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
+                Environment.Exit(1);
+                return null;
+            case HarmonyDiscoveryResult.UnknownIssue:
+            default:
+                return null;
+        }
     }
 
     private static Assembly? ResolveAssembly(object? sender, ResolveEventArgs e)
@@ -79,164 +147,6 @@ internal static class ModuleInitializer
         return null;
     }
 
-    private enum HarmonyDiscoveryResult
-    {
-        Discovered,
-        ModuleMissing,
-        ModuleSubModuleMissing,
-        ModuleSubModuleCorrupted,
-        ModuleVersionWrong,
-        ModuleBinariesMissing,
-        ModuleHarmonyMissing,
-        UnknownIssue,
-    }
-
-    private static HarmonyDiscoveryResult TryResolveHarmonyAssembliesFile(AssemblyName assemblyName, out string? path)
-    {
-        path = null;
-        var assemblyNameFull = $"{assemblyName.Name}.dll";
-
-        var configName = Path.GetFileName(Directory.GetCurrentDirectory());
-
-        var harmonyModuleFolder = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../", "../", ModuleInfoHelper.ModulesFolder, "Bannerlord.Harmony"));
-        if (!Directory.Exists(harmonyModuleFolder))
-            return HarmonyDiscoveryResult.ModuleMissing;
-
-        var harmonySubModule = Path.Combine(harmonyModuleFolder, ModuleInfoHelper.SubModuleFile);
-        if (!File.Exists(harmonySubModule))
-            return HarmonyDiscoveryResult.ModuleSubModuleMissing;
-
-        var doc = new XmlDocument();
-        doc.Load(File.Exists(harmonySubModule) ? harmonySubModule : string.Empty);
-        var harmonyModuleInfo = ModuleInfoExtended.FromXml(doc);
-        if (harmonyModuleInfo is null)
-            return HarmonyDiscoveryResult.ModuleSubModuleCorrupted;
-
-        if (new ApplicationVersionComparer().Compare(harmonyModuleInfo.Version, new ApplicationVersion(ApplicationVersionType.Release, 2, 2, 2, 0)) < 0)
-            return HarmonyDiscoveryResult.ModuleVersionWrong;
-
-        var harmonyBinFolder = Path.Combine(harmonyModuleFolder, "bin", configName);
-        if (!Directory.Exists(harmonyBinFolder))
-            return HarmonyDiscoveryResult.ModuleBinariesMissing;
-
-        var assemblyFile = Path.Combine(harmonyBinFolder, assemblyNameFull);
-        if (!File.Exists(assemblyFile))
-            return HarmonyDiscoveryResult.ModuleHarmonyMissing;
-
-        path = File.Exists(assemblyFile) ? assemblyFile : string.Empty;
-        NtfsUnblocker.UnblockFile(path);
-        return HarmonyDiscoveryResult.Discovered;
-    }
-    private static HarmonyDiscoveryResult TryResolveHarmonyAssembliesFileFromSteam(AssemblyName assemblyName, out string? path)
-    {
-        path = null;
-        var assemblyNameFull = $"{assemblyName.Name}.dll";
-
-        var configName = Path.GetFileName(Directory.GetCurrentDirectory());
-
-        var harmonySteamModuleFolder = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "../", "../", "../", "../", "workshop", "content", "261550", "2859188632"));
-        if (!Directory.Exists(harmonySteamModuleFolder))
-            return HarmonyDiscoveryResult.ModuleMissing;
-
-        var harmonySteamSubModule = Path.Combine(harmonySteamModuleFolder, ModuleInfoHelper.SubModuleFile);
-        if (!File.Exists(harmonySteamSubModule))
-            return HarmonyDiscoveryResult.ModuleSubModuleMissing;
-
-        var doc = new XmlDocument();
-        doc.Load(File.Exists(harmonySteamSubModule) ? harmonySteamSubModule : string.Empty);
-        var harmonyModuleInfo = ModuleInfoExtended.FromXml(doc);
-        if (harmonyModuleInfo is null)
-            return HarmonyDiscoveryResult.ModuleSubModuleCorrupted;
-
-        if (new ApplicationVersionComparer().Compare(harmonyModuleInfo.Version, new ApplicationVersion(ApplicationVersionType.Release, 2, 10, 0, 0)) < 0)
-            return HarmonyDiscoveryResult.ModuleVersionWrong;
-
-        var harmonyBinSteamFolder = Path.Combine(harmonySteamModuleFolder, "bin", configName);
-        if (!Directory.Exists(harmonyBinSteamFolder))
-            return HarmonyDiscoveryResult.ModuleBinariesMissing;
-
-        var assemblySteamFile = Path.Combine(harmonyBinSteamFolder, assemblyNameFull);
-        if (!File.Exists(assemblySteamFile))
-            return HarmonyDiscoveryResult.ModuleHarmonyMissing;
-
-        path = File.Exists(assemblySteamFile) ? assemblySteamFile : string.Empty;
-        NtfsUnblocker.UnblockFile(path);
-        return HarmonyDiscoveryResult.Discovered;
-    }
-    private static string? ResolveHarmonyAssembliesFile(AssemblyName assemblyName)
-    {
-        var assemblyNameFull = $"{assemblyName.Name}.dll";
-
-        var configName = Path.GetFileName(Directory.GetCurrentDirectory());
-        var checkSteam = configName == "Win64_Shipping_Client";
-
-        var genericDiscoveryResult = TryResolveHarmonyAssembliesFile(assemblyName, out var genericHarmonyPath);
-        if (genericDiscoveryResult == HarmonyDiscoveryResult.Discovered)
-            return genericHarmonyPath;
-
-        if (checkSteam && TryResolveHarmonyAssembliesFileFromSteam(assemblyName, out var steamHarmonyPath) == HarmonyDiscoveryResult.Discovered)
-            return steamHarmonyPath;
-
-        switch (genericDiscoveryResult)
-        {
-            case HarmonyDiscoveryResult.ModuleMissing:
-                MessageBoxDialog.Show(@"The Harmony module is missing!
-Can't launch with 'Bannerlord.Harmony' module missing!
-
-If the module was installed manually, make sure that the module in installed in 'Modules/Bannerlord.Harmony'!
-If Vortex is used, try to reinstall manually!
-If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
-                Environment.Exit(1);
-                return null;
-            case HarmonyDiscoveryResult.ModuleSubModuleMissing:
-                MessageBoxDialog.Show(@$"The Harmony module is corrupted!
-Can't find '{ModuleInfoHelper.SubModuleFile}' in 'Bannerlord.Harmony'!
-
-If the module was installed manually, try to do a clean reinstall!
-If Vortex is used, try to reinstall manually!
-If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
-                Environment.Exit(1);
-                return null;
-            case HarmonyDiscoveryResult.ModuleSubModuleCorrupted:
-                MessageBoxDialog.Show(@$"The Harmony module is corrupted!
-Failed to read '{ModuleInfoHelper.SubModuleFile}'!
-
-If the module was installed manually, try to do a clean reinstall!
-If Vortex is used, try to reinstall manually!
-If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
-                Environment.Exit(1);
-                return null;
-            case HarmonyDiscoveryResult.ModuleVersionWrong:
-                MessageBoxDialog.Show(@"The Harmony module is wrong!
-At least v2.2.2.x is required!
-
-If the module was installed manually, find and install the latest version!
-If Vortex is used, try to reinstall manually the latest version!
-If Steam is used, download the latest Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
-                Environment.Exit(1);
-                return null;
-            case HarmonyDiscoveryResult.ModuleBinariesMissing:
-                MessageBoxDialog.Show(@$"The Harmony module is corrupted!
-Can't find '{Path.Combine("bin", configName)}' in 'Bannerlord.Harmony'!
-
-If the module was installed manually, try to do a clean reinstall!
-If Vortex is used, try to reinstall manually!
-If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
-                Environment.Exit(1);
-                return null;
-            case HarmonyDiscoveryResult.ModuleHarmonyMissing:
-                MessageBoxDialog.Show(@$"The Harmony module is corrupted!
-Can't find '{assemblyNameFull}' in 'Bannerlord.Harmony'!
-
-If the module was installed manually, try to do a clean reinstall!
-If Vortex is used, try to reinstall manually!
-If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!", MessageBoxButtons.Ok, MessageBoxIcon.Error);
-                Environment.Exit(1);
-                return null;
-        }
-        return null;
-    }
-
     private static Assembly? ResolveHarmonyAssembly(AssemblyName assemblyName)
     {
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -249,8 +159,8 @@ If Steam is used, download the Harmony mod from NexusMods!", "Error from BLSE!",
         if (string.IsNullOrEmpty(assemblyFile))
             return null;
 
-        var harmony = Assembly.ReflectionOnlyLoadFrom(assemblyFile);
-        if (harmony.GetName().Version < new Version(2, 2, 2, 0))
+
+        if (ReflectionParser.GetAssemblyVersion(assemblyFile) < new Version(2, 2, 2, 0))
         {
             MessageBoxDialog.Show(@"The Harmony module is corrupted!
 Wrong 0Harmony.dll version! At least v2.2.2.x is required!
